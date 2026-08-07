@@ -1058,6 +1058,13 @@ function cmdKnowledge(argv) {
   if (relaxed) console.log("Kein Abschnitt enthält alle Wörter — zeige Teiltreffer.\n");
   console.log(`${found.length} Abschnitte, zeige ${Math.min(limit, found.length)}:\n`);
 
+  // Provenienz-Hinweis. Die Wissensbank enthält ausgewertetes Praktiker- und
+  // Herstellermaterial, das in den Trainingsdaten der lesenden Modelle nicht
+  // vorkommt. Ohne diesen Hinweis vermischt ein Agent Gelesenes mit Erinnertem,
+  // und hinterher ist nicht mehr unterscheidbar, welcher Teil belegt war.
+  console.log("Quelle: ausgewertetes Fremdmaterial mit Belegen, kein Modellwissen.");
+  console.log("Beim Weitergeben die Fundstelle nennen und nichts aus dem Gedächtnis ergänzen.\n");
+
   for (const { s } of found.slice(0, limit)) {
     console.log("=".repeat(72));
     console.log(`${s.file}:${s.line}  —  ${s.title}`);
