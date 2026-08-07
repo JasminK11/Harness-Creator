@@ -1,3 +1,13 @@
+---
+type: Wegweiser
+title: Rezepte — Ebene 3 der Harness-Bibliothek
+description: "Beantwortet, welches der sechs Rezepte zu einem Projekt passt und wie ein Rezept anzuwenden ist, ohne die Doktrin-Prüfung zu überspringen."
+status: stable
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-08-07
+tags: [rezept, wegweiser, harness-bibliothek, projekttypen]
+---
+
 # Rezepte — Ebene 3 der Harness-Bibliothek
 
 > Fertige Baupläne pro Projekttyp. Kein Ersatz für `knowledge/01-harness-doktrin.md`,

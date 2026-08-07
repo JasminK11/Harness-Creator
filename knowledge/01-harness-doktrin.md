@@ -1,3 +1,50 @@
+---
+type: Doktrin
+title: Harness-Doktrin — welche Modellschwäche jede Komponente kompensiert
+description: "Beantwortet, ob und warum eine Harness-Komponente gebaut wird — jede Komponente als überprüfbare Wette auf eine konkrete Modellschwäche."
+status: stable
+sources:
+  - id: anthropic-harness-design
+    resource: https://www.anthropic.com/engineering/harness-design-long-running-apps
+    title: Harness design for long-running application development
+    author: Anthropic Engineering
+    last_modified: 2026-03-24
+  - id: anthropic-effective-harnesses
+    resource: https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents
+    title: Effective harnesses for long-running agents
+    author: Anthropic Engineering
+    last_modified: 2025-11-26
+  - id: anthropic-context-engineering
+    resource: https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+    title: Effective context engineering for AI agents
+    author: Anthropic Engineering
+    last_modified: 2025-09-29
+  - id: anthropic-building-effective-agents
+    resource: https://www.anthropic.com/engineering/building-effective-agents
+    title: Building effective agents
+    author: Anthropic Engineering
+    last_modified: 2024-12-19
+  - id: claude-sdk-subagents
+    resource: https://code.claude.com/docs/en/agent-sdk/subagents
+    title: Subagents in the SDK
+    author: Anthropic
+  - id: claude-sdk-overview
+    resource: https://code.claude.com/docs/en/agent-sdk/overview
+    title: Agent SDK overview
+    author: Anthropic
+  - id: claude-context-editing
+    resource: https://platform.claude.com/docs/en/build-with-claude/context-editing
+    title: Context editing
+    author: Anthropic
+  - id: claude-compaction
+    resource: https://platform.claude.com/docs/en/build-with-claude/compaction
+    title: Compaction
+    author: Anthropic
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-02-07
+tags: [harness, modellschwaechen, planner-generator-evaluator, context-reset, kontext-engineering, anthropic]
+---
+
 # 01 — Harness-Doktrin
 
 > **Worum es geht:** Die Begründungen hinter Harness-Komponenten — welche Modellschwäche jede Komponente kompensiert und wann sie überflüssig wird.

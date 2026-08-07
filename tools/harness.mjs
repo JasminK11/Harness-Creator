@@ -1179,6 +1179,56 @@ function cmdLint(argv) {
     }
   }
 
+  // --- Bestandszahlen gegen den aktuellen Katalog ---
+  // Wissensdateien nennen Kennzahlen im Fliesstext ("rund 1.050 Bausteine"). Ändert
+  // sich der Katalog — etwa weil der Extractor genauer wird — veralten sie still und
+  // widersprechen einander. Genau die Klasse Fehler, gegen die eine gepflegte
+  // Wissensbank antritt: Widersprüche, die niemandem auffallen, weil niemand
+  // abgleicht.
+  if (fs.existsSync(INDEX_JSON)) {
+    let cat = null;
+    try { cat = JSON.parse(fs.readFileSync(INDEX_JSON, "utf8")); } catch { /* egal */ }
+    if (cat) {
+      const kennzahlen = [
+        { wert: cat.totals.items, was: "Bausteine gesamt" },
+        { wert: cat.items.filter((i) => !i.bulk).length, was: "Bausteine im Standardzugriff" },
+        { wert: cat.items.filter((i) => i.bulk).length, was: "Bausteine in Massen-Repos" },
+      ];
+      const alleWerte = new Set(kennzahlen.map((k) => k.wert));
+
+      // Eine Zahl ist nur dann eine Bestandsangabe, wenn ihr Umfeld das sagt.
+      // Sonst meldet die Prüfung Zeilenzahlen und Token-Angaben als Widerspruch.
+      const BESTAND_RE = /\b(baustein|einträg|katalog|skills?\b|standardzugriff|verzeichnet|umfasst)/i;
+      // Bewusste Rundungen sind keine Widersprüche, sondern korrekte Prosa.
+      const RUNDUNG_RE = /\b(rund|etwa|circa|ca\.|über|mehr als|knapp|gut)\s*$/i;
+
+      for (const f of files) {
+        const text = safeRead(f.abs);
+        const gesehen = new Set();
+        for (const m of text.matchAll(/\b(\d{1,3}(?:[.,]\d{3})+|\d{3,6})\b/g)) {
+          const roh = m[1];
+          const zahl = Number(roh.replace(/[.,]/g, ""));
+          if (!Number.isFinite(zahl) || zahl < 100 || gesehen.has(zahl)) continue;
+          if (alleWerte.has(zahl)) continue;                      // stimmt
+
+          const vor = text.slice(Math.max(0, m.index - 70), m.index);
+          const nach = text.slice(m.index + roh.length, m.index + roh.length + 70);
+          if (!BESTAND_RE.test(vor + nach)) continue;             // andere Art Zahl
+          if (RUNDUNG_RE.test(vor) && zahl % 1000 === 0) continue; // "über 25.000"
+
+          gesehen.add(zahl);
+          for (const k of kennzahlen) {
+            const abweichung = Math.abs(zahl - k.wert) / k.wert;
+            if (abweichung > 0 && abweichung < 0.2) {
+              add("hoch", f.rel, `Bestandszahl \`${roh}\` weicht vom Katalog ab — aktuell ${k.wert} (${k.was}). Veraltete Zahl oder Verwechslung.`);
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
   // --- Rohquellen ohne Auswertung ---
   const rawDir = path.join(ROOT, "Learnings");
   if (fs.existsSync(rawDir)) {

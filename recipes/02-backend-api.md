@@ -1,3 +1,24 @@
+---
+type: Rezept
+title: Rezept 02 — Backend- / API-Projekt
+description: "Beantwortet, mit welchem Kern-Set ein Harness für ein Backend mit externen Konsumenten beginnt — Vertragsprüfung statt Bewertungs-Loop."
+status: stable
+sources:
+  - id: harness-katalog
+    resource: catalog/index.json
+    title: Katalog der Harness-Bibliothek — jede genannte ID über `node tools/harness.mjs show <id>` geprüft
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+  - id: harness-doktrin
+    resource: knowledge/01-harness-doktrin.md
+    title: Harness-Doktrin — Abschnitte 3.3, 3.4, 3.5, 6.2 und Checkliste 8 als Begründung der Auswahl
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-08-07
+tags: [rezept, backend, api, contract-first, migrationen, datenbank, sicherheit]
+---
+
 # Rezept 02 — Backend- / API-Projekt
 
 ## Wann dieses Rezept passt

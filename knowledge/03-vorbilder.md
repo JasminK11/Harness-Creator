@@ -1,3 +1,32 @@
+---
+type: Analyse
+title: Vorbilder — Understand-Anything und graphify
+description: "Beantwortet, wie zwei fremde Projekte eine grosse Wissensmenge so ablegen, dass ein Agent gezielt zugreift statt alles zu laden — und was davon für diese Bibliothek übernehmbar ist."
+status: stable
+sources:
+  - id: understand-anything
+    resource: https://github.com/Egonex-AI/Understand-Anything
+    title: Understand-Anything — Claude-Code-Plugin für Codebasis-Wissensgraphen (lokaler Abzug unter C:\Users\info\.harness-sources\Egonex-AI__Understand-Anything)
+    author: Egonex-AI
+  - id: ua-token-reduction-design
+    resource: C:\Users\info\.harness-sources\Egonex-AI__Understand-Anything\docs\superpowers\specs\2026-03-27-token-reduction-design.md
+    title: Token Reduction Design — Massnahmen C1 bis C5, Schätzung für ein 500-Datei-Projekt
+    author: Egonex-AI
+    last_modified: 2026-03-27
+  - id: graphify
+    resource: https://github.com/Graphify-Labs/graphify
+    title: graphify — beliebiger Ordner zu persistentem Wissensgraph (lokaler Abzug unter C:\Users\info\.harness-sources\Graphify-Labs__graphify)
+    author: Graphify-Labs
+  - id: harness-bibliothek
+    resource: C:\Users\info\OneDrive\Desktop\Harnes Creator
+    title: Eigene Harness-Bibliothek — INDEX.md, sources.txt, tools/harness.mjs, catalog/by-domain
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-05-07
+tags: [wissensgraph, kontextbudget, progressive-disclosure, understand-anything, graphify, katalog-architektur]
+---
+
 # 03 — Vorbilder: Understand-Anything und graphify
 
 > **Abstract.** Beide Projekte lösen dieselbe Aufgabe wie wir: eine grosse Wissensmenge so auf die Festplatte legen, dass ein Agent gezielt zugreift statt alles zu laden.

@@ -1,3 +1,44 @@
+---
+type: Referenz
+title: Bausteine — Werkstoffkunde der sechs Claude-Code-Typen
+description: "Beantwortet, welcher der sechs Baustein-Typen ein gegebenes Problem löst — und warum die anderen fünf es nicht tun."
+status: stable
+sources:
+  - id: cc-skills
+    resource: https://code.claude.com/docs/en/skills
+    title: Extend Claude with skills
+    author: Anthropic
+    last_modified: 2026-08-07
+  - id: cc-sub-agents
+    resource: https://code.claude.com/docs/en/sub-agents
+    title: Create custom subagents
+    author: Anthropic
+    last_modified: 2026-08-07
+  - id: cc-hooks
+    resource: https://code.claude.com/docs/en/hooks
+    title: Hooks
+    author: Anthropic
+    last_modified: 2026-08-07
+  - id: cc-mcp
+    resource: https://code.claude.com/docs/en/mcp
+    title: Connect Claude Code to tools via MCP
+    author: Anthropic
+    last_modified: 2026-08-07
+  - id: cc-plugins
+    resource: https://code.claude.com/docs/en/plugins
+    title: Create plugins
+    author: Anthropic
+    last_modified: 2026-08-07
+  - id: harness-katalog
+    resource: catalog/index.json
+    title: Katalog der Harness-Bibliothek — gelesen über `node tools/harness.mjs show` und `stats`
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-02-07
+tags: [claude-code, skill, subagent, slash-command, hook, mcp-server, plugin, kontextkosten, progressive-disclosure]
+---
+
 # 02 — Bausteine: Werkstoffkunde
 
 > **Worum es geht:** Welcher der sechs Baustein-Typen ein gegebenes Problem löst — und warum die anderen fünf es nicht tun.

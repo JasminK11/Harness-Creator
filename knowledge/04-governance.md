@@ -1,3 +1,38 @@
+---
+type: Governance
+title: Governance — was ab 1.050 Bausteinen kippt
+description: "Beantwortet, welche Governance-Mechanismen eine Katalog-Bibliothek fremder Bausteine ab der 100er-Schwelle braucht — gemessen am eigenen Bestand."
+status: stable
+sources:
+  - id: miraje-skill-centric
+    resource: https://www.youtube.com/watch?v=7jjudsEhBtM
+    title: Building skill-centric agentic products — Konferenzvortrag
+    author: Yogendra Miraje (Principal AI Engineer, FactSet)
+  - id: harness-cli
+    resource: tools/harness.mjs
+    title: Eigenes CLI — DOMAIN_RULES, classify(), SKIP_DIRS, hookDescription(), cmdSearch-Score, cmdUpdate-Diff, cmdInstall-Manifest
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+  - id: harness-index
+    resource: INDEX.md
+    title: Bestandsübersicht nach Typ, Domäne und Repo — Katalogstand 2026-08-07 08:38
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+  - id: harness-build-skill
+    resource: C:\Users\info\.claude\skills\harness-build\SKILL.md
+    title: Skill harness-build — Symptomtabelle und Ablauf search/show/install
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+  - id: cli-laeufe-2026-08-07
+    resource: catalog/index.json
+    title: CLI-Läufe stats/search/show vom 2026-08-07, aus denen alle Zahlen dieser Datei stammen
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-05-07
+tags: [governance, katalog, routing, descriptions, eval, admission, lifecycle, coherence]
+---
+
 # 04 — Governance: was ab 1.050 Bausteinen kippt
 
 > **Abstract.** Unsere Bibliothek hat mit 1.050 Bausteinen im Standardzugriff Mirajes dritte Schwelle (~100) um den Faktor zehn überschritten — die Architektur ist dafür gebaut, die Governance ist bei null.

@@ -1,3 +1,24 @@
+---
+type: Rezept
+title: Rezept 06 — Bestehende, unbekannte Codebasis übernehmen
+description: "Beantwortet, mit welchem Kern-Set ein Harness für die Übernahme einer fremden Legacy-Codebasis beginnt — Kontext-Isolation plus persistente Notizen."
+status: stable
+sources:
+  - id: harness-katalog
+    resource: catalog/index.json
+    title: Katalog der Harness-Bibliothek — jede genannte ID über `node tools/harness.mjs show <id>` geprüft
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+  - id: harness-doktrin
+    resource: knowledge/01-harness-doktrin.md
+    title: Harness-Doktrin — Abschnitte 3.1, 3.3, 3.4, 3.5, 5, 6.1, 6.2, 6.4 und Checkliste 8 als Begründung der Auswahl
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-08-07
+tags: [rezept, legacy, onboarding, kontext-isolation, handoff, spec-mining]
+---
+
 # Rezept 06 — Bestehende, unbekannte Codebasis übernehmen
 
 ## Wann dieses Rezept passt

@@ -1,3 +1,24 @@
+---
+type: Rezept
+title: Rezept 01 — Web-App mit React / Next.js
+description: "Beantwortet, mit welchem Kern-Set aus dem Katalog ein Harness für eine React-/Next.js-Web-App beginnt und welche naheliegenden Kandidaten bewusst wegfallen."
+status: stable
+sources:
+  - id: harness-katalog
+    resource: catalog/index.json
+    title: Katalog der Harness-Bibliothek — jede genannte ID über `node tools/harness.mjs show <id>` geprüft
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+  - id: harness-doktrin
+    resource: knowledge/01-harness-doktrin.md
+    title: Harness-Doktrin — Abschnitte 2, 3.3, 3.5, 6.1, 6.2 als Begründung der Auswahl
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
+generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+stale_after: 2027-05-07
+tags: [rezept, react, nextjs, frontend, browser-verifikation, accessibility]
+---
+
 # Rezept 01 — Web-App mit React / Next.js
 
 ## Wann dieses Rezept passt
