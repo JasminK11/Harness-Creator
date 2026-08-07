@@ -12,6 +12,7 @@
  *   search <query>    Katalog durchsuchen (kompakte Trefferzeilen)
  *   show <id>         Detail zu einem Baustein
  *   install <id...>   Baustein(e) in ein Zielprojekt kopieren
+ *   uninstall <id...> Bausteine anhand des Manifests wieder entfernen
  *   stats             Übersicht
  *
  * Warum ein CLI statt "Claude liest die Repos":
@@ -23,6 +24,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -775,18 +777,206 @@ const TARGET_BY_TYPE = {
   plugin: ".claude/plugins",
 };
 
-function copyRecursive(src, dest) {
+/**
+ * Kopiert und **protokolliert dabei, was tatsächlich geschrieben wurde**.
+ *
+ * Warum die Rückgabe: `uninstall` darf nicht raten. Ein Verzeichnis nachträglich
+ * abzulaufen wäre die falsche Quelle — bei `--force` über eine bestehende
+ * Installation stünden dort auch Dateien, die dieser Lauf nie angefasst hat, und
+ * das Manifest würde fremde Dateien zum Löschen freigeben. Nur der Kopiervorgang
+ * selbst weiss es genau, also sagt er es.
+ */
+function copyRecursive(src, dest, out = []) {
   const st = fs.statSync(src);
   if (st.isDirectory()) {
     fs.mkdirSync(dest, { recursive: true });
     for (const e of fs.readdirSync(src)) {
       if (SKIP_DIRS.has(e)) continue;
-      copyRecursive(path.join(src, e), path.join(dest, e));
+      copyRecursive(path.join(src, e), path.join(dest, e), out);
     }
   } else {
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(src, dest);
+    out.push(dest);
   }
+  return out;
+}
+
+/** md5 einer Datei. Kein Sicherheitsmerkmal, sondern ein Änderungsindikator:
+ *  `uninstall` soll erkennen, ob der User die Datei nach der Installation
+ *  angefasst hat, und sie dann in Ruhe lassen. */
+function fileHash(file) {
+  try { return createHash("md5").update(fs.readFileSync(file)).digest("hex"); }
+  catch { return null; }
+}
+
+// ---------------------------------------------------------------- Installationsgrenze
+
+/**
+ * Sichtprüfung vor dem Kopieren: was bringt der Baustein an ausführbarem Code mit?
+ *
+ * Warum das nötig ist: `install` kopiert Code aus dreizehn **fremden** Repos in
+ * Projekte des Users. Bei einem Hook ist das kein Lesestoff — Claude Code ruft ihn
+ * bei einem Lifecycle-Ereignis von selbst auf, ohne dass jemand ihn vorher geöffnet
+ * hat. Bis hierhin meldete das CLI nur den Kopiervorgang ("+ id -> pfad"), nicht,
+ * was da kopiert wird.
+ *
+ * **Das ist eine Sichtprüfung, kein Schutz.** Ein Textmuster-Abgleich erkennt keinen
+ * verschleierten Aufruf, kennt keine Absicht und gibt keine Freigabe. Er macht
+ * sichtbar, was sonst unbemerkt ins Projekt käme. Wer den Hinweis liest und
+ * bestätigt, hat entschieden — genau das ist der Zweck, und mehr wird nicht
+ * behauptet. Deshalb steht die Ehrlichkeitszeile auch in der Ausgabe und nicht nur
+ * hier im Kommentar.
+ */
+
+/** Endungen, bei denen eine Datei ausgeführt statt gelesen wird. */
+const EXEC_EXT = /\.(sh|bash|zsh|ps1|psm1|bat|cmd|py|rb|pl|js|mjs|cjs|ts)$/i;
+
+/**
+ * Auffällige Muster. Bewusst wenige und bewusst grob: jede Meldung kostet
+ * Aufmerksamkeit, und eine Liste, die pro Baustein zwanzig Zeilen ausgibt, wird
+ * nach dem zweiten Mal überblättert statt gelesen. `auch` verlangt einen zweiten
+ * Treffer in derselben Zeile — ohne das meldete "Zugangsdaten" jedes process.env.PATH.
+ * Die Lookbehinds halten `regex.exec(...)` und `array.eval` heraus, die in
+ * JS-Bausteinen häufiger vorkommen als die gemeinten Aufrufe.
+ */
+const RISK_PATTERNS = [
+  { label: "Netzwerkzugriff", re: /\b(curl|wget|axios|urllib|httpx|node-fetch|Invoke-WebRequest|Invoke-RestMethod)\b|\bfetch\s*\(|\brequests\.(get|post|put|patch|delete)\b|\bhttps?\.request\b|\bnew\s+WebSocket\b/ },
+  { label: "Prozessaufruf", re: /\b(child_process|subprocess|execSync|execFileSync|spawnSync|Start-Process|Invoke-Expression|os\.system|popen)\b|\bspawn\s*\(|(?<![.\w])exec\s*\(|(?<![.\w])eval\s*\(|\bnew\s+Function\s*\(/ },
+  { label: "Ziel ausserhalb", re: /\b(os\.homedir|expanduser|USERPROFILE|HOMEPATH)\b|\$HOME\b|~\/\.[a-z]|(?:^|[\s"'`(])\/etc\/|\bHKEY_|\.ssh\b/ },
+  { label: "Zugangsdaten", re: /\b(process\.env|os\.environ|getenv|\$env:)\b|\$\{?[A-Z_]{2,}\}?/, auch: /\b[A-Z_]*(API_?KEY|_KEY|TOKEN|SECRET|PASSW|CREDENTIAL)[A-Z_]*\b/i },
+];
+
+const fmtSize = (b) =>
+  b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`;
+
+/**
+ * Liest die Quelle des Bausteins und sammelt, was ausführbar ist.
+ *
+ * Warum nicht im `extract`-Lauf als Katalogfeld: eine Flagge im Katalog würde jede
+ * Änderung an den Mustern zu einem vollen Neuaufbau des Katalogs zwingen, und der
+ * Fundort mit Zeilennummer — das eigentlich Nützliche — passt ohnehin nicht in
+ * einen Katalogeintrag. Beim Kopieren wird die Quelle sowieso gelesen; hier kostet
+ * die Prüfung nichts extra.
+ */
+function inspectItem(it, src) {
+  const bericht = { id: it.id, type: it.type, dateien: [], bytes: 0, anzahl: 0, gekuerzt: false, gruende: [] };
+  const alle = [];
+  try {
+    if (fs.statSync(src).isDirectory()) walk(src, (p, isDir) => { if (!isDir) alle.push(p); });
+    else alle.push(src);
+  } catch { return bericht; }
+  bericht.anzahl = alle.length;
+
+  let geoeffnet = 0;
+  for (const f of alle) {
+    const size = safeSize(f);
+    bericht.bytes += size;
+    const base = path.basename(f);
+    const byExt = EXEC_EXT.test(base);
+    // Dateien ohne Endung können eine Shebang-Zeile tragen und werden deshalb
+    // geöffnet. Alles andere (.md, .json, Bilder) nicht — ein Plugin mit 3.438
+    // Dateien würde sonst bei jedem `install` komplett eingelesen.
+    if (!byExt && (base.includes(".") || size > 200000)) continue;
+    if (geoeffnet >= 300) { bericht.gekuerzt = true; continue; }
+    geoeffnet++;
+    const text = safeRead(f);
+    if (!text) continue;
+    const shebang = /^#!/.test(text);
+    if (!byExt && !shebang) continue;
+
+    const lines = text.split("\n");
+    const funde = [];
+    for (let i = 0; i < lines.length; i++) {
+      const l = lines[i];
+      if (l.length > 400) continue; // minifizierte Zeile: der Fundort sagt nichts aus
+      for (const pat of RISK_PATTERNS) {
+        if (!pat.re.test(l)) continue;
+        if (pat.auch && !pat.auch.test(l)) continue;
+        funde.push({ zeile: i + 1, label: pat.label, text: l.trim().slice(0, 88) });
+        break; // eine Meldung pro Zeile genügt, sonst wird die Liste unlesbar
+      }
+    }
+    const r = path.relative(src, f).split(path.sep).join("/");
+    bericht.dateien.push({ rel: r || base, bytes: size, zeilen: lines.length, shebang, funde });
+  }
+
+  // Gründe für eine Rückfrage. Ein Hook zählt immer — nicht wegen seines Inhalts,
+  // sondern weil er von selbst startet; das ist der Unterschied zu einem Skill,
+  // den der Agent erst laden muss.
+  if (it.type === "hook") bericht.gruende.push("Hook — feuert bei Lifecycle-Ereignissen automatisch, ohne dass ihn jemand aufruft");
+  if (bericht.dateien.length) {
+    const mitFund = bericht.dateien.filter((d) => d.funde.length).length;
+    bericht.gruende.push(`${bericht.dateien.length} ausführbare Datei(en)${mitFund ? `, davon ${mitFund} mit Fundstellen` : ""}`);
+  }
+  if (bericht.bytes > 5 * 1048576) bericht.gruende.push(`${fmtSize(bericht.bytes)} — grösser als 5 MB`);
+  if (bericht.anzahl > 200) bericht.gruende.push(`${bericht.anzahl} Dateien — mehr als 200`);
+  return bericht;
+}
+
+function printInspection(berichte) {
+  console.log("\n  Prüfung vor dem Kopieren:\n");
+  for (const b of berichte) {
+    console.log(`  ${b.gruende.length ? "!" : "-"} ${b.id} (${b.type}) — ${b.anzahl} Datei(en), ${fmtSize(b.bytes)}`);
+    if (!b.gruende.length) { console.log("      nichts Ausführbares gefunden"); continue; }
+    for (const g of b.gruende) console.log(`      ${g}`);
+
+    // Ein Plugin bringt 296 ausführbare Dateien mit, 123 davon mit Fundstellen —
+    // vollständig ausgegeben wäre das eine Wand, die niemand liest, und damit
+    // schlechter als eine kurze Liste. Deshalb: erst die auffälligen Dateien,
+    // höchstens zwölf, der Rest als Zahl. Wer mehr will, hat `show`.
+    const mitFund = b.dateien.filter((d) => d.funde.length);
+    const ohneFund = b.dateien.filter((d) => !d.funde.length);
+    const zeigen = (mitFund.length ? mitFund : ohneFund).slice(0, 12);
+    for (const d of zeigen) {
+      console.log(`      ${d.rel}  (${fmtSize(d.bytes)}, ${d.zeilen} Zeilen${d.shebang ? ", Shebang" : ""})`);
+      for (const f of d.funde.slice(0, 4)) console.log(`        Z.${String(f.zeile).padStart(4)}  ${f.label.padEnd(16)} ${f.text}`);
+      if (d.funde.length > 4) console.log(`        ... ${d.funde.length - 4} weitere Fundstelle(n) in dieser Datei`);
+    }
+    const restFund = mitFund.length - (mitFund.length ? zeigen.length : 0);
+    const restOhne = ohneFund.length - (mitFund.length ? 0 : zeigen.length);
+    if (restFund > 0) console.log(`      ... ${restFund} weitere Datei(en) mit Fundstellen, hier nicht aufgeführt`);
+    if (restOhne > 0) console.log(`      ... ${restOhne} weitere ausführbare Datei(en) ohne Fundstelle`);
+    if (b.gekuerzt) console.log("      (zu viele Dateien — nicht alle geöffnet, Rest ungeprüft)");
+  }
+  console.log("");
+  console.log("  Das ist eine Sichtprüfung, kein Schutz: ein Textmuster-Abgleich erkennt keinen");
+  console.log("  verschleierten Aufruf und sagt nichts über Absicht. Er zeigt, was sonst");
+  console.log("  unbemerkt ins Projekt käme. Wer bestätigt, hat entschieden.");
+}
+
+/**
+ * Rückfrage vor dem Kopieren.
+ *
+ * Ohne TTY und ohne `--yes` wird **nicht** installiert. Stilles Durchwinken wäre
+ * schlimmer als gar keine Prüfung: es sähe aus wie eine bestandene Kontrolle,
+ * obwohl niemand hingesehen hat.
+ */
+function confirmInstall(flags) {
+  if (flags.yes) { console.log("\n  --yes: ohne Rückfrage bestätigt.\n"); return true; }
+  if (!process.stdin.isTTY) {
+    console.log("\n  Abbruch: keine Eingabemöglichkeit (kein TTY) und kein --yes — nichts kopiert.");
+    console.log("  Wenn die Fundstellen oben gelesen und in Ordnung sind: denselben Befehl mit --yes.");
+    // Kein `die()`: die Meldung oben ist die eigentliche Nachricht. Aber ein
+    // Skript, das `install` aufruft, darf einen Abbruch nicht als Erfolg lesen.
+    process.exitCode = 1;
+    return false;
+  }
+  process.stdout.write("\n  Fortfahren? [j/N] ");
+  let antwort = "";
+  try {
+    const buf = Buffer.alloc(64);
+    const n = fs.readSync(0, buf, 0, buf.length, null);
+    antwort = buf.toString("utf8", 0, n).trim().toLowerCase();
+  } catch {
+    console.log("\n  Abbruch: Eingabe nicht lesbar — nichts kopiert. Mit --yes wiederholen.");
+    process.exitCode = 1;
+    return false;
+  }
+  if (antwort === "j" || antwort === "ja" || antwort === "y" || antwort === "yes") return true;
+  console.log("  Abgebrochen — nichts kopiert.");
+  process.exitCode = 1;
+  return false;
 }
 
 /**
@@ -804,12 +994,20 @@ function copyRecursive(src, dest) {
 const CLAUDE_MD_START = "<!-- harness-library:start — automatisch erzeugt, Änderungen hier gehen verloren -->";
 const CLAUDE_MD_END = "<!-- harness-library:end -->";
 
-function claudeMdBlock(installed, catalogGeneratedAt) {
+function claudeMdBlock(installed, catalogGeneratedAt, target) {
+  // Die Bibliothek kann auf sich selbst angewendet werden — und soll das auch,
+  // denn ein Werkzeug, das seine eigenen Regeln nicht befolgt, taugt nichts.
+  // Dann stimmt aber "dieses Projekt bezieht Bausteine aus ..." nicht mehr:
+  // es bezieht nicht, es ist die Quelle.
+  const selbst = target && path.resolve(target) === path.resolve(ROOT);
+
   const L = [];
   L.push(CLAUDE_MD_START);
   L.push("## Harness-Bibliothek");
   L.push("");
-  L.push(`Dieses Projekt bezieht Harness-Bausteine aus \`${ROOT}\`.`);
+  L.push(selbst
+    ? "Dies **ist** die Harness-Bibliothek. Die Regeln unten gelten für die Arbeit an ihr selbst — sie sind dieselben, die sie jedem Zielprojekt mitgibt."
+    : `Dieses Projekt bezieht Harness-Bausteine aus \`${ROOT}\`.`);
   L.push("");
   L.push("### Zugriffsregel — bindend");
   L.push("");
@@ -879,7 +1077,7 @@ function claudeMdBlock(installed, catalogGeneratedAt) {
 
 function writeClaudeMd(target, installed, catalogGeneratedAt) {
   const file = path.join(target, "CLAUDE.md");
-  const block = claudeMdBlock(installed, catalogGeneratedAt);
+  const block = claudeMdBlock(installed, catalogGeneratedAt, target);
   let text = fs.existsSync(file) ? fs.readFileSync(file, "utf8") : "";
 
   const s = text.indexOf(CLAUDE_MD_START);
@@ -901,7 +1099,10 @@ function cmdInstall(argv) {
   const dry = !!flags["dry-run"];
   if (!flags._.length) die("Keine ID angegeben. Beispiel: install affaan-m__ecc/skill/tdd-workflow --to C:\\proj");
 
-  const manifest = [];
+  // Erst auflösen, dann prüfen, dann kopieren. Die Trennung ist der Kern der
+  // Installationsgrenze: läge der Halt in der Kopierschleife, wäre der erste
+  // Baustein längst geschrieben, während der zweite noch zur Bestätigung ansteht.
+  const plan = [];
   for (const id of flags._) {
     const it = findItem(cat, id);
     if (!it) { console.log(`  ! nicht gefunden: ${id}`); continue; }
@@ -916,9 +1117,40 @@ function cmdInstall(argv) {
       console.log(`  = ${it.id} — existiert schon (${path.relative(target, dest)}), --force zum Überschreiben`);
       continue;
     }
+    plan.push({ it, src, dest });
+  }
+  if (!plan.length) return;
+
+  // --dry-run zeigt die Analyse ebenfalls — sonst wäre der Probelauf genau um die
+  // Angabe ärmer, wegen der man ihn macht.
+  const berichte = plan.map((p) => inspectItem(p.it, p.src));
+  if (berichte.some((b) => b.gruende.length)) {
+    printInspection(berichte);
+    if (!dry && !confirmInstall(flags)) return;
+    if (dry) console.log("\n  --dry-run: hier stünde die Rückfrage. Nichts wird kopiert.\n");
+  }
+
+  const manifest = [];
+  const now = new Date().toISOString();
+  for (const { it, src, dest } of plan) {
     console.log(`  ${dry ? "~" : "+"} ${it.id} -> ${path.relative(target, dest).split(path.sep).join("/")}`);
-    if (!dry) copyRecursive(src, dest);
-    manifest.push({ id: it.id, type: it.type, from: it.repo, sourcePath: it.path, installedTo: path.relative(target, dest).split(path.sep).join("/") });
+    const geschrieben = dry ? [] : copyRecursive(src, dest);
+    // Die Dateiliste ist das, was den Weg zurück überhaupt erst möglich macht:
+    // `installedTo` allein benennt nur den Ordner, und bei `mcp` sogar das
+    // Projektwurzelverzeichnis — daraus liesse sich nichts löschen, ohne zu raten.
+    // `commit` ist der Repo-Stand, aus dem die Kopie stammt; er steht bereits im
+    // Katalog und wäre nach dem nächsten `sync` nicht mehr rekonstruierbar.
+    manifest.push({
+      id: it.id, type: it.type, from: it.repo, sourcePath: it.path,
+      installedTo: path.relative(target, dest).split(path.sep).join("/"),
+      commit: cat.repos.find((r) => r.dir === it.repo)?.head || null,
+      installedAt: now,
+      bytes: it.bytes,
+      files: geschrieben.map((f) => ({
+        path: path.relative(target, f).split(path.sep).join("/"),
+        md5: fileHash(f),
+      })),
+    });
   }
 
   if (!dry && manifest.length) {
@@ -944,8 +1176,179 @@ function cmdInstall(argv) {
   }
 }
 
-/** Schreibt nur den Regelblock, ohne Bausteine zu installieren.
- *  Für Projekte, die die Bibliothek durchsuchen wollen, ohne (noch) etwas zu übernehmen. */
+/**
+ * Räumt leergewordene Hüllen auf — aber nur die, und nur innerhalb des Zielprojekts.
+ *
+ * Ohne das bliebe nach dem letzten Skill ein leeres `.claude/skills/<name>/` stehen
+ * und sähe aus wie eine kaputte Installation. Der Abbruch bei der ersten nicht
+ * leeren Ebene ist der Punkt: fremde Nachbardateien halten den Ordner am Leben.
+ */
+function removeEmptyDirs(dir, stopAt) {
+  const stop = path.resolve(stopAt);
+  let d = path.resolve(dir);
+  while (d !== stop && d.startsWith(stop + path.sep)) {
+    try {
+      if (fs.readdirSync(d).length) return;
+      fs.rmdirSync(d);
+    } catch { return; }
+    d = path.dirname(d);
+  }
+}
+
+/**
+ * `uninstall <id...> --to DIR` — der Weg zurück.
+ *
+ * Warum das ohne Manifest nicht geht und mit Raten nicht gehen darf: Was zu einem
+ * Baustein gehört, weiss nach dem Kopieren nur das Manifest. `installedTo` benennt
+ * einen Ordner, und bei Typ `mcp` ist dieser Ordner das Projektwurzelverzeichnis —
+ * ein rekursives Löschen darauf wäre kein Deinstallieren, sondern ein Unfall.
+ * Deshalb gilt hier eine harte Regel: **gelöscht wird ausschliesslich, was namentlich
+ * im Manifest steht.** Alles andere im selben Verzeichnis bleibt liegen, auch wenn
+ * es offensichtlich dazugehört.
+ *
+ * Die zweite Regel schützt den User vor uns: hat er eine Datei nach der Installation
+ * angepasst — md5 weicht ab —, bleibt sie stehen und der Manifest-Eintrag bleibt
+ * mit ihr bestehen. Seine Arbeit wiegt schwerer als ein sauberer Rückbau. Erst
+ * `--force` überstimmt das.
+ */
+function cmdUninstall(argv) {
+  const flags = parseFlags(argv);
+  const target = path.resolve(flags.to || process.cwd());
+  const dry = !!flags["dry-run"];
+  if (!flags._.length) die("Keine ID angegeben. Beispiel: uninstall affaan-m__ecc/skill/tdd-workflow --to C:\\proj");
+
+  const mf = path.join(target, ".claude", "harness-manifest.json");
+  if (!fs.existsSync(mf)) {
+    die(`Kein Manifest in ${target}\n` +
+        "  Ohne Manifest ist nicht belegbar, welche Dateien zu einem Baustein gehören.\n" +
+        "  Hier wird nicht geraten — von Hand entfernen.");
+  }
+  let doc;
+  try { doc = JSON.parse(fs.readFileSync(mf, "utf8")); } catch (e) { die(`Manifest nicht lesbar: ${e.message}`); }
+  const items = Array.isArray(doc.items) ? doc.items : [];
+
+  // Auflösen wie `install`: exakt, sonst case-insensitiv, sonst als Suffix.
+  const treffer = [];
+  for (const id of flags._) {
+    const s = String(id).toLowerCase();
+    const e = items.find((i) => i.id === id)
+      || items.find((i) => String(i.id).toLowerCase() === s)
+      || items.find((i) => String(i.id).toLowerCase().endsWith("/" + s));
+    if (!e) { console.log(`  ! nicht im Manifest: ${id}`); continue; }
+    if (!treffer.includes(e)) treffer.push(e);
+  }
+  if (!treffer.length) return;
+
+  // Vorprüfung, bevor die erste Datei fällt: Manifeste aus der Zeit vor der
+  // Dateiliste bleiben lesbar, aber sie tragen die nötige Angabe nicht. Abbruch
+  // für den ganzen Lauf — ein halb ausgeführter Rückbau ist schlechter als keiner.
+  const ohneListe = treffer.filter((e) => !Array.isArray(e.files) || !e.files.length);
+  if (ohneListe.length) {
+    console.log("Abbruch — Manifest-Einträge ohne Dateiliste (aus einer älteren Version):");
+    for (const e of ohneListe) console.log(`  - ${e.id}  →  ${e.installedTo}`);
+    console.log("\n  Diese Einträge nennen nur das Zielverzeichnis, nicht die Dateien darin.");
+    console.log("  Entweder von Hand entfernen, oder einmal neu installieren");
+    console.log("  (`install <id> --to DIR --force`) — danach führt das Manifest die Dateien.");
+    process.exitCode = 1;
+    return;
+  }
+
+  // Erst vollständig entscheiden, dann löschen — dieselbe Trennung wie in
+  // `cmdInstall`: sonst ist Baustein 1 weg, während Baustein 2 noch geprüft wird.
+  const plan = [];
+  for (const e of treffer) {
+    const weg = [], behalten = [], fehlt = [];
+    for (const f of e.files) {
+      const abs = path.resolve(target, f.path);
+      // Das Manifest liegt im Projekt und ist editierbar. Ein Pfad, der aus dem
+      // Zielverzeichnis herausführt, wird nicht angefasst.
+      if (abs !== target && !abs.startsWith(target + path.sep)) {
+        behalten.push({ f, grund: "Pfad ausserhalb des Zielprojekts" });
+        continue;
+      }
+      if (!fs.existsSync(abs)) { fehlt.push(f); continue; }
+      const jetzt = fileHash(abs);
+      const geaendert = !!(f.md5 && jetzt && jetzt !== f.md5);
+      if (geaendert && !flags.force) {
+        behalten.push({ f, grund: "seit der Installation geändert — bleibt ohne --force" });
+        continue;
+      }
+      weg.push({ f, abs, geaendert });
+    }
+    plan.push({ e, weg, behalten, fehlt });
+  }
+
+  let summeWeg = 0, summeBehalten = 0;
+  for (const p of plan) {
+    const herkunft = `${p.e.type}, aus ${p.e.from}${p.e.commit ? ` @ ${p.e.commit}` : ""}`;
+    console.log(`\n${p.e.id}  (${herkunft})`);
+    console.log(`  ${p.e.files.length} Datei(en) laut Manifest unter ${p.e.installedTo}`);
+    for (const w of p.weg) console.log(`  ${dry ? "~" : "-"} ${w.f.path}${w.geaendert ? "   [geändert, per --force entfernt]" : ""}`);
+    for (const b of p.behalten) console.log(`  = ${b.f.path}   bleibt: ${b.grund}`);
+    if (p.fehlt.length) console.log(`  . ${p.fehlt.length} Datei(en) waren schon nicht mehr da`);
+    summeWeg += p.weg.length;
+    summeBehalten += p.behalten.length;
+    if (!dry) {
+      for (const w of p.weg) {
+        try { fs.rmSync(w.abs, { force: true }); } catch (err) { console.log(`  ! ${w.f.path}: ${err.message}`); continue; }
+        removeEmptyDirs(path.dirname(w.abs), target);
+      }
+    }
+  }
+
+  if (dry) {
+    console.log(`\n  --dry-run: ${summeWeg} Datei(en) würden entfernt, ${summeBehalten} blieben stehen.`);
+    console.log("  Nichts gelöscht, Manifest unverändert.");
+    return;
+  }
+
+  // Manifest fortschreiben. Ein Eintrag verschwindet nur, wenn nichts von ihm
+  // übrig blieb; sonst bleibt er mit den verbliebenen Dateien stehen — sonst
+  // behauptete der Herkunftsnachweis Dateien, die es nicht mehr gibt, und die
+  // stehengebliebenen hätten überhaupt keinen Nachweis mehr.
+  const rest = [];
+  for (const it of items) {
+    const p = plan.find((x) => x.e === it);
+    if (!p) { rest.push(it); continue; }
+    if (!p.behalten.length) continue;
+    rest.push({ ...it, files: p.behalten.map((b) => b.f), partiallyRemoved: true });
+  }
+  fs.writeFileSync(mf, JSON.stringify({ ...doc, generatedAt: new Date().toISOString(), items: rest }, null, 2));
+  console.log(`\n  ${summeWeg} Datei(en) entfernt, ${summeBehalten} stehengelassen.`);
+  console.log(`  Manifest: ${path.relative(target, mf).split(path.sep).join("/")} (${rest.length} Bausteine)`);
+
+  if (!flags["no-claude-md"]) {
+    const cf = writeClaudeMd(target, rest, doc.catalogGeneratedAt);
+    console.log(`  Regelblock: ${path.relative(target, cf).split(path.sep).join("/")}`);
+  }
+}
+
+/**
+ * Legt im Zielprojekt die Skills ab, mit denen es die Bibliothek bedient.
+ *
+ * Warum das zum Bootstrap gehört: Die Skills liegen bewusst im Projekt der
+ * Bibliothek und nicht in der globalen Claude-Konfiguration — so sind sie
+ * versioniert, wandern mit dem Repo und gelten nicht ungefragt für jedes
+ * Verzeichnis auf der Platte. Der Preis dafür ist, dass ein frisches Zielprojekt
+ * sie nicht kennt. Also bekommt es sie hier.
+ */
+function copySkillsTo(target, namen) {
+  const quelle = path.join(ROOT, ".claude", "skills");
+  if (!fs.existsSync(quelle)) return [];
+  const kopiert = [];
+  for (const n of namen) {
+    const src = path.join(quelle, n);
+    if (!fs.existsSync(src)) continue;
+    const dest = path.join(target, ".claude", "skills", n);
+    copyRecursive(src, dest);
+    kopiert.push(n);
+  }
+  return kopiert;
+}
+
+/** Schreibt den Regelblock und legt die Bedien-Skills ab, ohne Bausteine zu
+ *  installieren. Für Projekte, die die Bibliothek nutzen wollen, ohne (noch)
+ *  etwas zu übernehmen. */
 function cmdBootstrap(argv) {
   const flags = parseFlags(argv);
   const target = path.resolve(flags.to || flags._[0] || process.cwd());
@@ -954,11 +1357,22 @@ function cmdBootstrap(argv) {
   const mf = path.join(target, ".claude", "harness-manifest.json");
   let installed = [];
   if (fs.existsSync(mf)) { try { installed = JSON.parse(fs.readFileSync(mf, "utf8")).items || []; } catch { /* egal */ } }
+
   const cf = writeClaudeMd(target, installed, cat.generatedAt);
-  console.log(`Regelblock geschrieben: ${cf}`);
+  console.log(`Regelblock: ${cf}`);
   console.log(installed.length
     ? `  ${installed.length} bereits installierte Bausteine aufgeführt.`
     : "  Noch keine Bausteine installiert — nur die Zugriffsregel.");
+
+  // Die Bibliothek braucht sich selbst nichts zu kopieren.
+  if (path.resolve(target) !== path.resolve(ROOT) && !flags["no-skills"]) {
+    const kopiert = copySkillsTo(target, ["harness-build", "harness-plan"]);
+    if (kopiert.length) {
+      console.log(`\nSkills: ${kopiert.join(", ")} -> .claude/skills/`);
+      console.log("  /harness-plan  — Projekt planen, bevor Code entsteht");
+      console.log("  /harness-build — passende Bausteine auswählen und installieren");
+    }
+  }
 }
 
 // ---------------------------------------------------------------- knowledge
@@ -1366,6 +1780,17 @@ harness.mjs — Harness-Bibliothek
   node tools/harness.mjs show <id> [--head N]      Detail zu einem Baustein
   node tools/harness.mjs install <id...> --to DIR  Baustein(e) ins Zielprojekt kopieren
        [--force] [--dry-run] [--no-claude-md]
+       [--yes]   Rückfrage überspringen. Vor dem Kopieren wird gemeldet, was der
+                 Baustein an ausführbarem Code mitbringt (Hooks feuern automatisch)
+                 samt Fundstelle mit Zeilennummer. Ohne --yes und ohne TTY wird
+                 abgebrochen statt kopiert. Sichtprüfung, kein Schutz.
+  node tools/harness.mjs uninstall <id...> --to DIR
+       [--dry-run] [--force] [--no-claude-md]
+                 Entfernt genau die Dateien, die im Manifest des Zielprojekts zu
+                 diesen Bausteinen stehen — nichts sonst, auch nicht im selben
+                 Ordner. Dateien, die seit der Installation geändert wurden,
+                 bleiben stehen; --force entfernt auch sie. Manifest-Einträge
+                 ohne Dateiliste (ältere Version) führen zum Abbruch.
   node tools/harness.mjs bootstrap --to DIR        nur den Regelblock in die
                                                    CLAUDE.md des Projekts schreiben
   node tools/harness.mjs knowledge "<frage>"       Wissensbank durchsuchen —
@@ -1389,6 +1814,7 @@ switch (cmd) {
   case "search": cmdSearch(rest); break;
   case "show": cmdShow(rest); break;
   case "install": cmdInstall(rest); break;
+  case "uninstall": cmdUninstall(rest); break;
   case "bootstrap": cmdBootstrap(rest); break;
   case "knowledge": case "know": case "why": cmdKnowledge(rest); break;
   case "lint": cmdLint(rest); break;

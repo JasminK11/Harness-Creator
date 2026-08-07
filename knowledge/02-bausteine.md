@@ -179,7 +179,7 @@ Argumente kommen als `$ARGUMENTS` (alles), `$1`/`$2` (positionell) oder als bena
 
 Geprüfte Eckdaten: Die Doku listet rund 30 Ereignisse; die im Harness-Alltag tragenden sind `PreToolUse`, `PostToolUse`, `UserPromptSubmit`, `Stop`, `SubagentStop`, `SessionStart`, `PreCompact`. Handler-Typen sind `command`, `http`, `mcp_tool`, `prompt` und `agent` — die letzten beiden schicken die Entscheidung an ein Modell bzw. an einen Subagenten, das Feuern selbst bleibt trotzdem deterministisch. Exit-Codes: `0` = Erfolg, stdout wird als JSON ausgewertet; `2` = blockierender Fehler, stderr geht an Claude; alles andere = nicht-blockierender Fehler. Feiner steuerbar ist `PreToolUse` über `hookSpecificOutput.permissionDecision` mit `allow`, `deny`, `ask` oder `defer`.
 
-**Zwei Fallen aus dieser Bibliothek.** Erstens: **Kopieren aktiviert einen Hook nicht.** Er muss in `settings.json` eingetragen werden, sonst liegt eine Datei im Projekt, die nie läuft — die trügerischste aller Harness-Fehlfunktionen, weil alles installiert aussieht. Zweitens: Die 152 Hook-Einträge im Katalog stammen überwiegend aus fremden Systemen. `affaan-m__ecc/hook/after-file-edit` liegt unter `.cursor/hooks/` und ist ein Cursor-Hook, der über eine `adapter.js` erst ins Claude-Format übersetzt wird. Vor dem Eintragen prüfen, für welches System der Hook geschrieben wurde.
+**Zwei Fallen aus dieser Bibliothek.** Erstens: **Kopieren aktiviert einen Hook nicht.** Er muss in `settings.json` eingetragen werden, sonst liegt eine Datei im Projekt, die nie läuft — die trügerischste aller Harness-Fehlfunktionen, weil alles installiert aussieht. Zweitens: Die 56 Hook-Einträge im Katalog stammen überwiegend aus fremden Systemen. `affaan-m__ecc/hook/adapter` und `affaan-m__ecc/hook/before-shell-execution-block-no-verify` liegen unter `.cursor/hooks/` und sind Cursor-Hooks, die über eben jene `adapter.js` erst ins Claude-Format übersetzt werden. Vor dem Eintragen prüfen, für welches System der Hook geschrieben wurde.
 
 **Warum genau dieser Typ.** Weil er der einzige Typ ist, der nicht von einer Modellentscheidung abhängt. Alles andere in dieser Liste ist eine Bitte.
 
@@ -214,7 +214,7 @@ Drei Scopes: `local` (Standard, in `~/.claude.json`, nur dieses Projekt, privat)
 
 Die Ausnahmen sind aber real und häufig: `alwaysLoad: true` in der Serverkonfiguration lädt alle Tools dieses Servers vorab; `ENABLE_TOOL_SEARCH=auto` lädt vorab, solange die Schemas in 10 % des Kontextfensters passen; hinter einem Nicht-Erstanbieter-Proxy oder auf einer Azure-gehosteten Microsoft-Foundry-Deployment lädt Claude Code grundsätzlich vorab. **Die strukturelle Aussage bleibt deshalb bestehen: MCP-Kosten fallen im Hauptfenster an und sind an die Session gebunden, nicht an die Aufgabe.** Dazu kommen Laufzeitkosten: Ausgaben über 10.000 Token lösen eine Warnung aus, bei 25.000 Token wird gekappt (`MAX_MCP_OUTPUT_TOKENS`).
 
-Ein Randbefund zur Bibliothek: Von rund 1.050 regulären Bausteinen sind genau **drei** vom Typ `mcp`. MCP-Konfigurationen sind fast immer projekt- und zugangsdatenspezifisch — hier ist wenig zu holen, und das ist kein Mangel des Katalogs.
+Ein Randbefund zur Bibliothek: Von 954 Bausteinen im Standardzugriff sind genau **drei** vom Typ `mcp`. MCP-Konfigurationen sind fast immer projekt- und zugangsdatenspezifisch — hier ist wenig zu holen, und das ist kein Mangel des Katalogs.
 
 ### 2.6 Plugin
 
@@ -237,7 +237,7 @@ Verzeichnisse liegen im Plugin-**Root**, nicht in `.claude-plugin/` — dort geh
 
 **Wann er die falsche Wahl ist.** Beim Zusammenbau eines einzelnen Projekt-Harness fast immer. Die Doku empfiehlt selbst: erst standalone in `.claude/` iterieren, dann zum Plugin machen, wenn geteilt werden soll. Für die Auswahl aus dieser Bibliothek heißt das: Nimm einzelne Bausteine, nicht das Plugin, aus dem sie stammen.
 
-**Kontext-Kosten.** Die Summe der enthaltenen Bausteine — und die ist selten überschaubar. Das Repo `affaan-m__ecc` allein steuert 585 Bausteine bei. Ein Plugin dieser Größenordnung zu aktivieren, bedeutet Hunderte von Descriptions im Dauerkontext und die dazugehörige Routing-Unschärfe (Abschnitt 5).
+**Kontext-Kosten.** Die Summe der enthaltenen Bausteine — und die ist selten überschaubar. Das Repo `affaan-m__ecc` allein steuert 520 Bausteine bei. Ein Plugin dieser Größenordnung zu aktivieren, bedeutet Hunderte von Descriptions im Dauerkontext und die dazugehörige Routing-Unschärfe (Abschnitt 5).
 
 ---
 
@@ -421,7 +421,7 @@ Beide feuern auf „neues Feature" und „Bug beheben". Installiert man beide, k
 
 **7.6 Kopierter Hook, der nie läuft**
 *Symptom:* Alles sieht installiert aus, die Datei liegt unter `.claude/hooks/`, und nichts passiert.
-*Ursache:* Ein Hook wird durch Kopieren nicht aktiv. Er muss in `settings.json` unter dem passenden Ereignis eingetragen sein. Zweite Variante: Der Hook stammt aus einem fremden System — `affaan-m__ecc/hook/after-file-edit` ist ein Cursor-Hook aus `.cursor/hooks/`.
+*Ursache:* Ein Hook wird durch Kopieren nicht aktiv. Er muss in `settings.json` unter dem passenden Ereignis eingetragen sein. Zweite Variante: Der Hook stammt aus einem fremden System — `affaan-m__ecc/hook/adapter` ist ein Cursor-Hook aus `.cursor/hooks/`.
 *Korrektur:* Nach jedem Installieren die Registrierung in `settings.json` prüfen und dem User sagen, bei welchem Ereignis der Hook jetzt was tut. Vorher das Zielformat verifizieren: Ereignisname, Eingabefelder auf stdin, Exit-Code-Semantik.
 
 **7.7 Fremdes Frontmatter, unverändert übernommen**
@@ -449,8 +449,8 @@ Alle URLs abgerufen am **2026-08-07**.
 - `affaan-m__ecc/agent/code-reviewer` — Subagent mit Kiro-Frontmatter (`allowedTools:`)
 - `msitarzewski__agency-agents/agent/code-reviewer` — Subagent mit fremden Feldern (`emoji:`, `vibe:`) und unzulässigem `name`
 - `affaan-m__ecc/command/pr` — Command-Frontmatter mit `argument-hint`
-- `affaan-m__ecc/hook/after-file-edit` — Cursor-Hook mit Adapter, nicht direkt lauffähig
+- `affaan-m__ecc/hook/adapter`, `affaan-m__ecc/hook/before-shell-execution-block-no-verify` — Cursor-Hooks aus `.cursor/hooks/`, nicht direkt lauffähig
 - `affaan-m__ecc/mcp/mcp` — minimale `.mcp.json`
-- Bestandszahlen aus `node tools/harness.mjs stats`, Katalogstand 2026-08-07: 25.593 Bausteine aus 13 Repos, davon 24.543 im ausgeblendeten Massen-Repo `Klotzkette__claude-fuer-deutsches-recht`; regulär rund 1.050 — 385 Agents, 241 Plugins, 152 Hooks, 112 Commands, 3 MCP-Konfigurationen
+- Bestandszahlen aus `node tools/harness.mjs stats` und `INDEX.md`, Katalogstand 2026-08-07 08:57: 25.497 Bausteine aus 13 Repos, davon 24.543 im ausgeblendeten Massen-Repo `Klotzkette__claude-fuer-deutsches-recht`; im Standardzugriff 954 — 402 Skills, 375 Agents, 112 Commands, 56 Hooks, 6 Plugins, 3 MCP-Konfigurationen
 
 **Haltbarkeit.** Frontmatter-Felder, Hook-Ereignisse und das Ladeverhalten von MCP-Tools ändern sich mit den Claude-Code-Versionen; Tool Search etwa ist eine vergleichsweise junge Voreinstellung. Prüfe die Formatangaben neu, statt sie zu glauben, wenn zwischen diesem Abrufdatum und deiner Sitzung eine größere Version liegt.

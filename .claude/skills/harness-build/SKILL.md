@@ -154,8 +154,20 @@ Erst trocken, dann echt:
 
 ```bash
 node tools/harness.mjs install <id1> <id2> ... --to "<projektpfad>" --dry-run
-node tools/harness.mjs install <id1> <id2> ... --to "<projektpfad>"
+node tools/harness.mjs install <id1> <id2> ... --to "<projektpfad>" --yes
 ```
+
+Der Trockenlauf gibt vor dem Kopieren aus, was die Bausteine an **ausführbarem
+Code** mitbringen: Skript-Dateien, Shebangs, und je Fundstelle die Zeilennummer zu
+Prozessaufruf, Netzwerkzugriff, Zielen ausserhalb des Projekts und Zugriff auf
+Zugangsdaten. Das ist eine Sichtprüfung, kein Schutz — sie zeigt, was sonst
+unbemerkt ins Projekt käme.
+
+**Diese Ausgabe gehört vor die Bestätigung aus Schritt 6, nicht danach.** Läuft
+etwas Ausführbares mit, legst du die Fundstellen dem User vor und holst seine
+Zustimmung; erst dann der echte Lauf. `--yes` überspringt nur die Rückfrage des
+CLI, nicht die des Users — ohne `--yes` bricht `install` in einer Agenten-Sitzung
+ab, weil dort kein Terminal für die Rückfrage da ist.
 
 Danach prüfen, dass die Dateien am erwarteten Ort liegen: Skills unter
 `.claude/skills/`, Subagents unter `.claude/agents/`, Commands unter

@@ -52,15 +52,19 @@ des Repos und ausserhalb von OneDrive, weil sonst hunderte Megabyte an
 HARNESS_SOURCES=/pfad/nach/wahl node tools/harness.mjs update
 ```
 
-Die beiden Skills in `skills/` nach `~/.claude/skills/` kopieren, damit
-`/harness-build` und `/harness-update` verfügbar sind:
+Die Skills liegen unter `.claude/skills/` **im Projekt**, nicht in der globalen
+Claude-Konfiguration. So sind sie versioniert, wandern mit dem Repo und gelten
+nicht ungefragt für jedes Verzeichnis auf der Platte.
 
-```bash
-cp -r skills/harness-build skills/harness-update ~/.claude/skills/
-```
+| Skill | Wofür | Wo sie gebraucht wird |
+|---|---|---|
+| `/harness-plan` | Projekt planen, bevor Code entsteht | im Zielprojekt |
+| `/harness-build` | Bausteine auswählen und installieren | im Zielprojekt |
+| `/harness-update` | Repos pullen, Katalog neu bauen | hier |
 
-Beide Skills enthalten absolute Pfade zur Bibliothek. Wer sie woanders ablegt,
-muss die Pfade darin anpassen.
+`bootstrap` und `install` legen `harness-plan` und `harness-build` automatisch im
+Zielprojekt ab — sonst kennt ein frisches Projekt sie nicht. Mit `--no-skills`
+unterdrücken.
 
 ## Benutzung
 
@@ -146,10 +150,18 @@ catalog/
   index.json             Ebene 3 — erzeugt, ~20 MB, nicht im Repo
   by-domain/*.md         Ebene 2 — erzeugt
 knowledge/               Warum ein Harness so gebaut wird
+  LOG.md                 Änderungsprotokoll der Wissensbank, nur ergänzen
 recipes/                 Baupläne pro Projekttyp
-skills/                  Die beiden Claude-Skills zum Kopieren nach ~/.claude/skills/
+Learnings/               Rohquellen — nur lesen, nie ändern
+.claude/skills/          Die drei Claude-Skills, projektlokal
+CLAUDE.md                Arbeitsregeln für dieses Projekt selbst
 CHANGELOG.md             Was sich bei jedem update geändert hat — erzeugt
 ```
+
+Die Bibliothek wendet ihre eigenen Regeln auf sich selbst an: `CLAUDE.md` enthält
+den Regelblock, den `bootstrap` in jedes Zielprojekt schreibt, plus die
+Arbeitsregeln, die aus der Wissensbank abgeleitet sind. Ein Werkzeug, das seine
+eigenen Regeln nicht befolgt, ist der beste Beweis, dass die Regeln nichts taugen.
 
 Alles unter `catalog/`, `INDEX.md` und `CHANGELOG.md` wird erzeugt. Von Hand
 gepflegt werden nur `sources.txt`, `knowledge/`, `recipes/` und `tools/`.

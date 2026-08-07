@@ -3,6 +3,12 @@ type: Wegweiser
 title: Rezepte — Ebene 3 der Harness-Bibliothek
 description: "Beantwortet, welches der sechs Rezepte zu einem Projekt passt und wie ein Rezept anzuwenden ist, ohne die Doktrin-Prüfung zu überspringen."
 status: stable
+sources:
+  - id: harness-doktrin
+    resource: knowledge/01-harness-doktrin.md
+    title: Harness-Doktrin — Abschnitt 0 und Checkliste 8, Begründungspflicht je Baustein sowie Load-Bearing-Test 7.1
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-07
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2027-08-07
 tags: [rezept, wegweiser, harness-bibliothek, projekttypen]
@@ -58,18 +64,20 @@ das Kern-Set aus `01` und ergänzt aus `02` gezielt — nicht beide Kern-Sets ad
 ## Deckung im Katalog
 
 Alle sechs Typen sind belegt; keiner musste ersetzt werden. Sehr gut versorgt sind
-SEO (61 Bausteine aus einem durchgehenden Repo), Frontend/React und Testing;
-gut versorgt Backend/API, Python/ML und Onboarding; dünn, aber ausreichend der
-Pentest-Fall mit vier Strix-Skills plus Reviewer-Agenten.
+SEO (58 Bausteine im Standardzugriff, überwiegend aus einem durchgehenden Repo),
+Frontend/React und Testing; gut versorgt Backend/API, Python/ML und Onboarding;
+dünn, aber ausreichend der Pentest-Fall mit vier Strix-Skills plus Reviewer-Agenten.
 
-Eine Einschränkung kehrt in allen Rezepten wieder: Ein grosser Teil der
-`ecc`-Skills liegt im Katalog **nur als japanische Übersetzung** vor (Quellpfad
-`docs/ja-JP/skills/...`) — darunter `error-handling`, `redis-patterns`,
-`hexagonal-architecture`, `git-workflow`, `codebase-onboarding`, `repo-scan`,
-`code-tour`, `security-scan`. Sie funktionieren technisch, sind für einen
-deutschsprachigen Betrieb aber schlecht wartbar; in den Rezepten stehen sie
-deshalb konsequent unter "Bewusst weggelassen". Vor der Übernahme eines solchen
-Bausteins immer `show <id> --head 20` prüfen.
+**Erledigte Einschränkung.** Frühere Fassungen dieser Datei warnten, ein grosser
+Teil der `ecc`-Skills liege im Katalog **nur als japanische Übersetzung** vor
+(Quellpfad `docs/ja-JP/skills/...`). Das galt, solange die Übersetzung ihr
+englisches Original per ID-Dedup überschrieb. Der Extraktor erkennt
+Übersetzungsverzeichnisse inzwischen (`TRANSLATION_RE` in `tools/harness.mjs`):
+`error-handling`, `redis-patterns`, `hexagonal-architecture`, `git-workflow`,
+`codebase-onboarding`, `repo-scan`, `code-tour` und `security-scan` lösen alle
+wieder auf ihre englische Fassung auf. Wo sie in einzelnen Rezepten noch unter
+"Bewusst weggelassen" stehen, ist die dortige Begründung überholt. `show <id>
+--head 20` vor der Übernahme bleibt trotzdem richtig.
 
 ## Werkzeug
 
@@ -80,4 +88,4 @@ node tools/harness.mjs install <id...> --to <projekt> # mehrere IDs auf einmal
 node tools/harness.mjs install <id> --to <projekt> --dry-run
 ```
 
-`catalog/index.json` nie direkt lesen — 25.593 Einträge.
+`catalog/index.json` nie direkt lesen — 25.497 Einträge, rund 19 MB.

@@ -72,6 +72,15 @@ Kontext die knappste Ressource, und jeder Baustein verbraucht davon.
 | `mattpocock__skills/skill/wayfinder` | skill | Nur wenn die Übernahme in mehrere Sessions zerfällt und ein Issue-Tracker vorhanden ist. Verteilt Entscheidungen auf Tickets statt auf Kontext. | 12 |
 | `Egonex-AI__Understand-Anything/skill/understand` (386 KB, 50 Dateien) plus `understand-explain` (5 KB) | skill | Nur bei sehr grosser Codebasis, in der wiederholte Exploration teurer ist als ein persistenter Wissensgraph. Der Preis ist erheblich — vorher rechnen. | 391 |
 | `Graphify-Labs__graphify/agent/graphify` | agent | Alternative zum Vorigen, wenn auch Nicht-Code-Material (Dokumente, Papers, Bilder) in denselben Graph soll. Nur eines von beiden nehmen. | 62 |
+
+> **Kein Widerspruch zu `knowledge/03-vorbilder.md`, Teil E.** Dort wird ein
+> `/graphify`-Lauf **abgelehnt** — das gilt ausschliesslich für die
+> Harness-Bibliothek selbst, deren Katalog aus unverbundenen Bausteinen aus
+> 13 fremden Repos besteht und in dem nur Attributfragen gestellt werden.
+> Hier ist der Korpus eine **fremde, zusammenhängende Codebasis**: genau der
+> Fall, für den ein Graph gebaut ist. Die Empfehlung hier und die Absage dort
+> beziehen sich auf verschiedene Korpora, nicht auf verschiedene Urteile über
+> das Werkzeug.
 | `affaan-m__ecc/agent/refactor-cleaner` | agent | **Erst** wenn Specs oder Tests existieren. Toten Code ohne Sicherheitsnetz zu entfernen, ist der klassische Legacy-Unfall. | 3 |
 | `affaan-m__ecc/skill/search-first` | skill | Nur wenn eigene Implementierungen dazukommen: erst nach vorhandenen Lösungen suchen, dann bauen. | 8 |
 

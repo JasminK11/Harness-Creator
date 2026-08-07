@@ -242,7 +242,7 @@ Wer entscheidet was: **Der Agent entscheidet, aber nach einer Regel, die im Proj
 
 ## Teil D — Übernahme-Empfehlung für unsere Bibliothek
 
-Stand bei uns: `sources.txt` (13 Repos), `tools/harness.mjs` (805 Zeilen, `sync`/`extract`/`search`/`show`/`install`/`update`/`stats`), dreistufiger Index (`INDEX.md` 4 KB → `catalog/by-domain/*.md` → `catalog/index.json` **15 MB**), 25.322 Bausteine.
+Stand bei uns: `sources.txt` (13 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.497 Bausteine, davon 954 im Standardzugriff.
 
 Priorisiert, mit ehrlicher Einschätzung:
 
@@ -252,7 +252,7 @@ Priorisiert, mit ehrlicher Einschätzung:
 
 **3. Katalog-Schema als Tabelle in das lesende Skill (Vorbild: UA-Query-Skills).** Was fehlt: Ein Agent, der `index.json` benutzen *muss*, weiss nicht, welche Felder es gibt, und liest sich das an. Nutzen: gezieltes Greifen statt Explorieren. Aufwand: klein — eine Tabelle mit den Feldern aus `cmdExtract`. **Machen.**
 
-**4. Vorfilter und Domänen-Profil beim Install.** Was fehlt: `legal-de` stellt 24.543 von 25.322 Bausteinen (96,9 %) — das erdrückt jede Statistik und jede Suche. Nutzen: grösser als jede Kontext-Optimierung. Umsetzung: `.harnessignore`-Äquivalent für `extract`, plus ein Profil beim `install` (z. B. "nur `seo`, `frontend`, `meta`"). Aufwand: klein bis mittel. **Machen — das ist unser eigentliches "zu viel".**
+**4. Vorfilter und Domänen-Profil beim Install.** Was fehlt: Das Massen-Repo `Klotzkette__claude-fuer-deutsches-recht` stellt 24.543 von 25.497 Bausteinen (96,3 %) — das erdrückt jede Statistik und jede Suche. Nutzen: grösser als jede Kontext-Optimierung. Umsetzung: `.harnessignore`-Äquivalent für `extract`, plus ein Profil beim `install` (z. B. "nur `seo`, `frontend`, `meta`"). Aufwand: klein bis mittel. **Machen — das ist unser eigentliches "zu viel".**
 
 **5. Konfidenz-/Provenienz-Feld pro Baustein.** Was fehlt: `DOMAIN_RULES` in `tools/harness.mjs` ist eine Regex-Heuristik; im Katalog steht das Ergebnis aber so verbindlich wie ein Fakt. Nutzen: Der Agent weiss, wann er nachsehen muss. Umsetzung: Feld `domainConfidence: "EXTRACTED"` (aus Frontmatter) vs. `"INFERRED"` (aus Regex). Aufwand: klein. **Machen.**
 
@@ -272,11 +272,13 @@ Priorisiert, mit ehrlicher Einschätzung:
 
 **Urteil: Nein, nicht über den Katalog als Ganzes.** Begründung entlang der Entscheidung, die ein Agent bei uns tatsächlich treffen muss:
 
+> **Abgrenzung — diese Absage gilt nur dem eigenen Katalog.** Sie widerspricht **nicht** `recipes/06-legacy-onboarding.md`, das `Graphify-Labs__graphify/agent/graphify` als Baustein empfiehlt. Dort geht es um eine **fremde Codebasis**, die ein Team übernimmt: ein zusammenhängender Korpus, in dem Beziehungsfragen („was hängt woran") genau die richtigen Fragen sind. Hier geht es um **unseren Katalog**: eine Sammlung unverbundener Bausteine aus 13 fremden Repos, in der nur Attributfragen („welcher Typ, welche Domäne") gestellt werden. Dasselbe Werkzeug, zwei verschiedene Korpora — beide Aussagen stehen nebeneinander, ohne sich zu berühren.
+
 Die Frage lautet immer *"Welchen Baustein baue ich in Projekt X ein?"*. Das ist eine **Auswahl nach Attributen** — Typ, Domäne, Repo, Beschreibung, Grösse. Ein Graph beantwortet dagegen Beziehungsfragen: *"wie hängt A mit B zusammen"*, *"was ist der kürzeste Pfad"*, *"welche Knoten sind zentral"*. Diese Fragen stellt bei unserem Katalog niemand.
 
 Drei konkrete Gegenargumente:
 
-1. **Uns fehlen die Kanten.** graphifys Wert entsteht aus `god nodes`, `surprising connections` und `community detection` — alles setzt einen *zusammenhängenden* Korpus voraus. Unsere 25.322 Bausteine stammen aus 13 fremden Repos, die nichts miteinander zu tun haben. Ein SEO-Skill und ein Rust-Review-Agent haben keine Beziehung, und ein Graph, der das behauptet, wäre schlechter als kein Graph. `GRAPH_REPORT.md` würde vor allem Rauschen ausweisen.
+1. **Uns fehlen die Kanten.** graphifys Wert entsteht aus `god nodes`, `surprising connections` und `community detection` — alles setzt einen *zusammenhängenden* Korpus voraus. Unsere 25.497 Bausteine stammen aus 13 fremden Repos, die nichts miteinander zu tun haben. Ein SEO-Skill und ein Rust-Review-Agent haben keine Beziehung, und ein Graph, der das behauptet, wäre schlechter als kein Graph. `GRAPH_REPORT.md` würde vor allem Rauschen ausweisen.
 
 2. **Der Lauf wäre teuer und graphify selbst würde bremsen.** Unsere Bausteine sind Markdown, nicht Code — damit greift nicht die kostenlose AST-Route, sondern die semantische Extraktion per LLM (`skill.md` Step 3, Part B). Ausserdem warnt `detect` ab 500 Dateien bzw. 2 Mio. Wörtern und verlangt Eingrenzung; wir liegen um Grössenordnungen darüber.
 
@@ -284,7 +286,7 @@ Drei konkrete Gegenargumente:
 
 **Was stattdessen zu tun ist:** Empfehlungen D1–D5 umsetzen. Sie adressieren die Sorge des Users direkt (Zugriffsregel + Budget + Vorfilter), kosten zusammen weniger Aufwand als ein einziger graphify-Lauf und erzeugen keinen zweiten Datenbestand.
 
-**Wo ein Lauf doch vertretbar wäre — als Experiment, nicht als Infrastruktur:** `/graphify` auf die 13 Dateien in `catalog/by-domain/` (klein, thematisch geclustert, Kosten nahe null). Erkenntnisziel: findet die Community Detection Baustein-Gruppen, die unsere `DOMAIN_RULES` verfehlen? Wenn ja, ist das ein Hinweis, die Regeln zu verbessern — nicht, einen Graphen einzuführen. Wenn nein, ist die Frage endgültig beantwortet.
+**Wo ein Lauf doch vertretbar wäre — als Experiment, nicht als Infrastruktur:** `/graphify` auf die 12 Dateien in `catalog/by-domain/` (klein, thematisch geclustert, Kosten nahe null; es sind 12 und nicht 13 Dateien, weil `legal-de` als reine Massen-Repo-Domäne dort nicht erzeugt wird — siehe `knowledge/04-governance.md`, Abschnitt 2.1). Erkenntnisziel: findet die Community Detection Baustein-Gruppen, die unsere `DOMAIN_RULES` verfehlen? Wenn ja, ist das ein Hinweis, die Regeln zu verbessern — nicht, einen Graphen einzuführen. Wenn nein, ist die Frage endgültig beantwortet.
 
 ---
 
@@ -326,7 +328,7 @@ Drei konkrete Gegenargumente:
 
 - `INDEX.md`
 - `sources.txt`, `Git wichtig.txt`
-- `tools/harness.mjs` (Funktions-Übersicht, `DOMAIN_RULES`)
+- `tools/harness.mjs` (Funktions-Übersicht, `DOMAIN_RULES`, `classify()`, `cmdSearch()`; 1.397 Zeilen — Verweise bewusst über Bezeichner statt über Zeilennummern, eine frühere Fassung nannte hier „805 Zeilen" und war nach dem nächsten Commit falsch)
 - `catalog/by-domain/seo.md`, Grösse von `catalog/index.json`
 
 **Nicht verifiziert / Vermutung:** Die Kostenaussage in Teil E, Punkt 2 (Markdown-Korpus ⇒ LLM-Route statt AST) beruht auf `skill.md` Step 3 Part A/B und `detect.py`-Kategorien, nicht auf einem Testlauf. Die Token-Zahlen in A3 stammen aus dem Design-Dokument von Understand-Anything und sind dort selbst als Schätzung für ein 500-Datei-Projekt ausgewiesen.
