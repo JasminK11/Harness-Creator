@@ -831,6 +831,29 @@ function claudeMdBlock(installed, catalogGeneratedAt) {
   L.push("`show` für die engere Auswahl, dann `install`. `INDEX.md` der Bibliothek darf");
   L.push("komplett gelesen werden — sie ist dafür klein gehalten.");
   L.push("");
+  L.push("### Die Wissensbank befragen");
+  L.push("");
+  L.push("Die Bibliothek enthält nicht nur Bausteine, sondern begründetes Wissen dazu,");
+  L.push("wie man ein Agenten-Setup richtig baut — ausgewertet aus Anthropics");
+  L.push("Engineering-Material und Konferenzvorträgen von Praktikern.");
+  L.push("");
+  L.push("```bash");
+  L.push('node tools/harness.mjs knowledge "<frage>"     # liefert Abschnitte, keine Dateien');
+  L.push("node tools/harness.mjs knowledge --list        # Inhaltsverzeichnis");
+  L.push("```");
+  L.push("");
+  L.push("**Wann das dran ist** — nicht nur bei Fragen zur Bibliothek, sondern immer,");
+  L.push("wenn eine Entscheidung über den Aufbau dieses Projekts ansteht:");
+  L.push("");
+  L.push("- Soll eine Regel als Hook, Skill oder in die CLAUDE.md? → `knowledge \"hook statt skill\"`");
+  L.push("- Lohnt sich hier ein Subagent? → `knowledge \"subagent kontext kosten\"`");
+  L.push("- Wie prüft man Ergebnisse, ohne dass der Agent sich selbst gut findet?");
+  L.push("  → `knowledge \"evaluator agent\"`");
+  L.push("- Wird das Setup zu komplex? → `knowledge \"einfachste lösung zuerst\"`");
+  L.push("");
+  L.push("Die Wissensbank-Dateien **nicht** am Stück lesen. Sie umfassen tausende Zeilen");
+  L.push("und wachsen weiter; `knowledge` schneidet den passenden Abschnitt heraus.");
+  L.push("");
   if (installed.length) {
     L.push("### Installierte Bausteine");
     L.push("");
@@ -842,14 +865,14 @@ function claudeMdBlock(installed, catalogGeneratedAt) {
     L.push("Herkunftsnachweis: `.claude/harness-manifest.json`.");
     L.push("");
   }
-  L.push("### Hintergrund");
+  L.push("### Wo das Wissen herkommt");
   L.push("");
-  L.push("- `knowledge/01-harness-doktrin.md` — warum ein Harness so gebaut wird, welche");
-  L.push("  Komponente welche Modellschwäche adressiert, wann sie überflüssig wird");
-  L.push("- `knowledge/02-bausteine.md` — Skill vs. Subagent vs. Command vs. Hook vs. MCP");
-  L.push("- `recipes/` — fertige Baupläne pro Projekttyp");
+  L.push("`knowledge/` — Begründungen, nicht Bedienungsanleitungen. Harness-Design nach");
+  L.push("Anthropic, die sechs Baustein-Typen im Vergleich, Kontext-Vorbilder,");
+  L.push("Governance ab Bibliotheksgrösse, ausgewertete Konferenzvorträge.");
+  L.push("`recipes/` — Baupläne pro Projekttyp mit verifizierten Baustein-IDs.");
   L.push("");
-  L.push("Diese Dateien nur bei Bedarf lesen, nicht vorsorglich.");
+  L.push("Beides über `knowledge` abfragen statt am Stück lesen.");
   L.push(CLAUDE_MD_END);
   return L.join("\n");
 }
@@ -936,6 +959,122 @@ function cmdBootstrap(argv) {
   console.log(installed.length
     ? `  ${installed.length} bereits installierte Bausteine aufgeführt.`
     : "  Noch keine Bausteine installiert — nur die Zugriffsregel.");
+}
+
+// ---------------------------------------------------------------- knowledge
+
+/**
+ * Durchsucht die Wissensbank (`knowledge/`, `recipes/`) auf **Abschnittsebene**.
+ *
+ * Warum nicht einfach die Dateien lesen: Die Wissensbank wächst mit jedem
+ * ausgewerteten Vortrag und jedem neuen Rezept. Ab ein paar tausend Zeilen ist sie
+ * genau das, wogegen der Katalog gebaut wurde — zu viel, um sie zu lesen, also
+ * liest sie niemand. Ein Abschnitt umfasst typisch 15 bis 30 Zeilen und ist die
+ * kleinste Einheit, die für sich allein eine Frage beantwortet.
+ *
+ * Bewusst ohne Index: 2000-odd Zeilen sind in Millisekunden geparst. Ein
+ * vorberechneter Index wäre eine weitere Datei, die veralten kann.
+ */
+const KNOWLEDGE_DIRS = ["knowledge", "recipes"];
+
+function collectSections() {
+  const sections = [];
+  for (const dir of KNOWLEDGE_DIRS) {
+    const full = path.join(ROOT, dir);
+    if (!fs.existsSync(full)) continue;
+    for (const file of fs.readdirSync(full).filter((f) => /\.md$/i.test(f)).sort()) {
+      const text = safeRead(path.join(full, file));
+      const lines = text.split(/\r?\n/);
+      let cur = null;
+      let inFence = false;
+      const push = () => { if (cur && cur.body.join("").trim()) sections.push(cur); };
+
+      for (let n = 0; n < lines.length; n++) {
+        const line = lines[n];
+        if (/^\s*```/.test(line)) inFence = !inFence;
+        const h = !inFence && line.match(/^(#{2,4})\s+(.+?)\s*$/);
+        if (h) {
+          push();
+          cur = { file: `${dir}/${file}`, level: h[1].length, title: h[2].trim(), line: n + 1, body: [] };
+        } else if (cur) {
+          cur.body.push(line);
+        }
+      }
+      push();
+    }
+  }
+  return sections;
+}
+
+function cmdKnowledge(argv) {
+  const flags = parseFlags(argv);
+  const sections = collectSections();
+  if (!sections.length) die("Keine Wissensbank gefunden — knowledge/ und recipes/ sind leer.");
+
+  if (flags.list) {
+    let lastFile = null;
+    for (const s of sections) {
+      if (s.file !== lastFile) { console.log(`\n${s.file}`); lastFile = s.file; }
+      console.log(`  ${"  ".repeat(s.level - 2)}${s.title}`);
+    }
+    console.log(`\n${sections.length} Abschnitte in ${new Set(sections.map((s) => s.file)).size} Dateien.`);
+    return;
+  }
+
+  const terms = flags._.join(" ").toLowerCase().split(/\s+/).filter(Boolean);
+  if (!terms.length) {
+    console.log('Keine Frage angegeben. Beispiel: knowledge "warum hooks statt skills"');
+    console.log("Inhaltsverzeichnis: knowledge --list");
+    return;
+  }
+
+  const rated = sections.map((s) => {
+    const title = s.title.toLowerCase();
+    const body = s.body.join("\n").toLowerCase();
+    let score = 0, hits = 0;
+    for (const t of terms) {
+      const inTitle = title.includes(t);
+      const inBody = body.includes(t);
+      if (inTitle || inBody) hits++;
+      if (inTitle) score += 12;
+      if (inBody) score += Math.min(4, (body.split(t).length - 1));
+    }
+    return { s, score, hits };
+  });
+
+  // Wie bei `search`: alle Wörter müssen vorkommen, sonst wird die Frage durch
+  // Präzisierung schlechter beantwortet statt besser.
+  let found = rated.filter((x) => x.hits === terms.length);
+  let relaxed = false;
+  if (!found.length) { found = rated.filter((x) => x.hits > 0); relaxed = true; }
+  if (!found.length) {
+    console.log(`Nichts gefunden zu "${terms.join(" ")}".`);
+    console.log("Inhaltsverzeichnis: node tools/harness.mjs knowledge --list");
+    return;
+  }
+  found.sort((a, b) => b.hits - a.hits || b.score - a.score);
+
+  const limit = Number(flags.limit || 4);
+  if (relaxed) console.log("Kein Abschnitt enthält alle Wörter — zeige Teiltreffer.\n");
+  console.log(`${found.length} Abschnitte, zeige ${Math.min(limit, found.length)}:\n`);
+
+  for (const { s } of found.slice(0, limit)) {
+    console.log("=".repeat(72));
+    console.log(`${s.file}:${s.line}  —  ${s.title}`);
+    console.log("=".repeat(72));
+    const body = s.body.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+    const maxLines = Number(flags.lines || 45);
+    const bodyLines = body.split("\n");
+    console.log(bodyLines.slice(0, maxLines).join("\n"));
+    if (bodyLines.length > maxLines) {
+      console.log(`\n[... ${bodyLines.length - maxLines} weitere Zeilen — ganzer Abschnitt mit --lines 999]`);
+    }
+    console.log("");
+  }
+  if (found.length > limit) {
+    console.log(`Weitere ${found.length - limit} Abschnitte:`);
+    for (const { s } of found.slice(limit, limit + 10)) console.log(`  ${s.file} — ${s.title}`);
+  }
 }
 
 // ---------------------------------------------------------------- update
@@ -1043,6 +1182,9 @@ harness.mjs — Harness-Bibliothek
        [--force] [--dry-run] [--no-claude-md]
   node tools/harness.mjs bootstrap --to DIR        nur den Regelblock in die
                                                    CLAUDE.md des Projekts schreiben
+  node tools/harness.mjs knowledge "<frage>"       Wissensbank durchsuchen —
+       [--limit N] [--lines N]                     liefert Abschnitte, nicht Dateien
+  node tools/harness.mjs knowledge --list          Inhaltsverzeichnis der Wissensbank
   node tools/harness.mjs stats                     Übersicht
 
 Klon-Verzeichnis: ${CLONE_DIR}
@@ -1058,6 +1200,7 @@ switch (cmd) {
   case "show": cmdShow(rest); break;
   case "install": cmdInstall(rest); break;
   case "bootstrap": cmdBootstrap(rest); break;
+  case "knowledge": case "know": case "why": cmdKnowledge(rest); break;
   case "stats": cmdStats(); break;
   default: console.log(USAGE);
 }

@@ -178,16 +178,30 @@ der ungefähr passt. Vorschlag an den User: entweder ein passendes Repo in
 `sources.txt` aufnehmen und `/harness-update` laufen lassen, oder den Baustein für
 dieses Projekt selbst schreiben.
 
-## Hintergrund
+## Die Wissensbank befragen
 
-Nur bei Bedarf lesen, nicht vorsorglich:
+Die Bibliothek katalogisiert nicht nur Bausteine, sondern hält begründetes Wissen
+dazu, wie man ein Setup richtig baut — aus Anthropics Engineering-Material und
+ausgewerteten Konferenzvorträgen.
 
-- `knowledge/01-harness-doktrin.md` — warum ein Harness so gebaut wird, welche
-  Komponente welche Modellschwäche adressiert, wann sie überflüssig wird
-- `knowledge/02-bausteine.md` — Skill vs. Subagent vs. Command vs. Hook vs. MCP
-- `knowledge/03-vorbilder.md` — wie Understand-Anything und graphify das
-  Kontextproblem lösen
-- `recipes/` — Baupläne pro Projekttyp
+```bash
+node tools/harness.mjs knowledge "<frage>"     # liefert Abschnitte, keine Dateien
+node tools/harness.mjs knowledge --list        # Inhaltsverzeichnis
+```
+
+Nutze das **während** der Auswahl, nicht danach. Typische Momente:
+
+| Situation | Abfrage |
+|---|---|
+| Regel als Hook, Skill oder CLAUDE.md? | `knowledge "hook statt skill"` |
+| Lohnt ein Subagent an dieser Stelle? | `knowledge "subagent kontext kosten"` |
+| Wie prüfen ohne Selbstbewertung? | `knowledge "evaluator agent"` |
+| Wird das Setup zu komplex? | `knowledge "einfachste lösung zuerst"` |
+| Was macht eine gute description aus? | `knowledge "description routing"` |
+
+Die Dateien unter `knowledge/` und `recipes/` **nicht** am Stück lesen. Sie
+umfassen tausende Zeilen und wachsen mit jedem ausgewerteten Vortrag weiter.
+`knowledge` schneidet den passenden Abschnitt heraus und nennt Datei und Zeile.
 
 ## Verhältnis zu `/bootstrap-project`
 
