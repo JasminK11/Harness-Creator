@@ -53,6 +53,19 @@ Aufwandsspalte trägt den korrigierten Wert, nicht den ursprünglich geschätzte
 | M9 | Feuerpreis anzeigen statt Verzeichnisgröße | CLI | klein (~5 Z.) | 3 |
 | M11 | Rezepte auf Abschnittsebene selbsttragend machen | Struktur | klein | 3 |
 | M12b/c | Rauchtest für Ausführbares, `verified`-Feld setzen | Prozess | klein | 4 |
+| M13 | `harness-build` Schritt 1: Prüfschleifen erheben, Ausschlussfrage stellen | Doku | klein (~6 Z.) | 2 |
+| M14 | Rückkanal: was ein `harness-build`-Lauf hinterlässt | Doku | klein (~12 Z.) | 2 |
+| M15 | `eval` sichtbar machen und an `update` hängen | CLI | klein | 2 |
+| M16 | `cmdStats` bekommt seinen Einwand | CLI | klein (~2 Z.) | 3 |
+| M17 | Reibung kennzeichnen; `activationOf` bei unregistriertem Hook-Skript | Doku + CLI | klein | 3 |
+| M18 | Naht `/harness-plan` → `/harness-build` schliessen | Doku | klein | 2 |
+
+M13 bis M18 stammen aus der Auswertung von fünf Vorträgen zu Forward Deployed
+Engineering und simulationsbasiertem Prüfen; Belege und Grenzen jeweils in
+`knowledge/08`. Sie fassen drei Dateien an, die sonst nirgends in dieser Liste vorkommen:
+`harness-build/SKILL.md` (M13, M14, M17a, M18), `harness-plan/SKILL.md` (M18) und
+`werkzeug-aenderer.md` (M15). M13 und M18 betreffen beide Schritt 1 derselben Skill und
+sollten in einem Zug erledigt werden.
 
 Reihenfolge innerhalb Priorität 1: **M3 → M2 → M6 → M4 → M1**. M3, M2 und M6 fassen
 dieselbe Funktion (`cmdInstall`) an und sollten in einem Zug erledigt werden; M1 setzt
@@ -281,10 +294,51 @@ einem Katalogumbau denselben Baustein findet. Keine Qualitätsaussage.
 5. Ausgabe je Fall eine Zeile, Exit-Code ≠ 0 nur bei FEHLT/VERBOTEN/toter Rezept-ID,
    zusätzlich `--json`.
 6. Stufe 2 (Modelllauf gegen `harness-build/SKILL.md`) bleibt draußen, bis Stufe 1 zwei
-   Update-Zyklen überlebt hat.
+   Update-Zyklen überlebt hat. Wenn sie gebaut wird, gelten die fünf Bauvorgaben in
+   `knowledge/04` 4.1 — Kontext als Fixture statt als Prompt-Block, Aufgabenkonstruktion
+   **nicht** offenlegen, Umformulierungs-Zweitfassung je Fall, Präfix-Test ohne zweiten
+   Lauf, und der Aufwanddeckel aus `knowledge/07` C1(b). Der Läufer gehört nicht ins CLI,
+   sondern als Skill oder Subagent ins Harness: der teure Teil ist der Modelllauf, nicht
+   das Ablesen.
+7. **Ein Fall mit langer, profilartiger Anfrage fehlt.** Alle Fälle mit `erwartet` sind
+   heute zweiwörtig. `cmdSearch` liest Mehrwortanfragen als UND und lockert erst auf
+   Teiltreffer, wenn kein Baustein alle Wörter trägt — ein volles Projektprofil
+   überschreitet diese Schwelle zuverlässig und kippt die Suche von scharf auf breit.
+   Gemessen: `tdd testing` setzt `affaan-m__ecc/agent/tdd-guide` auf Rang 1, als
+   zwölfwörtiges Profil fällt derselbe Baustein auf Rang 11 und damit aus `topN: 5`.
+   Der Fall ist heute rot und gehört wie die beiden Sprachfälle mit `optional: true`
+   geführt, bis die Lockerungslogik entschärft ist — sonst bricht er den Exit-Code,
+   ohne dass jemand die Ursache angehen kann.
 
 **Warum.** Rallabandi besteht auf einer Vergleichsbasis. Branco: die Dekomposition wird
 selbst zur Ground Truth.
+
+**Warum eine Vorab-Regressionsprüfung überhaupt etwas fängt — der einzige Fremdbeleg.**
+Aman Gupta (Nubank, Anwender, nicht Anbieter) berichtet zwei Funde aus dem Regelbetrieb:
+„we caught a regression uh with simulation that could have made it to production, but
+simulation caught it. And at the same time, we also caught in another agent an issue uh
+which could have lowered our self-service rate" (11:55). Übertragbar ist davon nur der
+Regressionsfall; die Selbstbedienungsquote ist Fachdomäne, nicht Methode. **Grenze:**
+zwei Funde ohne Nenner, ohne Zeitraum und ohne Fehlalarmzahl — keine Trefferquote, es
+gilt `knowledge/07` E5 und F3. Verschoben hat sich der *Fundort*, nicht die Absicht.
+Siehe `knowledge/08` Abschnitt 9.
+
+**Warum „Keine Qualitätsaussage" keine Bescheidenheit ist.** Für die Frage „ist der
+empfohlene Satz gut?" existiert kein Validator. Das Kriterium lässt sich nicht nach links
+schieben (`knowledge/07` B6), und ein Modell darf nicht über die eigene Ausgabe richten
+(`knowledge/07` D4) — das abschliessende Güteurteil bleibt deshalb offen markiert,
+während die Auswahl selbst Aufgabe von `harness-build` bleibt. Fremd belegt bei Reyes
+(Factory) für dessen eigenes Kernprodukt: „we do not yet have validators … we're unable
+to close the loop on some of those challenges. It's an engineering task to build the
+system that can verify some of those very hard problems" (19:01).
+
+**Zur Wiederholung desselben Falls.** Sie ist bei Stufe 2 zulässig und nützlich: sie
+schärft die Bestehensquote pro Fall, und genau die ist der Messgegenstand — ein Eval
+misst Modellverhalten, nicht die Welt. Anand stützt das ausdrücklich: „It improves my
+estimate of what the model is telling me." Unzulässig ist nur der Sprung von dieser
+Quote zu einer Aussage über die Güte eines Bausteins; dafür hilft keine Wiederholung,
+sondern nur ein neuer, anders gelagerter Fall. Für Stufe 1 entfällt die Frage —
+`cmdSearch` ist deterministisch, zwei Läufe liefern byteidentische Ausgabe.
 
 **Was die Prüfung ergab.** Die vorgeschlagene Baseline ist entartet: `cmdSearch` **ist**
 bereits ein namensgewichteter Substring-Matcher (+10 auf `name + id`), die „Baseline"
@@ -416,6 +470,21 @@ danach automatisch hält — das ist M1.
    Ergebnisbericht.
 6. Optional (~15 Z. in `cmdLint`): Rezept-IDs gegen den Katalog — überschneidet sich mit
    M1 Prüfung A und M12a.
+7. **Den vorhandenen Block „Wann es nicht passt" um belegbare Voraussetzungen einzelner
+   Kern-Set-Bausteine ergänzen** — nur dort, wo ein Baustein ohne die Voraussetzung
+   nachweislich nichts liefert, und nur mit einer Bedingung, die aus `show` bzw. dem
+   Baustein selbst hervorgeht. Die Form existiert bereits zweimal und wird kopiert, nicht
+   erfunden: Rezept 03 („Reine LLM-Anwendungen ohne eigenes Training brauchen
+   `mle-workflow` nicht") und Rezept 05 („Wenn keine Live-URL abrufbar ist, liefern die
+   meisten Bausteine hier nichts"). Kandidaten mit harter Voraussetzung:
+   `anthropics__skills/skill/webapp-testing` (lokal startbare App),
+   `msitarzewski__agency-agents/agent/api-tester` (erreichbare Endpunkte),
+   `usestrix__strix/skill/strix-pentest` (ausführbares Ziel plus die in Rezept 04 bereits
+   genannte schriftliche Erlaubnis), die `AgriciDaniel__claude-seo`-Kette (abrufbare
+   Live-URL). Formuliert als Voraussetzung des **Bausteins**, nicht als Vermutung über
+   das Zielprojekt. Keine neue Tabellenspalte, kein neuer Abschnitt. Grund: die harten
+   Voraussetzungen stehen heute nur auf Rezept-Ebene, nicht am Baustein — und `knowledge`
+   schneidet abschnittsweise aus.
 
 **Warum.** Garg warnt vor kollabiertem Lösungsraum. Wang verlangt Verifikationspfad,
 erlaubten Zustand, vorab einzusammelnden Kontext.
@@ -471,6 +540,260 @@ Frontmatter.
 
 ---
 
+## M13 — `harness-build` Schritt 1: Prüfschleifen erheben und die Ausschlussfrage stellen
+
+**Was zu tun ist.** Zwei Fragen in Schritt 1 von `harness-build/SKILL.md`, zusammen rund
+sechs Zeilen Prosa, keine Codeänderung.
+
+1. **Welche Prüfschleifen liefern heute ein Ja/Nein?** Linter, Typechecker, Testsuite,
+   Schema-Validierung, Security-Scan, CI-Gate. Abzulesen aus `package.json`,
+   `pyproject.toml`, `go.mod`/`Makefile`, `tsconfig.json`, Linter- und CI-Konfiguration —
+   das liest Schritt 1 ohnehin. **Notiere den Befehl, nicht die Absicht**, und
+   unterscheide „vorhanden" von „läuft und ist grün": ein `"test": "echo no tests"` und
+   eine rote CI sind keine Schleifen. Geht es aus den Dateien nicht hervor, ist das die
+   eine Sache, die per `AskUserQuestion` an den User geht. Tatsachen sammeln, kein
+   Qualitätsurteil über das fremde Projekt fällen.
+2. **Was ausdrücklich nicht gebraucht wird.** Diese Angabe steht in keiner Projektdatei —
+   was hier nicht gefragt wird, setzt der Agent selbst, und der User sieht es erst in der
+   Auswahl. Auf Rezeptebene gibt es dafür „Bewusst weggelassen", auf Projektebene nichts.
+
+In Schritt 6, eine Zeile über der Auswahltabelle: `Prüfschleifen heute: <befehl> ·
+<befehl>` — oder `Prüfschleifen heute: keine.`
+
+**Regel bei null Schleifen.** Der erste Baustein ist der, der **„fertig" entscheidbar
+macht**; der Typ folgt aus dem Fall und ist nicht vorgegeben. Zuerst den Massstab: bei
+bestehender Codebasis ohne Test-Suite ein Agent, der Invarianten mit Test-Ankern aus dem
+Code zieht (`affaan-m__ecc/agent/spec-miner`, so in `recipes/06` bereits begründet); bei
+jungem Projekt ein TDD-erzwingender Command. **Erst wenn ein Check existiert, der Hook**,
+der ihn bei jeder Änderung ausführt. Ein Hook führt eine Prüfung aus, er erzeugt keine —
+vorher installiert liegt er tot in `.claude/hooks/`.
+
+**Warum.** Reyes (Factory) macht die Dichte deterministischer Prüfschleifen zur
+Messgrösse über die Codebasis und leitet daraus die Ausgabequalität ab; Anand belegt,
+dass fehlender Kontext nicht ausgelassen, sondern erfunden wird. Belege und Grenzen:
+`knowledge/08` Abschnitte 1, 2 und 6. Doktrinärer Rückhalt im eigenen Bestand:
+`knowledge/01` Checkliste Frage 3 („Baue stattdessen den Check ein — er ist billiger und
+zuverlässiger").
+
+**Was die Prüfung ergab.** Die Lücke ist real: `harness-build/SKILL.md` erhebt heute
+Was, Stack, Reifegrad und Schmerz, die CI-Konfiguration taucht nur als Informationsquelle
+über den Stack auf, nicht als Befund. Widerlegt wurde die ursprüngliche Typ-Vorgabe
+„Hook oder Command" für den Null-Schleifen-Fall: ein katalogisierter Hook führt eine
+vorhandene Prüfung aus und erzeugt keine, und `recipes/06` beantwortet denselben Fall
+bereits mit einem Agenten. Ebenfalls widerlegt: eine zweite Spalte „Woran sichtbar, dass
+es gewirkt hat" — Schritt 6 liegt vor der Installation, der Baustein hat im Zielprojekt
+nie gelaufen.
+
+**Betroffen.** `.claude/skills/harness-build/SKILL.md`, Schritt 1 und Schritt 6. Kein
+CLI-Eingriff.
+
+## M14 — Rückkanal: was ein `harness-build`-Lauf hinterlässt
+
+**Was zu tun ist.** Ein Schritt 9 „Rückmeldung an die Bibliothek" in
+`harness-build/SKILL.md`, rund zwölf Zeilen, plus zwei Ablageorte, die es schon gibt.
+
+1. **Die tatsächlich abgesetzten Suchen wörtlich mitschreiben** — Frage, Filter,
+   gewählter Baustein, **und die Suchen, die nichts Brauchbares lieferten**. Ohne diese
+   Notiz gibt es beim ersten echten Lauf nichts zu ernten: das Manifest führt die
+   Herkunft des *Bausteins*, nicht die *Frage*, die zu ihm führte. Aus einer solchen
+   Notiz wird ein Fall in `evals/routing.jsonl` (`frage`, `erwartet`, `warum`; ein
+   sachlich falscher Treffer als `verboten` im selben Fall) — im Rahmen des
+   Umfangsdeckels aus M7, also ersetzend statt ergänzend.
+2. **Der fehlende Baustein bekommt einen benannten Ort:** ein Kommentarblock am Ende von
+   `sources.txt`, eine Zeile je Lücke, Format `# Lücke: <Suche> · <Projekt> · <Datum> ·
+   Kandidat: <Repo-URL oder "keiner">`. `sources.txt` ist die Datei, die diese
+   Information verbraucht, und das CLI liest sie ausschliesslich — Kommentare überleben
+   jedes `update`. **Eine leere Lückenliste ist ein gültiges Ergebnis** und wird als
+   solche vermerkt, sonst erfindet der nächste Lauf Lücken.
+3. **Drei Fragen an den Besitzer, als Text:** Was hat gefehlt oder nicht gepasst? War das
+   an diesem Projekt oder allgemein? Wenn allgemein: welches Rezept oder welcher
+   Wissensabschnitt zieht nach? Die Antwort geht **an den Besitzer**, nicht vom
+   Zielprojekt-Agenten in die Bibliothek — er sitzt ausserhalb und hat dort keine
+   Schreibzuständigkeit.
+4. **Einarbeitung über die vorhandenen Bahnen.** Führt der Befund zu einer Rezept- oder
+   Wissensänderung, ist das ein `revise`-Eintrag; die Aktionsartentabelle verlangt dort
+   ohnehin „woran der Irrtum bemerkt wurde" — dort steht dann „beim Setup von Projekt X".
+   War der Befund projektspezifisch, kommt eine Zeile in „Bewusst nicht umgesetzt", deren
+   Grundspalte den Projektbezug nennt. Zuständig bleibt der `wissensbank-autor`.
+
+**Warum.** Wu (Cognition): „the feedback is actually like half of the loop that makes the
+next deployment better than the previous deployment" — und die Entscheidung „allgemein
+oder einmalig" ist genau der Schritt, der aus Dienstleistung Erkenntnis macht. Reyes
+lehnt Kundenarbeit ab, die nicht ins Produkt zurückwirkt. Belege: `knowledge/08`
+Abschnitt 11.
+
+**Was die Prüfung ergab.** Der Rückkanal ist heute an zwei Stellen als Handlungsanweisung
+vorhanden (`harness-build/SKILL.md` und `harness-update/SKILL.md`: „wenn nichts Passendes
+da ist, ein passendes Repo in `sources.txt` aufnehmen") und nirgends persistiert;
+`sources.txt` enthält keine einzige vermerkte Lücke. Verworfen: eine vierte Aktionsart in
+`knowledge/LOG.md`, weil `revise` die geforderten Felder bereits verlangt und LOG.md das
+Änderungsprotokoll der Wissensbank ist, nicht ein Laufprotokoll des Werkzeugs.
+Ebenfalls verworfen: verworfene Treffer zusätzlich zu persistieren — eine verworfene ID
+sagt nach dem nächsten `update` nichts mehr über den dann geltenden Bestand.
+
+**Sicherheit: mittel, nicht hoch.** Es hat noch keinen Einsatz gegen ein Fremdprojekt
+gegeben (Aufgabe „Am echten Projekt verifizieren" ist offen). Der Nutzen ist begründet,
+nicht gemessen — aber jetzt ist der billigste Zeitpunkt, die Notiz zu setzen.
+
+**Betroffen.** `.claude/skills/harness-build/SKILL.md`, `sources.txt` (nur Kommentare),
+`evals/routing.jsonl`. Kein CLI-Eingriff.
+
+## M15 — `eval` sichtbar machen und an einen Ablauf hängen
+
+**Was zu tun ist.** Vier kleine Eingriffe. Der Befehl existiert, läuft in unter einer
+Sekunde und setzt bei Pflichtfehlschlag Exit-Code 1 — er wird nur von nichts ausgelöst
+und steht an keiner Stelle, die ein Agent liest.
+
+1. **Vierter Schritt in `cmdUpdate`:** nach dem Changelog-Block ein Schritt
+   `4/4  Routing-Evals`, der `cmdEval` fährt. Den bereits geladenen Katalog durchreichen,
+   statt ihn ein zweites Mal zu laden. Fehlendes `evals/`-Verzeichnis darf `update`
+   **nicht** per `die()` abbrechen — in dem Fall eine Hinweiszeile und regulär enden; das
+   Changelog ist zu diesem Zeitpunkt schon geschrieben.
+2. **Ergebnis als eine Zeile in den obersten `CHANGELOG.md`-Abschnitt**, den `cmdUpdate`
+   ohnehin erzeugt (`Routing-Evals: 12 von 12 bestanden` bzw. die durchgefallenen Fälle
+   namentlich). **Nicht** in `knowledge/LOG.md`: dort steht die Geschichte der
+   Wissensbank mit drei definierten Aktionsarten und einer Begründungspflicht, die eine
+   Maschine nicht erfüllen kann — und die Datei läuft durch `lint`, wo maschinell
+   angehängte Zahlen und IDs Fehlalarme auslösen.
+3. **Sichtbarkeit:** eine Zweckzeile für `eval` in `befehlsUebersicht()`, damit `extract`
+   die Zeile nach `INDEX.md` schreibt. `INDEX.md` führt heute elf Befehle, der Dispatcher
+   zwölf — die einzige Lücke ist `eval`, und ihre Ursache ist ein `extract`, das seit dem
+   Einbau nicht mehr lief. Die Zahlangabe „alle elf Befehle" in `CLAUDE.md` wird damit
+   ebenfalls falsch und muss mit.
+4. **`node tools/harness.mjs eval` in den Nachweis-Block von
+   `.claude/agents/werkzeug-aenderer.md`** aufnehmen; dort steht heute nur `lint --all`.
+   Und zwei Sätze in `harness-update/SKILL.md`: dass `update` vier Schritte hat und ein
+   roter Eval-Lauf dem User gemeldet wird, statt in der Rohausgabe unterzugehen.
+
+**Warum.** Gupta (Nubank) macht den billigen Test zur Vorbedingung des teuren: „They
+don't launch until they're happy with the sim output." **Die Begründung ist bei uns
+umgekehrt herzuleiten:** dort ist die Verifikation der teure Teil (Evals „a few days", ein
+A/B-Test „can take forever"), hier ist sie praktisch gratis und läuft trotzdem nie, weil
+kein Ablauf sie auslöst. Siehe `knowledge/08` Abschnitt 9.
+
+**Was die Prüfung ergab.** Verworfen wurde eine Kette `lint` → `eval`: die beiden prüfen
+Verschiedenes, und `lint --strict` steht heute allein deshalb auf 1, weil Rohquellen noch
+nicht ausgewertet waren — eine Kette hätte den Suchtest gesperrt, weil ein Vortrag noch
+nicht eingepflegt war. Ebenfalls verworfen: das Ergebnis nach `knowledge/LOG.md` zu
+schreiben (Kategorienfehler, siehe Punkt 2). Der Exit-Code von `update` ändert sich durch
+Punkt 1 — das ist gewollt (`knowledge/04` 4.2), aber eine bewusste Vertragsänderung.
+
+**Vorbedingung für mehr.** Bevor `eval` weitere Sperrwirkung bekommt, muss einmal
+gemessen werden, ob ein grüner Lauf überhaupt mit dem Ausgang einer Projektverifikation
+zusammenhängt. Ohne diesen Abgleich ist jede weitere Schranke eine Schranke ohne
+Vorhersagewert — genau die Bedingung, die Gupta für seine eigene Sperre erfüllt hat.
+
+**Betroffen.** `cmdUpdate`, `befehlsUebersicht()`, `INDEX.md` (erzeugt), `CLAUDE.md`,
+`.claude/agents/werkzeug-aenderer.md`, `.claude/skills/harness-update/SKILL.md`.
+
+## M16 — `cmdStats` bekommt seinen Einwand, wie `eval` und `lint` ihn haben
+
+**Was zu tun ist.** Zwei Zeilen an die Kopfausgabe von `cmdStats`:
+
+> Was diese Zahl nicht sagt: ob ein Baustein gut ist oder je benutzt wurde.
+> Sie wächst mit jedem aufgenommenen Repo.
+
+Belegbar ohne neue Datenquelle: der Katalog führt `bulk` je Eintrag, die Aufteilung in
+Standardzugriff und Massen-Repos ist bereits berechenbar.
+
+**Warum.** Wu (Cognition) formuliert den Einwand gegen seine eigene Aktivitätszahl, bevor
+das Publikum ihn stellt („this actually just kind of looks like token maxing"). Die
+einzige Zahl dieser Bibliothek, die sich genauso verhält — sie wächst mit jedem
+aufgenommenen Repo, ohne dass Nutzen entsteht — ist die Bestandszahl. `eval` und `lint`
+tragen ihren Einwand bereits in der eigenen Ausgabe; `cmdStats` ist der einzige
+zahlenausgebende Befehl ohne. Siehe `knowledge/08` Abschnitt 4.
+
+**Was die Prüfung ergab.** Ausdrücklich verworfen: ein Zähler „wurde jemals ausgelöst".
+Die Bibliothek führt kein Register ihrer Zielprojekte — `cmdInstall` schreibt das Manifest
+ausschliesslich ins Ziel, nichts zurück —, Hooks hinterlassen ohnehin keine Spur, und die
+Messung läge heute bei null verstrichener Zeit. Die ehrlichere Zahl ist der von
+`activationOf` bestimmte Zustand: ob ein Baustein überhaupt feuern **kann**, aus dem
+Zustand des Zielprojekts statt aus fremder Telemetrie. Ebenfalls verworfen: die
+Routing-Trefferquote als „unsere Sessionzahl" zu führen — sie ist gegen eine eingefrorene
+Falldatei gerechnet und durch Benutzung nicht aufblasbar.
+
+**Betroffen.** `cmdStats`.
+
+## M17 — Reibung kennzeichnen, und `activationOf` nicht „wirksam" melden lassen, wo nichts wirkt
+
+**Was zu tun ist.** Zwei getrennt zu entscheidende Teile.
+
+**(a) Kennzeichnung in `harness-build/SKILL.md` Schritt 6, reiner Prosa-Eingriff.** Hinter
+dem Baustein-Namen eine Marke für jeden Baustein, der den Ablauf des Menschen **anhält**
+statt ihn nur zu unterstützen; unter der Tabelle je markiertem Baustein eine Zeile: *was*
+blockiert wird (Ereignis und Werkzeug), *wann* es feuert, und wie man es wieder abstellt.
+Im Bericht (Schritt 8) je Marke eine Zeile, was den Baustein zum Schweigen bringt.
+
+**Woher die Marke kommt — nicht aus der Description.** Die ist an genau dieser Stelle
+unzuverlässig: `affaan-m__ecc/skill/gateguard` schreibt „blocks Edit/Write/Bash", besteht
+aber nur aus einer `SKILL.md` und blockiert nichts. Die Marke wird aus dem gezogen, was
+`show` und der Trockenlauf tatsächlich zeigen: Typ `hook` mit `PreToolUse`, `Stop` oder
+`SubagentStop` → unterbricht; ausführbare Datei im Paket mit einem dieser Ereignisse im
+Code → unterbricht; nur Text, der ein Gate beschreibt → **nicht** unterbricht, sondern
+bremst, mit dem Zusatz, dass der Baustein eine Bitte ist und kein Zwang
+(`knowledge/02` 3.1) und dass der beschriebene Hook erst nachgebaut werden müsste.
+
+**(b) Nebenbefund, eigener Fall für das CLI.** Der Zustandsbericht meldet für
+`affaan-m__ecc/skill/delivery-gate` „aktiv … kein weiterer Schritt", obwohl das
+mitgelieferte `hooks/quality-gate.py` unregistriert bleibt und der Stop-Gate damit nicht
+wirkt. Für den Skill-Anteil ist die Meldung richtig, für den Hook-Anteil irreführend —
+das gehört in `activationOf()`, nicht in eine `SKILL.md`.
+
+**Warum.** Reyes: Prüfungen werden abgeschaltet, wenn sie als kleinlich empfunden werden.
+Bei uns ist die Aussage aber aus dem eigenen Bestand belegt und **nicht** auf Reyes zu
+stützen: `knowledge/02` führt „Fehlalarme und Reibung" als Kostenspalte der
+deterministischen Bausteine, und Abschnitt 7 beschreibt den zu oft feuernden Hook samt
+Folge („der User schaltet den Hook ab"). Reyes' eigentliche These über Änderungen am
+Arbeitsablauf setzt Team und Kunde voraus und gilt hier nicht.
+
+**Was die Prüfung ergab.** Verworfen: eine zweite Bestätigungsrunde als eigener Schritt.
+Schritt 7 erzwingt bereits eine Zwischenzustimmung für ausführbare Inhalte; eine dritte
+Runde erzieht zum Durchklicken. Verworfen ebenso: Prozentzahlen aus dem Vortrag und jede
+Berufung auf Reyes in der Wissensbank.
+
+**Betroffen.** (a) `.claude/skills/harness-build/SKILL.md` Schritte 6 und 8. (b)
+`activationOf()`.
+
+## M18 — Die Naht zwischen `/harness-plan` und `/harness-build` schliessen
+
+**Was zu tun ist.** `harness-plan/SKILL.md` sagt zu: „Danach `/harness-build`
+vorschlagen — es liest Abschnitt 5 und 6 der `PLAN.md`". `harness-build/SKILL.md` nennt
+`PLAN.md` an keiner Stelle. Zwei Möglichkeiten, und nur eine davon ist billig:
+
+1. **In `harness-build` Schritt 1 ergänzen:** Existiert eine `PLAN.md` im Projekt, sind
+   deren Abschnitt 5 (Schmerzpunkte) und 6 (Prüfverfahren) die Symptomliste; die
+   Rückfragen aus Schritt 1 entfallen insoweit. Die dort notierten Bars sind der Massstab,
+   gegen den die Auswahl später bewertet wird; ein Baustein, der auf keinen davon
+   einzahlt, braucht eine ausdrückliche Begründung.
+2. **Oder** `harness-plan` so umformulieren, dass es den Ist-Zustand beschreibt, statt ein
+   Verhalten von `harness-build` zu behaupten, das dort nicht kodiert ist.
+
+Dazu, unabhängig davon und billig: die Schmerzpunkte aus Schritt 1 als **nummerierte
+Liste** schreiben statt nur als Dreisatz-Zusammenfassung und zusammen mit ihr bestätigen
+lassen; auf diese Nummern verweisen Schritt 4 Kriterium 1 und Schritt 5 dann wörtlich.
+Die Regel existiert bereits, sie bekommt nur einen geschriebenen Bezugspunkt statt eines
+erinnerten. Und: **eine leere Liste ist ein gültiges Ergebnis** — findet sich kein
+benennbarer Schmerzpunkt, lautet die Antwort „kein Harness" bzw. nur `bootstrap`, nicht
+ein generisches Kern-Set aus einem Rezept (Anschluss an `knowledge/01` Checkliste 8).
+
+**Warum.** Ein Dokument, das das Gegenteil des tatsächlichen Verhaltens behauptet, ist die
+Fehlerklasse, gegen die diese Wissensbank gebaut ist. Der auslösende Befund kam aus zwei
+Prüfungen unabhängig voneinander (Wu zur Zeitaufteilung Verstehen gegen Bauen, Reyes zur
+ROI-Geschichte vor dem Bau) — die Quellen liefern den Anlass, nicht die Begründung.
+
+**Was die Prüfung ergab.** Ausdrücklich verworfen: `/harness-plan` als Pflichtschritt vor
+`/harness-build`. Das widerspricht `harness-plan` selbst (bei Wegwerf-Prototypen „reiner
+Overhead"), dem Einsatzfall von `harness-build` (laufendes MVP oder Produktivsystem — dort
+gibt es keine `PLAN.md`) und dem Grundprinzip „einfachste Lösung zuerst". Ebenfalls
+verworfen: „`harness-build` sucht danach nur noch zu Symptomen aus dieser Liste" — die
+Liste ist die Ausgangshypothese, kein Deckel; eine Suche darf ein Symptom aufdecken, das
+im Gespräch nicht benannt wurde.
+
+**Betroffen.** `.claude/skills/harness-build/SKILL.md` Schritte 1, 4, 5;
+`.claude/skills/harness-plan/SKILL.md`.
+
+---
+
 ## Bewusst nicht umgesetzt
 
 Kein Vorschlag wurde vollständig verworfen, aber diese Teile sind nach der Prüfung
@@ -511,6 +834,23 @@ vorgeschlagen werden.
 | Trigger-Kollision als maschinelle „Bar" | Es gibt kein Werkzeug für Description-Überlappung; doktrinär bereits abgedeckt. |
 | Hartkodierter Verifikationsbefehl im Rezept | Das Rezept kennt das Zielprojekt nicht — das wäre genau die Hartkodierung, die M11 abstellen will. |
 | Jeden der 32 Pflichtbausteine manuell auslösen | Dutzende Sitzungen für ein nicht reproduzierbares Ergebnis, das beim nächsten `update` still verfällt. |
+| Messfelder im `harness-manifest.json` (Vorher/Nachher-Wert) | Die Dokumentebene wird bei jedem `install` neu geschrieben; aus `prev` wird nur `.items` gelesen. Der Wert wäre nach der nächsten Installation weg. Und `install` läuft im Agentenbetrieb zwingend mit `--yes` — es gibt keinen Eingabepfad, der Agent schriebe die Zahl selbst. |
+| Pflichtfeld `herkunft` je Eval-Fall | Nicht belegbar (kein Anfragenprotokoll), praktisch konstant, kein Trennwert. Der Zustand gehört einmal in den Kopf von `evals/routing.jsonl`. |
+| Pflichtfelder `autor`/`datum` je Eval-Fall | `git blame` liefert beides generiert statt gepflegt; `lint` prüft `evals/` gar nicht, es gäbe keinen Erzwinger. Doppelt geführte Angaben verbietet `knowledge/07` E3. |
+| Gewichtung „Feldfall zählt stärker" im Eval | `cmdEval` kennt bestanden/durchgefallen und einen Exit-Code; eine Gewichtung hätte keinen Konsumenten. |
+| Vielfaltszahl (verschiedene IDs in den Top-n) als zweite Kennzahl | Falsch gepolt: bei der einzigen real belegten Einebnung (frühere ODER-Semantik) steigt sie, während die Bestehensquote fällt. Die richtige zweite Zahl ist die Rangverschiebung, M7 Punkt 1. |
+| Protokollierung jeder Suchanfrage nach `evals/` | `ladeEvalFaelle` macht aus jeder Nicht-Kommentarzeile in `evals/*.jsonl` einen Fall; Logzeilen gälten als bestanden und machten die echten unsichtbar. Ein Log liefert ausserdem Ist-Treffer, ein Eval-Fall braucht Soll-Treffer — teuer ist das Label, nicht die Frage. |
+| Kette `lint` → `eval` als Sperre | Prüfen Verschiedenes. `lint --strict` stand zeitweise allein deshalb auf 1, weil Rohquellen noch nicht ausgewertet waren — die Kette hätte den Suchtest gesperrt, weil ein Vortrag fehlte. |
+| Eval-Ergebnis nach `knowledge/LOG.md` schreiben | Kategorienfehler: LOG.md ist der Zeitstrahl der Wissensbank mit drei Aktionsarten und Begründungspflicht, ein Routing-Eval misst den Katalog. Für Katalogläufe existiert `CHANGELOG.md`. |
+| Vierte Aktionsart in `knowledge/LOG.md` für Einsatzberichte | `revise` verlangt bereits „woran der Irrtum bemerkt wurde"; projektspezifische Befunde gehören in diesen Abschnitt hier. Eine vierte Art machte aus dem Änderungsprotokoll ein Laufprotokoll. |
+| Eingriffsstufen-Spalte (`autonom`/`Freigabe`/`Mensch`) in den Rezepten | Kategorienfehler: Rezeptzeilen sind Bausteine, keine Prozessschritte. Eine Markdown-Spalte erzwingt nichts; Erzwingung säße in `permissions`, die das CLI bewusst nicht schreibt. |
+| Rückfallzeile „greift nicht, wenn X — dann Y" je Kern-Set-Eintrag | 33 Zeilen über sechs Rezepte, jede eine belegpflichtige Aussage über ein Zielprojekt, das die Bibliothek nicht betreibt. M11 Punkt 7 leistet dasselbe für ein Sechstel des Aufwands. |
+| `/harness-plan` als Pflichtschritt vor `/harness-build` | Widerspricht `harness-plan` selbst („reiner Overhead" bei Wegwerf-Prototypen) und dem Einsatzfall von `harness-build` (laufendes MVP oder Produktivsystem — dort gibt es keine `PLAN.md`). |
+| Zweite Spalte „Woran sichtbar, dass es gewirkt hat" in der Auswahltabelle | Schritt 6 liegt vor der Installation; der Baustein hat im Zielprojekt nie gelaufen. Eine Pflichtspalte, die nur mit Vermutung zu füllen ist, erzeugt „Die Vermutung im Faktenkostüm". |
+| Zweite Bestätigungsrunde für reibungserzeugende Bausteine | Schritt 7 erzwingt bereits eine Zwischenzustimmung für ausführbare Inhalte; eine dritte Runde erzieht zum Durchklicken. |
+| Kriterium „gibt nur eine Meinung ab" vor „löst ein benanntes Problem" | Achsenverwechslung — der bestehende Satz trennt Zwang von Bitte, nicht prüfbar von nicht prüfbar. Und die Typvorliebe räumte alle sechs Kern-Sets leer, die ausschliesslich aus Skills und Agents bestehen. |
+| Eigenes Werkzeug zur Namensauflösung („meinen zwei IDs dasselbe?") | IDs sind `repo/typ/slug`, deterministisch und eindeutig; von 54 Namensgruppen sind 45 gewollte Typ-Sätze desselben Repos. Der Auflöser existiert bereits als `--type`. |
+| Zähler „Baustein wurde jemals ausgelöst" | Kein Register der Zielprojekte, Hooks hinterlassen keine Spur, und die Messung läge heute bei null verstrichener Zeit. `activationOf` liefert die ehrlichere Grösse: ob ein Baustein feuern **kann**. |
 
 ---
 

@@ -49,6 +49,16 @@ sources:
     author: Sai Krishna Rallabandi
     resource: Konferenzvortrag AI Engineer, 2026-07-30
     retrieved: 2026-08-07
+  - id: wu-cognition
+    title: "How Forward Deployed Engineering is done at Cognition"
+    author: Jia Rong Wu (Cognition, Devin)
+    resource: Konferenzvortrag AI Engineer, veröffentlicht 2026-07-28
+    retrieved: 2026-08-07
+  - id: reyes-factory
+    title: "How Forward Deployed Engineering is done at Factory"
+    author: Eno Reyes (Factory, Droid)
+    resource: Konferenzvortrag AI Engineer, veröffentlicht 2026-07-29
+    retrieved: 2026-08-07
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2027-08-07
 tags: [projektstart, architektur, verifikation, abnahme, betrieb, zuschnitt, fallen]
@@ -91,14 +101,15 @@ tags: [projektstart, architektur, verifikation, abnahme, betrieb, zuschnitt, fal
 ### 2.1 A1 — Abnahmedatei vor der ersten Zeile Code
 
 **Tun.** `ABNAHME.md` in die Projektwurzel, und in die `CLAUDE.md` eine Zeile, die darauf verweist („Vor Umsetzungs- und Architekturentscheidungen zuerst `ABNAHME.md` lesen") — eine Datei, die niemand verlinkt, liest ein frischer Agent in der nächsten Sitzung nicht. Drei Blöcke, zusammen unter einer Seite: (1) **Wer widerlegt** — zahlender Kunde, Prüfer, du selbst in drei Monaten, ein noch ungesehener Datensatz; dazu die eine Frage, an der es scheitern würde, in zwei Sätzen beantwortet. (2) **Bars, drei bis fünf Zeilen** — je Größe, Zahl bzw. Schwelle und Messverfahren, und nur Dimensionen, die in *diesem* Projekt über Annahme oder Ablehnung entscheiden (oft nicht Latenz und Kosten, sondern Falschtreffer-Rate, Nachvollziehbarkeit der Quelle, Wiederherstellbarkeit); beim Start als „geschätzt" markieren und beim ersten echten Messwert korrigieren. (3) **K.-o.-Kriterien** — binäre Aussagen („keine Ausgabe ohne Quellenangabe", „kein Schreibzugriff außerhalb `out/`"); der billigste und haltbarste Block, den schreibst du auch dann, wenn du 1 und 2 auslässt. Formuliere beobachtbares Verhalten, nicht Implementierung; wo ein Kriterium automatisch prüfbar ist, schreibe den Befehl daneben; gib dieselbe Datei jedem prüfenden Agenten mit.
-**Warum.** Ohne benannte Bars arbeiten Agent und Auftraggeber gegen ein unausgesprochenes, sich verschiebendes Ziel — und ohne Abnahmetest optimiert man monatelang eine Demo, die beim ersten ernsten Review kippt.
-**Beleg.** Chan: „Machine one is a demo. One clean document in, one fluent answer out … Machine two is a memo. Its job's to survive an argument." Wang: „the problem statement becomes much easier." (Chan · Wang)
+**Warum.** Ohne benannte Bars arbeiten Agent und Auftraggeber gegen ein unausgesprochenes, sich verschiebendes Ziel — und ohne Abnahmetest optimiert man monatelang eine Demo, die beim ersten ernsten Review kippt. Das Kriterium ist dabei die billigere Hälfte; die teurere ist die Umgebung, die es prüfen kann — Reyes: „Less so solving the problem, more so preparing the environment for verification of the problem" (15:33). Wer das Kriterium hinschreibt, ohne zu wissen, wer es prüft, hat einen Wunsch notiert (siehe `knowledge/08` Abschnitte 1 und 2).
+**Beleg.** Chan: „Machine one is a demo. One clean document in, one fluent answer out … Machine two is a memo. Its job's to survive an argument." Wang: „the problem statement becomes much easier." Reyes stützt ausschliesslich den Grundsatz „Kriterium vor dem Lauf, schriftlich", nicht die drei Blöcke: „I would like to have this very bounded task. I know that I want to solve this task and here is what solving this task means. I will now basically push a lever of inference until the task is complete" (13:57 — im Original „almost no human intervention except for the planning stage", nicht vollständige Autonomie). (Chan · Wang · Reyes)
 
 ### 2.2 A2 — Eigene Aufgaben als Messlatte und ein Logbuch im Repo
 
 **Tun.** Drei bis fünf Aufgaben aus der echten Domäne festlegen, je mit Startzustand, Eingabe und einem *vorab wörtlich notierten* Abnahmekriterium („fertig heißt: …"), formuliert bevor das erste Ergebnis gesehen wurde. Darüber ein Logbuch als einfache Datei (`evals/log.md`, eine Zeile pro Lauf) mit vier Feldern: **Variablen** (Datum, Modell-ID, Harness-Stand), **Ergebnis** (bestanden/durchgefallen gegen das vorab notierte Kriterium — nicht der ausführende Agent urteilt), **Aufwand** (Tokens bzw. `/cost`, Schritte, Laufzeit — immer parallel zum Ergebnis), **Änderung** (genau eine Sache seit der letzten Zeile). Billig halten: Textdatei, keine Eval-Infrastruktur, kein Judge-Modell.
+**Bevor du eine eigene Kennzahl definierst: nimm eine, die das Projekt ohnehin führt** — Laufzeit der Testsuite, Zahl der Durchläufe bis grün, Zeit vom Auftrag bis zum lauffähigen Stand. Eine Kennzahl, die es nur wegen der Messung gibt, verfällt mit der Messung. Und der Nachher-Wert gilt erst, wenn das Setup vollständig in Gebrauch ist; teilaktiviert gemessen ist kein Nachher.
 **Warum.** Nicht Modellgüte messen, sondern echte Verbesserung von einem bloßen Modell- oder Harness-Wechsel trennen können. Dieselben Aufgaben sind das „vorher definierte Messkriterium" des Load-Bearing-Tests; ohne sie sind weder „eine Komponente pro Lauf entfernen" noch die Neubewertung bei Modellwechsel durchführbar (`knowledge "load bearing test"`).
-**Beleg.** Garg: „different harnesses you care about have a pretty big impact on how many tokens are actually consumed on a task … this can be pretty hard to interpret when you're not holding variables constant"; öffentliche Benchmarks sind schmal geschnitten (GDPval: „a very narrow set of Excel tasks"). (Garg)
+**Beleg.** Garg: „different harnesses you care about have a pretty big impact on how many tokens are actually consumed on a task … this can be pretty hard to interpret when you're not holding variables constant"; öffentliche Benchmarks sind schmal geschnitten (GDPval: „a very narrow set of Excel tasks"). Für die Herkunft der Messgrösse Wu (Cognition, 12:41): „If you look at every single metric that you measure before you bring in Devin and after you bring in Devin, you can take a look at that" — und die Bedingung „whenever we get deployed, and fully activated within the customer environment". Wu erklärt die Nutzenmessung im selben Vortrag ausdrücklich für ungelöst; übernommen ist die Vorgehensweise, keine seiner Zahlen (`knowledge/08` Abschnitte 4 und 13). Für das vorab wörtlich notierte Kriterium zusätzlich Reyes: „here is what solving this task means" (13:57). (Garg · Wu · Reyes)
 
 ### 2.3 A3 — Drei Spalten: deterministisch, Skript, Grauzone — nur die Grauzone bekommt AI
 
@@ -465,6 +476,7 @@ tags: [projektstart, architektur, verifikation, abnahme, betrieb, zuschnitt, fal
 - Wurde der Rollback einmal wirklich ausgeführt, oder ist er nur dokumentiert? Und wurde ein Backup je wiederhergestellt?
 - Wann liest du das nächste Mal zwanzig echte Läufe am Stück — und wo steht die Liste der wiederkehrenden Fehlermodi?
 - Welche Abhängigkeit ist noch in Bewegung, und wer zieht sie in welchem Takt nach?
+- **Womit wird der Agent ausgelöst — Mensch, CI, Webhook, Zeitplan? Und wenn ausschliesslich Mensch: ist das entschieden oder nur nicht entschieden worden?** Die Frage gehört in diese Phase, nicht in den Pflichtteil eines Rezepts: Vor dem ersten Lauf gibt es kein Symptom, an dem sich eine Auslöseform begründen liesse. Beleg: Wu (Cognition) nennt als Ziel „How can we automate ourselves out of the job in the sense that we set up the agent in a way that it runs all of the automations for us … It can respond to like specific alerts, specific events" — eine Zielformulierung, kein Abnahmekriterium. Achtung bei der Übersetzung: Was einen Agenten von aussen startet, ist kein Hook (`knowledge "hook startet keinen agenten"`).
 
 ---
 
@@ -536,6 +548,15 @@ Alle neun Vorträge der AI Engineer Conference 2026, abgerufen und ausgewertet a
 | 7 | MCP Tasks (async): Why Aren't Any Agents Supporting Them? | Cornelia Davis, Temporal |
 | 8 | Rethinking Environments for Long-Horizon Work | Rayan Garg, Theta Software |
 | 9 | Wearing the Agent: From Group Chats to Glasses | Sai Krishna Rallabandi |
+
+**Zwei später ergänzte Vorträge**, ausgewertet am 2026-08-07 und in diesem Kapitel nur an drei Stellen belegend (A1, A2, Abschnitt 7.7):
+
+| # | Titel | Sprecher |
+|---|---|---|
+| 10 | How Forward Deployed Engineering is done at Cognition | Jia Rong Wu, Cognition (Devin) |
+| 11 | How Forward Deployed Engineering is done at Factory | Eno Reyes, Factory (Droid) |
+
+Ihre vollständige Auswertung samt Abgrenzung und verworfenen Punkten steht in `08-pruefbarkeit-und-pruefdaten.md`. Beide sind Firmenvorträge mit erkennbarem Eigeninteresse; keine ihrer Zahlen ist als Beleg verwendbar.
 
 **Verwandte Kapitel dieser Wissensbank** — abfragen statt am Stück lesen:
 

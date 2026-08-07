@@ -15,6 +15,13 @@
 {"_kommentar":"Sprachgrenze: die Quellen sind englisch, die Nutzer denken deutsch. Diese Fälle dürfen fehlschlagen — sie messen eine bekannte Schwäche, damit eine Verbesserung sichtbar wird."}
 {"frage":"sicherheit prüfen","mindestens":1,"optional":true,"warum":"Deutsche Anfrage auf englischen Bestand — bekannte Lücke"}
 {"frage":"tests schreiben","mindestens":1,"optional":true,"warum":"Deutsche Anfrage auf englischen Bestand — bekannte Lücke"}
+{"_kommentar":"Nutzerabsicht statt Katalogvokabular. Die Fälle oben prüfen Begriffe, die im Katalog stehen — damit misst man, ob die Suche ihr eigenes Vokabular wiederfindet, nicht ob sie einem Menschen hilft. Diese Fälle nehmen die Formulierung, mit der jemand tatsächlich ankommt. Sie sind optional, weil sie eine bekannte Lücke messen, keinen Regressionsschutz."}
+{"_kommentar":"Quelle des Musters: Rajpal/Gupta, SimulationMaxxing (Learnings/). Der Befund lautete, dass in dieser Datei die Absicht bereits im Feld warum danebenstand, ungenutzt."}
+{"_kommentar":"Gemessen wird die erwartete ID, nicht die Trefferzahl. `mindestens 1` bestand in allen vier Fällen und verdeckte, dass drei davon nur Unbrauchbares lieferten — eine Trefferquote ohne bekannte Obergrenze ist keine Aussage (Anand, Persona Engineering)."}
+{"frage":"reviews miss the same mistakes","erwartet":["affaan-m__ecc/agent/code-reviewer"],"topN":5,"optional":true,"warum":"So beschreibt jemand das Problem. Liefert derzeit ai-regression-testing, network-config-reviewer, react-build — alle falsch"}
+{"frage":"nobody understands this codebase","erwartet":["affaan-m__ecc/skill/codebase-onboarding"],"topN":5,"optional":true,"warum":"Überblick verloren, in eigenen Worten. Der einzige der vier Fälle, der derzeit trifft"}
+{"frage":"our releases keep breaking","erwartet":["affaan-m__ecc/skill/deployment-patterns"],"topN":5,"optional":true,"warum":"Deployment-Schmerz. Liefert derzeit opensource-forker/packager/sanitizer — release wird im Open-Source-Sinn gelesen"}
+{"frage":"how do I know the agent did it right","erwartet":["affaan-m__ecc/skill/eval-harness"],"topN":5,"optional":true,"warum":"Prüfbarkeit ohne das Wort eval. Liefert derzeit domain-analyzer und zk-steward — alle falsch"}
 {"_kommentar":"Präzision: mehr Wörter müssen weniger und gezieltere Treffer liefern, nicht mehr. Das war einmal umgekehrt, weil die Suche ODER statt UND wertete."}
 {"frage":"review","mindestens":1,"warum":"Grundfall für den Präzisionsvergleich"}
 {"frage":"code review","hoechstensSoVieleWie":"review","warum":"Zwei Wörter dürfen nie mehr Treffer liefern als eins"}

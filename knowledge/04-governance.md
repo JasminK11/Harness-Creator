@@ -268,38 +268,54 @@ Bei uns ist die exponierte Stelle eine andere. Wir schreiben die Skills nicht, w
 
 Eine Liste von Testanfragen mit erwarteten Treffern, gegen die `search` läuft. Zwei Stufen:
 
-**Stufe 1 — deterministisch, ohne Modell.** Reines `search`-Verhalten, läuft in Sekunden und kann an jedes `/harness-update` gehängt werden. Pro Fall: eine Anfrage, die Bausteine die **im Ergebnis stehen müssen** (`must`), optional welche die **nicht** darin stehen dürfen (`verboten`), und ab welcher Position das noch zählt (`top`).
+**Stufe 1 — deterministisch, ohne Modell.** Reines `search`-Verhalten, läuft in Sekunden und kann an jedes `/harness-update` gehängt werden. Pro Fall: eine Anfrage, die Bausteine die **im Ergebnis stehen müssen** (`erwartet`), optional welche die **nicht** darin stehen dürfen (`verboten`), und ab welcher Position das noch zählt (`topN`). Die Feldnamen sind die der Umsetzung; die frühere Fassung dieses Abschnitts nannte `must` und `top`, die es im Code nie gab.
 
-**Stufe 2 — mit Modell, seltener.** Man gibt dem Agenten die Nutzerabsicht im Klartext („mein Deployment bricht seit dem Umzug auf Kubernetes") und lässt ihn ohne weitere Hilfe suchen und auswählen. Bewertet wird nur, ob die `must`-Bausteine in seiner Endauswahl stehen. Das ist der Eval, der Mirajes Fall abbildet: Er misst nicht den Katalog, sondern ob `harness-build/SKILL.md` das Modell noch führt. Läuft manuell — bei jedem Modellwechsel, sonst nie.
+**Stufe 2 — mit Modell, seltener.** Man gibt dem Agenten die Nutzerabsicht im Klartext („mein Deployment bricht seit dem Umzug auf Kubernetes") und lässt ihn ohne weitere Hilfe suchen und auswählen. Bewertet wird nur, ob die erwarteten Bausteine in seiner Endauswahl stehen. Das ist der Eval, der Mirajes Fall abbildet: Er misst nicht den Katalog, sondern ob `harness-build/SKILL.md` das Modell noch führt. Läuft manuell — bei jedem Modellwechsel, sonst nie. Stufe 2 ist bis heute nicht gebaut und bleibt es laut `knowledge/06` M7 Punkt 6, bis Stufe 1 zwei Update-Zyklen überlebt hat; die folgenden fünf Regeln sind die Bauvorgabe für diesen Zeitpunkt, keine Aufforderung, ihn vorzuziehen.
+
+**Die zwei Hälften, die Stufe 1 und Stufe 2 voneinander trennen.** Pruitt (Varick Agents) zerlegt dasselbe Problem in „writing good analysis from the context and extracting the correct context in the first place" (18:12). Stufe 1 misst ausschliesslich die zweite Hälfte — ob die Suche für eine Absicht noch denselben Baustein liefert. Die erste Hälfte, ob die Begründung taugt, die `harness-build` zu Auswahl und Verwurf schreibt, ist hier absichtlich nicht automatisiert: `harness-build/SKILL.md` legt die Auswahl mit Begründung vor und holt vor jedem Kopiervorgang eine Bestätigung ein. Einen Eval dafür zu bauen, hiesse ein menschliches Gate zu ersetzen, das heute funktioniert. Belege und Herleitung: `knowledge/08` Abschnitte 2 und 3.
+
+**Fünf Bauvorgaben für Stufe 2.**
+
+1. **Kontext als Fixture auf der Platte, nicht als Block im Prompt.** Pro Fall ein Minimal-Projektverzeichnis mit echter `package.json` bzw. `go.mod`, `README` und einer Zeile „Nicht gebraucht: …"; der Agent bekommt nur den Satz Nutzerabsicht plus den Pfad. Grund: fehlender Kontext wird nicht ausgelassen, sondern erfunden (`knowledge/08` Abschnitt 6). Ein Kontextblock im Prompt überspränge zusätzlich Schritt 1 der Skill — also genau das, was Stufe 2 prüfen soll.
+2. **Was ausdrücklich nicht in den Prompt gehört:** dass aus einem Katalog ausgewählt wird, welche Grössenordnung üblich ist, und dass eine Leerauswahl erlaubt ist. Diese drei sind wörtlich der Inhalt von `harness-build/SKILL.md` und damit die Messgrösse selbst; die Leerauswahl steht dort ausserdem weit hinten — also genau an der Schwanzposition, auf die Mirajes Vorfall zielt. Wer sie mitliefert, misst den Prompt statt den Skill.
+3. **Eine Zweitfassung je Fall: dieselbe Absicht anders formuliert**, zweiter Lauf in frischem Kontext. Kippt die Endauswahl zwischen den Fassungen, ist der Fall **fehlgeschlagen**, nicht neutral — die Instabilität ist der Befund, den Stufe 2 erzeugen soll. Folgenlos bleibt die Abweichung nur, wenn beide Auswahlen die erwarteten Bausteine enthalten und sich lediglich in der Ergänzung unterscheiden; das wird als „abweichend, Kern gehalten" vermerkt, nicht als bestanden. Herleitung: `knowledge/08` Abschnitt 7.
+4. **Der Präfix-Test kostet keinen zweiten Lauf.** Die Endauswahl des Agenten gegen die ersten n aus derselben Suche vergleichen: ist sie das Präfix in genau dieser Reihenfolge, hat er die Trefferliste übernommen statt ausgewählt — eigene Meldung, kein Extralauf.
+5. **Der Aufwanddeckel aus `knowledge/07` C1(b) gilt auch hier:** wird ein Lauf länger als wenige Minuten Handarbeit, läuft er beim nächsten Modellwechsel nicht. Dann ist zuerst der schnellere Pfad zu bauen, nicht der Eval zu erweitern. Der Läufer gehört deshalb nicht ins CLI — das hat keine Abhängigkeiten und keinen Modellzugang, und der teure Teil wäre ohnehin der Modelllauf, nicht das Ablesen — sondern als Skill oder Subagent ins Harness, dessen Sitzung das Modell bereits hat.
 
 ### 4.2 Dateiformat und Ort
 
 `evals/routing.jsonl` — eine Zeile pro Fall, damit ein neuer Fall ein Einzeiler-Diff ist und ein Lauf zeilenweise über die Datei iterieren kann:
 
+Die tatsächlich umgesetzten Felder — `frage`, optional `typ` und `domaene`, `erwartet`, `verboten`, `topN` (Standard 5), `mindestens`/`maxTreffer`, `hoechstensSoVieleWie`, `optional`, `warum`; Zeilen mit `_kommentar` werden übersprungen:
+
 ```jsonl
-{"id":"deploy-bricht","stufe":1,"q":"deployment ci","flags":["--domain","devops"],"top":10,"must":["affaan-m__ecc/skill/deployment-patterns"],"verboten":[],"notiz":"Kern-Treffer für die Absicht 'ausliefern'"}
-{"id":"fremde-codebasis","stufe":1,"q":"codebase onboarding","top":10,"must":["msitarzewski__agency-agents/agent/codebase-onboarding-engineer","Egonex-AI__Understand-Anything/skill/understand-onboard"],"verboten":[],"notiz":"Absicht 'verstehen'"}
-{"id":"go-review","stufe":1,"q":"go code review","top":5,"must":["affaan-m__ecc/agent/go-reviewer"],"verboten":["affaan-m__ecc/agent/cpp-reviewer"],"notiz":"Trennschärfe-Test nach Mirajes report-html/report-pdf-Muster"}
-{"id":"keine-jp-stummel","stufe":1,"q":"production audit","top":10,"verboten":["affaan-m__ecc/skill/production-audit"],"must":[],"notiz":"Platzhalter darf nicht als Treffer erscheinen"}
-{"id":"deploy-klartext","stufe":2,"absicht":"Mein Deployment bricht seit dem Umzug auf Kubernetes.","must":["affaan-m__ecc/skill/kubernetes-patterns"],"notiz":"prüft harness-build, nicht den Katalog"}
+{"frage":"code review","erwartet":["affaan-m__ecc/agent/code-reviewer"],"topN":5,"warum":"Häufigster Einstieg überhaupt: Reviews übersehen dieselben Fehler"}
+{"frage":"code review","typ":"command","erwartet":["affaan-m__ecc/command/code-review"],"topN":3,"warum":"Gegenprobe zum Typfilter"}
+{"frage":"deployment patterns","erwartet":["affaan-m__ecc/skill/deployment-patterns"],"verboten":["AgriciDaniel__claude-seo/skill/seo-drift"],"topN":5,"warum":"Deployment bricht. Der SEO-Treffer auf Platz 2 belegt Domänenrauschen"}
+{"frage":"arbeitsvertrag","maxTreffer":0,"warum":"Rechts-Repo ist bulk und darf die Standardsuche nicht fluten"}
+{"frage":"code review","hoechstensSoVieleWie":"review","warum":"Zwei Wörter dürfen nie mehr Treffer liefern als eins"}
 ```
 
-Daneben `evals/README.md` mit dem Modellstand des letzten Stufe-2-Laufs — das ist die Versionierung gegen ein Modell, die Miraje meint, z. B.: *„Letzter Stufe-2-Lauf: 2026-08-07, `claude-opus-5[1m]`, 11/12 bestanden. Fehlgeschlagen: `review-qualität` (zog command statt agent)."*
+<!-- lint:historisch --> Die frühere Fassung dieses Abschnitts zeigte ein erfundenes Schema mit `id`, `stufe`, `q`, `flags`, `top`, `must` und `notiz` sowie einen Stufe-2-Fall mit `absicht`. Keines dieser Felder existiert im Code; `ladeEvalFaelle` reicht unbekannte Felder stillschweigend durch, und eine Zeile mit `absicht` statt `frage` wird heute zur Suche nach dem Literal „undefined". Der Altstand ist hier benannt, weil er als Fundstelle in mehreren Prüfberichten zitiert wurde; er ist damit erledigt (offener Rest von M10 in `knowledge/06`). Vor dem Bau von Stufe 2 braucht der Runner deshalb ein Feld, an dem er Stufe-2-Fälle erkennt und aussortiert.
 
-Ein Subcommand `harness.mjs eval [--stufe 1]` führt Stufe 1 aus und gibt eine Zeile pro Fall aus (`OK` / `FEHLT <id> auf Position n` / `VERBOTEN <id> auf Position n`) plus eine Bilanz. Exit-Code ≠ 0 bei Fehlschlägen, damit `/harness-update` daran hängen kann.
+Daneben `evals/README.md` mit dem Modellstand des letzten Stufe-2-Laufs — das ist die Versionierung gegen ein Modell, die Miraje meint, z. B.: *„Letzter Stufe-2-Lauf: 2026-08-07, `claude-opus-5[1m]`, 11/12 bestanden. Fehlgeschlagen: `review-qualität` (zog command statt agent)."* Diese Datei existiert bis heute nicht; `evals/` enthält nur `routing.jsonl`.
 
-**Umfang, der sich lohnt: 12–20 Fälle.** Einer pro Absicht aus Abschnitt 2.3, plus drei Trennschärfe-Fälle (`go-review`), plus zwei Negativ-Fälle gegen die bekannten Müll-Einträge. Mehr wird nicht gepflegt und verrottet.
+Der Subcommand `eval` führt Stufe 1 aus und gibt eine Zeile pro auffälligem Fall aus plus eine Bilanz, die bekannte Schwächen (`optional`) getrennt führt. Exit-Code ≠ 0 bei Fehlschlägen, damit `/harness-update` daran hängen kann — daran hängt es heute noch nicht, siehe `knowledge/06` M15.
+
+**Umfang, der sich lohnt: 12–20 Fälle.** Einer pro Absicht aus Abschnitt 2.3, plus drei Trennschärfe-Fälle, plus zwei Negativ-Fälle gegen die bekannten Müll-Einträge. Mehr wird nicht gepflegt und verrottet. Fälle aus einem echten `harness-build`-Lauf **ersetzen** konstruierte, sie kommen nicht dazu — zuerst die, deren Frage im Namen des erwarteten Bausteins steht und die deshalb nur prüfen, ob ein Substring-Matcher einen Substring findet.
 
 ### 4.3 Woran man Drift erkennt
 
 | Symptom im Eval-Lauf | Wahrscheinliche Ursache |
 |---|---|
-| Ein `must` fällt von Position 3 auf 14, sonst nichts | Katalog gewachsen — neue Konkurrenz aus einem der 13 Repos. Kein Handlungsbedarf, ausser `top` war zu grosszügig |
-| Mehrere `must` fallen gleichzeitig weg | Ein Repo hat umbenannt oder umsortiert. `CHANGELOG.md` prüfen |
-| `must` existiert gar nicht mehr | Baustein upstream gelöscht. Eval-Fall auf den Nachfolger umschreiben oder streichen — mit Notiz |
+| Ein `erwartet` fällt von Position 3 auf 14, sonst nichts | Katalog gewachsen — neue Konkurrenz aus einem der 13 Repos. Kein Handlungsbedarf, ausser `topN` war zu grosszügig |
+| Mehrere `erwartet` fallen gleichzeitig weg | Ein Repo hat umbenannt oder umsortiert. `CHANGELOG.md` prüfen |
+| `erwartet` existiert gar nicht mehr | Baustein upstream gelöscht. Eval-Fall auf den Nachfolger umschreiben oder streichen — mit Notiz |
+| Bestehensquote unverändert grün, erwartete IDs rutschen aber im Rang | Score-Gewichtung eingeebnet. `eval` misst heute nur, *ob* die ID unter `topN` steht, nicht *wo* — deshalb bleibt der Lauf grün. Die Rangverschiebung gegen den letzten grünen Lauf ist die dafür fehlende zweite Zahl (`knowledge/06` M7 Punkt 1, offen) |
+| Eval grün, aber ein echter Projektlauf wählte einen anderen Baustein als erwartet | Die Erwartung war falsch, nicht der Lauf. Ein Eval-Fall ist eine Vorhersage darüber, was ein Agent für diese Absicht finden *sollte*; geprüft wird er durch den Einsatz, nicht umgekehrt. `erwartet` auf den tatsächlich brauchbaren Baustein korrigieren oder den Fall auf `optional: true` setzen, `warum` trägt die Begründung. Nie den Projektlauf an den Eval anpassen |
 | Stufe 1 grün, Stufe 2 rot | **Das ist Mirajes Fall.** Der Katalog ist in Ordnung, das Modell folgt `harness-build/SKILL.md` nicht mehr. Skill-Datei prüfen: steht die kritische Anweisung weit hinten? |
 
-Der letzte Fall ist der einzige, den man ohne Eval niemals bemerkt — und der einzige, gegen den nur ein Modelllauf hilft.
+Der letzte Fall ist der einzige, den man ohne Eval niemals bemerkt — und der einzige, gegen den nur ein Modelllauf hilft. Die vorletzte Zeile ist die jüngste: Sie kam aus der Einsicht, dass auch die menschliche beziehungsweise handgeschriebene Referenz nicht die Wahrheit ist, sondern eine Vorhersage, die widerlegt werden kann (Anand: „They are not people, they are forecasts, and we should treat them accordingly", 18:29). Eine Änderung an einem Eval-Fall aus diesem Grund ist ein `revise`-Eintrag in `knowledge/LOG.md` — die Aktionsart verlangt dort ohnehin „woran der Irrtum bemerkt wurde", also den Verweis auf den Projektlauf.
 
 ---
 

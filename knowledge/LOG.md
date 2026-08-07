@@ -52,11 +52,94 @@ Format jedes Eintrags — die Kopfzeile ist bewusst maschinenlesbar, damit
 | `ingest` | Neues Wissen kommt herein: eine neue Datei, ein neuer Abschnitt, eine ausgewertete Rohquelle | Woher das Wissen stammt (Quelle mit Datum), welche Dateien entstanden oder gewachsen sind |
 | `lint` | Die Wissensbank wurde geprüft — maschinell über `node tools/harness.mjs lint` oder inhaltlich durch ein Modell | Anzahl und Schwere der Befunde vorher/nachher, was davon behoben wurde und was offen bleibt |
 | `revise` | Bestehendes Wissen wird korrigiert, ersetzt, umsortiert oder für verfallen erklärt | Was vorher galt, was jetzt gilt, und woran der Irrtum bemerkt wurde |
+| `add` | Ein Werkzeug der Bibliothek kommt hinzu, das selbst kein Wissen ist — ein Subagent, ein Skill, ein Verzeichnis | Was entsteht, wozu, und welche Zuständigkeit sich dadurch verschiebt |
+
+`add` fehlte in dieser Tabelle, obwohl unten bereits ein Eintrag damit
+überschrieben ist (`[2026-08-07] add | Zwei feste Subagenten ergänzt`). Der
+Widerspruch fiel auf, als eine Prüfung die Aktionsarten aufzählen sollte und
+`add` für definiert hielt. Nachgetragen statt den alten Eintrag umzuschreiben —
+diese Datei wird ergänzt, nicht korrigiert. Für **Wissen** bleibt `ingest` die
+richtige Aktion; `add` gilt ausschliesslich für Werkzeuge und Struktur.
+`cmdLint()` prüft die Kopfzeilen nicht gegen diese Tabelle, die Drift war also
+nicht maschinell zu bemerken.
 
 Eine Aktion pro Eintrag. Wer in einem Lauf einpflegt **und** prüft, schreibt
 zwei Einträge.
 
 ## Einträge
+
+## [2026-08-07] ingest | Fünf Vorträge zu Forward Deployed Engineering und simulationsbasiertem Prüfen ausgewertet — neues Kapitel `08`, sechs neue Maßnahmen, Korrekturen in fünf bestehenden Dateien
+
+**Woher das Wissen stammt.** Fünf Rohquellen unter `Learnings/`, alle Konferenzvorträge
+der AI-Engineer-Reihe, abgerufen und ausgewertet am 2026-08-07:
+
+| Titel | Sprecher | Veröffentlicht |
+|---|---|---|
+| AI tools for Forward Deployed Engineering | Vasuman Moza (CEO) und JD Pruitt (Head of Engineering), Varick Agents | 2026-07-28 |
+| How Forward Deployed Engineering is done at Cognition | Jia Rong Wu, Cognition (Devin) | 2026-07-28 |
+| How Forward Deployed Engineering is done at Factory | Eno Reyes, Factory (Droid) | 2026-07-29 |
+| Persona Engineering: A Field Guide to AI Synthetic Personas | Ishan Anand, Insight Sciences | 2026-07-29 |
+| SimulationMaxxing: How we ship agents 20x faster | Aman Gupta (Nubank) und Shreya Rajpal (Snowglobe) | 2026-07-29 |
+
+Damit ist der `lint`-Befund „5 Rohquelle(n) tauchen in keiner Wissensdatei auf"
+abgearbeitet — der einzige mittlere Befund, den der Lauf davor noch führte.
+
+**Was entstanden ist.** `knowledge/08-pruefbarkeit-und-pruefdaten.md`, 15 Abschnitte.
+Die Entscheidung für eine eigene Datei statt einer Erweiterung von `05` hat zwei Gründe:
+`05` ist ein geschlossenes Korpus von neun namentlich gezählten Vorträgen — Titel,
+Abstract und drei seiner fünf Abschnitte nennen die Zahl, eine Erweiterung hätte die
+Identität der Datei umgeschrieben. Und die fünf neuen Quellen teilen ein Thema, das die
+neun alten nicht haben: Arbeit am fremden, laufenden System, und daraus abgeleitet
+Prüfbarkeit als Grenze der Automatisierung. Gegen die Gefahr eines zweiten Namensraums —
+der Fehler, der zu den zwei widersprechenden M1–M12-Listen geführt hat — vergibt `08`
+ausdrücklich keine M-Nummern und keine Spezifikation: Belege und Befunde stehen dort,
+die Eval-Spezifikation bleibt in `04` Abschnitt 4, die Maßnahmen in `06`. Jeder Abschnitt
+nennt die Stelle, die er erweitert oder begrenzt.
+
+**Was in bestehende Dateien eingearbeitet wurde** — der Regelfall, nicht die neue Datei:
+
+- `01-harness-doktrin.md`, Abschnitt 2: Zweitbeleg aus fremder Praxis für die Position
+  von Stufe 2 (Reyes, „agent readiness"), mit ausdrücklich begrenztem Geltungsbereich —
+  er stützt Stufe 2 vor Stufe 3 und sagt nichts über Stufe 3 bis 6.
+- `01`, Anhang A: zwei Symptom-Zeilen. Die zweite („Analyse bleibt ausufernd, auch nachdem
+  der Kontext gekürzt wurde") ist ein **Nicht**-Symptom dieses Kapitels und die eigentlich
+  neue Information: Ausschweifung überlebt jede Kontextkürzung.
+- `02-bausteine.md`, 2.4: „Ein Hook startet keinen Agenten." Alle Hook-Ereignisse setzen
+  eine laufende Sitzung voraus, auch `SessionStart`; was von aussen startet, ist kein
+  Baustein dieser Bibliothek. Dazu die zweite Verwechslung: eine Description, die ein Gate
+  ankündigt, macht ohne Skript im Paket noch keinen Hook.
+- `04-governance.md`, 4.1: fünf Bauvorgaben für Stufe 2 und die Trennung der beiden
+  Hälften (Kontext finden gegen aus ihm schreiben).
+- `04`, 4.2: das erfundene Feldschema (`must`, `top`, `q`, `stufe`, `flags`, `notiz`)
+  durch die tatsächlichen Felder ersetzt und der Altstand mit `lint:historisch` samt
+  Begründung markiert — das war der offene Rest von M10.
+- `04`, 4.3: zwei neue Drift-Zeilen. Die wichtigere: Ein Eval-Fall ist eine Vorhersage,
+  kein Urteil — widerlegt ihn ein echter Projektlauf, wird der Eval korrigiert, nie der
+  Lauf.
+- `07-projekt-mit-ai-aufsetzen.md`: A1 bekommt den Vorbedingungssatz (das Kriterium ist
+  die billigere Hälfte, die Umgebung die teurere) und Reyes als eng begrenzten
+  Zweitbeleg; A2 bekommt die Regel „nimm eine Kennzahl, die das Projekt ohnehin führt";
+  Abschnitt 7.7 die Frage nach dem Auslöser im Zielprojekt.
+- `06-massnahmen.md`: M7 um zwei Punkte und drei Begründungsabsätze erweitert, M11 um
+  Punkt 7 (Voraussetzungen einzelner Kern-Set-Bausteine), sechs neue Maßnahmen M13–M18,
+  und 17 neue Zeilen in „Bewusst nicht umgesetzt".
+
+**Was ausdrücklich nicht übernommen wurde.** 19 Vorschläge, jeder mit Grund, in `08`
+Abschnitt 14 und in `06` „Bewusst nicht umgesetzt". Die drei folgenreichsten: keine der
+Kernzahlen dieser fünf Vorträge ist als Beleg verwendbar (alle aus anonymisierten
+Fallstudien ohne Methodenteil oder mit „maybe" gehedgt); kein Pflichtfeld `herkunft` je
+Eval-Fall, weil es mangels Anfragenprotokoll nicht belegbar und praktisch konstant wäre;
+und `/harness-plan` wird **kein** Pflichtschritt vor `/harness-build`.
+
+**Was offen bleibt.** M13–M18 sind Vorschläge, keine Umsetzungen — sie fassen
+`harness-build/SKILL.md`, `harness-plan/SKILL.md`, `werkzeug-aenderer.md` und drei
+CLI-Funktionen an und gehören an den `werkzeug-aenderer` beziehungsweise an einen
+gesonderten Lauf. In diesem Lauf wurde an `tools/harness.mjs` nichts geändert.
+
+**Belegt durch.** `node tools/harness.mjs lint` vor dem Lauf: 1 Befund mittel (die fünf
+Rohquellen), 0 hoch. Nach dem Lauf: 0 Befunde, Exit-Code 0. `node tools/harness.mjs eval`
+unverändert 12 von 12 Pflichtfällen bestanden. Alle in diesem Lauf neu genannten
+Baustein-IDs vor dem Schreiben mit `show` verifiziert.
 
 ## [2026-08-07] revise | Einstiegspunkt für fremde Agenten: `INDEX.md` trägt jetzt Orientierung statt nur Bestand, die Befehlsliste wird aus dem Dispatcher gelesen
 

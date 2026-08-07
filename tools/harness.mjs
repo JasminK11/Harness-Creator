@@ -1570,6 +1570,9 @@ function cmdInstall(argv) {
       console.log(`  Regelblock: ${path.relative(target, cf).split(path.sep).join("/")}`);
     }
   }
+
+  // Zum Schluss: Was ist im Zielprojekt sonst noch passiert? Siehe meldeSchaden().
+  meldeSchaden(target);
 }
 
 /**
@@ -1717,6 +1720,10 @@ function cmdUninstall(argv) {
     const cf = writeClaudeMd(target, rest, doc.catalogGeneratedAt);
     console.log(`  Regelblock: ${path.relative(target, cf).split(path.sep).join("/")}`);
   }
+
+  // Gerade nach einem Rückbau ist die Frage berechtigt, ob mehr verschwunden ist
+  // als beabsichtigt.
+  meldeSchaden(target);
 }
 
 /**
@@ -1770,6 +1777,11 @@ function cmdBootstrap(argv) {
       console.log("  /harness-build — passende Bausteine auswählen und installieren");
     }
   }
+
+  // `bootstrap` ist meist der erste Befehl in einem fremden Projekt — also die
+  // beste Gelegenheit, auf Verschwundenes hinzuweisen, solange es noch jemand
+  // rückgängig machen kann. Siehe meldeSchaden().
+  meldeSchaden(target);
 }
 
 // ---------------------------------------------------------------- knowledge
@@ -1893,6 +1905,62 @@ function cmdKnowledge(argv) {
     console.log(`Weitere ${found.length - limit} Abschnitte:`);
     for (const { s } of found.slice(limit, limit + 10)) console.log(`  ${s.file} — ${s.title}`);
   }
+}
+
+// ---------------------------------------------------------------- schaden
+
+/**
+ * Meldet, was im Zielprojekt verschwunden oder verändert wurde.
+ *
+ * Warum das im Werkzeug steht und nicht in einer Anweisung: Beim Ausstatten eines
+ * echten Projekts wurden vier Dateien des Besitzers gelöscht — `.claude/commands/`
+ * und `settings.local.json` — obwohl der Auftrag ausdrücklich verbot, zu löschen,
+ * was man nicht selbst angelegt hat. Kein Bericht erwähnte es. Aufgefallen ist es
+ * nur, weil jemand `git status` gegen den Endzustand hielt statt den Meldungen zu
+ * glauben.
+ *
+ * Eine Anweisung wird befolgt, bis sie unbequem wird. Was nicht verhandelbar ist,
+ * gehört deshalb nicht ins Modell, sondern in den Ablauf.
+ *
+ * Läuft nur, wenn das Ziel ein Git-Repository ist — sonst gibt es keinen Bezugspunkt.
+ */
+function meldeSchaden(target, { still = false } = {}) {
+  let status;
+  try {
+    status = execFileSync("git", ["-C", target, "status", "--porcelain"], {
+      encoding: "utf8", stdio: ["ignore", "pipe", "pipe"],
+    });
+  } catch {
+    return { pruefbar: false, geloescht: [], geaendert: [] };
+  }
+
+  const geloescht = [], geaendert = [];
+  for (const zeile of status.split(/\r?\n/)) {
+    if (!zeile.trim()) continue;
+    const marke = zeile.slice(0, 2);
+    const datei = zeile.slice(3).trim();
+    if (/D/.test(marke)) geloescht.push(datei);
+    else if (/M/.test(marke)) geaendert.push(datei);
+  }
+
+  if (!still && (geloescht.length || geaendert.length)) {
+    console.log("");
+    if (geloescht.length) {
+      console.log(`  ACHTUNG — ${geloescht.length} Datei(en) fehlen gegenüber dem letzten Commit:`);
+      for (const d of geloescht.slice(0, 12)) console.log(`      ${d}`);
+      if (geloescht.length > 12) console.log(`      ... ${geloescht.length - 12} weitere`);
+      console.log(`  Wiederherstellen mit:  git -C "${target}" checkout HEAD -- <datei>`);
+      console.log("");
+    }
+    if (geaendert.length) {
+      console.log(`  ${geaendert.length} Datei(en) geändert (nicht von install angelegt):`);
+      for (const d of geaendert.slice(0, 8)) console.log(`      ${d}`);
+      if (geaendert.length > 8) console.log(`      ... ${geaendert.length - 8} weitere`);
+      console.log(`  Ansehen mit:  git -C "${target}" diff`);
+    }
+    console.log("");
+  }
+  return { pruefbar: true, geloescht, geaendert };
 }
 
 // ---------------------------------------------------------------- eval

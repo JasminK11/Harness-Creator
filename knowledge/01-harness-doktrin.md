@@ -132,6 +132,9 @@ Das Harness war "over 20x more expensive" ([Harness design](https://www.anthropi
 
 Springe nie direkt auf Stufe 5. Wenn du auf Stufe 5 landest, musst du sagen können, welches Symptom dich auf Stufe 4 gezwungen hat.
 
+**Zweitbeleg für die Position von Stufe 2, aus fremder Praxis.** Eno Reyes (Factory) misst die „agent readiness" einer Codebasis als Anzahl der vorhandenen deterministischen Prüfschleifen — Linter, Typechecker, Security-Scans, End-to-End-Tests — und leitet daraus ab: „the quality of the output of these very long-running harnesses of advanced agents is directly proportional to the degree to which you can validate their work" (13:00), sowie als Ratschlag an Kunden „Less so solving the problem, more so preparing the environment for verification of the problem" (15:33).
+**Geltungsbereich.** Die Aussage betrifft die Prüfinfrastruktur des **Zielprojekts**, nicht die Eskalationsstufen des Harness. Sie stützt, dass Stufe 2 vor Stufe 3 kommt, und sagt nichts über Stufe 3 bis 6. Sie ist Praxisbeobachtung eines Anbieters mit Produktinteresse, ohne veröffentlichte Zahlen. Reyes' eigene Begründung über dichte Belohnung im Post-Training fällt unter den in `knowledge/05` Abschnitt 3 verworfenen Trainingsstrang und wird nicht übernommen. Bemerkenswert ist die Gegenprobe, die er selbst liefert: für Bereiche ohne Validator bleibt auch bei ihm die Autonomie aus — „we do not yet have validators that can validate some of the hard visual problems … So, we're unable to close the loop" (19:01). Herleitung und Grenzen: `knowledge/08` Abschnitte 1 und 2.
+
 ---
 
 ## 3. Die Modellschwächen, gegen die ein Harness arbeitet
@@ -398,6 +401,10 @@ Nachschlagewerk für den laufenden Betrieb: Du beobachtest ein Verhalten, du suc
 | Kosten explodieren, Ergebnis wird nicht besser | Komponenten ohne Wirkung | Load-Bearing-Test, eine Komponente pro Lauf entfernen | 7.1 |
 | Agent bricht Aufgaben ab, weil ein Tool fehlt oder unklar dokumentiert ist | schwaches Agent-Computer-Interface | Tool-Beschreibungen überarbeiten und testen | 8 (Prinzip 3) |
 | Parallele Subagents erzeugen widersprüchliche Änderungen | Teilaufgaben waren nicht unabhängig | sequenziell ausführen; Parallelität nur bei echter Unabhängigkeit | 8 (Zusatzregel) |
+| Analyse ist inhaltlich falsch, obwohl das Material vollständig übergeben wurde | zu viel Rohmaterial in einem Aufruf; Entitäten falsch aufgelöst | verdichtete Sicht vorschalten, nicht den Prompt verlängern | 3.1 / `07` B3 |
+| Analyse bleibt ausufernd, auch nachdem der Kontext gekürzt wurde | keine Kontextfrage — das Modell gewichtet Detail nicht | weiteres Kürzen hilft nachweislich nicht; Umfang an anderer Stelle begrenzen | `08` 3 |
+
+Die letzte Zeile ist die einzige in dieser Tabelle, die auf ein **Nicht**-Symptom dieses Kapitels zeigt: Ausschweifung überlebt jede Kontextkürzung, weil sie keine Mengenfrage ist. Wer sie als Context Rot behandelt, kürzt vergeblich weiter.
 | Neue Modellversion, Ergebnisse unverändert oder schlechter | veraltete Zwangsstruktur | Sprints/Chunking zuerst streichen, dann Zwischen-Evaluatoren | 7.2 |
 
 ## 10. Anhang B — Kurzform der Doktrin
