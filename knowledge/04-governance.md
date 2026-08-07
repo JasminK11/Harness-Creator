@@ -20,11 +20,7 @@ Miraje nennt drei Regime:
 | ab ~10 | Vorauswahl per Embeddings/Similarity oder kleinem Vorfilter-Modell | überschritten |
 | ab ~100 | Hierarchie, Metadaten-Filter, **Governance** | 1.050 — Faktor 10 darüber |
 
-**Die Architektur ist in Ordnung.** Wir haben genau das, was das dritte Regime verlangt:
-
-- Hierarchie: `INDEX.md` (Ebene 1, 4,7 KB) → `catalog/by-domain/*.md` (Ebene 2) → `search`/`show` (Ebene 3).
-- Metadaten-Filter: `--type`, `--domain`, `--repo`, `--limit`.
-- Ein Mengen-Ventil: `!bulk` in `sources.txt` blendet 24.543 Rechts-Bausteine aus der Standardsuche aus. Ohne das wären wir bei 25.593 und jede Suche wertlos.
+**Die Architektur ist in Ordnung.** Wir haben genau das, was das dritte Regime verlangt: Hierarchie (`INDEX.md` mit 4,7 KB → `catalog/by-domain/*.md` → `search`/`show`), Metadaten-Filter (`--type`, `--domain`, `--repo`, `--limit`) und ein Mengen-Ventil (`!bulk` in `sources.txt` hält 24.543 Rechts-Bausteine aus der Standardsuche; ohne das wären wir bei 25.593 und jede Suche wertlos).
 
 **Die Governance fehlt vollständig.** Kein Admission-Gate, keine Ownership, keine Boundaries, keine Lifecycle-Policy, keine Audits. Genau die Dimension, die Miraje ab 100 fordert, ist bei uns die einzige, die wir nie gebaut haben.
 
@@ -71,11 +67,11 @@ node tools/harness.mjs show affaan-m__ecc/skill/production-audit
 
 Ein Production-Audit-Skill in der Domäne `docs` — und die Beschreibung sagt übersetzt „für diese Datei wird noch eine japanische Übersetzung benötigt". Das ist kein Baustein, das ist ein Platzhalter.
 
-**Ein Wort im Fliesstext kippt die Domäne.** `affaan-m__ecc/skill/competitive-platform-analysis` — Wettbewerbsanalyse, zwei Dateien — liegt in `devops, product`. `devops`, weil in der Description der Satz „First step in the three-skill competitive **pipeline**" steht. Ebenso `competitive-report-structure`.
+**Ein einzelnes Wort im Fliesstext kippt die Domäne.** Drei Fälle aus derselben Suche:
 
-**`e2e-testing` liegt in `data-ai`** — wegen „Page Object **Model**". Die `data-ai`-Regex enthält `model`.
-
-**`inherit-legacy-style` liegt in `data-ai`** — wegen „onboarding an AI coding **agent** onto a legacy project". Die `data-ai`-Regex enthält `agent`. Ein Skill zum Übernehmen fremder Code-Konventionen ist damit weder in `docs` noch in einer Onboarding-Kategorie zu finden.
+- `competitive-platform-analysis` (Wettbewerbsanalyse) liegt in `devops` — wegen des Satzes „First step in the three-skill competitive **pipeline**". Ebenso `competitive-report-structure`.
+- `e2e-testing` liegt in `data-ai` — wegen „Page Object **Model**"; die `data-ai`-Regex enthält `model`.
+- `inherit-legacy-style` liegt in `data-ai` — wegen „onboarding an AI coding **agent** onto a legacy project". Ein Skill zum Übernehmen fremder Code-Konventionen ist damit weder in `docs` noch in einer Onboarding-Kategorie auffindbar.
 
 **`react-reviewer` liegt in fünf Domänen gleichzeitig:** `security, frontend, backend, meta, media`. `meta` wegen „**hook** correctness", `media` wegen „**render** performance", `backend` wegen „**server**/client component boundaries". Ein Baustein, der in fünf von zwölf Domänen auftaucht, filtert nichts mehr.
 
@@ -163,17 +159,14 @@ Mirajes Regel: `name` und `description` sind **Routing-Signale**. Die Descriptio
 
 | Baustein | Was es richtig macht |
 |---|---|
-| `affaan-m__ecc/skill/cpp-testing` | „**Use only when** writing/updating/fixing C++ tests, configuring GoogleTest/CTest, diagnosing failing or flaky tests" — Situation, Triggerwort *C++*, und eine ausdrückliche Obergrenze |
-| `affaan-m__ecc/skill/python-testing` | „**Use when** writing or improving Python tests" |
-| `affaan-m__ecc/agent/cpp-reviewer` | „Use for all C++ code changes. MUST BE USED for C++ projects" — trennscharf zu `go-reviewer` über ein Wort |
-| `affaan-m__ecc/agent/go-reviewer` | dieselbe Schablone, Triggerwort *Go* |
+| `affaan-m__ecc/skill/cpp-testing` | „**Use only when** writing/updating/fixing C++ tests, configuring GoogleTest/CTest, diagnosing failing or flaky tests" — Situation, Triggerwort *C++*, und eine ausdrückliche Obergrenze. Bestes Beispiel im Bestand |
 | `anthropics__skills/skill/canvas-design` | „**You should use this skill when the user asks to** create a poster…" — wörtlich die Nutzeranfrage |
-| `anthropics__skills/skill/brand-guidelines` | „**Use it when** …" plus Objektbezug („any artifact") |
 | `nextlevelbuilder/agent/design-review` | „Use PROACTIVELY **after any front-end change and before calling UI work complete**" — Zeitpunkt statt Thema |
+| `affaan-m__ecc/agent/cpp-reviewer` · `agent/go-reviewer` | identische Schablone, trennscharf allein über das Sprachwort |
 | `affaan-m__ecc/skill/inherit-legacy-style` | „Use when the user types `/inherit-legacy-style`, or when onboarding an AI coding agent onto a legacy project" |
+| `affaan-m__ecc/skill/python-testing` · `anthropics/skill/brand-guidelines` | „Use when writing or improving Python tests" bzw. „Use it when …" |
+| `Egonex-AI/skill/understand-chat` · `skill/understand-explain` | beide „Use when you need …" — richtig gebaut, aber untereinander kaum trennbar |
 | `affaan-m__ecc/agent/code-reviewer` | „Use immediately after writing or modifying code" — richtig gebaut, aber siehe C |
-| `Egonex-AI/skill/understand-chat` | „Use when you need to ask questions about a codebase" |
-| `Egonex-AI/skill/understand-explain` | „Use when you need a deep-dive explanation of a specific file" |
 
 **Kategorie B — beschreibt nur sich selbst (7 von 25):**
 
@@ -433,23 +426,8 @@ Empfohlene Reihenfolge: **M1 → M3 → M6 → M2** (ein halber Tag, beseitigt d
 
 **CLI-Läufe, aus denen die Zahlen stammen** (alle 2026-08-07, Katalogstand 2026-08-07 08:38):
 
-```bash
-node tools/harness.mjs stats
-node tools/harness.mjs search "ja-jp"                      # 163
-node tools/harness.mjs search "ja-jp" --domain docs        # 163
-node tools/harness.mjs search "日本語翻訳"                   #  25
-node tools/harness.mjs search "usr/bin/env"                #  68
-node tools/harness.mjs search "" --type hook --domain meta #  69
-node tools/harness.mjs search "code review"                # 231
-node tools/harness.mjs search "api design"                 # 184
-node tools/harness.mjs search "security audit"             # 120
-node tools/harness.mjs search "review"                     # 107
-node tools/harness.mjs search "refactor"                   #  15
-node tools/harness.mjs search "documentation"              #   8
-node tools/harness.mjs show affaan-m__ecc/skill/production-audit
-node tools/harness.mjs show affaan-m__ecc/skill/python-testing
-node tools/harness.mjs show affaan-m__ecc/skill/competitive-platform-analysis
-node tools/harness.mjs show multica-ai__multica/hook/use-auto-scroll
-```
+- `stats`
+- `search` mit: `ja-jp` (163) · `ja-jp --domain docs` (163) · `日本語翻訳` (25) · `usr/bin/env` (68) · `"" --type hook --domain meta` (69) · `code review` (231) · `api design` (184) · `security audit` (120) · `review` (107) · `refactor` (15) · `documentation` (8) · `"" --repo` für multica, mattpocock, anthropics, nextlevelbuilder, msitarzewski
+- `show` für: `affaan-m__ecc/skill/production-audit`, `affaan-m__ecc/skill/python-testing`, `affaan-m__ecc/skill/competitive-platform-analysis`, `multica-ai__multica/hook/use-auto-scroll`
 
 **Nicht verifiziert / Vermutung:** Die Zahl „rund 230 Bausteine ohne brauchbare Description" (Abschnitt 3.2) ist die Summe aus 68 Shebang-Treffern und 163 `ja-jp`-Treffern abzüglich einer geschätzten Überschneidung; sie wurde nicht mengenmässig disjunkt gezählt, weil `catalog/index.json` per Regel nicht gelesen werden darf. Die Werte in der Hygiene-Tabelle (Abschnitt 5.5) für „mehr als 3 Domänen" und „Namensdubletten" sind offen — sie lassen sich erst mit M11 erheben. Die Aussage zur `walk`-Reihenfolge in Abschnitt 5.1 (alphabetisch, `docs/` vor `skills/`) ist aus dem beobachteten Ergebnis erschlossen (`production-audit` löst auf `docs/ja-JP/…` auf, `python-testing` auf `.kiro/skills/…`), nicht aus einem Testlauf mit protokollierter Verzeichnisreihenfolge.
