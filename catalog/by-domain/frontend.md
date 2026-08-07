@@ -1,6 +1,6 @@
 # Domäne: frontend
 
-96 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+74 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (18)
 
@@ -39,36 +39,11 @@
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-plan` | Generate a concrete design system (tokens, style, type, UX) before building UI | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-review` | Run the 7-phase design review (WCAG AA, responsive, interaction) on a page or URL | 1 |
 
-## hook (26)
+## hook (1)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/design-quality-check` | !/usr/bin/env node | 4 |
-| `Egonex-AI__Understand-Anything/hook/useismobile` | — | 1 |
-| `Egonex-AI__Understand-Anything/hook/usekeyboardshortcuts` | Prevent shortcuts from firing when typing in input fields | 3 |
-| `multica-ai__multica/hook/use-attachment-html-text` | 413 / 415 won't become 200 on retry; a transport error is easier to | 1 |
-| `multica-ai__multica/hook/use-auto-scroll` | Re-running the initial scroll-to-bottom on every effect mount would | 2 |
-| `multica-ai__multica/hook/use-can-edit-skill` | — | 2 |
-| `multica-ai__multica/hook/use-comment-trigger-preview` | Explicit @agent / @squad mentions that will NOT trigger if posted as-is | 4 |
-| `multica-ai__multica/hook/use-comment-trigger-preview-test` | Cached agents render immediately for the repeated signature (no | 10 |
-| `multica-ai__multica/hook/use-document-title` | — | 1 |
-| `multica-ai__multica/hook/use-file-upload` | Carries the full Attachment so editors that need preview metadata | 7 |
-| `multica-ai__multica/hook/use-file-upload-test` | MUL-3192 — verifies that the URL chosen for markdown persistence is | 8 |
-| `multica-ai__multica/hook/use-in-page-find` | --------------------------------------------------------------------------- | 12 |
-| `multica-ai__multica/hook/use-in-page-find-test` | Text nodes: "foo ", "bar", " foobar". "foo" hits the first and third, | 5 |
-| `multica-ai__multica/hook/use-inline-media-url` | Keep refetches well inside the server's signed-URL TTL (30 min default, | 6 |
-| `multica-ai__multica/hook/use-issue-detail-scroll-restore` | A virtualized timeline initializes after the parent's layout effect and | 3 |
-| `multica-ai__multica/hook/use-issue-reactions` | Reconnect recovery | 4 |
-| `multica-ai__multica/hook/use-issue-subscribers` | Imported from the defining module, not the "@multica/core/api" barrel: the | 9 |
-| `multica-ai__multica/hook/use-issue-timeline` | Stable mutation handles. TanStack v5 returns a fresh result wrapper from | 16 |
-| `multica-ai__multica/hook/use-issue-trigger-preview` | Keep the prior verdict visible while a new signature (assignee/status | 4 |
-| `multica-ai__multica/hook/use-mobile` | Tailwind `lg`. Below it a 256px nav plus a 320px list column leave a | 1 |
-| `multica-ai__multica/hook/use-quick-action-menu` | The extension reads through a getter on every keystroke; a ref keeps that | 3 |
-| `multica-ai__multica/hook/use-resolve-issue-identifier` | — | 1 |
-| `multica-ai__multica/hook/use-scroll-fade` | ResizeObserver only fires on the container's own box. When children | 3 |
-| `multica-ai__multica/hook/use-sticky-composer` | — | 1 |
-| `multica-ai__multica/hook/use-tab-history` | — | 1 |
-| `multica-ai__multica/hook/use-zoom-canvas` | Fit is deferred until both sizes are known; until then any transform we | 16 |
 
 ## plugin (1)
 
@@ -76,37 +51,40 @@
 |---|---|---:|
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (42)
+## skill (45)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/angular-developer` | Angular コードを生成し、アーキテクチャ ガイダンスを提供します。プロジェクトの作成、コンポーネント、またはサービスを作成するとき、または反応性（シグナル、linkedSignal、リソース）、フォーム、依存性注入、ルーティング、SSR、アクセシビリテ… | 16 |
+| `affaan-m__ecc/skill/angular-developer` | Generates Angular code and provides architectural guidance. Trigger when creating projects, components, or services, or for best … | 128 |
 | `affaan-m__ecc/skill/backend-patterns` | Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.j… | 14 |
 | `affaan-m__ecc/skill/blender-motion-state-inspection` | Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model… | 8 |
-| `affaan-m__ecc/skill/browser-qa` | このスキルを使用して、機能をデプロイ後にブラウザ自動化を使用した自動ビジュアルテストとUI相互作用検証を自動化します。 | 3 |
-| `affaan-m__ecc/skill/click-path-audit` | ユーザー向けボタン/タッチポイントを完全な状態変更シーケンスを通して追跡し、機能が個別に機能するが互いにキャンセルされたり、間違った最終状態を生成したり、UIを矛盾した状態にしたままにするバグを見つけます。次の場合に使用します：体系的なデバッグがバグを見つけ… | 4 |
+| `affaan-m__ecc/skill/browser-qa` | Use this skill to automate visual testing and UI interaction verification using browser automation after deploying features. | 4 |
+| `affaan-m__ecc/skill/click-path-audit` | Trace every user-facing button/touchpoint through its full state change sequence to find bugs where functions individually work b… | 8 |
 | `affaan-m__ecc/skill/coding-standards` | Baseline cross-project coding conventions for naming, readability, immutability, and code-quality review. Use detailed frontend o… | 13 |
-| `affaan-m__ecc/skill/compose-multiplatform-patterns` | KMPプロジェクト向けのCompose MultiplatformおよびJetpack Composeパターン — 状態管理、ナビゲーション、テーマ設定、パフォーマンス、プラットフォーム固有のUI。 | 9 |
+| `affaan-m__ecc/skill/compose-multiplatform-patterns` | Compose Multiplatform and Jetpack Compose patterns for KMP projects — state management, navigation, theming, performance, and pla… | 8 |
 | `affaan-m__ecc/skill/documentation-lookup` | Use up-to-date library and framework docs via Context7 MCP instead of training data. Activates for setup questions, API reference… | 5 |
 | `affaan-m__ecc/skill/frontend-a11y` | > Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus manage… | 12 |
-| `affaan-m__ecc/skill/frontend-design-direction` | フロントエンド設計の方向性、美的原則、および一貫した設計言語実装。 | 4 |
+| `affaan-m__ecc/skill/frontend-design-direction` | Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applic… | 4 |
 | `affaan-m__ecc/skill/frontend-patterns` | Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices. | 16 |
 | `affaan-m__ecc/skill/frontend-slides` | Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to bui… | 16 |
-| `affaan-m__ecc/skill/motion-advanced` | 日本語翻訳：このファイルは motion-advanced 用の日本語翻訳が必要です | 1 |
-| `affaan-m__ecc/skill/motion-foundations` | 日本語翻訳：このファイルは motion-foundations 用の日本語翻訳が必要です | 1 |
-| `affaan-m__ecc/skill/motion-patterns` | 日本語翻訳：このファイルは motion-patterns 用の日本語翻訳が必要です | 1 |
-| `affaan-m__ecc/skill/motion-ui` | 日本語翻訳：このファイルは motion-ui 用の日本語翻訳が必要です | 1 |
+| `affaan-m__ecc/skill/healthcare-emr-patterns` | EMR/EHR development patterns for healthcare applications. Clinical safety, encounter workflows, prescription generation, clinical… | 6 |
+| `affaan-m__ecc/skill/liquid-glass-design` | iOS 26 Liquid Glass design system — dynamic glass material with blur, reflection, and interactive morphing for SwiftUI, UIKit, an… | 9 |
+| `affaan-m__ecc/skill/make-interfaces-feel-better` | Apply concrete design-engineering details that make interfaces feel polished. Use when reviewing or improving UI spacing, typogra… | 5 |
+| `affaan-m__ecc/skill/motion-advanced` | Advanced motion patterns for React / Next.js — drag & drop, gestures, text animations, SVG path drawing, custom hooks, imperative… | 18 |
+| `affaan-m__ecc/skill/motion-foundations` | Motion tokens, spring presets, performance rules, device adaptation, accessibility enforcement, and SSR safety for React / Next.j… | 9 |
+| `affaan-m__ecc/skill/motion-patterns` | Production-ready animation patterns for React / Next.js — button, modal, toast, stagger, page transitions, exit animations, scrol… | 13 |
+| `affaan-m__ecc/skill/motion-ui` | Production-ready UI motion system for React/Next.js. Use when implementing animations, transitions, or motion patterns. | 14 |
 | `affaan-m__ecc/skill/nextjs-turbopack` | Next.js 16+ and Turbopack — incremental bundling, FS caching, dev speed, and when to use Turbopack vs webpack. | 2 |
-| `affaan-m__ecc/skill/nuxt4-patterns` | ハイドレーション安全性、パフォーマンス、ルートルール、遅延ロード、useFetchとuseAsyncDataを使ったSSR安全なデータフェッチングのためのNuxt 4アプリパターン。 | 7 |
+| `affaan-m__ecc/skill/nuxt4-patterns` | Nuxt 4 app patterns for hydration safety, performance, route rules, lazy loading, and SSR-safe data fetching with useFetch and us… | 5 |
 | `affaan-m__ecc/skill/react-native-patterns` | React Native and Expo app patterns — Expo Router navigation, state separation (server/client/route/form), TanStack Query data fet… | 11 |
 | `affaan-m__ecc/skill/react-patterns` | React 18/19 patterns including hooks discipline, server/client component boundaries, Suspense + error boundaries, form actions, d… | 11 |
 | `affaan-m__ecc/skill/react-performance` | React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/ve… | 18 |
 | `affaan-m__ecc/skill/react-testing` | React component testing with React Testing Library, Vitest/Jest, MSW for network mocking, accessibility assertions with axe, and … | 13 |
-| `affaan-m__ecc/skill/remotion-video-creation` | Remotion のベストプラクティス - React で動画を作成する。3D、アニメーション、音声、字幕、チャート、トランジションなどをカバーするドメイン固有の29のルール。 | 4 |
-| `affaan-m__ecc/skill/swiftui-patterns` | @Observableを使用した状態管理、ビュー合成、ナビゲーション、パフォーマンス最適化、モダンなiOS/macOS UIのベストプラクティスを備えたSwiftUIアーキテクチャパターン。 | 8 |
+| `affaan-m__ecc/skill/remotion-video-creation` | Best practices for Remotion - Video creation in React. 29 domain-specific rules covering 3D, animations, audio, captions, charts,… | 76 |
+| `affaan-m__ecc/skill/swiftui-patterns` | SwiftUI architecture patterns, state management with @Observable, view composition, navigation, performance optimization, and mod… | 7 |
 | `affaan-m__ecc/skill/taste` | A creative-direction (taste) layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop visual family… | 20 |
-| `affaan-m__ecc/skill/ui-demo` | Playwrightを使用して美しいUIデモ動画を録画する。ユーザーがWebアプリのデモ、ウォークスルー、スクリーン録画、またはチュートリアル動画の作成を求める場合に使用する。可視カーソル、自然なリズム、プロフェッショナルな仕上がりのWebM動画を生成する。 | 18 |
-| `affaan-m__ecc/skill/ui-to-vue` | UIスクリーンショットやデザインエクスポートをVue 3コンポーネントに一括変換する際に使用。Vant、Element Plus、Ant Design Vueに対応。 | 6 |
+| `affaan-m__ecc/skill/ui-demo` | Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutor… | 15 |
+| `affaan-m__ecc/skill/ui-to-vue` | Use when the user has UI screenshots or design exports that need batch conversion into Vue 3 components, especially with Vant, El… | 5 |
 | `affaan-m__ecc/skill/vue-patterns` | Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigati… | 13 |
 | `affaan-m__ecc/skill/windows-desktop-e2e` | E2E testing for Windows native desktop apps (WPF, WinForms, Win32/MFC, Qt) using pywinauto and Windows UI Automation. | 30 |
 | `anthropics__skills/skill/frontend-design` | Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direc… | 18 |

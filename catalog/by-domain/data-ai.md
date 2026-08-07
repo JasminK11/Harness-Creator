@@ -1,8 +1,8 @@
 # Domäne: data-ai
 
-144 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+159 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (50)
+## agent (51)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -17,6 +17,7 @@
 | `affaan-m__ecc/agent/loop-operator` | Operate autonomous agent loops, monitor progress, and intervene safely when loops stall. | 1 |
 | `affaan-m__ecc/agent/marketing-agent` | Marketing strategist and copywriter for campaign planning, audience research, positioning, copy creation, and content review. Cov… | 7 |
 | `affaan-m__ecc/agent/mle-reviewer` | Production machine-learning engineering reviewer for data contracts, feature pipelines, training reproducibility, offline/online … | 5 |
+| `affaan-m__ecc/agent/observer` | Background agent that analyzes session observations to detect patterns and create instincts. Uses Haiku for cost-efficiency. v2.1… | 7 |
 | `affaan-m__ecc/agent/pytorch-build-resolver` | PyTorch runtime, CUDA, and training error resolution specialist. Fixes tensor shape mismatches, device errors, gradient issues, D… | 5 |
 | `AgriciDaniel__claude-seo/agent/seo-drift` | > SEO drift analysis agent. Captures baselines of SEO-critical page elements and compares against stored snapshots to detect regr… | 3 |
 | `AgriciDaniel__claude-seo/agent/seo-flow` | FLOW framework prompt analyst. Reads the target URL, selects relevant FLOW stage prompts, applies them, and returns structured ou… | 2 |
@@ -74,7 +75,7 @@
 | `affaan-m__ecc/command/multi-frontend` | Run a frontend-focused multi-model workflow for components, layouts, animation, and UI polish. | 6 |
 | `affaan-m__ecc/command/multi-plan` | Create a multi-model implementation plan without modifying production code. | 10 |
 | `affaan-m__ecc/command/multi-workflow` | Run a full multi-model development workflow with research, planning, execution, optimization, and review. | 8 |
-| `affaan-m__ecc/command/prompt-optimize` | ドラフトプロンプトを分析し、ECC が強化された最適化済みバージョンを出力します。貼り付けてすぐに実行できる状態で出力されます。タスクは実行しません — コンサルティング分析のみを出力します。 | 3 |
+| `affaan-m__ecc/command/prompt-optimize` | Legacy slash-entry shim for the prompt-optimizer skill. Prefer the skill directly. | 1 |
 | `affaan-m__ecc/command/python-review` | Comprehensive Python code review for PEP 8 compliance, type hints, security, and Pythonic idioms. Invokes the python-reviewer age… | 7 |
 | `affaan-m__ecc/command/react-build` | Fix React build failures (Vite, webpack, Next.js, CRA, Parcel, esbuild, Bun) incrementally — JSX/TSX compile errors, hydration mi… | 5 |
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
@@ -82,22 +83,17 @@
 | `affaan-m__ecc/command/security-scan` | Run AgentShield against agent, hook, MCP, permission, and secret surfaces. | 3 |
 | `affaan-m__ecc/command/vue-review` | Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibili… | 6 |
 
-## hook (12)
+## hook (7)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/before-submit-prompt` | !/usr/bin/env node | 1 |
 | `affaan-m__ecc/hook/config-protection` | !/usr/bin/env node | 5 |
 | `affaan-m__ecc/hook/cost-tracker` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/cursor-session-env` | !/usr/bin/env node | 2 |
 | `affaan-m__ecc/hook/ecc-context-monitor` | !/usr/bin/env node | 9 |
 | `affaan-m__ecc/hook/ecc-statusline` | !/usr/bin/env node | 5 |
 | `affaan-m__ecc/hook/insaits-security-monitor` | !/usr/bin/env python3 | 8 |
 | `affaan-m__ecc/hook/plan-canvas-sessions` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/plugin-hook-bootstrap` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/subagent-start` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/subagent-stop` | !/usr/bin/env node | 1 |
-| `Egonex-AI__Understand-Anything/hook/auto-update-prompt` | Auto-Update Knowledge Graph (Internal — Hook-Triggered) | 16 |
+| `affaan-m__ecc/hook/pre-compact` | !/usr/bin/env node | 7 |
 
 ## plugin (3)
 
@@ -107,49 +103,68 @@
 | `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-… | 650 |
 | `mvanhorn__last30days-skill/plugin/last30days` | Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent s… | 30695 |
 
-## skill (59)
+## skill (78)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/agent-architecture-audit` | エージェントおよび LLM アプリケーション向けのフルスタック診断。12 層のエージェントスタックにおけるラッパーリグレッション、メモリ汚染、ツール規律の失敗、隠れた修復ループ、レンダリング破損を監査します。重要度順の発見事項とコードファーストの修正を生成し… | 13 |
-| `affaan-m__ecc/skill/agent-eval` | カスタムタスクでコーディングエージェント（Claude Code、Aider、Codex など）をヘッドツーヘッドで比較し、合格率、コスト、時間、一貫性のメトリクスを測定します | 6 |
-| `affaan-m__ecc/skill/agent-harness-construction` | AI エージェントのアクション空間、ツール定義、観測フォーマットを設計・最適化して完了率を向上させます。 | 3 |
+| `affaan-m__ecc/skill/agent-architecture-audit` | Full-stack diagnostic for agent and LLM applications. Audits the 12-layer agent stack for wrapper regression, memory pollution, t… | 10 |
+| `affaan-m__ecc/skill/agent-eval` | Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consis… | 4 |
+| `affaan-m__ecc/skill/agent-harness-construction` | Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. | 2 |
 | `affaan-m__ecc/skill/agent-introspection-debugging` | Structured self-debugging workflow for AI agent failures using capture, diagnosis, contained recovery, and introspection reports. | 6 |
-| `affaan-m__ecc/skill/agent-payment-x402` | タスクごとのバジェット、支出コントロール、ノンカストディアルウォレットを備えた x402 決済実行を AI エージェントに追加します。agentwallet-sdk を通じて Base をサポートし、OKX Payments / OKX エージェント決済プロ… | 13 |
+| `affaan-m__ecc/skill/agent-payment-x402` | Add x402 payment execution to AI agents with per-task budgets, spending controls, and non-custodial wallets. Supports Base throug… | 10 |
 | `affaan-m__ecc/skill/agent-self-evaluation` | Use after completing any non-trivial task. The agent self-rates its output on 5 axes — accuracy, completeness, clarity, actionabi… | 41 |
 | `affaan-m__ecc/skill/agent-sort` | Build an evidence-backed ECC install plan for a specific repo by sorting skills, commands, rules, hooks, and extras into DAILY vs… | 6 |
 | `affaan-m__ecc/skill/agentic-engineering` | > Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing. Use when AI agents perf… | 4 |
-| `affaan-m__ecc/skill/autonomous-agent-harness` | Claude Codeを永続的なメモリ、スケジュール済み操作、コンピュータ使用、タスクキューイングを備えた完全自動エージェントシステムに変換します。スタンドアロンエージェントフレームワーク（Hermes、AutoGPT）を、Claude Codeのネイティブ… | 7 |
+| `affaan-m__ecc/skill/agentic-os` | Build persistent multi-agent operating systems on Claude Code. Covers kernel architecture, specialist agents, slash commands, fil… | 12 |
+| `affaan-m__ecc/skill/ai-first-engineering` | Engineering operating model for teams where AI agents generate a large share of implementation output. | 1 |
+| `affaan-m__ecc/skill/ai-regression-testing` | Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-… | 11 |
+| `affaan-m__ecc/skill/autonomous-agent-harness` | Transform Claude Code into a fully autonomous agent system with persistent memory, scheduled operations, computer use, and task q… | 11 |
 | `affaan-m__ecc/skill/autonomous-loops` | Patterns and architectures for autonomous Claude Code loops — from simple sequential pipelines to RFC-driven multi-agent DAG syst… | 24 |
 | `affaan-m__ecc/skill/blender-motion-state-inspection` | Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model… | 8 |
-| `affaan-m__ecc/skill/continuous-agent-loop` | 品質ゲート、評価、リカバリーコントロールを備えた継続的な自律エージェントループのパターン。 | 1 |
-| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | LLM APIの使用量のコスト最適化パターン — タスクの複雑さによるモデルルーティング、予算追跡、リトライロジック、プロンプトキャッシング。 | 7 |
-| `affaan-m__ecc/skill/data-scraper-agent` | 任意のパブリックソース（ジョブボード、価格、ニュース、GitHub、スポーツなど）用の完全自動化されたAI搭載データ収集エージェントを構築します。スケジュールでスクレイプし、無料LLM（Gemini Flash）でデータを豊かにし、Notion/Sheets… | 3 |
+| `affaan-m__ecc/skill/blueprint` | >- Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects. Each step… | 5 |
+| `affaan-m__ecc/skill/ck` | Persistent per-project memory for Claude Code. Auto-loads project context on session start, tracks sessions with git activity, an… | 53 |
+| `affaan-m__ecc/skill/claude-devfleet` | Orchestrate multi-agent coding tasks via Claude DevFleet — plan projects, dispatch parallel agents in isolated worktrees, monitor… | 6 |
+| `affaan-m__ecc/skill/continuous-agent-loop` | Patterns for continuous autonomous agent loops with quality gates, evals, and recovery controls. | 1 |
+| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching. | 6 |
+| `affaan-m__ecc/skill/cost-tracking` | Track and report Claude Code token usage, spending, and budgets from the local ECC cost-tracker metrics log. Use when the user as… | 4 |
+| `affaan-m__ecc/skill/data-scraper-agent` | Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anythi… | 24 |
 | `affaan-m__ecc/skill/dmux-workflows` | Multi-agent orchestration using dmux (tmux pane manager for AI agents). Patterns for parallel agent workflows across Claude Code,… | 5 |
 | `affaan-m__ecc/skill/dynamic-workflow-mode` | Design task-local harnesses, eval gates, and reusable skill extraction for Claude dynamic workflow mode and other adaptive agent … | 5 |
 | `affaan-m__ecc/skill/e2e-testing` | Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strateg… | 8 |
 | `affaan-m__ecc/skill/ecc-recipes` | Map a described workflow to the right ECC command-GROUP with run-order and stop condition, and browse all command-group recipe fa… | 6 |
-| `affaan-m__ecc/skill/enterprise-agent-ops` | オブザーバビリティ、セキュリティ境界、およびライフサイクル管理を備えた長寿命エージェントワークロードを運用します。 | 1 |
-| `affaan-m__ecc/skill/gateguard` | API、エージェント、およびLLMエンドポイントのアクセス制御と認可パターン。 | 5 |
+| `affaan-m__ecc/skill/ecc-tools-cost-audit` | Evidence-first ECC Tools burn and billing audit workflow. Use when investigating runaway PR creation, quota bypass, premium-model… | 6 |
+| `affaan-m__ecc/skill/enterprise-agent-ops` | Operate long-lived agent workloads with observability, security boundaries, and lifecycle management. | 1 |
+| `affaan-m__ecc/skill/finance-billing-ops` | Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales… | 4 |
+| `affaan-m__ecc/skill/flox-environments` | Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager… | 14 |
+| `affaan-m__ecc/skill/foundation-models-on-device` | Apple FoundationModels framework for on-device LLM — text generation, guided generation with @Generable, tool calling, and snapsh… | 8 |
+| `affaan-m__ecc/skill/gan-style-harness` | GAN-inspired Generator-Evaluator agent harness for building high-quality applications autonomously. Based on Anthropic's March 20… | 12 |
 | `affaan-m__ecc/skill/inherit-legacy-style` | Legacy-project style inheritance skill. Use when the user types /inherit-legacy-style, or when onboarding an AI coding agent onto… | 8 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
 | `affaan-m__ecc/skill/ito-data-atlas-agent` | Design background Data Atlas style agents for Itô basket research, market discovery, parameter drafting, and human-in-the-loop ed… | 2 |
-| `affaan-m__ecc/skill/llm-trading-agent-security` | 日本語翻訳：このファイルは llm-trading-agent-security 用の日本語翻訳が必要です | 1 |
+| `affaan-m__ecc/skill/knowledge-ops` | Knowledge base management, ingestion, sync, and retrieval across multiple storage layers (local files, MCP memory, vector stores,… | 7 |
+| `affaan-m__ecc/skill/lead-intelligence` | AI-native lead intelligence and outreach pipeline. Replaces Apollo, Clay, and ZoomInfo with agent-powered signal scoring, mutual … | 21 |
+| `affaan-m__ecc/skill/llm-trading-agent-security` | Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-… | 4 |
 | `affaan-m__ecc/skill/loop-design-check` | Design a goal-oriented agent loop, and review it for the ways loops go wrong — spinning and burning tokens, Goodhart-gaming the v… | 12 |
 | `affaan-m__ecc/skill/ml-adoption-playbook` | End-to-end methodology for AI agents and software engineers to add machine learning algorithms to existing non-ML codebases. Cove… | 4 |
 | `affaan-m__ecc/skill/mle-workflow` | Production machine-learning engineering workflow for data contracts, reproducible training, model evaluation, deployment, monitor… | 22 |
-| `affaan-m__ecc/skill/openclaw-persona-forge` | 为 OpenClaw AI Agent 锻造完整的龙虾灵魂方案。根据用户偏好或随机抽卡， 输出身份定位、灵魂描述(SOUL.md)、角色化底线规则、名字和头像生图提示词。 如当前环境提供已审核的生图 skill，可自动生成统一风格头像图片。 当用户需要创建、… | 12 |
+| `affaan-m__ecc/skill/openclaw-persona-forge` | 为 OpenClaw AI Agent 锻造完整的龙虾灵魂方案。根据用户偏好或随机抽卡， 输出身份定位、灵魂描述(SOUL.md)、角色化底线规则、名字和头像生图提示词。 如当前环境提供已审核的生图 skill，可自动生成统一风格头像图片。 当用户需要创建、… | 35 |
 | `affaan-m__ecc/skill/orch-add-feature` | Orchestrate building a brand-new feature end to end — research, plan, TDD implementation, review, and gated commit — by delegatin… | 2 |
 | `affaan-m__ecc/skill/orch-fix-defect` | Orchestrate fixing a bug — reproduce it as a failing regression test, fix to green, review, and gated commit — by delegating each… | 2 |
 | `affaan-m__ecc/skill/orch-pipeline` | Shared orchestration engine for the orch-* skill family. Defines the gated Research-Plan-TDD-Review-Commit pipeline, the size cla… | 6 |
+| `affaan-m__ecc/skill/plan-orchestrate` | Read a plan document, decompose it into steps, design a per-step agent chain from the ECC catalogue, and emit ready-to-paste /orc… | 18 |
 | `affaan-m__ecc/skill/prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and executio… | 2 |
-| `affaan-m__ecc/skill/prompt-optimizer` | 日本語翻訳：このファイルは prompt-optimizer 用の日本語翻訳が必要です | 1 |
+| `affaan-m__ecc/skill/prompt-optimizer` | >- Analyze raw prompts, identify intent and gaps, match ECC components (skills/commands/agents/hooks), and output a ready-to-past… | 16 |
 | `affaan-m__ecc/skill/pytorch-patterns` | PyTorch deep learning patterns and best practices for building robust, efficient, and reproducible training pipelines, model arch… | 11 |
+| `affaan-m__ecc/skill/ralphinho-rfc-pipeline` | RFC-driven multi-agent DAG execution pattern with quality gates, merge queues, and work unit orchestration. | 1 |
 | `affaan-m__ecc/skill/react-performance` | React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/ve… | 18 |
 | `affaan-m__ecc/skill/recsys-pipeline-architect` | Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffe… | 8 |
-| `affaan-m__ecc/skill/regex-vs-llm-structured-text` | 構造化テキストの解析に正規表現と大規模言語モデルのどちらを使うかを選択するための意思決定フレームワーク——まず正規表達式から始め、信頼度の低いエッジケースにのみ大規模言語モデルを追加する。 | 8 |
+| `affaan-m__ecc/skill/regex-vs-llm-structured-text` | Decision framework for choosing between regex and LLM when parsing structured text — start with regex, add LLM only for low-confi… | 6 |
+| `affaan-m__ecc/skill/santa-method` | Multi-agent adversarial verification with convergence loop. Two independent review agents must both pass before output ships. | 12 |
+| `affaan-m__ecc/skill/security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks usi… | 4 |
+| `affaan-m__ecc/skill/skill-comply` | Visualize whether skills, rules, and agent definitions are actually followed — auto-generates scenarios at 3 prompt strictness le… | 59 |
 | `affaan-m__ecc/skill/social-publisher` | Agent-driven scheduling and publishing of social media posts across 13 platforms via SocialClaw. Use when the user wants to publi… | 4 |
 | `affaan-m__ecc/skill/team-agent-orchestration` | Run team-based orchestration for agent squads using work items, ownership, agent Kanban, merge gates, and control pane handoffs. | 5 |
+| `affaan-m__ecc/skill/team-builder` | Interactive agent picker for composing and dispatching parallel teams | 7 |
 | `affaan-m__ecc/skill/unified-memory` | Share durable, inspectable context and handoffs between Claude, Codex, Hermes, Cursor, OpenCode, and other agents through the loc… | 6 |
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | > Live SEO data via DataForSEO MCP server: SERP analysis, keyword research (volume, difficulty, intent, trends), backlink profile… | 23 |
 | `AgriciDaniel__claude-seo/skill/seo-geo` | > Optimize content for AI Overviews (formerly SGE), ChatGPT web search, Perplexity, and other AI-powered search experiences. Gene… | 24 |

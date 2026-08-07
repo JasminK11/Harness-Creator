@@ -1,6 +1,6 @@
 # Domäne: devops
 
-48 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+53 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (26)
 
@@ -45,22 +45,27 @@
 |---|---|---:|
 | `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4119 |
 
-## skill (20)
+## skill (25)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
+| `affaan-m__ecc/skill/canary-watch` | Use this skill to monitor and verify a deployed URL after releases — checks HTTP endpoints, SSE streams, static assets, console e… | 3 |
 | `affaan-m__ecc/skill/competitive-platform-analysis` | >- Use when scoping a competitive landscape — identifying, categorising, and score-filtering a competitor set before any benchmar… | 12 |
 | `affaan-m__ecc/skill/competitive-report-structure` | >- Use after benchmark-methodology has produced scored competitor profile cards. Assembles findings into a decision-grade report:… | 9 |
-| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | LLM APIの使用量のコスト最適化パターン — タスクの複雑さによるモデルルーティング、予算追跡、リトライロジック、プロンプトキャッシング。 | 7 |
+| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching. | 6 |
+| `affaan-m__ecc/skill/dashboard-builder` | Build monitoring dashboards that answer real operator questions for Grafana, SigNoz, and similar platforms. Use when turning metr… | 2 |
 | `affaan-m__ecc/skill/deployment-patterns` | > Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production read… | 11 |
+| `affaan-m__ecc/skill/django-celery` | Django + Celery async task patterns — configuration, task design, beat scheduling, retries, canvas workflows, monitoring, and tes… | 13 |
 | `affaan-m__ecc/skill/docker-patterns` | > Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service … | 8 |
 | `affaan-m__ecc/skill/e2e-testing` | Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strateg… | 8 |
-| `affaan-m__ecc/skill/github-ops` | GitHub操作、自動化、APIインテグレーション、およびCI/CDワークフロー。 | 4 |
+| `affaan-m__ecc/skill/github-ops` | GitHub repository operations, automation, and management. Issue triage, PR management, CI/CD operations, release management, and … | 5 |
 | `affaan-m__ecc/skill/kubernetes-patterns` | Kubernetes workload patterns, resource management, RBAC, probes, autoscaling, ConfigMap/Secret handling, and kubectl debugging fo… | 20 |
+| `affaan-m__ecc/skill/lead-intelligence` | AI-native lead intelligence and outreach pipeline. Replaces Apollo, Clay, and ZoomInfo with agent-powered signal scoring, mutual … | 21 |
 | `affaan-m__ecc/skill/mle-workflow` | Production machine-learning engineering workflow for data contracts, reproducible training, model evaluation, deployment, monitor… | 22 |
-| `affaan-m__ecc/skill/opensource-pipeline` | オープンソースパイプライン: プライベートプロジェクトをフォーク、サニタイズし、安全な公開リリースのためにパッケージ化する。3つのエージェント（フォーカー、サニタイザー、パッケージャー）を連鎖させる。トリガー: '/opensource'、'open sou… | 9 |
+| `affaan-m__ecc/skill/opensource-pipeline` | Open-source pipeline: fork, sanitize, and package private projects for safe public release. Chains 3 agents (forker, sanitizer, p… | 7 |
 | `affaan-m__ecc/skill/orch-pipeline` | Shared orchestration engine for the orch-* skill family. Defines the gated Research-Plan-TDD-Review-Commit pipeline, the size cla… | 6 |
-| `affaan-m__ecc/skill/ralphinho-rfc-pipeline` | RFC駆動の複数エージェントDAG実行パターン、品質ゲート、マージキュー、ワークユニットオーケストレーション。 | 2 |
+| `affaan-m__ecc/skill/pubmed-database` | Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and… | 5 |
+| `affaan-m__ecc/skill/ralphinho-rfc-pipeline` | RFC-driven multi-agent DAG execution pattern with quality gates, merge queues, and work unit orchestration. | 1 |
 | `affaan-m__ecc/skill/recsys-pipeline-architect` | Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffe… | 8 |
 | `affaan-m__ecc/skill/social-publisher` | Agent-driven scheduling and publishing of social media posts across 13 platforms via SocialClaw. Use when the user wants to publi… | 4 |
 | `affaan-m__ecc/skill/taste` | A creative-direction (taste) layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop visual family… | 20 |

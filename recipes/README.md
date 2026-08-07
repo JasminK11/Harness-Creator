@@ -47,21 +47,19 @@ das Kern-Set aus `01` und ergänzt aus `02` gezielt — nicht beide Kern-Sets ad
 
 ## Deckung im Katalog
 
-Alle sechs Typen sind belegt; keiner musste ersetzt werden. Die Bestände sind
-allerdings ungleich tief:
+Alle sechs Typen sind belegt; keiner musste ersetzt werden. Sehr gut versorgt sind
+SEO (61 Bausteine aus einem durchgehenden Repo), Frontend/React und Testing;
+gut versorgt Backend/API, Python/ML und Onboarding; dünn, aber ausreichend der
+Pentest-Fall mit vier Strix-Skills plus Reviewer-Agenten.
 
-- **Sehr gut:** SEO (61 Bausteine, ein durchgehendes Repo), Frontend/React, Testing.
-- **Gut:** Backend/API, Python/ML, Onboarding.
-- **Dünn, aber ausreichend:** Pentest — vier Strix-Skills plus Reviewer-Agenten.
-
-Eine Einschränkung, die in allen Rezepten wiederkehrt: Ein grosser Teil der
+Eine Einschränkung kehrt in allen Rezepten wieder: Ein grosser Teil der
 `ecc`-Skills liegt im Katalog **nur als japanische Übersetzung** vor (Quellpfad
-`docs/ja-JP/skills/...`). Betroffen sind unter anderem `error-handling`,
-`redis-patterns`, `hexagonal-architecture`, `git-workflow`, `codebase-onboarding`,
-`repo-scan`, `code-tour`, `security-scan`. Sie funktionieren technisch, sind für
-einen deutschsprachigen Betrieb aber schlecht wartbar — in den Rezepten stehen
-sie deshalb konsequent unter "Bewusst weggelassen". Vor der Übernahme eines
-solchen Bausteins immer `show <id> --head 20` prüfen.
+`docs/ja-JP/skills/...`) — darunter `error-handling`, `redis-patterns`,
+`hexagonal-architecture`, `git-workflow`, `codebase-onboarding`, `repo-scan`,
+`code-tour`, `security-scan`. Sie funktionieren technisch, sind für einen
+deutschsprachigen Betrieb aber schlecht wartbar; in den Rezepten stehen sie
+deshalb konsequent unter "Bewusst weggelassen". Vor der Übernahme eines solchen
+Bausteins immer `show <id> --head 20` prüfen.
 
 ## Werkzeug
 

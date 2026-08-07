@@ -1,6 +1,6 @@
 # Domäne: backend
 
-123 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+111 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (32)
 
@@ -51,28 +51,14 @@
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 | `affaan-m__ecc/command/vue-review` | Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibili… | 6 |
 
-## hook (18)
+## hook (4)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/after-mcp-execution` | !/usr/bin/env node | 1 |
 | `affaan-m__ecc/hook/auto-tmux-dev` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/auto-tmux-dev-test` | Check if tmux is available for conditional tests | 5 |
-| `affaan-m__ecc/hook/before-mcp-execution` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/before-shell-execution` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/before-submit-prompt` | !/usr/bin/env node | 1 |
 | `affaan-m__ecc/hook/gateguard-fact-force` | !/usr/bin/env node | 40 |
 | `affaan-m__ecc/hook/mcp-health-check` | !/usr/bin/env node | 23 |
 | `affaan-m__ecc/hook/pre-bash-dev-server-block` | !/usr/bin/env node | 6 |
-| `affaan-m__ecc/hook/pre-bash-dev-server-block-test` | --- Blocking tests (non-Windows only) --- | 10 |
-| `multica-ai__multica/hook/use-attachment-html-text` | 413 / 415 won't become 200 on retry; a transport error is easier to | 1 |
-| `multica-ai__multica/hook/use-comment-trigger-preview` | Explicit @agent / @squad mentions that will NOT trigger if posted as-is | 4 |
-| `multica-ai__multica/hook/use-comment-trigger-preview-test` | Cached agents render immediately for the repeated signature (no | 10 |
-| `multica-ai__multica/hook/use-drag-to-scroll` | Kim specced 4–6px. 5 sits in the middle: past the jitter of a real click | 5 |
-| `multica-ai__multica/hook/use-file-upload` | Carries the full Attachment so editors that need preview metadata | 7 |
-| `multica-ai__multica/hook/use-file-upload-test` | MUL-3192 — verifies that the URL chosen for markdown persistence is | 8 |
-| `multica-ai__multica/hook/use-issue-trigger-preview` | Keep the prior verdict visible while a new signature (assignee/status | 4 |
-| `multica-ai__multica/hook/use-quick-action-menu` | The extension reads through a getter on every keystroke; a ref keeps that | 3 |
 
 ## plugin (1)
 
@@ -80,52 +66,54 @@
 |---|---|---:|
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (65)
+## skill (67)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/ai-regression-testing` | AI 支援開発のためのリグレッションテスト戦略。データベース依存なしのサンドボックスモード API テスト、自動化されたバグチェックワークフロー、同じモデルがコードを書いてレビューする AI のブラインドスポットを捕捉するパターン。 | 14 |
-| `affaan-m__ecc/skill/api-connector-builder` | ターゲット リポジトリの既存統合パターンに正確に一致する新しい API コネクターまたはプロバイダーを構築します。2 番目のアーキテクチャを発明せずに、1 つ以上の統合を追加するときに使用します。 | 4 |
+| `affaan-m__ecc/skill/ai-regression-testing` | Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-… | 11 |
+| `affaan-m__ecc/skill/api-connector-builder` | Build a new API connector or provider by matching the target repo's existing integration pattern exactly. Use when adding one mor… | 3 |
 | `affaan-m__ecc/skill/api-design` | REST API design patterns including resource naming, status codes, pagination, filtering, error responses, versioning, and rate li… | 13 |
 | `affaan-m__ecc/skill/backend-patterns` | Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.j… | 14 |
 | `affaan-m__ecc/skill/bun-runtime` | Bun as runtime, package manager, bundler, and test runner. When to choose Bun vs Node, migration notes, and Vercel support. | 3 |
-| `affaan-m__ecc/skill/clickhouse-io` | ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical … | 11 |
+| `affaan-m__ecc/skill/clickhouse-io` | ClickHouse database patterns, query optimization, analytics, and data engineering best practices for high-performance analytical … | 10 |
 | `affaan-m__ecc/skill/coding-standards` | Baseline cross-project coding conventions for naming, readability, immutability, and code-quality review. Use detailed frontend o… | 13 |
 | `affaan-m__ecc/skill/contract-first` | Use when multiple consumers and providers must evolve an API or event schema without field drift, integration surprises, or one s… | 9 |
-| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | LLM APIの使用量のコスト最適化パターン — タスクの複雑さによるモデルルーティング、予算追跡、リトライロジック、プロンプトキャッシング。 | 7 |
+| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching. | 6 |
 | `affaan-m__ecc/skill/database-migrations` | > Database migration best practices for schema changes, data migrations, rollbacks, and zero-downtime deployments across PostgreS… | 10 |
-| `affaan-m__ecc/skill/django-celery` | DjangoおよびCeleryを使用した非同期タスク処理。タスクキューイング、ワーカー管理、エラー処理、スケジューリング。Redis/RabbitMQ ブローカー統合。 | 2 |
 | `affaan-m__ecc/skill/django-patterns` | Django architecture patterns, REST API design with DRF, ORM best practices, caching, signals, middleware, and production-grade Dj… | 21 |
 | `affaan-m__ecc/skill/django-security` | Django security best practices, authentication, authorization, CSRF protection, SQL injection prevention, XSS prevention, and sec… | 16 |
-| `affaan-m__ecc/skill/django-tdd` | Django testing strategies with pytest-django, TDD methodology, factory_boy, mocking, coverage, and testing Django REST Framework … | 22 |
+| `affaan-m__ecc/skill/django-tdd` | Django testing strategies with pytest-django, TDD methodology, factory_boy, mocking, coverage, and testing Django REST Framework … | 20 |
 | `affaan-m__ecc/skill/documentation-lookup` | Use up-to-date library and framework docs via Context7 MCP instead of training data. Activates for setup questions, API reference… | 5 |
-| `affaan-m__ecc/skill/flox-environments` | Floxで再現可能なクロスプラットフォーム開発環境を作成します — Nixに基づく宣言的な環境マネージャー。次の場合は必ずこのスキルを使用してください: システムレベルの依存関係（コンパイラー、データベース、openssl・libvips・BLAS・LAPA… | 18 |
-| `affaan-m__ecc/skill/gateguard` | API、エージェント、およびLLMエンドポイントのアクセス制御と認可パターン。 | 5 |
-| `affaan-m__ecc/skill/github-ops` | GitHub操作、自動化、APIインテグレーション、およびCI/CDワークフロー。 | 4 |
-| `affaan-m__ecc/skill/google-workspace-ops` | Google Workspace API操作、Sheets自動化、Gmail統合、およびドキュメント管理。 | 3 |
+| `affaan-m__ecc/skill/flox-environments` | Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager… | 14 |
+| `affaan-m__ecc/skill/gget` | gget CLI and Python workflow for quick genomic database queries, sequence lookup, BLAST-style searches, enrichment checks, and re… | 5 |
+| `affaan-m__ecc/skill/homelab-vlan-segmentation` | Segmenting home networks into VLANs for IoT, guest, trusted, and server traffic using UniFi, pfSense/OPNsense, and MikroTik — inc… | 10 |
+| `affaan-m__ecc/skill/homelab-wireguard-vpn` | WireGuard VPN server setup, peer configuration, key generation, split tunneling vs full tunnel routing, and remote access to a ho… | 10 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
-| `affaan-m__ecc/skill/ios-icon-gen` | SF Symbols（Apple ネイティブ 5,000 件以上）または Iconify API（200 以上のコレクションから 275,000 件以上のオープンソースアイコン）から Xcode アセットカタログ用の PNG イメージセットとして iOS ア… | 7 |
+| `affaan-m__ecc/skill/ios-icon-gen` | Generate iOS app icons as PNG imagesets for Xcode asset catalogs from SF Symbols (5000+ Apple-native) or Iconify API (275k+ open … | 21 |
 | `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 2 |
-| `affaan-m__ecc/skill/jira-integration` | Jira チケットの取得、要件分析、チケットステータスの更新、コメントの追加、またはイシューのトランジションを行う際に使用します。MCP または直接 REST 呼び出しによる Jira API パターンを提供します。 | 11 |
-| `affaan-m__ecc/skill/kotlin-exposed-patterns` | JetBrains Exposed ORM パターン（DSL クエリ、DAO パターン、トランザクション、HikariCP 接続プーリング、Flyway マイグレーション、リポジトリパターンを含む）。 | 23 |
+| `affaan-m__ecc/skill/jira-integration` | Use this skill when retrieving Jira tickets, analyzing requirements, updating ticket status, adding comments, or transitioning is… | 9 |
+| `affaan-m__ecc/skill/kotlin-exposed-patterns` | JetBrains Exposed ORM patterns including DSL queries, DAO pattern, transactions, HikariCP connection pooling, Flyway migrations, … | 22 |
+| `affaan-m__ecc/skill/kotlin-ktor-patterns` | Ktor server patterns including routing DSL, plugins, authentication, Koin DI, kotlinx.serialization, WebSockets, and testApplicat… | 19 |
 | `affaan-m__ecc/skill/laravel-patterns` | Patrones de arquitectura Laravel, routing/controladores, Eloquent ORM, capas de servicio, colas, eventos, caché y API resources p… | 11 |
 | `affaan-m__ecc/skill/mailtrap-email-integration` | Guides agents through integrating transactional email sending via Mailtrap's Email API, including sandbox testing, domain verific… | 4 |
 | `affaan-m__ecc/skill/mcp-server-patterns` | Build MCP servers with Node/TypeScript SDK — tools, resources, prompts, Zod validation, stdio vs Streamable HTTP. Use Context7 or… | 4 |
-| `affaan-m__ecc/skill/mysql-patterns` | 日本語翻訳：このファイルは mysql-patterns 用の日本語翻訳が必要です | 1 |
-| `affaan-m__ecc/skill/nutrient-document-processing` | Nutrient DWS API を使用してドキュメントの処理、変換、OCR、抽出、編集、署名、フォーム入力を行います。PDF、DOCX、XLSX、PPTX、HTML、画像に対応しています。 | 6 |
+| `affaan-m__ecc/skill/motion-advanced` | Advanced motion patterns for React / Next.js — drag & drop, gestures, text animations, SVG path drawing, custom hooks, imperative… | 18 |
+| `affaan-m__ecc/skill/mysql-patterns` | MySQL and MariaDB schema, query, indexing, transaction, replication, and connection-pool patterns for production backends. | 12 |
+| `affaan-m__ecc/skill/nutrient-document-processing` | Process, convert, OCR, extract, redact, sign, and fill documents using the Nutrient DWS API. Works with PDFs, DOCX, XLSX, PPTX, H… | 6 |
 | `affaan-m__ecc/skill/postgres-patterns` | > PostgreSQL database patterns for query optimization, schema design, indexing, and security. Quick reference for common patterns… | 4 |
 | `affaan-m__ecc/skill/prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and executio… | 2 |
 | `affaan-m__ecc/skill/prisma-patterns` | Prisma ORM patterns for TypeScript backends — schema design, query optimization, transactions, pagination, and critical traps lik… | 15 |
-| `affaan-m__ecc/skill/pubmed-database` | 生物医学文献、MeSH クエリ、PMID 検索、引用取得、および API を利用した文献モニタリングのための PubMed および NCBI E-utilities の直接検索ワークフロー。 | 6 |
+| `affaan-m__ecc/skill/pubmed-database` | Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and… | 5 |
 | `affaan-m__ecc/skill/quarkus-patterns` | Patrones de arquitectura Quarkus 3.x LTS con Camel para mensajería, diseño de API RESTful, servicios CDI, acceso a datos con Pana… | 15 |
 | `affaan-m__ecc/skill/quarkus-tdd` | Desarrollo guiado por pruebas para Quarkus 3.x LTS usando JUnit 5, Mockito, REST Assured, pruebas Camel y JaCoCo. Usar al agregar… | 14 |
 | `affaan-m__ecc/skill/react-native-patterns` | React Native and Expo app patterns — Expo Router navigation, state separation (server/client/route/form), TanStack Query data fet… | 11 |
 | `affaan-m__ecc/skill/react-patterns` | React 18/19 patterns including hooks discipline, server/client component boundaries, Suspense + error boundaries, form actions, d… | 11 |
 | `affaan-m__ecc/skill/react-performance` | React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/ve… | 18 |
-| `affaan-m__ecc/skill/redis-patterns` | Redisデータ構造パターン、キャッシング戦略、分散ロック、レート制限、Pub/Sub、本番アプリケーション用コネクション管理。 | 12 |
+| `affaan-m__ecc/skill/redis-patterns` | Redis data structure patterns, caching strategies, distributed locks, rate limiting, pub/sub, and connection management for produ… | 12 |
 | `affaan-m__ecc/skill/security-review` | Use this skill when adding authentication, handling user input, working with secrets, creating API endpoints, or implementing pay… | 12 |
 | `affaan-m__ecc/skill/springboot-patterns` | Spring Boot architecture patterns, REST API design, layered services, data access, caching, async processing, and logging. Use fo… | 10 |
-| `affaan-m__ecc/skill/uspto-database` | 公式記録の検索、PatentSearch クエリ、TSDR チェック、譲渡データ、および再現可能な IP 調査ログのための USPTO 特許・商標データワークフロー。 | 8 |
+| `affaan-m__ecc/skill/tinystruct-patterns` | Expert guidance for developing with the tinystruct Java framework. Use when working on the tinystruct codebase or any project bui… | 27 |
+| `affaan-m__ecc/skill/uspto-database` | USPTO patent and trademark data workflow for official record lookup, PatentSearch queries, TSDR checks, assignment data, and repr… | 6 |
 | `affaan-m__ecc/skill/vue-patterns` | Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigati… | 13 |
 | `affaan-m__ecc/skill/x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate… | 7 |
 | `AgriciDaniel__claude-seo/skill/seo-ahrefs` | Ahrefs API analyst (extension). Reads referring domains, backlinks, organic keywords, and content explorer data via the tested @a… | 2 |

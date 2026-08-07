@@ -1,6 +1,6 @@
 # Domäne: product
 
-100 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+106 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (57)
 
@@ -73,17 +73,21 @@
 | `affaan-m__ecc/command/plan-prd` | Generate a lean, problem-first PRD and hand off to /plan for implementation planning. | 5 |
 | `affaan-m__ecc/command/prp-prd` | Interactive PRD generator - problem-first, hypothesis-driven product spec with back-and-forth questioning | 14 |
 
-## skill (39)
+## skill (45)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/skill/article-writing` | Write articles, guides, blog posts, tutorials, newsletter issues, and other long-form content in a distinctive voice derived from… | 3 |
 | `affaan-m__ecc/skill/benchmark-methodology` | >- Use after competitive-platform-analysis has produced a tiered competitor set. Scores each competitor across nine weighted dime… | 10 |
+| `affaan-m__ecc/skill/blueprint` | >- Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects. Each step… | 5 |
 | `affaan-m__ecc/skill/brand-discovery` | >- Use when a brand needs to discover or articulate its identity through structured multi-session interviews. Covers purpose, pos… | 21 |
 | `affaan-m__ecc/skill/brand-voice` | Build a source-derived writing style profile from real posts, essays, launch notes, docs, or site copy, then reuse that profile a… | 5 |
+| `affaan-m__ecc/skill/carrier-relationship-management` | > Codified expertise for managing carrier portfolios, negotiating freight rates, tracking carrier performance, allocating freight… | 23 |
 | `affaan-m__ecc/skill/competitive-platform-analysis` | >- Use when scoping a competitive landscape — identifying, categorising, and score-filtering a competitor set before any benchmar… | 12 |
 | `affaan-m__ecc/skill/competitive-report-structure` | >- Use after benchmark-methodology has produced scored competitor profile cards. Assembles findings into a decision-grade report:… | 9 |
-| `affaan-m__ecc/skill/energy-procurement` | 電気とガス調達、料金最適化、需要料金管理、再生可能エネルギーPPA評価、およびマルチファシリティーエネルギー戦略のための符号化された専門知識。 Codified expertise for electricity and gas procurement, t… | 30 |
+| `affaan-m__ecc/skill/energy-procurement` | > Codified expertise for electricity and gas procurement, tariff optimization, demand charge management, renewable PPA evaluation… | 29 |
+| `affaan-m__ecc/skill/finance-billing-ops` | Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales… | 4 |
+| `affaan-m__ecc/skill/frontend-design-direction` | Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applic… | 4 |
 | `affaan-m__ecc/skill/growth-log` | Use after a complex task, failure, or when reviewing what was learned. Teaches how to write growth logs that extract reusable pat… | 7 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
 | `affaan-m__ecc/skill/ito-basket-compare` | Compare Itô prediction-market baskets against a user's knowledge base, portfolio notes, financial context, watchlist, or research… | 2 |
@@ -91,6 +95,7 @@
 | `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 2 |
 | `affaan-m__ecc/skill/ito-trade-planner` | Build a non-advisory prediction-market trade planning worksheet for Itô or venue workflows. Use to inspect venues, underliers, co… | 2 |
 | `affaan-m__ecc/skill/latency-critical-systems` | Use for latency-sensitive systems such as realtime dashboards, market data, streaming agents, execution gateways, queues, caches,… | 2 |
+| `affaan-m__ecc/skill/manim-video` | Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the w… | 6 |
 | `affaan-m__ecc/skill/market-research` | Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and deci… | 2 |
 | `affaan-m__ecc/skill/marketing-campaign` | End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing p… | 5 |
 | `affaan-m__ecc/skill/orch-add-feature` | Orchestrate building a brand-new feature end to end — research, plan, TDD implementation, review, and gated commit — by delegatin… | 2 |
@@ -98,7 +103,8 @@
 | `affaan-m__ecc/skill/prediction-market-oracle-research` | Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligen… | 2 |
 | `affaan-m__ecc/skill/prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and executio… | 2 |
 | `affaan-m__ecc/skill/product-capability` | Translate PRD intent, roadmap asks, or product discussions into an implementation-ready capability plan that exposes constraints,… | 5 |
-| `affaan-m__ecc/skill/product-lens` | 日本語翻訳：このファイルは product-lens 用の日本語翻訳が必要です | 1 |
+| `affaan-m__ecc/skill/product-lens` | Use this skill to validate the "why" before building, run product diagnostics, and pressure-test product direction before the req… | 3 |
+| `affaan-m__ecc/skill/returns-reverse-logistics` | > Codified expertise for returns authorization, receipt and inspection, disposition decisions, refund processing, fraud detection… | 24 |
 | `AgriciDaniel__claude-seo/skill/seo-backlinks` | Backlink profile analysis: referring domains, anchor text distribution, toxic link detection, competitor gap analysis. Works with… | 13 |
 | `AgriciDaniel__claude-seo/skill/seo-competitor-pages` | > Generate SEO-optimized competitor comparison and alternatives pages. Covers "X vs Y" layouts, "alternatives to X" pages, featur… | 8 |
 | `AgriciDaniel__claude-seo/skill/seo-content-brief` | > Generate competitive SEO content briefs with per-section word counts, competitor scoring, keyword density guidance, and page-ty… | 24 |

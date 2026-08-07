@@ -220,13 +220,32 @@ function cmdSync() {
 
 // ---------------------------------------------------------------- extract
 
+/** Übersetzte Spiegelungen eines Bausteins. Mehrere Repos legen unter
+ *  `docs/ja-JP/skills/...` Übersetzungen ab. Die tragen dieselbe ID wie das
+ *  Original — wer zuerst gewalkt wird, gewinnt, und dann steht eine japanische
+ *  Beschreibung im Katalog, die keine Suche mehr findet. */
+const TRANSLATION_RE = /(^|\/)(docs\/)?(translations?|i18n|locales?|[a-z]{2}-[A-Z]{2})(\/|$)/;
+const isTranslation = (p) => TRANSLATION_RE.test(p);
+
+/** Platzhalter-Dateien, die nur ankündigen, dass eine Übersetzung fehlt.
+ *  Sie belegen sonst Trefferplätze, ohne Inhalt zu haben. */
+function isPlaceholder(text, bytes) {
+  if (bytes > 1500) return false;
+  return /翻訳|需要翻译|번역|traducción pendiente|translation needed|needs translation/i.test(text);
+}
+
 function extractRepo(repoDir, repoName) {
   const items = [];
-  const seen = new Set();
+  const seen = new Map();
 
   const add = (it) => {
-    if (seen.has(it.id)) return;
-    seen.add(it.id);
+    const prev = seen.get(it.id);
+    if (prev) {
+      // Ein Original ersetzt eine bereits erfasste Übersetzung — umgekehrt nie.
+      if (isTranslation(prev.path) && !isTranslation(it.path)) Object.assign(prev, it);
+      return;
+    }
+    seen.set(it.id, it);
     items.push(it);
   };
 
@@ -241,6 +260,7 @@ function extractRepo(repoDir, repoName) {
       const skillDir = path.dirname(full);
       const name = fm.name || path.basename(skillDir);
       const size = dirSize(skillDir);
+      if (isPlaceholder(text, size.bytes)) return;
       add({
         id: `${repoName}/skill/${slug(name)}`,
         type: "skill",
@@ -306,7 +326,11 @@ function extractRepo(repoDir, repoName) {
     }
 
     // --- Hooks: hooks/<datei> ---
-    if (/^hooks?$/i.test(parent) && !/^readme/i.test(base)) {
+    // Der Ordnername allein reicht nicht: In React-Projekten heisst `hooks/`
+    // das Verzeichnis für useXyz-Hooks, und Test-Suites legen ihre Fixtures
+    // daneben. Beides sind keine Claude-Code-Lifecycle-Hooks. Deshalb wird
+    // zusätzlich der Inhalt geprüft.
+    if (/^hooks?$/i.test(parent) && !/^readme/i.test(base) && isClaudeHook(full, base)) {
       const text = safeRead(full);
       const fm = frontmatter(text);
       const name = fm.name || base.replace(/\.[^.]+$/, "");
@@ -412,6 +436,26 @@ const pick = (o, keys) => {
 };
 const safeRead = (p) => { try { return fs.readFileSync(p, "utf8"); } catch { return ""; } };
 const safeSize = (p) => { try { return fs.statSync(p).size; } catch { return 0; } };
+
+/** Lifecycle-Ereignisse, an denen Claude Code Hooks aufruft. Ihr Vorkommen ist
+ *  das verlässlichste Signal dafür, dass eine Datei wirklich ein Hook ist. */
+const HOOK_EVENTS = /\b(PreToolUse|PostToolUse|UserPromptSubmit|SubagentStop|SessionStart|SessionEnd|PreCompact|Notification|hookSpecificOutput|permissionDecision)\b/;
+
+function isClaudeHook(full, base) {
+  // React-Hooks (useAuth.ts, useDebounce.tsx) und Testdateien fliegen sofort raus.
+  if (/^use[A-Z]/.test(base) && /\.(t|j)sx?$/i.test(base)) return false;
+  if (/([-_.](test|spec)\.|\.(test|spec)\.)/i.test(base)) return false;
+  if (/[-_](test|spec)\.[^.]+$/i.test(base)) return false;
+
+  // In `.claude/hooks/` ist die Zugehörigkeit durch den Ort belegt.
+  if (full.split(/[\\/]/).includes(".claude")) return true;
+
+  const text = safeRead(full);
+  if (!text) return false;
+  if (HOOK_EVENTS.test(text)) return true;
+  // Shell-Skripte mit Shebang, die stdin lesen, sind das klassische Hook-Muster.
+  return /^#!.*\b(bash|sh|python|node)\b/.test(text) && /stdin|process\.stdin|sys\.stdin|read -r/.test(text);
+}
 
 function hookDescription(text) {
   const c = text.match(/^\s*(?:#|\/\/)\s*(.+)$/m);

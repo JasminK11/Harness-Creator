@@ -1,6 +1,6 @@
 # Domäne: meta
 
-138 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+114 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (20)
 
@@ -27,38 +27,30 @@
 | `Egonex-AI__Understand-Anything/agent/tour-builder` | / Designs guided learning tours through codebases, creating 5-15 pedagogical steps that teach project architecture and key concep… | 21 |
 | `msitarzewski__agency-agents/agent/wordpress-performance-engineer` | Expert WordPress performance engineer specializing in Core Web Vitals, object caching (Redis/Memcached), page caching, database a… | 24 |
 
-## command (7)
+## command (6)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/command/cost-report` | Generate a local Claude Code cost report from the ECC cost-tracker metrics log. | 4 |
-| `affaan-m__ecc/command/devfleet` | Claude DevFleet を使って並列 Claude Code エージェントをオーケストレーションします — 自然言語でプロジェクトを計画し、隔離されたワークツリーにエージェントをディスパッチし、進捗を監視し、構造化レポートを読み取ります。 | 5 |
 | `affaan-m__ecc/command/harness-audit` | Run a deterministic repository harness audit and return a prioritized scorecard. | 3 |
 | `affaan-m__ecc/command/orch-build-mvp` | Orchestrate bootstrapping a working MVP from a design/spec doc — ingest, slice, scaffold, TDD, review, gated commit (reuses the G… | 1 |
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 | `affaan-m__ecc/command/security-scan` | Run AgentShield against agent, hook, MCP, permission, and secret surfaces. | 3 |
 | `affaan-m__ecc/command/sessions` | Manage Claude Code session history, aliases, and session metadata. | 14 |
 
-## hook (69)
+## hook (42)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/adapter` | !/usr/bin/env node | 2 |
 | `affaan-m__ecc/hook/auto-tmux-dev` | !/usr/bin/env node | 5 |
 | `affaan-m__ecc/hook/bash-hook-dispatcher` | !/usr/bin/env node | 6 |
-| `affaan-m__ecc/hook/bash-hook-dispatcher-test` | A pass-through command (no sub-hook adds context) must NOT echo the | 6 |
 | `affaan-m__ecc/hook/block-no-verify` | !/usr/bin/env node | 14 |
 | `affaan-m__ecc/hook/check-console-log` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/check-hook-enabled` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/check-hook-enabled-test` | Remove potentially interfering env vars unless explicitly set | 3 |
 | `affaan-m__ecc/hook/codex-hooks` | — | 2 |
 | `affaan-m__ecc/hook/config-protection` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/continuous-learning-observe-runner-test` | — | 7 |
 | `affaan-m__ecc/hook/cost-tracker` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/cost-tracker-test` | 1. Passes through input on stdout | 14 |
-| `affaan-m__ecc/hook/cursor-session-env` | !/usr/bin/env node | 2 |
 | `affaan-m__ecc/hook/design-quality-check` | !/usr/bin/env node | 4 |
-| `affaan-m__ecc/hook/design-quality-check-test` | — | 3 |
 | `affaan-m__ecc/hook/desktop-notify` | !/usr/bin/env node | 9 |
 | `affaan-m__ecc/hook/doc-file-warning` | !/usr/bin/env node | 3 |
 | `affaan-m__ecc/hook/ecc-context-monitor` | !/usr/bin/env node | 9 |
@@ -67,19 +59,9 @@
 | `affaan-m__ecc/hook/evaluate-session` | !/usr/bin/env node | 3 |
 | `affaan-m__ecc/hook/gateguard-fact-force` | !/usr/bin/env node | 40 |
 | `affaan-m__ecc/hook/governance-capture` | !/usr/bin/env node | 9 |
-| `affaan-m__ecc/hook/governance-capture-test` | ── detectSecrets ────────────────────────────────────────── | 14 |
-| `affaan-m__ecc/hook/hook-flags-test` | Import the module | 20 |
-| `affaan-m__ecc/hook/hooks-test` | Fall back to common Git Bash path shapes when cygpath is unavailable. | 271 |
 | `affaan-m__ecc/hook/insaits-security-monitor` | !/usr/bin/env python3 | 8 |
 | `affaan-m__ecc/hook/mcp-health-check` | !/usr/bin/env node | 23 |
 | `affaan-m__ecc/hook/observe` | !/usr/bin/env bash | 23 |
-| `affaan-m__ecc/hook/observe-entrypoint-allowlist-test` | ignore | 4 |
-| `affaan-m__ecc/hook/observe-signal-counter-race-test` | ignore cleanup errors | 9 |
-| `affaan-m__ecc/hook/observe-signal-timeout-test` | Extract each `_clv2_bail` handler body: the `def` line plus the indented lines | 7 |
-| `affaan-m__ecc/hook/observe-subdirectory-detection-test` | — | 8 |
-| `affaan-m__ecc/hook/plan-canvas-sessions-hook-test` | — | 3 |
-| `affaan-m__ecc/hook/plugin-hook-bootstrap` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/plugin-hook-bootstrap-test` | Windows-only: PowerShell preference and .sh fallback behaviour. | 12 |
 | `affaan-m__ecc/hook/post-bash-dispatcher` | !/usr/bin/env node | 1 |
 | `affaan-m__ecc/hook/post-edit-accumulator` | !/usr/bin/env node | 2 |
 | `affaan-m__ecc/hook/post-edit-console-warn` | !/usr/bin/env node | 2 |
@@ -87,31 +69,21 @@
 | `affaan-m__ecc/hook/post-edit-typecheck` | !/usr/bin/env node | 3 |
 | `affaan-m__ecc/hook/posttooluse-dispatcher` | !/usr/bin/env node | 10 |
 | `affaan-m__ecc/hook/pre-bash-commit-quality` | !/usr/bin/env node | 16 |
-| `affaan-m__ecc/hook/pre-bash-commit-quality-test` | Working tree diverges after staging; hook should still inspect staged content. | 16 |
-| `affaan-m__ecc/hook/pre-bash-dev-server-block-test` | --- Blocking tests (non-Windows only) --- | 10 |
 | `affaan-m__ecc/hook/pre-bash-dispatcher` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/pre-compact-test` | Reader built from a path -> content map (returns null for unknown/unreadable). | 5 |
+| `affaan-m__ecc/hook/pre-compact` | !/usr/bin/env node | 7 |
 | `affaan-m__ecc/hook/pre-write-doc-warn` | !/usr/bin/env node | 1 |
 | `affaan-m__ecc/hook/quality-gate` | !/usr/bin/env node | 5 |
 | `affaan-m__ecc/hook/run-with-flags` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/run-with-flags-truncation-test` | JSON document that exceeds MAX_STDIN so the runner's stdin cap trips. | 6 |
 | `affaan-m__ecc/hook/session-activity-tracker` | !/usr/bin/env node | 16 |
-| `affaan-m__ecc/hook/session-activity-tracker-test` | — | 22 |
+| `affaan-m__ecc/hook/session-end` | !/usr/bin/env node | 12 |
 | `affaan-m__ecc/hook/session-end-marker` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/session-end-test` | Regression: a user message containing $-sequences ($&, $$, $`, $') must be | 4 |
+| `affaan-m__ecc/hook/session-start` | !/usr/bin/env node | 27 |
 | `affaan-m__ecc/hook/session-start-bootstrap` | !/usr/bin/env node | 3 |
 | `affaan-m__ecc/hook/stop-format-typecheck` | !/usr/bin/env node | 9 |
-| `affaan-m__ecc/hook/stop-hooks-stdout-test` | All registered Stop hooks (hooks/hooks.json). | 11 |
-| `affaan-m__ecc/hook/subagent-start` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/subagent-stop` | !/usr/bin/env node | 1 |
 | `AgriciDaniel__claude-seo/hook/hooks` | — | 1 |
-| `AgriciDaniel__claude-seo/hook/run-python-hook` | !/usr/bin/env node | 2 |
 | `AgriciDaniel__claude-seo/hook/validate-schema` | !/usr/bin/env python3 | 6 |
-| `Egonex-AI__Understand-Anything/hook/auto-update-prompt` | Auto-Update Knowledge Graph (Internal — Hook-Triggered) | 16 |
 | `Egonex-AI__Understand-Anything/hook/hooks` | — | 1 |
 | `Egonex-AI__Understand-Anything/hook/post-tool-use-auto-update` | — | 2 |
-| `Egonex-AI__Understand-Anything/hook/useismobile` | — | 1 |
-| `Egonex-AI__Understand-Anything/hook/usekeyboardshortcuts` | Prevent shortcuts from firing when typing in input fields | 3 |
 
 ## mcp (3)
 
@@ -132,31 +104,35 @@
 | `mvanhorn__last30days-skill/plugin/last30days` | Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent s… | 30695 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (33)
+## skill (37)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/agent-eval` | カスタムタスクでコーディングエージェント（Claude Code、Aider、Codex など）をヘッドツーヘッドで比較し、合格率、コスト、時間、一貫性のメトリクスを測定します | 6 |
-| `affaan-m__ecc/skill/agent-harness-construction` | AI エージェントのアクション空間、ツール定義、観測フォーマットを設計・最適化して完了率を向上させます。 | 3 |
-| `affaan-m__ecc/skill/agentic-os` | Claude Code 上に永続的なマルチエージェントオペレーティングシステムを構築します。カーネルアーキテクチャ、スペシャリストエージェント、スラッシュコマンド、ファイルベースのメモリ、スケジュールされた自動化、外部データベースなしの状態管理をカバーします。 | 17 |
-| `affaan-m__ecc/skill/autonomous-agent-harness` | Claude Codeを永続的なメモリ、スケジュール済み操作、コンピュータ使用、タスクキューイングを備えた完全自動エージェントシステムに変換します。スタンドアロンエージェントフレームワーク（Hermes、AutoGPT）を、Claude Codeのネイティブ… | 7 |
+| `affaan-m__ecc/skill/agent-eval` | Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consis… | 4 |
+| `affaan-m__ecc/skill/agent-harness-construction` | Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. | 2 |
+| `affaan-m__ecc/skill/agentic-os` | Build persistent multi-agent operating systems on Claude Code. Covers kernel architecture, specialist agents, slash commands, fil… | 12 |
+| `affaan-m__ecc/skill/architecture-decision-records` | Capture architectural decisions made during Claude Code sessions as structured ADRs. Auto-detects decision moments, records conte… | 7 |
+| `affaan-m__ecc/skill/autonomous-agent-harness` | Transform Claude Code into a fully autonomous agent system with persistent memory, scheduled operations, computer use, and task q… | 11 |
 | `affaan-m__ecc/skill/autonomous-loops` | Patterns and architectures for autonomous Claude Code loops — from simple sequential pipelines to RFC-driven multi-agent DAG syst… | 24 |
-| `affaan-m__ecc/skill/ck` | Claude Codeの永続的なプロジェクト単位のメモリ。セッション開始時にプロジェクトコンテキストを自動読み込み、gitアクティビティでセッションを追跡し、ネイティブメモリに書き込みます。コマンドは決定的なNode.jsスクリプトを実行します — 動作はモ… | 4 |
-| `affaan-m__ecc/skill/codebase-onboarding` | 不慣れなコードベースを分析し、アーキテクチャマップ、主要なエントリポイント、規約、スターターCLAUDE.mdを含む構造化オンボーディングガイドを生成します。新しいプロジェクトに参加するか、リポでClaude Codeを初めてセットアップする場合に使用します。 | 2 |
+| `affaan-m__ecc/skill/ck` | Persistent per-project memory for Claude Code. Auto-loads project context on session start, tracks sessions with git activity, an… | 53 |
+| `affaan-m__ecc/skill/codebase-onboarding` | Analyze an unfamiliar codebase and generate a structured onboarding guide with architecture map, key entry points, conventions, a… | 8 |
 | `affaan-m__ecc/skill/config-gc` | Garbage collection for your Claude Code configuration. Periodically scans ~/.claude (skills, memory, hooks, permissions, MCP serv… | 8 |
-| `affaan-m__ecc/skill/configure-ecc` | Claude Code、Codex、Kimi 内で ECC のインストール、更新、再設定を案内し、各ハーネスが実際に備えるプラグイン、スコープ、フック機能を守ります。 | 9 |
-| `affaan-m__ecc/skill/context-budget` | エージェント、スキル、MCPサーバー、ルールにわたってClaude Codeのコンテキストウィンドウ消費を監査します。肥大化、冗長なコンポーネントを特定し、優先順位付けされたトークン節約の推奨事項を生成します。 | 7 |
+| `affaan-m__ecc/skill/configure-ecc` | Guide ECC installation, update, or reconfiguration from inside Claude Code, Codex, or Kimi while respecting each harness's real p… | 8 |
+| `affaan-m__ecc/skill/context-budget` | Audits Claude Code context window consumption across agents, skills, MCP servers, and rules. Identifies bloat, redundant componen… | 6 |
 | `affaan-m__ecc/skill/continuous-learning` | [OBSOLETO - usar continuous-learning-v2] Extractor de skill por hook Stop v1 heredado. v2 es un superconjunto estricto con aprend… | 5 |
-| `affaan-m__ecc/skill/cost-tracking` | ローカルのコスト追跡データベースからClaude Codeのトークン使用量、支出、予算を追跡・レポートします。コスト、支出、使用量、トークン、予算、またはプロジェクト、ツール、セッション、日付によるコスト内訳について質問する場合に使用します。 | 6 |
+| `affaan-m__ecc/skill/cost-tracking` | Track and report Claude Code token usage, spending, and budgets from the local ECC cost-tracker metrics log. Use when the user as… | 4 |
 | `affaan-m__ecc/skill/delivery-gate` | Stop hook that blocks Claude from finishing until quality checks pass. Detects rationalization patterns (surface text heuristics)… | 13 |
 | `affaan-m__ecc/skill/dmux-workflows` | Multi-agent orchestration using dmux (tmux pane manager for AI agents). Patterns for parallel agent workflows across Claude Code,… | 5 |
 | `affaan-m__ecc/skill/eval-harness` | Formal evaluation framework for Claude Code sessions implementing eval-driven development (EDD) principles | 6 |
-| `affaan-m__ecc/skill/gan-style-harness` | GAN（生成的敵対ネットワーク）スタイルの評価ハーネス、画像生成パターン、および品質メトリクス。 | 12 |
-| `affaan-m__ecc/skill/healthcare-eval-harness` | ヘルスケアAIモデル評価ハーネス、臨床メトリクス、およびレギュレーション遵守の検証。 | 7 |
-| `affaan-m__ecc/skill/laravel-plugin-discovery` | Laravel プラグイン検出、パッケージ管理、依存関係解決、およびサービスプロバイダ統合。 | 6 |
-| `affaan-m__ecc/skill/security-scan` | AgentShield を使用して、Claude Code の設定（.claude/ ディレクトリ）のセキュリティ脆弱性、設定ミス、インジェクションリスクをスキャンします。CLAUDE.md、settings.json、MCP サーバー、フック、エージェント… | 6 |
+| `affaan-m__ecc/skill/gan-style-harness` | GAN-inspired Generator-Evaluator agent harness for building high-quality applications autonomously. Based on Anthropic's March 20… | 12 |
+| `affaan-m__ecc/skill/healthcare-eval-harness` | Patient safety evaluation harness for healthcare application deployments. Automated test suites for CDSS accuracy, PHI exposure, … | 8 |
+| `affaan-m__ecc/skill/hookify-rules` | This skill should be used when the user asks to create a hookify rule, write a hook rule, configure hookify, add a hookify rule, … | 3 |
+| `affaan-m__ecc/skill/iterative-retrieval` | Pattern for progressively refining context retrieval to solve the subagent context problem | 7 |
+| `affaan-m__ecc/skill/laravel-plugin-discovery` | Discover and evaluate Laravel packages via LaraPlugins.io MCP. Use when the user wants to find plugins, check package health, or … | 6 |
+| `affaan-m__ecc/skill/security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks usi… | 4 |
+| `affaan-m__ecc/skill/skill-stocktake` | Use when auditing Claude skills and commands for quality. Supports Quick Scan (changed skills only) and Full Stocktake modes with… | 18 |
 | `affaan-m__ecc/skill/verification-loop` | A comprehensive verification system for Claude Code sessions. | 3 |
-| `affaan-m__ecc/skill/workspace-surface-audit` | アクティブなリポジトリ、MCPサーバー、プラグイン、コネクター、環境サーフェス、ツールのセットアップを監査し、最も価値の高いECCネイティブスキル、フック、エージェント、オペレーターワークフローを推奨する。ユーザーがClaude Codeのセットアップを支援… | 7 |
+| `affaan-m__ecc/skill/workspace-surface-audit` | Audit the active repo, MCP servers, plugins, connectors, env surfaces, and harness setup, then recommend the highest-value ECC-na… | 5 |
 | `AgriciDaniel__claude-seo/skill/seo-audit` | Full website SEO audit with parallel subagent delegation. Crawls up to 500 pages, detects business type, delegates to up to 15 sp… | 8 |
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | > Live SEO data via DataForSEO MCP server: SERP analysis, keyword research (volume, difficulty, intent, trends), backlink profile… | 23 |
 | `anthropics__skills/skill/skill-creator` | A skill for creating new skills and iteratively improving them. | 225 |

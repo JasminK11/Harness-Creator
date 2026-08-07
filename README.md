@@ -11,8 +11,8 @@ heraus, die dieses Projekt braucht. Nicht mehr.
 Es gibt inzwischen dutzende Repos voller guter Claude-Bausteine. Der naheliegende
 Weg — alle klonen und Claude draufloslassen — funktioniert nicht:
 
-Der hier katalogisierte Bestand umfasst **25.593 Bausteine**. Ein Agent, der die
-durchliest, hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode
+Der hier katalogisierte Bestand umfasst rund **25.500 Bausteine**. Ein Agent, der
+die durchliest, hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode
 gesehen hat. Er trifft dann keine bessere Auswahl, sondern gar keine.
 
 ## Die Lösung: drei Ebenen

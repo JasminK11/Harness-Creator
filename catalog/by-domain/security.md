@@ -56,19 +56,13 @@
 | `affaan-m__ecc/command/security-scan` | Run AgentShield against agent, hook, MCP, permission, and secret surfaces. | 3 |
 | `affaan-m__ecc/command/vue-review` | Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibili… | 6 |
 
-## hook (9)
+## hook (3)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/before-read-file` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/before-tab-file-read` | !/usr/bin/env node | 1 |
 | `affaan-m__ecc/hook/governance-capture` | !/usr/bin/env node | 9 |
 | `affaan-m__ecc/hook/insaits-security-monitor` | !/usr/bin/env python3 | 8 |
-| `affaan-m__ecc/hook/insaits-security-monitor-test` | — | 7 |
 | `affaan-m__ecc/hook/insaits-security-wrapper` | !/usr/bin/env node | 4 |
-| `affaan-m__ecc/hook/insaits-security-wrapper-test` | — | 5 |
-| `affaan-m__ecc/hook/test-insaits-security-monitor` | — | 8 |
-| `multica-ai__multica/hook/use-can-edit-skill` | — | 2 |
 
 ## plugin (1)
 
@@ -76,28 +70,34 @@
 |---|---|---:|
 | `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4119 |
 
-## skill (26)
+## skill (32)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/defi-amm-security` | DeFi自動マーケットメーカー（AMM）スマートコントラクトセキュリティ監査パターン。フラッシュローン、スリッページ、サンドイッチング攻撃、価格操作、再入攻撃、不正確な整数演算をカバー。 | 2 |
+| `affaan-m__ecc/skill/defi-amm-security` | Security checklist for Solidity AMM contracts, liquidity pools, and swap flows. Covers reentrancy, CEI ordering, donation or infl… | 5 |
 | `affaan-m__ecc/skill/django-security` | Django security best practices, authentication, authorization, CSRF protection, SQL injection prevention, XSS prevention, and sec… | 16 |
-| `affaan-m__ecc/skill/django-verification` | Verification loop for Django projects: migrations, linting, tests with coverage, security scans, and deployment readiness checks … | 13 |
+| `affaan-m__ecc/skill/django-verification` | Verification loop for Django projects: migrations, linting, tests with coverage, security scans, and deployment readiness checks … | 11 |
 | `affaan-m__ecc/skill/docker-patterns` | > Docker and Docker Compose patterns for local development, container security, networking, volume strategies, and multi-service … | 8 |
+| `affaan-m__ecc/skill/enterprise-agent-ops` | Operate long-lived agent workloads with observability, security boundaries, and lifecycle management. | 1 |
 | `affaan-m__ecc/skill/fastapi-patterns` | FastAPI patterns for async APIs, dependency injection, Pydantic request and response models, OpenAPI docs, tests, security, and p… | 9 |
+| `affaan-m__ecc/skill/flutter-dart-code-review` | Library-agnostic Flutter/Dart code review checklist covering widget best practices, state management patterns (BLoC, Riverpod, Pr… | 23 |
+| `affaan-m__ecc/skill/github-ops` | GitHub repository operations, automation, and management. Issue triage, PR management, CI/CD operations, release management, and … | 5 |
+| `affaan-m__ecc/skill/hipaa-compliance` | HIPAA-specific entrypoint for healthcare privacy and security work. Use when a task is explicitly framed around HIPAA, PHI handli… | 4 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
 | `affaan-m__ecc/skill/kubernetes-patterns` | Kubernetes workload patterns, resource management, RBAC, probes, autoscaling, ConfigMap/Secret handling, and kubectl debugging fo… | 20 |
 | `affaan-m__ecc/skill/laravel-security` | Buenas prácticas de seguridad en Laravel para autenticación/autorización, validación, CSRF, asignación masiva, subida de archivos… | 8 |
-| `affaan-m__ecc/skill/llm-trading-agent-security` | 日本語翻訳：このファイルは llm-trading-agent-security 用の日本語翻訳が必要です | 1 |
+| `affaan-m__ecc/skill/llm-trading-agent-security` | Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-… | 4 |
 | `affaan-m__ecc/skill/mle-workflow` | Production machine-learning engineering workflow for data contracts, reproducible training, model evaluation, deployment, monitor… | 22 |
-| `affaan-m__ecc/skill/perl-security` | テイントモード、入力バリデーション、安全なプロセス実行、DBIパラメータ化クエリ、Webセキュリティ（XSS/SQLi/CSRF）、perlcriticセキュリティポリシーを網羅する包括的なPerlセキュリティ。 | 16 |
+| `affaan-m__ecc/skill/network-config-validation` | Pre-deployment checks for router and switch configuration, including dangerous commands, duplicate addresses, subnet overlaps, st… | 7 |
+| `affaan-m__ecc/skill/perl-security` | Comprehensive Perl security covering taint mode, input validation, safe process execution, DBI parameterized queries, web securit… | 13 |
 | `affaan-m__ecc/skill/postgres-patterns` | > PostgreSQL database patterns for query optimization, schema design, indexing, and security. Quick reference for common patterns… | 4 |
 | `affaan-m__ecc/skill/prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and executio… | 2 |
 | `affaan-m__ecc/skill/quarkus-security` | Buenas prácticas de seguridad en Quarkus para autenticación, autorización, JWT/OIDC, RBAC, validación de entrada, CSRF, gestión d… | 10 |
-| `affaan-m__ecc/skill/security-bounty-hunter` | リポジトリ内の悪用可能なバウンティ対象のセキュリティ問題を発見します。ノイズの多いローカルのみの発見ではなく、実際のレポートに適格なリモートから到達可能な脆弱性に焦点を当てます。 | 5 |
+| `affaan-m__ecc/skill/security-bounty-hunter` | Hunt for exploitable, bounty-worthy security issues in repositories. Focuses on remotely reachable vulnerabilities that qualify f… | 3 |
 | `affaan-m__ecc/skill/security-review` | Use this skill when adding authentication, handling user input, working with secrets, creating API endpoints, or implementing pay… | 12 |
-| `affaan-m__ecc/skill/security-scan` | AgentShield を使用して、Claude Code の設定（.claude/ ディレクトリ）のセキュリティ脆弱性、設定ミス、インジェクションリスクをスキャンします。CLAUDE.md、settings.json、MCP サーバー、フック、エージェント… | 6 |
+| `affaan-m__ecc/skill/security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks usi… | 4 |
 | `affaan-m__ecc/skill/springboot-security` | Spring Security best practices for authn/authz, validation, CSRF, secrets, headers, rate limiting, and dependency security in Jav… | 8 |
+| `affaan-m__ecc/skill/token-budget-advisor` | >- Offers the user an informed choice about how much response depth to consume before answering. Use this skill when the user exp… | 6 |
 | `affaan-m__ecc/skill/x-api` | X/Twitter API integration for posting tweets, threads, reading timelines, search, and analytics. Covers OAuth auth patterns, rate… | 7 |
 | `AgriciDaniel__claude-seo/skill/seo-technical` | > Technical SEO audit across 9 categories: crawlability, indexability, security, URL structure, mobile, Core Web Vitals, structur… | 22 |
 | `mattpocock__skills/skill/writing-beats` | Writing, exploit — assemble raw material into a journey of beats, grounding each term before a beat leans on it. | 5 |

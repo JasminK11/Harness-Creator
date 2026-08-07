@@ -1,6 +1,6 @@
 # Domäne: seo
 
-61 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+60 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (24)
 
@@ -31,12 +31,11 @@
 | `msitarzewski__agency-agents/agent/search-query-analyst` | Specialist in search term analysis, negative keyword architecture, and query-to-intent mapping. Turns raw search query data into … | 5 |
 | `msitarzewski__agency-agents/agent/seo-specialist` | Expert search engine optimization strategist specializing in technical SEO, content optimization, link authority building, and or… | 21 |
 
-## hook (3)
+## hook (2)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `AgriciDaniel__claude-seo/hook/hooks` | — | 1 |
-| `AgriciDaniel__claude-seo/hook/run-python-hook` | !/usr/bin/env node | 2 |
 | `AgriciDaniel__claude-seo/hook/validate-schema` | !/usr/bin/env python3 | 6 |
 
 ## plugin (1)
@@ -49,7 +48,7 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/seo` | テクニカル SEO、オンページ最適化、構造化データ、Core Web Vitals、およびコンテンツ戦略にわたる SEO 改善の監査、計画、実施。ユーザーが検索可視性の向上、SEO 修正、スキーママークアップ、サイトマップ/robots の作業、またはキーワ… | 6 |
+| `affaan-m__ecc/skill/seo` | Audit, plan, and implement SEO improvements across technical SEO, on-page optimization, structured data, Core Web Vitals, and con… | 4 |
 | `AgriciDaniel__claude-seo/skill/seo` | Comprehensive SEO analysis for any website or business type. Full site audits, single-page analysis, technical SEO (crawlability,… | 106 |
 | `AgriciDaniel__claude-seo/skill/seo-ahrefs` | Ahrefs API analyst (extension). Reads referring domains, backlinks, organic keywords, and content explorer data via the tested @a… | 2 |
 | `AgriciDaniel__claude-seo/skill/seo-audit` | Full website SEO audit with parallel subagent delegation. Crawls up to 500 pages, detects business type, delegates to up to 15 sp… | 8 |

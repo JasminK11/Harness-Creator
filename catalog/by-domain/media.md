@@ -37,27 +37,22 @@
 | `affaan-m__ecc/command/marketing-campaign` | Plan and execute a full marketing campaign. Accepts a product brief and returns positioning, landing page copy, email sequence, s… | 4 |
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 
-## hook (1)
+## skill (23)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `multica-ai__multica/hook/use-zoom-canvas` | Fit is deferred until both sizes are known; until then any transform we | 16 |
-
-## skill (22)
-
-| ID | Beschreibung | KB |
-|---|---|---:|
-| `affaan-m__ecc/skill/design-system` | アクセシビリティ、レスポンシブネス、テーマ設定、コンポーネント群、トークンを備えた本番環境対応デザインシステムの構築。Figma、Storybook、コンポーネントライブラリ統合。 | 2 |
 | `affaan-m__ecc/skill/fal-ai-media` | Unified media generation via fal.ai MCP — image, video, and audio. Covers text-to-image (Nano Banana), text/image-to-video (Seeda… | 7 |
 | `affaan-m__ecc/skill/frontend-slides` | Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to bui… | 16 |
-| `affaan-m__ecc/skill/manim-video` | 日本語翻訳：このファイルは manim-video 用の日本語翻訳が必要です | 1 |
+| `affaan-m__ecc/skill/manim-video` | Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the w… | 6 |
 | `affaan-m__ecc/skill/marketing-campaign` | End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing p… | 5 |
-| `affaan-m__ecc/skill/nutrient-document-processing` | Nutrient DWS API を使用してドキュメントの処理、変換、OCR、抽出、編集、署名、フォーム入力を行います。PDF、DOCX、XLSX、PPTX、HTML、画像に対応しています。 | 6 |
+| `affaan-m__ecc/skill/nutrient-document-processing` | Process, convert, OCR, extract, redact, sign, and fill documents using the Nutrient DWS API. Works with PDFs, DOCX, XLSX, PPTX, H… | 6 |
 | `affaan-m__ecc/skill/react-performance` | React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/ve… | 18 |
-| `affaan-m__ecc/skill/remotion-video-creation` | Remotion のベストプラクティス - React で動画を作成する。3D、アニメーション、音声、字幕、チャート、トランジションなどをカバーするドメイン固有の29のルール。 | 4 |
+| `affaan-m__ecc/skill/remotion-video-creation` | Best practices for Remotion - Video creation in React. 29 domain-specific rules covering 3D, animations, audio, captions, charts,… | 76 |
 | `affaan-m__ecc/skill/taste` | A creative-direction (taste) layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop visual family… | 20 |
+| `affaan-m__ecc/skill/ui-demo` | Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutor… | 15 |
 | `affaan-m__ecc/skill/video-editing` | AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capt… | 10 |
-| `affaan-m__ecc/skill/visa-doc-translate` | ビザ申請書類（画像）を英語に翻訳し、原文と翻訳を含むバイリンガルPDFを作成する | 7 |
+| `affaan-m__ecc/skill/videodb` | See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return real… | 125 |
+| `affaan-m__ecc/skill/visa-doc-translate` | Translate visa application documents (images) to English and create a bilingual PDF with original and translation | 6 |
 | `AgriciDaniel__claude-seo/skill/seo` | Comprehensive SEO analysis for any website or business type. Full site audits, single-page analysis, technical SEO (crawlability,… | 106 |
 | `AgriciDaniel__claude-seo/skill/seo-image-gen` | AI image generation for SEO assets: OG/social preview images, blog hero images, schema images, product photography, infographics.… | 9 |
 | `AgriciDaniel__claude-seo/skill/seo-images` | > Image optimization analysis for SEO and performance. Checks alt text, file sizes, formats, responsive images, lazy loading, CLS… | 17 |
