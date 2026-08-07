@@ -1,8 +1,8 @@
 # Domäne: meta
 
-114 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+101 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (20)
+## agent (16)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -16,13 +16,9 @@
 | `anthropics__skills/agent/comparator` | Compare two outputs WITHOUT knowing which skill produced them. | 7 |
 | `anthropics__skills/agent/grader` | Evaluate expectations against an execution transcript and outputs. | 9 |
 | `Egonex-AI__Understand-Anything/agent/architecture-analyzer` | / Analyzes a codebase's file structure, summaries, and import relationships to identify logical architectural layers and assign e… | 23 |
-| `Egonex-AI__Understand-Anything/agent/article-analyzer` | / Analyzes markdown files using pre-parsed structural data and LLM inference to extract knowledge graph nodes and edges (entities… | 4 |
 | `Egonex-AI__Understand-Anything/agent/assemble-reviewer` | / Reviews the output of merge-batch-graphs.py for semantic issues the script cannot catch. Recovers dropped nodes/edges and fills… | 5 |
-| `Egonex-AI__Understand-Anything/agent/design-analyzer` | / Analyzes Figma structural nodes (pages, screens, components, instances, tokens) from a deterministic manifest and adds semantic… | 3 |
 | `Egonex-AI__Understand-Anything/agent/domain-analyzer` | / Analyzes codebases to extract business domain knowledge — domains, business flows, and process steps. Produces a domain-graph.j… | 6 |
-| `Egonex-AI__Understand-Anything/agent/file-analyzer` | / Analyzes batches of source files to produce knowledge graph nodes and edges. Extracts file structure, functions, classes, and r… | 33 |
 | `Egonex-AI__Understand-Anything/agent/graph-reviewer` | / Validates knowledge graphs for correctness, completeness, and quality. Runs systematic checks and renders approval or rejection… | 12 |
-| `Egonex-AI__Understand-Anything/agent/knowledge-graph-guide` | / Use this agent when users need help understanding, querying, or working with an Understand-Anything knowledge graph. Guides use… | 5 |
 | `Egonex-AI__Understand-Anything/agent/project-scanner` | / Scans a codebase directory to produce a structured inventory of all project files, detected languages, frameworks, import maps,… | 17 |
 | `Egonex-AI__Understand-Anything/agent/tour-builder` | / Designs guided learning tours through codebases, creating 5-15 pedagogical steps that teach project architecture and key concep… | 21 |
 | `msitarzewski__agency-agents/agent/wordpress-performance-engineer` | Expert WordPress performance engineer specializing in Core Web Vitals, object caching (Redis/Memcached), page caching, database a… | 24 |
@@ -93,18 +89,15 @@
 | `mvanhorn__last30days-skill/mcp/manifest` | MCP-Konfiguration | 5 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/mcp/mcp` | MCP-Server: playwright, chrome-devtools, shadcn | 1 |
 
-## plugin (6)
+## plugin (3)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/plugin/ecc` | Harness-native ECC plugin for engineering teams - 67 agents, 282 skills, 94 legacy command shims, reusable hooks, rules, MCP conv… | 49642 |
 | `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4119 |
 | `Egonex-AI__Understand-Anything/plugin/understand-anything` | AI-powered codebase understanding — analyze, visualize, and explain any project | 32102 |
-| `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-… | 650 |
-| `mvanhorn__last30days-skill/plugin/last30days` | Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent s… | 30695 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (37)
+## skill (31)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -136,13 +129,7 @@
 | `AgriciDaniel__claude-seo/skill/seo-audit` | Full website SEO audit with parallel subagent delegation. Crawls up to 500 pages, detects business type, delegates to up to 15 sp… | 8 |
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | > Live SEO data via DataForSEO MCP server: SERP analysis, keyword research (volume, difficulty, intent, trends), backlink profile… | 23 |
 | `anthropics__skills/skill/skill-creator` | A skill for creating new skills and iteratively improving them. | 225 |
-| `Egonex-AI__Understand-Anything/skill/understand` | Analyze a codebase to produce an interactive knowledge graph for understanding architecture, components, and relationships | 386 |
-| `Egonex-AI__Understand-Anything/skill/understand-chat` | Use when you need to ask questions about a codebase or understand code using a knowledge graph | 5 |
-| `Egonex-AI__Understand-Anything/skill/understand-dashboard` | Launch the interactive web dashboard to visualize a codebase's knowledge graph | 7 |
 | `Egonex-AI__Understand-Anything/skill/understand-diff` | Analyze the current code changes against the knowledge graph in the project's data directory (.ua/knowledge-graph.json, or the le… | 6 |
-| `Egonex-AI__Understand-Anything/skill/understand-domain` | Extract business domain knowledge from a codebase and generate an interactive domain flow graph. Works standalone (lightweight sc… | 26 |
 | `Egonex-AI__Understand-Anything/skill/understand-explain` | Use when you need a deep-dive explanation of a specific file, function, or module in the codebase | 5 |
-| `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
-| `Egonex-AI__Understand-Anything/skill/understand-knowledge` | Analyze a Karpathy-pattern LLM wiki knowledge base and generate an interactive knowledge graph with entity extraction, implicit r… | 44 |
 | `Egonex-AI__Understand-Anything/skill/understand-onboard` | Generate a comprehensive onboarding guide from the project's knowledge graph. | 5 |
 

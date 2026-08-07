@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-07 08:52 · 954 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
+> Stand: 2026-08-07 08:57 · 954 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
 
 ## Regel für Agenten
 
@@ -36,14 +36,14 @@ Einstieg über die Domäne, dann `search` innerhalb davon.
 |---|---:|---|
 | general | 331 | `catalog/by-domain/general.md` |
 | data-ai | 159 | `catalog/by-domain/data-ai.md` |
-| meta | 114 | `catalog/by-domain/meta.md` |
-| backend | 111 | `catalog/by-domain/backend.md` |
+| backend | 108 | `catalog/by-domain/backend.md` |
 | product | 106 | `catalog/by-domain/product.md` |
+| meta | 101 | `catalog/by-domain/meta.md` |
 | security | 80 | `catalog/by-domain/security.md` |
-| frontend | 74 | `catalog/by-domain/frontend.md` |
+| frontend | 73 | `catalog/by-domain/frontend.md` |
 | testing | 68 | `catalog/by-domain/testing.md` |
-| docs | 63 | `catalog/by-domain/docs.md` |
-| seo | 60 | `catalog/by-domain/seo.md` |
+| seo | 58 | `catalog/by-domain/seo.md` |
+| docs | 55 | `catalog/by-domain/docs.md` |
 | devops | 53 | `catalog/by-domain/devops.md` |
 | media | 48 | `catalog/by-domain/media.md` |
 
@@ -53,14 +53,14 @@ Einstieg über die Domäne, dann `search` innerhalb davon.
 |---|---:|---|---|
 | [affaan-m/ecc](https://github.com/affaan-m/ecc) | 520 | general:182, data-ai:100, meta:77, backend:67 | 2026-08-06 |
 | [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents) | 270 | general:117, product:52, data-ai:32, devops:22 | 2026-08-06 |
-| [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) | 52 | seo:52, product:14, backend:8, meta:5 | 2026-07-20 |
+| [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) | 52 | seo:50, product:14, backend:8, meta:5 | 2026-07-20 |
 | [mattpocock/skills](https://github.com/mattpocock/skills) | 36 | general:25, data-ai:5, docs:5, testing:2 | 2026-08-06 |
-| [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | 22 | meta:22, data-ai:9, media:2, docs:1 | 2026-07-30 |
+| [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | 22 | meta:12, data-ai:9, media:2, docs:1 | 2026-07-30 |
 | [anthropics/skills](https://github.com/anthropics/skills) | 21 | media:5, general:4, frontend:4, meta:4 | 2026-07-24 |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 12 | frontend:11, product:3, meta:2, media:1 | 2026-08-06 |
-| [multica-ai/multica](https://github.com/multica-ai/multica) | 10 | backend:9, data-ai:3, frontend:1, product:1 | 2026-08-07 |
+| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 12 | frontend:10, product:3, media:1, backend:1 | 2026-08-06 |
+| [multica-ai/multica](https://github.com/multica-ai/multica) | 10 | backend:6, data-ai:3, frontend:1, product:1 | 2026-08-07 |
 | [usestrix/strix](https://github.com/usestrix/strix) | 4 | security:4, backend:3, devops:2, data-ai:1 | 2026-08-06 |
-| [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill) | 4 | meta:2, general:2, data-ai:1 | 2026-07-31 |
+| [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill) | 4 | general:2, data-ai:1, meta:1 | 2026-07-31 |
 | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | 2 | data-ai:1, docs:1, general:1 | 2026-08-06 |
 | [Bomx/qwoted-seo-backlinks-skill](https://github.com/Bomx/qwoted-seo-backlinks-skill) | 1 | seo:1 | 2026-05-01 |
 
@@ -77,7 +77,7 @@ node tools/harness.mjs search "<stichwort>" --all   # alles, inklusive Massen-Re
 
 | Repo | Bausteine | Schwerpunkt | Stand |
 |---|---:|---|---|
-| [Klotzkette/claude-fuer-deutsches-recht](https://github.com/Klotzkette/claude-fuer-deutsches-recht) | 24543 | legal-de:24543, meta:286, product:86, media:50 | 2026-08-05 |
+| [Klotzkette/claude-fuer-deutsches-recht](https://github.com/Klotzkette/claude-fuer-deutsches-recht) | 24543 | legal-de:24161, meta:213, product:86, media:50 | 2026-08-05 |
 
 ## Weiterlesen
 

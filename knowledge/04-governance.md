@@ -98,9 +98,7 @@ Wer die Bibliothek befragt, kommt nicht mit „ich brauche etwas aus dem Bereich
 | `vermarkten` | „Das Produkt muss gefunden und verstanden werden." | seo, product, media |
 | `rechtliches` | „Deutsche Rechtsfragen." | legal-de (Massen-Repo) |
 
-Zwölf Einträge, davon zehn für Software. `vermarkten` und `rechtliches` sind Randbereiche unseres Bestands, gehören aber dazu, weil sie 128 bzw. 24.543 Bausteine abdecken.
-
-Beachte, was diese Liste nicht enthält: keine Sprache, kein Framework, keine Technikkategorie. Sprache und Framework sind das, was Miraje als **Triggerwort** bezeichnet — sie gehören in die Description (`cpp-reviewer` unterscheidet sich von `go-reviewer` allein durch „C++" bzw. „Go"), nicht in die Kategorie.
+Zwölf Einträge, davon zehn für Software; `vermarkten` und `rechtliches` sind Randbereiche, gehören aber dazu, weil sie 128 bzw. 24.543 Bausteine abdecken. Beachte, was die Liste **nicht** enthält: keine Sprache, kein Framework, keine Technikkategorie. Das sind Mirajes **Triggerwörter** — sie gehören in die Description (`cpp-reviewer` unterscheidet sich von `go-reviewer` allein durch „C++" bzw. „Go"), nicht in die Kategorie.
 
 ### 2.4 Urteil: zweite Ebene, kein Austausch
 
@@ -112,19 +110,7 @@ Beachte, was diese Liste nicht enthält: keine Sprache, kein Framework, keine Te
 
 **Was stattdessen: eine Absichts-Ebene neben den Domänen, als Datei gepflegt statt berechnet.**
 
-Der Ansatz existiert bereits im Ansatz. `harness-build/SKILL.md` enthält in den Zeilen 88–93 eine Symptomtabelle:
-
-```
-| Reviews übersehen dieselben Fehler   | search "code review" --type agent      |
-| Keiner traut sich an den Code        | search "codebase onboarding"           |
-| Tests fehlen oder brechen            | search "tdd testing" --domain testing  |
-| Sicherheitslücken nicht gefunden     | search "security audit" --domain security |
-| Deployments schlagen fehl            | search "deployment ci" --domain devops |
-```
-
-Das ist eine Absichts-Ebene mit sechs Einträgen, hartkodiert in einer Skill-Datei, ohne Verbindung zum Katalog. Der Vorschlag ist, sie herauszuziehen und aufzuwerten:
-
-`catalog/intents.yaml` — von Hand gepflegt, überlebt jedes `extract`:
+Der Ansatz existiert im Keim bereits. `harness-build/SKILL.md` führt in den Zeilen 88–93 eine Symptomtabelle („Reviews übersehen dieselben Fehler" → `search "code review" --type agent`; „Keiner traut sich an den Code" → `search "codebase onboarding"`; „Deployments schlagen fehl" → `search "deployment ci" --domain devops`). Das ist eine Absichts-Ebene mit sechs Einträgen, hartkodiert in einer Skill-Datei, ohne Verbindung zum Katalog. Der Vorschlag ist, sie herauszuziehen und aufzuwerten — `catalog/intents.yaml`, von Hand gepflegt, überlebt jedes `extract`:
 
 ```yaml
 - id: verstehen
@@ -234,19 +220,13 @@ R1–R3 sind harte Gates und gehören perspektivisch ins CLI (`search --strict`)
 
 Mirajes Vorfall: Modell-Upgrade, keine Zeile im Skill geändert, Agent befolgte den Skill nicht mehr — das neue Modell gewichtete den Anfang stärker, die kritische Anweisung stand am Ende. Sein Merksatz: Skills sind keine Dokumentation, sondern **Verträge, versioniert gegen ein Modell**.
 
-Bei uns ist die exponierte Stelle eine andere. Wir schreiben die Skills nicht, wir wählen sie aus. Das driftende Verhalten ist deshalb nicht „befolgt der Agent den Skill", sondern:
-
-> **Findet der Agent für eine gegebene Absicht noch denselben Baustein?**
-
-Das driftet aus drei unabhängigen Gründen: das Modell ändert sich, der Katalog ändert sich (`/harness-update` zieht 13 Repos, die uns nicht gehören), oder der Score in `cmdSearch` ändert sich. Ohne Messung merkt es niemand — die Suche gibt nie einen Fehler zurück, nur ein anderes Ergebnis.
+Bei uns ist die exponierte Stelle eine andere. Wir schreiben die Skills nicht, wir wählen sie aus. Das driftende Verhalten ist deshalb nicht „befolgt der Agent den Skill", sondern: **Findet der Agent für eine gegebene Absicht noch denselben Baustein?** Das driftet aus drei unabhängigen Gründen: das Modell ändert sich, der Katalog ändert sich (`/harness-update` zieht 13 Repos, die uns nicht gehören), oder der Score in `cmdSearch` ändert sich. Ohne Messung merkt es niemand — die Suche gibt nie einen Fehler zurück, nur ein anderes Ergebnis.
 
 ### 4.1 Das minimal sinnvolle Verfahren
 
 Eine Liste von Testanfragen mit erwarteten Treffern, gegen die `search` läuft. Zwei Stufen:
 
-**Stufe 1 — deterministisch, ohne Modell.** Reines `search`-Verhalten. Läuft in Sekunden, bei jedem `/harness-update` automatisch.
-
-Pro Fall: eine Anfrage, die Bausteine die **im Ergebnis stehen müssen** (`must`), optional welche die **nicht** darin stehen dürfen (`verboten`), und ab welcher Position das noch zählt (`top`).
+**Stufe 1 — deterministisch, ohne Modell.** Reines `search`-Verhalten, läuft in Sekunden und kann an jedes `/harness-update` gehängt werden. Pro Fall: eine Anfrage, die Bausteine die **im Ergebnis stehen müssen** (`must`), optional welche die **nicht** darin stehen dürfen (`verboten`), und ab welcher Position das noch zählt (`top`).
 
 **Stufe 2 — mit Modell, seltener.** Man gibt dem Agenten die Nutzerabsicht im Klartext („mein Deployment bricht seit dem Umzug auf Kubernetes") und lässt ihn ohne weitere Hilfe suchen und auswählen. Bewertet wird nur, ob die `must`-Bausteine in seiner Endauswahl stehen. Das ist der Eval, der Mirajes Fall abbildet: Er misst nicht den Katalog, sondern ob `harness-build/SKILL.md` das Modell noch führt. Läuft manuell — bei jedem Modellwechsel, sonst nie.
 
@@ -255,19 +235,14 @@ Pro Fall: eine Anfrage, die Bausteine die **im Ergebnis stehen müssen** (`must`
 `evals/routing.jsonl` — eine Zeile pro Fall, damit ein neuer Fall ein Einzeiler-Diff ist und ein Lauf zeilenweise über die Datei iterieren kann:
 
 ```jsonl
-{"id":"deploy-bricht","stufe":1,"q":"deployment ci","flags":["--domain","devops"],"top":10,"must":["affaan-m__ecc/skill/deployment-patterns"],"verboten":[],"notiz":"Kern-Treffer fuer die Absicht 'ausliefern'"}
+{"id":"deploy-bricht","stufe":1,"q":"deployment ci","flags":["--domain","devops"],"top":10,"must":["affaan-m__ecc/skill/deployment-patterns"],"verboten":[],"notiz":"Kern-Treffer für die Absicht 'ausliefern'"}
 {"id":"fremde-codebasis","stufe":1,"q":"codebase onboarding","top":10,"must":["msitarzewski__agency-agents/agent/codebase-onboarding-engineer","Egonex-AI__Understand-Anything/skill/understand-onboard"],"verboten":[],"notiz":"Absicht 'verstehen'"}
-{"id":"go-review","stufe":1,"q":"go code review","top":5,"must":["affaan-m__ecc/agent/go-reviewer"],"verboten":["affaan-m__ecc/agent/cpp-reviewer"],"notiz":"Trennschaerfe-Test nach Mirajes report-html/report-pdf-Muster"}
+{"id":"go-review","stufe":1,"q":"go code review","top":5,"must":["affaan-m__ecc/agent/go-reviewer"],"verboten":["affaan-m__ecc/agent/cpp-reviewer"],"notiz":"Trennschärfe-Test nach Mirajes report-html/report-pdf-Muster"}
 {"id":"keine-jp-stummel","stufe":1,"q":"production audit","top":10,"verboten":["affaan-m__ecc/skill/production-audit"],"must":[],"notiz":"Platzhalter darf nicht als Treffer erscheinen"}
-{"id":"deploy-klartext","stufe":2,"absicht":"Mein Deployment bricht seit dem Umzug auf Kubernetes.","must":["affaan-m__ecc/skill/kubernetes-patterns"],"notiz":"prueft harness-build, nicht den Katalog"}
+{"id":"deploy-klartext","stufe":2,"absicht":"Mein Deployment bricht seit dem Umzug auf Kubernetes.","must":["affaan-m__ecc/skill/kubernetes-patterns"],"notiz":"prüft harness-build, nicht den Katalog"}
 ```
 
-Daneben `evals/README.md` mit dem Modellstand des letzten Stufe-2-Laufs — das ist die Versionierung gegen ein Modell, die Miraje meint:
-
-```
-Letzter Stufe-2-Lauf: 2026-08-07, claude-opus-5[1m], 11/12 bestanden.
-Fehlgeschlagen: review-qualitaet (zog command statt agent).
-```
+Daneben `evals/README.md` mit dem Modellstand des letzten Stufe-2-Laufs — das ist die Versionierung gegen ein Modell, die Miraje meint, z. B.: *„Letzter Stufe-2-Lauf: 2026-08-07, `claude-opus-5[1m]`, 11/12 bestanden. Fehlgeschlagen: `review-qualität` (zog command statt agent)."*
 
 Ein Subcommand `harness.mjs eval [--stufe 1]` führt Stufe 1 aus und gibt eine Zeile pro Fall aus (`OK` / `FEHLT <id> auf Position n` / `VERBOTEN <id> auf Position n`) plus eine Bilanz. Exit-Code ≠ 0 bei Fehlschlägen, damit `/harness-update` daran hängen kann.
 
@@ -314,9 +289,7 @@ Human-in-the-Loop bleibt bei (a). (b) ist reine Automatik.
 
 ### 5.2 Ownership — **nicht anwendbar. Ersatz: Herkunftsnachweis.**
 
-Wir können keine Maintainer benennen. Ein `CODEOWNERS` über fremde Bausteine wäre eine Lüge — wir haben weder Zugriff noch Verantwortung.
-
-Was wir stattdessen brauchen, ist die Frage, die Ownership eigentlich beantwortet: **Wen frage ich, wenn dieser Baustein Ärger macht?** Antwort bei uns: das Upstream-Repo. Der Ersatz ist ein lückenloser Herkunftsnachweis.
+Wir können keine Maintainer benennen. Ein `CODEOWNERS` über fremde Bausteine wäre eine Lüge — wir haben weder Zugriff noch Verantwortung. Was wir stattdessen brauchen, ist die Frage, die Ownership eigentlich beantwortet: **Wen frage ich, wenn dieser Baustein Ärger macht?** Antwort bei uns: das Upstream-Repo. Der Ersatz ist ein lückenloser Herkunftsnachweis.
 
 Er existiert bereits zur Hälfte. `install` schreibt `.claude/harness-manifest.json` mit `id`, `from`, `sourcePath` und `catalogGeneratedAt` (Zeilen 837–851). Was fehlt: der **Commit-Hash** des Quell-Repos. `extract` erhebt ihn bereits (`repos[].head`, Zeile 444), schreibt ihn aber nicht ins Manifest. Ohne ihn lässt sich nachträglich nicht feststellen, welche Fassung eines Bausteins in einem Projekt liegt.
 
@@ -324,9 +297,7 @@ Zweiter Teil: eine Spalte „Vertrauen" in `sources.txt` bzw. `INDEX.md`. `anthr
 
 ### 5.3 Boundaries — teilweise anwendbar, und wir tun es heute nicht
 
-Miraje: Allow-List für Tools pro Skill, Tools sind zugriffskontrolliert.
-
-Das können wir **nicht durchsetzen** — wir kopieren fremde Dateien, wir schreiben ihr Frontmatter nicht. Aber wir können es **sichtbar machen**, und das ist der Teil, den wir heute liegen lassen.
+Miraje: Allow-List für Tools pro Skill, Tools sind zugriffskontrolliert. Das können wir **nicht durchsetzen** — wir kopieren fremde Dateien, wir schreiben ihr Frontmatter nicht. Aber wir können es **sichtbar machen**, und das ist der Teil, den wir heute liegen lassen.
 
 `extract` liest `allowed-tools` für Skills und Commands sowie `tools` für Agents bereits aus und legt sie in `meta` ab (Zeilen 254, 281, 302). `show` gibt sie aus. **`search` gibt sie nicht aus.** Der Agent, der aus 231 Treffern auswählt, sieht also nicht, dass Kandidat A nur `Read, Grep` will und Kandidat B uneingeschränkten `Bash`-Zugriff. Bei 25 sichtbaren Treffern kann er nicht für jeden ein `show` machen.
 
@@ -338,9 +309,7 @@ Konkret umsetzbar:
 
 ### 5.4 Lifecycle — **nicht anwendbar. Ersatz: Divergenz-Erkennung.**
 
-Semantische Versionierung, Deprecation-Warnungen, Changelog pro Skill — nichts davon können wir für fremde Bausteine leisten. Ein Repo kann jederzeit umbenennen, löschen oder inhaltlich umbauen, ohne uns zu informieren.
-
-Was wir haben, ist die Gegenrichtung: **wir erkennen Änderungen, statt sie anzukündigen.** `cmdUpdate` vergleicht bereits den Katalog vor und nach dem Sync und schreibt `Neu` / `Geändert` / `Entfernt` in `CHANGELOG.md` (Zeilen 887–923). Das ist ein Lifecycle-Ersatz auf Bibliotheksebene.
+Semantische Versionierung, Deprecation-Warnungen, Changelog pro Skill — nichts davon können wir für fremde Bausteine leisten. Ein Repo kann jederzeit umbenennen, löschen oder umbauen, ohne uns zu informieren. Was wir haben, ist die Gegenrichtung: **wir erkennen Änderungen, statt sie anzukündigen.** `cmdUpdate` vergleicht bereits den Katalog vor und nach dem Sync und schreibt `Neu` / `Geändert` / `Entfernt` in `CHANGELOG.md` (Zeilen 887–923). Das ist ein Lifecycle-Ersatz auf Bibliotheksebene.
 
 Was fehlt, ist der Bezug zu den **Projekten**, in denen die Bausteine gelandet sind. Ein Baustein, der upstream verschwindet, steht weiter in fünf Projekten und niemand erfährt es. Der fehlende Mechanismus: `harness.mjs drift --to <projekt>` — liest `.claude/harness-manifest.json`, gleicht gegen den aktuellen Katalog ab und meldet drei Zustände:
 
@@ -354,9 +323,7 @@ Das ist die ehrliche Version von Lifecycle bei fremdem Code: keine Deprecation-P
 
 ### 5.5 Coherence — anwendbar, und hier gehört der Eval hin
 
-Miraje: periodische Audits und Validierungsläufe, damit die Bibliothek als Ganzes stimmig bleibt.
-
-Das ist der Aspekt, der bei uns **eins zu eins übertragbar** ist, denn Kohärenz ist eine Eigenschaft des Katalogs — und der Katalog gehört uns, auch wenn die Bausteine es nicht tun.
+Miraje: periodische Audits und Validierungsläufe, damit die Bibliothek als Ganzes stimmig bleibt. Das ist der Aspekt, der bei uns **eins zu eins übertragbar** ist, denn Kohärenz ist eine Eigenschaft des Katalogs — und der Katalog gehört uns, auch wenn die Bausteine es nicht tun.
 
 Der Audit ist genau der Eval aus Abschnitt 4, plus eine Bestandshygiene-Prüfung, die `extract` nebenbei erhebt und in `CHANGELOG.md` schreibt:
 

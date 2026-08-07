@@ -169,10 +169,19 @@ const DOMAIN_RULES = [
   ["media", /\b(image|video|audio|render|figma|canva|pdf|docx|pptx|xlsx|screenshot)\b/i],
 ];
 
-function classify(...texts) {
-  const hay = texts.filter(Boolean).join(" ");
-  const hits = DOMAIN_RULES.filter(([, re]) => re.test(hay)).map(([d]) => d);
-  return hits.length ? hits : ["general"];
+/**
+ * Domäne aus Name und Beschreibung bestimmen. Der Pfad ist bewusst nur
+ * Rückfallebene: Ein Skill, der zufällig unter `docs/` liegt, ist deswegen kein
+ * Dokumentations-Skill. Als gleichberechtigtes Signal gewertet, kippte der Pfad
+ * ganze Verzeichnisbäume in die falsche Domäne.
+ */
+function classify(name, description, pathHint, ...extra) {
+  const primary = [name, description, ...extra].filter(Boolean).join(" ");
+  const hits = DOMAIN_RULES.filter(([, re]) => re.test(primary)).map(([d]) => d);
+  if (hits.length) return hits;
+
+  const fromPath = DOMAIN_RULES.filter(([, re]) => re.test(String(pathHint || ""))).map(([d]) => d);
+  return fromPath.length ? fromPath : ["general"];
 }
 
 // ---------------------------------------------------------------- sync
@@ -674,21 +683,32 @@ function cmdSearch(argv) {
   if (flags.domain) items = items.filter((i) => i.domains.includes(flags.domain));
   if (flags.repo) items = items.filter((i) => i.repo.toLowerCase().includes(String(flags.repo).toLowerCase()));
 
-  const scored = items
-    .map((i) => {
-      const hayName = (i.name + " " + i.id).toLowerCase();
-      const hayAll = (hayName + " " + i.description + " " + i.path + " " + i.domains.join(" ")).toLowerCase();
-      let score = 0;
-      for (const t of terms) {
-        if (hayName.includes(t)) score += 10;
-        if (hayAll.includes(t)) score += 3;
-      }
-      // Kleine Bausteine bevorzugen: billiger einzubauen, leichter zu prüfen.
-      if (score > 0 && i.bytes < 20000) score += 1;
-      return { i, score };
-    })
-    .filter((x) => terms.length === 0 || x.score > 0)
-    .sort((a, b) => b.score - a.score || a.i.id.localeCompare(b.i.id));
+  const rated = items.map((i) => {
+    const hayName = (i.name + " " + i.id).toLowerCase();
+    const hayAll = (hayName + " " + i.description + " " + i.path + " " + i.domains.join(" ")).toLowerCase();
+    let score = 0, hits = 0;
+    for (const t of terms) {
+      const inAll = hayAll.includes(t);
+      if (inAll) hits++;
+      if (hayName.includes(t)) score += 10;
+      if (inAll) score += 3;
+    }
+    // Kleine Bausteine bevorzugen: billiger einzubauen, leichter zu prüfen.
+    if (score > 0 && i.bytes < 20000) score += 1;
+    return { i, score, hits };
+  });
+
+  // Mehrwortsuchen als UND lesen, nicht als ODER. Sonst liefert "code review"
+  // mehr Treffer als "review" — je genauer die Absicht, desto unschärfer das
+  // Ergebnis. Nur wenn kein Baustein alle Wörter trägt, wird gelockert.
+  let scored = rated.filter((x) => terms.length === 0 || x.hits === terms.length);
+  let relaxed = false;
+  if (!scored.length && terms.length > 1) {
+    scored = rated.filter((x) => x.hits > 0);
+    relaxed = true;
+  }
+  scored.sort((a, b) => b.hits - a.hits || b.score - a.score || a.i.id.localeCompare(b.i.id));
+  if (relaxed) console.log(`Kein Baustein enthält alle Suchwörter — zeige Teiltreffer.\n`);
 
   const limit = Number(flags.limit || 25);
   if (!scored.length) {

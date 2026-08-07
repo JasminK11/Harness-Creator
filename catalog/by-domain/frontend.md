@@ -1,6 +1,6 @@
 # Domäne: frontend
 
-74 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+73 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (18)
 
@@ -51,7 +51,7 @@
 |---|---|---:|
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (45)
+## skill (44)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -94,7 +94,6 @@
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
 | `multica-ai__multica/skill/web-design-guidelines` | Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", … | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/banner-design` | Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generate… | 13 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/brand` | Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of vo… | 90 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 241 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variab… | 180 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/slides` | Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide … | 19 |

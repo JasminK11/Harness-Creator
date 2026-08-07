@@ -1,6 +1,6 @@
 # Domäne: backend
 
-111 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+108 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (32)
 
@@ -66,7 +66,7 @@
 |---|---|---:|
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (67)
+## skill (64)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -127,10 +127,7 @@
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
 | `multica-ai__multica/skill/multica-autopilots` | Use when creating, updating, inspecting, triggering, or debugging a Multica autopilot (scheduled, webhook, or manual). | 7 |
 | `multica-ai__multica/skill/multica-creating-agents` | Use when creating, inspecting, or debugging a Multica agent definition via the `multica agent` CLI or POST /api/agents. Not for a… | 32 |
-| `multica-ai__multica/skill/multica-mentioning` | Use when an issue comment needs to @mention someone — link to a person, trigger another agent, hand work to a squad, or broadcast… | 28 |
-| `multica-ai__multica/skill/multica-onboarding` | Use when a product-authored kickoff starts or resumes Mika's interactive onboarding for a Multica workspace. Guide the member fro… | 8 |
 | `multica-ai__multica/skill/multica-projects-and-resources` | Use when creating, inspecting, updating, or debugging Multica projects and their resources (github_repo, local_directory). | 9 |
-| `multica-ai__multica/skill/multica-runtimes-and-repos` | Use when a Multica runtime or daemon misbehaves: agent not running, task not claimed, runtime offline, workdir or session reuse, … | 7 |
 | `multica-ai__multica/skill/multica-skill-importing` | Use when asked to import or install a specific skill into this Multica workspace from a URL or slug. Not for choosing which skill… | 21 |
 | `multica-ai__multica/skill/multica-squads` | Use when creating, inspecting, updating, assigning to, or debugging a Multica squad, including how leader routing picks who runs. | 23 |
 | `multica-ai__multica/skill/multica-working-on-issues` | Use when acting on a Multica issue beyond what the brief covers: PR linking vs close intent, reading a linked PR's real state, me… | 26 |

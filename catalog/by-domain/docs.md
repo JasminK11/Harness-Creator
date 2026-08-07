@@ -1,6 +1,6 @@
 # Domäne: docs
 
-63 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+55 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (18)
 
@@ -39,14 +39,13 @@
 |---|---|---:|
 | `affaan-m__ecc/hook/doc-file-warning` | !/usr/bin/env node | 3 |
 
-## skill (41)
+## skill (33)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/skill/architecture-decision-records` | Capture architectural decisions made during Claude Code sessions as structured ADRs. Auto-detects decision moments, records conte… | 7 |
 | `affaan-m__ecc/skill/article-writing` | Write articles, guides, blog posts, tutorials, newsletter issues, and other long-form content in a distinctive voice derived from… | 3 |
 | `affaan-m__ecc/skill/brand-voice` | Build a source-derived writing style profile from real posts, essays, launch notes, docs, or site copy, then reuse that profile a… | 5 |
-| `affaan-m__ecc/skill/continuous-learning` | [OBSOLETO - usar continuous-learning-v2] Extractor de skill por hook Stop v1 heredado. v2 es un superconjunto estricto con aprend… | 5 |
 | `affaan-m__ecc/skill/continuous-learning-v2` | Sistema de aprendizaje basado en instintos que observa sesiones mediante hooks, crea instintos atómicos con puntuación de confian… | 9 |
 | `affaan-m__ecc/skill/cpp-coding-standards` | C++ coding standards based on the C++ Core Guidelines (isocpp.github.io). Use when writing, reviewing, or refactoring C++ code to… | 22 |
 | `affaan-m__ecc/skill/cpp-testing` | Use only when writing/updating/fixing C++ tests, configuring GoogleTest/CTest, diagnosing failing or flaky tests, or adding cover… | 9 |
@@ -55,23 +54,16 @@
 | `affaan-m__ecc/skill/fastapi-patterns` | FastAPI patterns for async APIs, dependency injection, Pydantic request and response models, OpenAPI docs, tests, security, and p… | 9 |
 | `affaan-m__ecc/skill/golang-testing` | > Go testing best practices including table-driven tests, test helpers, benchmarking, race detection, coverage analysis, and inte… | 6 |
 | `affaan-m__ecc/skill/google-workspace-ops` | Operate across Google Drive, Docs, Sheets, and Slides as one workflow surface for plans, trackers, decks, and shared documents. U… | 3 |
-| `affaan-m__ecc/skill/laravel-patterns` | Patrones de arquitectura Laravel, routing/controladores, Eloquent ORM, capas de servicio, colas, eventos, caché y API resources p… | 11 |
-| `affaan-m__ecc/skill/laravel-security` | Buenas prácticas de seguridad en Laravel para autenticación/autorización, validación, CSRF, asignación masiva, subida de archivos… | 8 |
-| `affaan-m__ecc/skill/laravel-tdd` | Desarrollo guiado por pruebas para Laravel con PHPUnit y Pest, factories, pruebas de base de datos, fakes y objetivos de cobertur… | 8 |
 | `affaan-m__ecc/skill/laravel-verification` | Bucle de verificación para proyectos Laravel: verificaciones de entorno, linting, análisis estático, pruebas con cobertura, escan… | 5 |
 | `affaan-m__ecc/skill/mcp-server-patterns` | Build MCP servers with Node/TypeScript SDK — tools, resources, prompts, Zod validation, stdio vs Streamable HTTP. Use Context7 or… | 4 |
 | `affaan-m__ecc/skill/project-guidelines-example` | Project-specific skill template covering architecture, patterns, testing, and deployment guidance. | 11 |
 | `affaan-m__ecc/skill/python-testing` | > Python testing best practices using pytest including fixtures, parametrization, mocking, coverage analysis, async testing, and … | 11 |
-| `affaan-m__ecc/skill/quarkus-patterns` | Patrones de arquitectura Quarkus 3.x LTS con Camel para mensajería, diseño de API RESTful, servicios CDI, acceso a datos con Pana… | 15 |
-| `affaan-m__ecc/skill/quarkus-security` | Buenas prácticas de seguridad en Quarkus para autenticación, autorización, JWT/OIDC, RBAC, validación de entrada, CSRF, gestión d… | 10 |
-| `affaan-m__ecc/skill/quarkus-tdd` | Desarrollo guiado por pruebas para Quarkus 3.x LTS usando JUnit 5, Mockito, REST Assured, pruebas Camel y JaCoCo. Usar al agregar… | 14 |
 | `affaan-m__ecc/skill/quarkus-verification` | Bucle de verificación para proyectos Quarkus: build, análisis estático, pruebas con cobertura, escaneos de seguridad, compilación… | 9 |
 | `affaan-m__ecc/skill/react-patterns` | React 18/19 patterns including hooks discipline, server/client component boundaries, Suspense + error boundaries, form actions, d… | 11 |
 | `affaan-m__ecc/skill/react-performance` | React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/ve… | 18 |
 | `affaan-m__ecc/skill/react-testing` | React component testing with React Testing Library, Vitest/Jest, MSW for network mocking, accessibility assertions with axe, and … | 13 |
 | `affaan-m__ecc/skill/scholar-evaluation` | Structured scholarly-work evaluation for papers, proposals, literature reviews, methods sections, evidence quality, citation supp… | 5 |
 | `affaan-m__ecc/skill/search-first` | > Research-before-coding workflow. Search for existing tools, libraries, and patterns before writing custom code. Systematizes th… | 8 |
-| `affaan-m__ecc/skill/springboot-tdd` | Desarrollo guiado por pruebas para Spring Boot usando JUnit 5, Mockito, MockMvc, Testcontainers y JaCoCo. Usar al agregar funcion… | 4 |
 | `affaan-m__ecc/skill/springboot-verification` | Bucle de verificación para proyectos Spring Boot: build, análisis estático, pruebas con cobertura, escaneos de seguridad y revisi… | 6 |
 | `affaan-m__ecc/skill/tdd-workflow` | Use this skill when writing new features, fixing bugs, or refactoring code. Enforces test-driven development with 80%+ coverage i… | 13 |
 | `AgriciDaniel__claude-seo/skill/seo-cluster` | > SERP-based semantic topic clustering for content architecture planning. Groups keywords by actual Google SERP overlap (not text… | 50 |

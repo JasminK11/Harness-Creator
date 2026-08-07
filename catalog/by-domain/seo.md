@@ -1,6 +1,6 @@
 # Domäne: seo
 
-60 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+58 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (24)
 
@@ -30,13 +30,6 @@
 | `msitarzewski__agency-agents/agent/resume-tailor` | Candidate-side resume optimization specialist who analyzes job descriptions, maps real experience to role requirements, improves … | 11 |
 | `msitarzewski__agency-agents/agent/search-query-analyst` | Specialist in search term analysis, negative keyword architecture, and query-to-intent mapping. Turns raw search query data into … | 5 |
 | `msitarzewski__agency-agents/agent/seo-specialist` | Expert search engine optimization strategist specializing in technical SEO, content optimization, link authority building, and or… | 21 |
-
-## hook (2)
-
-| ID | Beschreibung | KB |
-|---|---|---:|
-| `AgriciDaniel__claude-seo/hook/hooks` | — | 1 |
-| `AgriciDaniel__claude-seo/hook/validate-schema` | !/usr/bin/env python3 | 6 |
 
 ## plugin (1)
 
