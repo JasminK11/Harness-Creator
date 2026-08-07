@@ -132,7 +132,7 @@ existieren gar nicht mehr — `affaan-m__ecc/hook/after-file-edit`,
 `multica-ai__multica/hook/use-auto-scroll`, `multica-ai__multica/hook/index`
 und der japanische Stummel von `affaan-m__ecc/skill/production-audit`. Die
 Beispiele wurden durch geprüfte ersetzt; wo die alten IDs noch stehen, sind sie
-ausdrücklich als „existiert nicht mehr" markiert.
+ausdrücklich als „existiert nicht mehr" markiert. <!-- lint:historisch -->
 
 **Weitere behobene Widersprüche.** Überschrift „Vorschlag: zehn
 Absichts-Kategorien" auf **zwölf** korrigiert (die Tabelle darunter hatte immer

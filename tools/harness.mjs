@@ -829,8 +829,12 @@ function fileHash(file) {
  * hier im Kommentar.
  */
 
-/** Endungen, bei denen eine Datei ausgeführt statt gelesen wird. */
-const EXEC_EXT = /\.(sh|bash|zsh|ps1|psm1|bat|cmd|py|rb|pl|js|mjs|cjs|ts)$/i;
+/** Endungen, bei denen eine Datei ausgeführt statt gelesen wird.
+ *  Die Liste war zu kurz und liess .pyw, .php, .lua, .jsx und weitere durch —
+ *  belegt beim Prüflauf. Sie bleibt trotzdem unvollständig: Ausführbarkeit hängt
+ *  am Aufrufer, nicht an der Endung. Deshalb hängt die Rückfrage in cmdInstall
+ *  nicht mehr daran, ob hier etwas anschlägt. */
+const EXEC_EXT = /\.(sh|bash|zsh|fish|ksh|nu|command|ps1|psm1|psd1|bat|cmd|vbs|wsf|py|pyw|rb|pl|php|lua|r|jl|js|mjs|cjs|jsx|ts|mts|cts|tsx|scpt|applescript)$/i;
 
 /**
  * Auffällige Muster. Bewusst wenige und bewusst grob: jede Meldung kostet
@@ -979,6 +983,192 @@ function confirmInstall(flags) {
   return false;
 }
 
+// ---------------------------------------------------------------- Zustandsbericht
+
+/**
+ * Was nach dem Kopieren tatsächlich wirkt — und was nicht.
+ *
+ * Warum das eine eigene Ebene braucht: `install` meldete bisher den
+ * **Kopiervorgang** ("+ id -> pfad"). Das ist nicht dasselbe wie das Ergebnis. Ein
+ * Skill liegt nach dem Kopieren an seinem Platz und wird geladen; ein Hook liegt
+ * ebenfalls an seinem Platz und tut **nichts**, solange er nicht in
+ * `.claude/settings.json` eingetragen ist. Beide meldete das CLI mit demselben "+".
+ * Wer das las, hielt einen wirkungslosen Hook für installiert — und ein Agent, der
+ * `install` aufruft und danach berichtet, gab diesen Irrtum weiter.
+ *
+ * Der Bericht sagt deshalb pro Baustein: wirksam oder nicht, und bei "nicht" den
+ * fehlenden Schritt. Bei Hooks nicht als Beschreibung, sondern als
+ * einsetzfertiger JSON-Schnipsel — die Beschreibung "trag ihn in settings.json ein"
+ * ist genau die Auskunft, die den User googeln lässt.
+ *
+ * Die Zeilen beginnen mit `[aktiv]` / `[inaktiv]`, damit ein Agent den Bericht ohne
+ * Sprachverständnis auswerten und die inaktiven Bausteine weiterreichen kann.
+ */
+
+/** Ereignisse, unter denen ein Hook in `settings.json` steht. Bewusst **nicht**
+ *  `HOOK_EVENTS`: dort sind `hookSpecificOutput` und `permissionDecision`
+ *  mitgeführt, weil sie eine Datei als Hook ausweisen — als Schlüssel in
+ *  settings.json wären sie falsch, denn es sind Ausgabefelder, keine Ereignisse. */
+const HOOK_EVENT_NAMES = ["PreToolUse", "PostToolUse", "UserPromptSubmit", "Stop", "SubagentStop", "SessionStart", "SessionEnd", "PreCompact", "Notification"];
+const HOOK_EVENT_RE = new RegExp(`\\b(${HOOK_EVENT_NAMES.join("|")})\\b`, "g");
+/** Nur diese beiden filtern nach Werkzeug, nur sie tragen einen `matcher`. */
+const MATCHER_EVENTS = new Set(["PreToolUse", "PostToolUse"]);
+
+/** Wie die Datei gestartet wird. Ohne Eintrag hier steht der Pfad allein da —
+ *  richtig für alles mit Shebang und gesetztem Ausführungsrecht. */
+const HOOK_RUNNER = {
+  ".py": "python", ".rb": "ruby", ".pl": "perl",
+  ".sh": "bash", ".bash": "bash", ".zsh": "zsh",
+  ".js": "node", ".mjs": "node", ".cjs": "node",
+  ".ps1": "powershell -NoProfile -File",
+};
+
+/** Beide Dateien, weil Hooks in `settings.json` wie in `settings.local.json`
+ *  stehen dürfen — nur in einer zu suchen meldete einen registrierten Hook als
+ *  wirkungslos, und eine falsche Warnung kostet mehr Vertrauen als keine. */
+function settingsText(target) {
+  return ["settings.json", "settings.local.json"]
+    .map((n) => safeRead(path.join(target, ".claude", n)))
+    .join("\n");
+}
+
+function hookBefehl(relPfad) {
+  const zitiert = `"$CLAUDE_PROJECT_DIR/${relPfad}"`;
+  const runner = HOOK_RUNNER[path.extname(relPfad).toLowerCase()];
+  return runner ? `${runner} ${zitiert}` : zitiert;
+}
+
+/**
+ * Rät das Ereignis aus dem Hook-Code — nach Häufigkeit der Nennung.
+ *
+ * Das Frontmatter, wenn vorhanden, sticht: es ist eine Aussage des Autors, der
+ * Textfund nur ein Indiz. Ein Hook, der beide Ereignisse nennt, bekommt beide
+ * genannt statt eines geratenen — falsch eingetragen ist schlimmer als ungefragt.
+ */
+function hookEreignisse(text, meta) {
+  if (meta && meta.event) return [String(meta.event).trim()];
+  const zaehler = new Map();
+  for (const m of text.matchAll(HOOK_EVENT_RE)) zaehler.set(m[1], (zaehler.get(m[1]) || 0) + 1);
+  return [...zaehler.entries()].sort((a, b) => b[1] - a[1]).map(([e]) => e);
+}
+
+function hookSnippet(relPfad, ereignis, matcher) {
+  const eintrag = { type: "command", command: hookBefehl(relPfad) };
+  const gruppe = MATCHER_EVENTS.has(ereignis)
+    ? { matcher: matcher || "*", hooks: [eintrag] }
+    : { hooks: [eintrag] };
+  return JSON.stringify({ hooks: { [ereignis]: [gruppe] } }, null, 2);
+}
+
+/**
+ * Bestimmt den Zustand **eines** Manifest-Eintrags im Zielprojekt.
+ *
+ * Arbeitet auf der installierten Kopie, nicht auf dem Katalog. Damit gilt der
+ * Befund auch für Bausteine aus früheren Läufen: wer den Hook inzwischen in
+ * settings.json eingetragen hat, sieht ihn beim nächsten `install` als aktiv,
+ * ohne dass irgendwo ein Zustand nachgeführt werden müsste.
+ *
+ * `extra.quelle` ist der Weg für `--dry-run`: dort gibt es die Zieldatei noch
+ * nicht, gelesen wird dann die Quelle im Klon.
+ */
+function activationOf(entry, target, extra = {}) {
+  const rel = entry.installedTo || "";
+  const ziel = path.join(target, rel);
+  const base = path.basename(rel);
+
+  if (entry.type === "skill" || entry.type === "agent" || entry.type === "command") {
+    // Diese drei greifen durch blosses Vorhandensein — Claude Code liest die
+    // Verzeichnisse beim Sitzungsstart selbst ein. Nichts einzutragen.
+    const wo = entry.type === "skill" ? ".claude/skills" : entry.type === "agent" ? ".claude/agents" : ".claude/commands";
+    return { status: "aktiv", grund: null, wirkung: `wird aus ${wo}/ beim nächsten Sitzungsstart geladen — kein weiterer Schritt`, snippet: null };
+  }
+
+  if (entry.type === "hook") {
+    // Der verlässlichste Beleg für "registriert" ist der Dateiname in der
+    // settings.json. Ein JSON-Parse wäre genauer, scheitert aber an jeder
+    // Datei mit Kommentaren — und ein Fehlalarm ist hier der teurere Fehler.
+    if (base && settingsText(target).includes(base)) {
+      return { status: "aktiv", grund: null, wirkung: "in .claude/settings.json registriert", snippet: null };
+    }
+    const datei = fs.existsSync(ziel) ? ziel : (extra.quelle || ziel);
+    let text = "";
+    try { text = fs.statSync(datei).isDirectory() ? "" : safeRead(datei); } catch { /* egal */ }
+    const ereignisse = hookEreignisse(text, extra.meta || entry.meta);
+    const matcher = (extra.meta || entry.meta || {}).matcher;
+    return {
+      status: "inaktiv: nicht in .claude/settings.json registriert",
+      grund: "kopiert, aber wirkungslos — ein Hook feuert nur, wenn er unter einem Ereignis in .claude/settings.json steht",
+      wirkung: null,
+      ereignisse,
+      matcher,
+      snippet: ereignisse.length ? hookSnippet(rel, ereignisse[0], matcher) : null,
+    };
+  }
+
+  if (entry.type === "mcp") {
+    // `TARGET_BY_TYPE.mcp` ist das Projektwurzelverzeichnis, und der Extraktor
+    // klassifiziert jede passende JSON als MCP. Heisst die Datei nicht
+    // `.mcp.json`, liest Claude Code sie nie — sie liegt dann nur herum.
+    if (base !== ".mcp.json") {
+      return {
+        status: `inaktiv: heisst ${base}, nicht .mcp.json`,
+        grund: "Claude Code liest MCP-Server nur aus .mcp.json im Projektwurzelverzeichnis — diese Datei ist Vorlage, keine Konfiguration",
+        wirkung: null, snippet: null,
+      };
+    }
+    const text = safeRead(fs.existsSync(ziel) ? ziel : (extra.quelle || ziel));
+    // Platzhalter sind der Normalfall bei fremden MCP-Konfigurationen: der Server
+    // startet, meldet 401 und der User sucht den Fehler im falschen Werkzeug.
+    const platz = [...new Set((text.match(/\$\{?[A-Z][A-Z0-9_]{2,}\}?|<[A-Za-z_-]*(?:KEY|TOKEN|SECRET|PASSWORD)[A-Za-z_-]*>/g) || []))].slice(0, 6);
+    return {
+      status: platz.length ? "inaktiv: Zugangsdaten fehlen" : "inaktiv: Bestätigung beim nächsten Start nötig",
+      grund: platz.length
+        ? `Platzhalter in der Konfiguration (${platz.join(", ")}) — ohne gesetzte Werte startet der Server nicht`
+        : "Claude Code fragt beim nächsten Start, ob die MCP-Server dieses Projekts benutzt werden dürfen",
+      wirkung: null, snippet: null,
+    };
+  }
+
+  if (entry.type === "plugin") {
+    return {
+      status: "inaktiv: Plugins werden nicht aus .claude/plugins geladen",
+      grund: "ein Ordner dort aktiviert nichts — ein Plugin wird über einen Marketplace-Eintrag mit /plugin aktiviert. Die enthaltenen Skills/Commands wirken erst danach",
+      wirkung: null, snippet: null,
+    };
+  }
+
+  return { status: "unbekannt", grund: `Typ ${entry.type} — Wirksamkeit nicht bestimmbar`, wirkung: null, snippet: null };
+}
+
+/**
+ * Der Bericht. Zwei Adressaten, eine Ausgabe: der User liest die Prosa, ein Agent
+ * die Marken am Zeilenanfang und die Ergebniszeile am Ende.
+ */
+function printActivation(zustaende, dry) {
+  console.log(`\n  Zustand im Zielprojekt${dry ? " (nach einem Lauf ohne --dry-run)" : ""}:\n`);
+  for (const { entry, z } of zustaende) {
+    const marke = z.status === "aktiv" ? "[aktiv]  " : "[inaktiv]";
+    console.log(`  ${marke} ${entry.id}  ->  ${entry.installedTo}`);
+    if (z.status === "aktiv") { console.log(`            ${z.wirkung}`); continue; }
+    console.log(`            ${z.status}`);
+    if (z.grund) console.log(`            ${z.grund}`);
+    if (z.ereignisse && z.ereignisse.length > 1) {
+      console.log(`            Ereignis nicht eindeutig — im Code genannt: ${z.ereignisse.join(", ")}. Unten steht das häufigste.`);
+    } else if (z.ereignisse && !z.ereignisse.length) {
+      console.log("            Ereignis nicht aus dem Code ableitbar — Hook öffnen und selbst zuordnen.");
+    }
+    if (z.snippet) {
+      console.log("\n            In .claude/settings.json eintragen (bestehende Ereignisse ergänzen, nicht ersetzen):\n");
+      for (const l of z.snippet.split("\n")) console.log(`            ${l}`);
+      console.log("");
+    }
+  }
+  const aktiv = zustaende.filter((x) => x.z.status === "aktiv").length;
+  const offen = zustaende.length - aktiv;
+  console.log(`\n  Ergebnis: ${aktiv} von ${zustaende.length} wirksam, ${offen} brauchen einen Schritt von Hand.`);
+  if (offen) console.log("  Wer diesen Lauf berichtet, nennt die [inaktiv]-Zeilen mit: kopiert heisst nicht wirksam.");
+}
+
 /**
  * Schreibt einen Regelblock in die CLAUDE.md des Zielprojekts.
  *
@@ -1055,9 +1245,21 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
   if (installed.length) {
     L.push("### Installierte Bausteine");
     L.push("");
-    L.push("| Baustein | Typ | Liegt in |");
-    L.push("|---|---|---|");
-    for (const m of installed) L.push(`| \`${m.id}\` | ${m.type} | \`${m.installedTo}\` |`);
+    L.push("| Baustein | Typ | Liegt in | Zustand |");
+    L.push("|---|---|---|---|");
+    // Der Zustand wird hier **neu bestimmt** statt aus dem Manifest übernommen:
+    // wer den Hook seit der Installation in settings.json eingetragen hat, soll
+    // ihn nicht auf Dauer als wirkungslos gemeldet bekommen. Die Angabe im
+    // Manifest ist der Stand des Installationslaufs, die hier ist der von heute.
+    for (const m of installed) {
+      const st = target ? activationOf(m, target).status : (m.status || "unbekannt");
+      L.push(`| \`${m.id}\` | ${m.type} | \`${m.installedTo}\` | ${st} |`);
+    }
+    L.push("");
+    L.push("**Kopiert ist nicht wirksam.** Skills, Subagents und Commands greifen durch");
+    L.push("blosses Vorhandensein; Hooks brauchen einen Eintrag in `.claude/settings.json`,");
+    L.push("MCP-Server eine bestätigte `.mcp.json` samt Zugangsdaten, Plugins eine");
+    L.push("Aktivierung über `/plugin`. Was hier als `inaktiv:` steht, tut nichts.");
     L.push("");
     L.push(`Stand des Katalogs bei der Installation: ${String(catalogGeneratedAt).slice(0, 16).replace("T", " ")}.`);
     L.push("Herkunftsnachweis: `.claude/harness-manifest.json`.");
@@ -1092,9 +1294,42 @@ function writeClaudeMd(target, installed, catalogGeneratedAt) {
   return file;
 }
 
+/**
+ * Ermittelt das Zielverzeichnis — und verweigert die Arbeit, wenn keines genannt
+ * wurde.
+ *
+ * Warum kein Rückfall auf das Arbeitsverzeichnis: Diese Befehle schreiben und
+ * löschen in fremden Projekten. Ein stiller Standardwert bedeutet, dass ein
+ * vergessenes `--to` nicht auffällt, sondern irgendwo Dateien anlegt oder
+ * entfernt — bei `uninstall` unwiederbringlich. Genau das ist beim Prüfen dieses
+ * Codes passiert: ein Testaufruf ohne `--to` installierte in die Bibliothek selbst
+ * und schrieb deren CLAUDE.md um.
+ *
+ * Lieber ein Abbruch mit klarer Ansage als eine Aktion am falschen Ort.
+ */
+function requireTarget(flags, befehl, { erlaubeSelbst = false, positional = false } = {}) {
+  // `positional` nur dort, wo die freien Argumente nicht schon belegt sind:
+  // bei install und uninstall sind das die Baustein-IDs, nicht das Ziel.
+  const roh = flags.to || (positional ? flags._[0] : null);
+  if (!roh || roh === true) {
+    die(`Kein Zielverzeichnis angegeben.\n` +
+        `  ${befehl} verlangt --to, weil es in einem fremden Projekt schreibt.\n` +
+        `  Beispiel: node tools/harness.mjs ${befehl} ... --to "C:\\Pfad\\zum\\Projekt"\n` +
+        `  Für das aktuelle Verzeichnis ausdrücklich: --to .`);
+  }
+  const target = path.resolve(String(roh));
+  if (!fs.existsSync(target)) die(`Zielverzeichnis existiert nicht: ${target}`);
+  if (!erlaubeSelbst && path.resolve(target) === path.resolve(ROOT)) {
+    die(`Ziel ist die Bibliothek selbst: ${target}\n` +
+        `  ${befehl} ist für Zielprojekte gedacht. Für die Bibliothek selbst gibt es\n` +
+        `  nur 'bootstrap --to .' — das schreibt den Regelblock, ohne Bausteine zu kopieren.`);
+  }
+  return target;
+}
+
 function cmdInstall(argv) {
   const flags = parseFlags(argv);
-  const target = path.resolve(flags.to || process.cwd());
+  const target = requireTarget(flags, "install");
   const cat = loadCatalog();
   const dry = !!flags["dry-run"];
   if (!flags._.length) die("Keine ID angegeben. Beispiel: install affaan-m__ecc/skill/tdd-workflow --to C:\\proj");
@@ -1123,14 +1358,28 @@ function cmdInstall(argv) {
 
   // --dry-run zeigt die Analyse ebenfalls — sonst wäre der Probelauf genau um die
   // Angabe ärmer, wegen der man ihn macht.
+  // Die Rückfrage hängt am **Vorgang**, nicht am Ergebnis der Mustersuche.
+  //
+  // Vorher hing sie an `gruende.length`: Fand die Erkennung nichts, gab es keine
+  // Ausgabe, keine Rückfrage, keinen Abbruch ohne TTY. Damit war die Mustersuche
+  // nicht die Qualität der Warnung, sondern der Ein-/Ausschalter der ganzen
+  // Grenze — und jede Erkennungslücke wurde von "Fundstelle nicht gemeldet" zu
+  // "ungefragt installiert". Da die Erkennung nachweislich Lücken hat (.pyw,
+  // .php, .lua und weitere), wäre das eine Grenze gewesen, die genau dann
+  // durchlässt, wenn sie gebraucht wird.
+  //
+  // Fremder Code wird in ein fremdes Projekt kopiert. Das allein ist der Anlass
+  // zu fragen. Was die Erkennung findet, macht die Frage nur besser begründet.
   const berichte = plan.map((p) => inspectItem(p.it, p.src));
-  if (berichte.some((b) => b.gruende.length)) {
-    printInspection(berichte);
-    if (!dry && !confirmInstall(flags)) return;
-    if (dry) console.log("\n  --dry-run: hier stünde die Rückfrage. Nichts wird kopiert.\n");
+  printInspection(berichte);
+  if (dry) {
+    console.log("\n  --dry-run: hier stünde die Rückfrage. Nichts wird kopiert.\n");
+  } else if (!confirmInstall(flags)) {
+    return;
   }
 
   const manifest = [];
+  const zustaende = [];
   const now = new Date().toISOString();
   for (const { it, src, dest } of plan) {
     console.log(`  ${dry ? "~" : "+"} ${it.id} -> ${path.relative(target, dest).split(path.sep).join("/")}`);
@@ -1140,7 +1389,7 @@ function cmdInstall(argv) {
     // Projektwurzelverzeichnis — daraus liesse sich nichts löschen, ohne zu raten.
     // `commit` ist der Repo-Stand, aus dem die Kopie stammt; er steht bereits im
     // Katalog und wäre nach dem nächsten `sync` nicht mehr rekonstruierbar.
-    manifest.push({
+    const eintrag = {
       id: it.id, type: it.type, from: it.repo, sourcePath: it.path,
       installedTo: path.relative(target, dest).split(path.sep).join("/"),
       commit: cat.repos.find((r) => r.dir === it.repo)?.head || null,
@@ -1150,8 +1399,18 @@ function cmdInstall(argv) {
         path: path.relative(target, f).split(path.sep).join("/"),
         md5: fileHash(f),
       })),
-    });
+    };
+    // Der Zustand kommt ins Manifest, nicht nur auf den Bildschirm: die Ausgabe
+    // ist nach dem Schliessen des Terminals fort, der inaktive Hook bleibt.
+    // Inaktive Einträge werden deshalb auch nie ausgelassen — sie sind kopiert,
+    // und der Herkunftsnachweis muss sie führen, sonst löscht `uninstall` sie nie.
+    const z = activationOf(eintrag, target, { meta: it.meta, quelle: src });
+    eintrag.status = z.status;
+    manifest.push(eintrag);
+    zustaende.push({ entry: eintrag, z });
   }
+
+  if (zustaende.length) printActivation(zustaende, dry);
 
   if (!dry && manifest.length) {
     // Manifest = Herkunftsnachweis. Ohne ihn weiss beim nächsten Update niemand mehr,
@@ -1159,7 +1418,15 @@ function cmdInstall(argv) {
     const mf = path.join(target, ".claude", "harness-manifest.json");
     let prev = [];
     if (fs.existsSync(mf)) { try { prev = JSON.parse(fs.readFileSync(mf, "utf8")).items || []; } catch { /* egal */ } }
-    const merged = [...prev.filter((p) => !manifest.some((m) => m.id === p.id)), ...manifest];
+    // Deduplizierung über `id` **und** `installedTo`. Warum beides: `--force`
+    // schreibt einen anderen Baustein auf denselben Pfad. Wird nur über `id`
+    // verglichen, stehen danach zwei IDs mit demselben `installedTo` im Manifest —
+    // der Herkunftsnachweis behauptet dann zwei Herkünfte für eine Datei, die es
+    // nur einmal gibt, und `uninstall` würde beim ersten Eintrag Dateien löschen,
+    // die inzwischen dem zweiten gehören.
+    const verdraengt = prev.filter((p) => !manifest.some((m) => m.id === p.id) && manifest.some((m) => m.installedTo === p.installedTo));
+    for (const v of verdraengt) console.log(`  überschreibt \`${v.id}\` (${v.installedTo}) — Manifest-Eintrag entfernt`);
+    const merged = [...prev.filter((p) => !manifest.some((m) => m.id === p.id || m.installedTo === p.installedTo)), ...manifest];
     fs.mkdirSync(path.dirname(mf), { recursive: true });
     fs.writeFileSync(mf, JSON.stringify({
       generatedAt: new Date().toISOString(),
@@ -1213,7 +1480,7 @@ function removeEmptyDirs(dir, stopAt) {
  */
 function cmdUninstall(argv) {
   const flags = parseFlags(argv);
-  const target = path.resolve(flags.to || process.cwd());
+  const target = requireTarget(flags, "uninstall");
   const dry = !!flags["dry-run"];
   if (!flags._.length) die("Keine ID angegeben. Beispiel: uninstall affaan-m__ecc/skill/tdd-workflow --to C:\\proj");
 
@@ -1351,8 +1618,9 @@ function copySkillsTo(target, namen) {
  *  etwas zu übernehmen. */
 function cmdBootstrap(argv) {
   const flags = parseFlags(argv);
-  const target = path.resolve(flags.to || flags._[0] || process.cwd());
-  if (!fs.existsSync(target)) die(`Zielverzeichnis existiert nicht: ${target}`);
+  // Selbstanwendung ist hier erlaubt und erwünscht: Die Bibliothek soll ihren
+  // eigenen Regelblock tragen. Kopiert wird dabei nichts.
+  const target = requireTarget(flags, "bootstrap", { erlaubeSelbst: true, positional: true });
   const cat = loadCatalog();
   const mf = path.join(target, ".claude", "harness-manifest.json");
   let installed = [];
@@ -1529,6 +1797,61 @@ function knowledgeFiles() {
   return out;
 }
 
+/* --- Nahtprüfungen ------------------------------------------------------
+ * Die bisherigen `lint`-Prüfungen sehen jede Wissensdatei für sich an. Die
+ * teureren Fehler entstehen aber dort, wo handgeschriebener Text auf
+ * maschinell Erzeugtes trifft: eine ID, die im Katalog nicht mehr steht; ein
+ * Aufruf, den das CLI nicht mehr kennt; ein Katalog, der stillschweigend
+ * veraltet. Keiner dieser Fehler meldet sich von selbst — er zeigt sich erst,
+ * wenn ein Agent dem Text folgt und der Befehl abbricht.
+ */
+
+/** Dateien, die keine Wissensseiten sind, aber dieselben Aussagen tragen.
+ *  Bewusst NICHT in `knowledgeFiles()` aufgenommen: dort liefe die
+ *  Frontmatter-Prüfung mit, und eine README braucht kein `stale_after`. */
+const NAHT_EXTRA = ["README.md", "INDEX.md", "CLAUDE.md"];
+
+/** Absatz-Marke, mit der ein Autor eine bewusst tote Angabe stehen lässt.
+ *  HTML-Kommentar, damit sie in jeder Markdown-Ansicht unsichtbar bleibt. */
+const LINT_HISTORISCH = "<!-- lint:historisch -->";
+
+/** Baustein-IDs im Fliesstext. Das Repo-Präfix ist optional, damit auch die
+ *  Kurzform `nextlevelbuilder/agent/design-review` auffällt — sie liest sich
+ *  richtig, ist aber für `install` unauflösbar. */
+const NAHT_ID_RE = /`([A-Za-z0-9._-]+(?:__[A-Za-z0-9._-]+)?\/(?:skill|agent|command|hook|mcp|plugin)\/[A-Za-z0-9._/-]+)`/g;
+
+/** Ab wann ein Katalog als veraltet gilt. */
+const KATALOG_MAX_TAGE = 30;
+
+function nahtDateien() {
+  const out = knowledgeFiles();
+  for (const f of NAHT_EXTRA) {
+    const abs = path.join(ROOT, f);
+    if (fs.existsSync(abs)) out.push({ rel: f, abs });
+  }
+  return out;
+}
+
+/** Liest die eigene Oberfläche aus dem eigenen Quelltext: die Subcommands aus
+ *  dem `switch` am Dateiende, die Flaggen aus jedem `flags.x`-Zugriff.
+ *  Warum nicht eine gepflegte Liste: die wäre die dritte Stelle, an der
+ *  dasselbe steht (Dispatcher, USAGE, Liste) — und die erste, die vergessen
+ *  wird. Der Dispatcher kann nicht veralten, er ist die Wahrheit. */
+function cliOberflaeche() {
+  const selbst = safeRead(fileURLToPath(import.meta.url));
+  const subcommands = new Set();
+  // Nicht zeilenanfangs-verankert: `case "knowledge": case "know": case "why":`
+  // steht auf einer Zeile, und die Aliase sind genauso gültige Aufrufe.
+  for (const m of selbst.matchAll(/\bcase "([a-z-]+)":/g)) subcommands.add(m[1]);
+  const flaggen = new Set();
+  for (const m of selbst.matchAll(/flags\.([A-Za-z]\w*)/g)) flaggen.add(m[1]);
+  for (const m of selbst.matchAll(/flags\["([^"]+)"\]/g)) flaggen.add(m[1]);
+  // `flags["dry-run"]` und `flags.dryRun` meinen dieselbe Flagge; auf der
+  // Kommandozeile steht immer die Bindestrich-Form.
+  for (const f of [...flaggen]) flaggen.add(f.replace(/([A-Z])/g, (_, c) => "-" + c.toLowerCase()));
+  return { subcommands, flaggen };
+}
+
 function cmdLint(argv) {
   const flags = parseFlags(argv);
   const files = knowledgeFiles();
@@ -1593,53 +1916,128 @@ function cmdLint(argv) {
     }
   }
 
+  // Einmal geladen, danach von der Bestandszahl- und den Naht-Prüfungen gemeinsam
+  // benutzt: die Datei ist 20 MB gross, ein zweites Parsen kostete mehr als
+  // sämtliche Prüfungen zusammen.
+  let cat = null;
+  if (fs.existsSync(INDEX_JSON)) {
+    try { cat = JSON.parse(fs.readFileSync(INDEX_JSON, "utf8")); } catch { /* egal */ }
+  }
+
   // --- Bestandszahlen gegen den aktuellen Katalog ---
   // Wissensdateien nennen Kennzahlen im Fliesstext ("rund 1.050 Bausteine"). Ändert
   // sich der Katalog — etwa weil der Extractor genauer wird — veralten sie still und
   // widersprechen einander. Genau die Klasse Fehler, gegen die eine gepflegte
   // Wissensbank antritt: Widersprüche, die niemandem auffallen, weil niemand
   // abgleicht.
-  if (fs.existsSync(INDEX_JSON)) {
-    let cat = null;
-    try { cat = JSON.parse(fs.readFileSync(INDEX_JSON, "utf8")); } catch { /* egal */ }
-    if (cat) {
-      const kennzahlen = [
-        { wert: cat.totals.items, was: "Bausteine gesamt" },
-        { wert: cat.items.filter((i) => !i.bulk).length, was: "Bausteine im Standardzugriff" },
-        { wert: cat.items.filter((i) => i.bulk).length, was: "Bausteine in Massen-Repos" },
-      ];
-      const alleWerte = new Set(kennzahlen.map((k) => k.wert));
+  if (cat) {
+    const kennzahlen = [
+      { wert: cat.totals.items, was: "Bausteine gesamt" },
+      { wert: cat.items.filter((i) => !i.bulk).length, was: "Bausteine im Standardzugriff" },
+      { wert: cat.items.filter((i) => i.bulk).length, was: "Bausteine in Massen-Repos" },
+    ];
+    const alleWerte = new Set(kennzahlen.map((k) => k.wert));
 
-      // Eine Zahl ist nur dann eine Bestandsangabe, wenn ihr Umfeld das sagt.
-      // Sonst meldet die Prüfung Zeilenzahlen und Token-Angaben als Widerspruch.
-      const BESTAND_RE = /\b(baustein|einträg|katalog|skills?\b|standardzugriff|verzeichnet|umfasst)/i;
-      // Bewusste Rundungen sind keine Widersprüche, sondern korrekte Prosa.
-      const RUNDUNG_RE = /\b(rund|etwa|circa|ca\.|über|mehr als|knapp|gut)\s*$/i;
+    // Eine Zahl ist nur dann eine Bestandsangabe, wenn ihr Umfeld das sagt.
+    // Sonst meldet die Prüfung Zeilenzahlen und Token-Angaben als Widerspruch.
+    const BESTAND_RE = /\b(baustein|einträg|katalog|skills?\b|standardzugriff|verzeichnet|umfasst)/i;
+    // Bewusste Rundungen sind keine Widersprüche, sondern korrekte Prosa.
+    const RUNDUNG_RE = /\b(rund|etwa|circa|ca\.|über|mehr als|knapp|gut)\s*$/i;
 
-      for (const f of files) {
-        const text = safeRead(f.abs);
-        const gesehen = new Set();
-        for (const m of text.matchAll(/\b(\d{1,3}(?:[.,]\d{3})+|\d{3,6})\b/g)) {
-          const roh = m[1];
-          const zahl = Number(roh.replace(/[.,]/g, ""));
-          if (!Number.isFinite(zahl) || zahl < 100 || gesehen.has(zahl)) continue;
-          if (alleWerte.has(zahl)) continue;                      // stimmt
+    for (const f of files) {
+      const text = safeRead(f.abs);
+      const gesehen = new Set();
+      for (const m of text.matchAll(/\b(\d{1,3}(?:[.,]\d{3})+|\d{3,6})\b/g)) {
+        const roh = m[1];
+        const zahl = Number(roh.replace(/[.,]/g, ""));
+        if (!Number.isFinite(zahl) || zahl < 100 || gesehen.has(zahl)) continue;
+        if (alleWerte.has(zahl)) continue;                      // stimmt
 
-          const vor = text.slice(Math.max(0, m.index - 70), m.index);
-          const nach = text.slice(m.index + roh.length, m.index + roh.length + 70);
-          if (!BESTAND_RE.test(vor + nach)) continue;             // andere Art Zahl
-          if (RUNDUNG_RE.test(vor) && zahl % 1000 === 0) continue; // "über 25.000"
+        const vor = text.slice(Math.max(0, m.index - 70), m.index);
+        const nach = text.slice(m.index + roh.length, m.index + roh.length + 70);
+        if (!BESTAND_RE.test(vor + nach)) continue;             // andere Art Zahl
+        if (RUNDUNG_RE.test(vor) && zahl % 1000 === 0) continue; // "über 25.000"
 
-          gesehen.add(zahl);
-          for (const k of kennzahlen) {
-            const abweichung = Math.abs(zahl - k.wert) / k.wert;
-            if (abweichung > 0 && abweichung < 0.2) {
-              add("hoch", f.rel, `Bestandszahl \`${roh}\` weicht vom Katalog ab — aktuell ${k.wert} (${k.was}). Veraltete Zahl oder Verwechslung.`);
-              break;
-            }
+        gesehen.add(zahl);
+        for (const k of kennzahlen) {
+          const abweichung = Math.abs(zahl - k.wert) / k.wert;
+          if (abweichung > 0 && abweichung < 0.2) {
+            add("hoch", f.rel, `Bestandszahl \`${roh}\` weicht vom Katalog ab — aktuell ${k.wert} (${k.was}). Veraltete Zahl oder Verwechslung.`);
+            break;
           }
         }
       }
+    }
+  }
+
+  // --- Naht 1: genannte Baustein-IDs gegen den Katalog ---
+  // Eine tote ID in einem Rezept macht nicht die Zeile unbrauchbar, sondern das
+  // ganze Rezept: der Agent setzt den `install`-Befehl ab, der bricht ab, und der
+  // Agent hat keinen Anhaltspunkt, ob der Baustein umbenannt wurde oder nie
+  // existierte. Deshalb dort "hoch". In `knowledge/` ist dieselbe ID nur ein
+  // Beleg im Fliesstext — falsch, aber nicht handlungsleitend, also "mittel".
+  if (cat) {
+    const bekannt = new Set(cat.items.map((i) => i.id));
+    const bekanntKlein = new Set(cat.items.map((i) => i.id.toLowerCase()));
+    for (const f of nahtDateien()) {
+      const tot = new Set();
+      // Absatzweise, nicht zeilenweise: die Unterdrückung gilt für den Gedanken,
+      // nicht für den Zeilenumbruch. Wissensdateien nennen tote IDs absichtlich,
+      // wenn sie erklären, warum sie tot sind — dieser Satz ist selbst der Beleg
+      // und darf nicht als Fehler zurückkommen.
+      for (const block of safeRead(f.abs).split(/\r?\n\s*\r?\n/)) {
+        if (block.includes(LINT_HISTORISCH)) continue;
+        for (const m of block.matchAll(NAHT_ID_RE)) {
+          const id = m[1];
+          if (bekannt.has(id) || bekanntKlein.has(id.toLowerCase())) continue;
+          tot.add(id);
+        }
+      }
+      if (tot.size) {
+        const schwere = f.rel.startsWith("recipes/") ? "hoch" : "mittel";
+        add(schwere, f.rel, `${tot.size} Baustein-ID(en) nicht im Katalog auflösbar — \`install\` bricht damit ab:\n      ${[...tot].slice(0, 8).join("\n      ")}` +
+          `\n      Richtige Form mit \`search\` suchen. Ist die ID absichtlich genannt, weil sie nicht mehr existiert: \`${LINT_HISTORISCH}\` in denselben Absatz setzen.`);
+      }
+    }
+  }
+
+  // --- Naht 2: genannte CLI-Aufrufe gegen das CLI selbst ---
+  // Geprüft wird nur, was in einem Codeblock steht. Der Unterschied ist inhaltlich,
+  // nicht kosmetisch: ein Codeblock ist eine Anweisung ("führ das aus"), ein
+  // Inline-Backtick im Fliesstext ist oft ein Vorschlag ("ein Subcommand `eval`
+  // wäre …"). Prüfte man beides, meldete `lint` jede geplante Maßnahme aus
+  // `knowledge/04` und `knowledge/06` als Fehler — 11 Fehlalarme, kein Fund.
+  {
+    const { subcommands, flaggen } = cliOberflaeche();
+    for (const f of nahtDateien()) {
+      const totSub = new Set(), totFlag = new Set();
+      let inFence = false;
+      for (const line of safeRead(f.abs).split(/\r?\n/)) {
+        if (/^\s*```/.test(line)) { inFence = !inFence; continue; }
+        if (!inFence || line.includes(LINT_HISTORISCH)) continue;
+        // `node` verlangt, weil `tools/harness.mjs   Das CLI …` in der
+        // Verzeichnisübersicht der README sonst als Aufruf von `Das` gilt.
+        const m = line.match(/\bnode\s+\S*harness\.mjs\s+([a-zA-Z][\w-]*)/);
+        if (m && !subcommands.has(m[1])) totSub.add(m[1]);
+        if (!/harness\.mjs/.test(line)) continue;
+        for (const g of line.matchAll(/\s(--[a-z][a-z-]*)/g)) {
+          if (!flaggen.has(g[1].slice(2))) totFlag.add(g[1]);
+        }
+      }
+      if (totSub.size) add("hoch", f.rel, `Codeblock ruft Subcommand(s) auf, die es nicht gibt: ${[...totSub].map((s) => `\`${s}\``).join(", ")}. Vorhanden: ${[...subcommands].join(", ")}.`);
+      if (totFlag.size) add("hoch", f.rel, `Codeblock nennt Flagge(n), die das CLI nicht kennt: ${[...totFlag].map((s) => `\`${s}\``).join(", ")}.`);
+    }
+  }
+
+  // --- Naht 3: Alter des Katalogs ---
+  // Die 13 Quell-Repos wachsen täglich. Ein alter Katalog gibt keine Fehlermeldung,
+  // er liefert nur weniger Treffer als es gäbe — der Ausfall ist unsichtbar, und
+  // genau deshalb muss ihn jemand melden.
+  let katalogTage = null;
+  if (cat?.generatedAt) {
+    katalogTage = Math.floor((Date.now() - Date.parse(cat.generatedAt)) / 86400000);
+    if (katalogTage > KATALOG_MAX_TAGE) {
+      add("mittel", "catalog/index.json", `Katalog ist ${katalogTage} Tage alt (Grenze ${KATALOG_MAX_TAGE}), erzeugt am ${cat.generatedAt.slice(0, 10)}. Die Quell-Repos wachsen täglich: \`node tools/harness.mjs update\` laufen lassen.`);
     }
   }
 
@@ -1663,8 +2061,12 @@ function cmdLint(argv) {
   const zaehler = { hoch: 0, mittel: 0, niedrig: 0 };
   for (const b of befunde) zaehler[b.schwere]++;
 
-  console.log(`Wissensbank geprüft: ${files.length} Dateien, ${befunde.length} Befunde`);
-  console.log(`  ${zaehler.hoch} hoch · ${zaehler.mittel} mittel · ${zaehler.niedrig} niedrig\n`);
+  console.log(`Wissensbank geprüft: ${files.length} Dateien, Nähte in ${nahtDateien().length}, ${befunde.length} Befunde`);
+  console.log(`  ${zaehler.hoch} hoch · ${zaehler.mittel} mittel · ${zaehler.niedrig} niedrig`);
+  // Das Alter immer nennen, auch wenn es unter der Grenze liegt: sonst weiss
+  // niemand, ob die Prüfung gelaufen ist oder der Katalog nur knapp durchkam.
+  if (katalogTage !== null) console.log(`  Katalog ${katalogTage} Tage alt (Grenze ${KATALOG_MAX_TAGE})`);
+  console.log("");
 
   const zeigen = flags.all ? befunde : befunde.filter((b) => b.schwere !== "niedrig");
   for (const b of zeigen) {
@@ -1675,6 +2077,22 @@ function cmdLint(argv) {
 
   console.log("\nWas dieser Befehl nicht kann: inhaltliche Widersprüche zwischen Seiten");
   console.log("erkennen. Das braucht ein Modell und gehört in den Einpflege-Ablauf.");
+
+  // --- Exit-Code ---
+  // Bis hierher war `lint` ein Bericht, den jemand lesen musste. Ein Exit-Code
+  // macht daraus eine Schranke, die auch dann greift, wenn niemand hinsieht.
+  // Gestaffelt, weil die Schweren verschieden zwingend sind: "hoch" heisst, ein
+  // Befehl im Text schlägt fehl — das darf nie durchgehen. "mittel" heisst, eine
+  // Aussage stimmt nicht mehr; das ist eine Bringschuld, aber kein Grund, einen
+  // Lauf abzubrechen, der etwas ganz anderes tut. Wer beides will, nimmt --strict.
+  const scharf = zaehler.hoch + (flags.strict ? zaehler.mittel : 0);
+  process.exitCode = scharf ? 1 : 0;
+  if (scharf) {
+    console.log(`\nExit-Code 1 — ${scharf} Befund(e) ${flags.strict ? "hoher oder mittlerer" : "hoher"} Schwere.`);
+  } else if (zaehler.mittel && !flags.strict) {
+    console.log(`\nExit-Code 0 — kein Befund hoher Schwere. Mit --strict zählen auch die ${zaehler.mittel} mittleren.`);
+  }
+  return zaehler;
 }
 
 // ---------------------------------------------------------------- update
@@ -1784,6 +2202,10 @@ harness.mjs — Harness-Bibliothek
                  Baustein an ausführbarem Code mitbringt (Hooks feuern automatisch)
                  samt Fundstelle mit Zeilennummer. Ohne --yes und ohne TTY wird
                  abgebrochen statt kopiert. Sichtprüfung, kein Schutz.
+       Nach dem Kopieren folgt ein Zustandsbericht: [aktiv] / [inaktiv] je Baustein.
+       Skills, Subagents und Commands wirken sofort; Hooks brauchen einen Eintrag in
+       .claude/settings.json — der fertige JSON-Schnipsel wird ausgegeben —, MCP eine
+       .mcp.json mit Zugangsdaten, Plugins eine Aktivierung über /plugin.
   node tools/harness.mjs uninstall <id...> --to DIR
        [--dry-run] [--force] [--no-claude-md]
                  Entfernt genau die Dateien, die im Manifest des Zielprojekts zu
@@ -1796,10 +2218,18 @@ harness.mjs — Harness-Bibliothek
   node tools/harness.mjs knowledge "<frage>"       Wissensbank durchsuchen —
        [--limit N] [--lines N]                     liefert Abschnitte, nicht Dateien
   node tools/harness.mjs knowledge --list          Inhaltsverzeichnis der Wissensbank
-  node tools/harness.mjs lint [--all]              Wissensbank auf Verfall prüfen:
+  node tools/harness.mjs lint [--all] [--strict]   Wissensbank auf Verfall prüfen:
                                                    fehlende Metadaten, abgelaufenes
                                                    stale_after, tote Verweise,
                                                    nicht ausgewertete Rohquellen
+       Dazu die Nähte zwischen Text und Maschine: jede genannte Baustein-ID gegen
+       den Katalog (in recipes/ hoch, sonst mittel), jeden Aufruf "node
+       tools/harness.mjs <sub> --<flag>" aus einem Codeblock gegen den Dispatcher,
+       und das Alter von catalog/index.json gegen ${KATALOG_MAX_TAGE} Tage.
+       Geprüft werden knowledge/, recipes/ sowie README.md, INDEX.md, CLAUDE.md.
+       Eine absichtlich tote Angabe entschärft "${LINT_HISTORISCH}" im selben Absatz.
+       Exit-Code: 1 bei jedem Befund hoher Schwere, sonst 0. Mit --strict zählen
+       auch mittlere. Damit ist lint als Schranke in einer CI benutzbar.
   node tools/harness.mjs stats                     Übersicht
 
 Klon-Verzeichnis: ${CLONE_DIR}

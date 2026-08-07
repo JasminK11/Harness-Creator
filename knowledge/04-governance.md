@@ -206,7 +206,7 @@ Mirajes Regel: `name` und `description` sind **Routing-Signale**. Die Descriptio
 
 **Kategorie C — als Routing-Signal unbrauchbar (7 von 25):**
 
-Die Stichprobe musste hier vollständig neu gezogen werden. Die ursprünglichen sieben Beispiele sind alle hinfällig: `affaan-m__ecc/skill/production-audit`, `…/skill/perl-testing` und `…/skill/csharp-testing` tragen seit M1 wieder ihre englische Originalbeschreibung; `affaan-m__ecc/hook/after-file-edit`, `multica-ai__multica/hook/use-auto-scroll` und `…/hook/index` existieren im Katalog nicht mehr, seit `isClaudeHook()` React-Hooks und Fremdformate aussortiert. **Alle sieben Ersatzbeispiele sind Hooks** — und das ist der Befund, nicht die Auswahl:
+Die Stichprobe musste hier vollständig neu gezogen werden. Die ursprünglichen sieben Beispiele sind alle hinfällig: `affaan-m__ecc/skill/production-audit`, `…/skill/perl-testing` und `…/skill/csharp-testing` tragen seit M1 wieder ihre englische Originalbeschreibung; `affaan-m__ecc/hook/after-file-edit`, `multica-ai__multica/hook/use-auto-scroll` und `…/hook/index` existieren im Katalog nicht mehr, seit `isClaudeHook()` React-Hooks und Fremdformate aussortiert. **Alle sieben Ersatzbeispiele sind Hooks** — und das ist der Befund, nicht die Auswahl: <!-- lint:historisch -->
 
 | Baustein | Description im Katalog |
 |---|---|
@@ -313,7 +313,7 @@ Miraje: Gehört dieser Skill überhaupt in die Bibliothek, oder in einen bestehe
 
 Bei uns gibt es **zwei** Admission-Entscheidungen, und beide sind heute ungeregelt:
 
-**(a) Aufnahme eines Repos in `sources.txt`.** Das ist unser echtes PR-Review-Äquivalent — die einzige Stelle, an der ein Mensch entscheidet. Es gibt dafür keine Kriterien. Ergebnis: `multica-ai/multica` lieferte 36 Bausteine, von denen die Mehrzahl **React-Hooks aus einer Anwendung** waren, keine Claude-Code-Bausteine — etwa `multica-ai__multica/hook/use-auto-scroll` aus `packages/ui/hooks/use-auto-scroll.ts`. Der Extraktor erkannte Hooks am Ordnernamen `hooks/` und konnte ein React-`hooks/`-Verzeichnis nicht von einem Claude-Code-`hooks/`-Verzeichnis unterscheiden.
+**(a) Aufnahme eines Repos in `sources.txt`.** Das ist unser echtes PR-Review-Äquivalent — die einzige Stelle, an der ein Mensch entscheidet. Es gibt dafür keine Kriterien. Ergebnis: `multica-ai/multica` lieferte 36 Bausteine, von denen die Mehrzahl **React-Hooks aus einer Anwendung** waren, keine Claude-Code-Bausteine — etwa `multica-ai__multica/hook/use-auto-scroll` aus `packages/ui/hooks/use-auto-scroll.ts`. Der Extraktor erkannte Hooks am Ordnernamen `hooks/` und konnte ein React-`hooks/`-Verzeichnis nicht von einem Claude-Code-`hooks/`-Verzeichnis unterscheiden. <!-- lint:historisch -->
 
 **Am Extraktor behoben, am Gate nicht.** `isClaudeHook()` in `tools/harness.mjs` verwirft heute Dateien nach dem Muster `use<Grossbuchstabe>…` mit `.ts`/`.tsx`-Endung sowie Testdateien und verlangt sonst ein bekanntes Hook-Event oder ein stdin-lesendes Shebang-Skript. Das Repo liefert dadurch nur noch **10 Bausteine**, allesamt echte Skills; keiner der genannten React-Hooks ist im Katalog auflösbar. Das Admission-Kriterium („liefert das Repo Claude-Code-Bausteine oder Anwendungscode?") fehlt trotzdem weiterhin — behoben wurde ein Symptom im Extraktor, nicht die ungeregelte Aufnahme.
 

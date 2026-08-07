@@ -169,19 +169,35 @@ Zustimmung; erst dann der echte Lauf. `--yes` überspringt nur die Rückfrage de
 CLI, nicht die des Users — ohne `--yes` bricht `install` in einer Agenten-Sitzung
 ab, weil dort kein Terminal für die Rückfrage da ist.
 
-Danach prüfen, dass die Dateien am erwarteten Ort liegen: Skills unter
-`.claude/skills/`, Subagents unter `.claude/agents/`, Commands unter
-`.claude/commands/`, Hooks unter `.claude/hooks/`.
+### 7b. Den Zustandsbericht auswerten
 
-**Hooks sind nicht mit dem Kopieren aktiv.** Sie müssen in `.claude/settings.json`
-eingetragen werden. Sieh dir den kopierten Hook an, trag ihn korrekt ein, und sag dem
-User, was er jetzt bei welchem Ereignis tut. Ein Hook, den niemand erwartet, ist eine
-schlechte Überraschung.
+Nach dem Kopieren gibt `install` aus, **was jetzt wirkt und was nicht**. Jede Zeile
+beginnt mit `[aktiv]` oder `[inaktiv]`, am Ende steht `Ergebnis: N von M wirksam`.
+Lies das, statt es zu überspringen: kopiert heisst nicht wirksam.
+
+- `[aktiv]` — Skills, Subagents, Commands. Sie greifen durch blosses Vorhandensein,
+  ab der nächsten Sitzung. Nichts weiter zu tun.
+- `[inaktiv]` bei einem **Hook** — er liegt in `.claude/hooks/` und tut nichts,
+  solange er nicht in `.claude/settings.json` steht. Der Bericht gibt den fertigen
+  JSON-Schnipsel mit dem abgeleiteten Ereignis aus. Übernimm ihn in die vorhandene
+  `settings.json`, ohne bestehende Ereignisse zu ersetzen. Nennt der Bericht mehrere
+  Ereignisse oder keines, sieh in den Hook und ordne ihn selbst zu — falsch
+  eingetragen ist schlimmer als gar nicht.
+- `[inaktiv]` bei **MCP** — Zugangsdaten setzen, und die `.mcp.json` wird erst beim
+  nächsten Start des Zielprojekts zur Bestätigung angeboten.
+- `[inaktiv]` bei einem **Plugin** — ein Ordner unter `.claude/plugins` aktiviert
+  nichts; das läuft über `/plugin`.
+
+Dass ein Hook feuert, ohne dass ihn jemand aufruft, ist der Punkt: sag dem User, bei
+welchem Ereignis er was tut. Ein Hook, den niemand erwartet, ist eine schlechte
+Überraschung.
 
 ### 8. Ergebnis dokumentieren
 
-Berichte knapp: was installiert wurde, welches Problem es jeweils löst, was noch
-Handarbeit braucht (Hook-Registrierung, MCP-Zugangsdaten, Anpassung an den Stack).
+Berichte knapp: was installiert wurde, welches Problem es jeweils löst, und —
+wörtlich aus dem Zustandsbericht — welche Bausteine `[inaktiv]` sind und was ihnen
+fehlt (Hook-Registrierung, MCP-Zugangsdaten, Plugin-Aktivierung, Anpassung an den
+Stack). Melde nie "installiert", wo der Bericht `[inaktiv]` sagt.
 
 ## Wenn nichts Passendes da ist
 
