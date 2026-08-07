@@ -1084,6 +1084,135 @@ function cmdKnowledge(argv) {
   }
 }
 
+// ---------------------------------------------------------------- lint
+
+/**
+ * Prüft die Wissensbank auf Verfall und Brüche.
+ *
+ * Warum das nötig ist: Eine Wissensbank, in die nur eingepflegt wird, verrottet
+ * still. Karpathys LLM-Wiki nennt neben Ingest und Query ausdrücklich eine dritte
+ * Operation — Lint: Widersprüche zwischen Seiten, veraltete Aussagen, verwaiste
+ * Seiten, fehlende Querverweise. Google zieht im Open Knowledge Format dieselbe
+ * Konsequenz und schreibt Verfallsdaten und Prüfvermerke ins Frontmatter.
+ *
+ * Was hier maschinell geht, läuft hier. Widerspruchsprüfung braucht ein Modell und
+ * gehört in die Skill, die das Einpflegen begleitet.
+ *
+ * Quellen: gist.github.com/karpathy/442a6bf555914893e9891c11519de94f
+ *          github.com/GoogleCloudPlatform/knowledge-catalog (OKF v0.2)
+ */
+const HEUTE = () => new Date().toISOString().slice(0, 10);
+
+function knowledgeFiles() {
+  const out = [];
+  for (const dir of KNOWLEDGE_DIRS) {
+    const full = path.join(ROOT, dir);
+    if (!fs.existsSync(full)) continue;
+    for (const f of fs.readdirSync(full).filter((x) => /\.md$/i.test(x)).sort()) {
+      out.push({ rel: `${dir}/${f}`, abs: path.join(full, f) });
+    }
+  }
+  return out;
+}
+
+function cmdLint(argv) {
+  const flags = parseFlags(argv);
+  const files = knowledgeFiles();
+  if (!files.length) die("Keine Wissensbank gefunden.");
+
+  const heute = HEUTE();
+  const befunde = [];
+  const add = (schwere, datei, text) => befunde.push({ schwere, datei, text });
+
+  const alleTitel = new Map();   // Überschrift -> [Datei]
+  const alleDateien = new Set(files.map((f) => path.basename(f.rel)));
+
+  for (const f of files) {
+    const text = safeRead(f.abs);
+    const fm = frontmatter(text);
+    const hatFm = text.startsWith("---");
+
+    // --- Frontmatter nach OKF ---
+    if (!hatFm) {
+      add("hoch", f.rel, "Kein Frontmatter. Ohne Metadaten ist nicht erkennbar, woher das Wissen stammt, wer es geprüft hat und wann es verfällt.");
+    } else {
+      if (!fm.sources && !fm.source) add("mittel", f.rel, "Kein `sources`-Feld — die Herkunft der Aussagen ist nicht maschinell nachvollziehbar.");
+      if (!fm.status) add("niedrig", f.rel, "Kein `status` (draft / stable / deprecated).");
+      if (!fm.stale_after) {
+        add("mittel", f.rel, "Kein `stale_after` — die Seite kann unbemerkt veralten.");
+      } else if (fm.stale_after < heute) {
+        add("hoch", f.rel, `Verfallen: \`stale_after: ${fm.stale_after}\` liegt vor heute (${heute}). Inhalt gegen die Quellen prüfen.`);
+      }
+      if (!fm.verified && !fm.generated) add("niedrig", f.rel, "Weder `generated` noch `verified` — die Vertrauensstufe ist unbekannt.");
+    }
+
+    // --- Verweise auf nicht vorhandene Dateien ---
+    for (const m of text.matchAll(/\]\(([^)#][^)]*\.md)(?:#[^)]*)?\)/g)) {
+      const ziel = path.basename(m[1]);
+      if (!alleDateien.has(ziel) && !fs.existsSync(path.resolve(path.dirname(f.abs), m[1]))) {
+        add("mittel", f.rel, `Verweis ins Leere: \`${m[1]}\``);
+      }
+    }
+
+    // --- Doppelte Überschriften: Redundanz oder Widerspruch ---
+    // Nur innerhalb von `knowledge/`. Rezepte folgen absichtlich einer festen
+    // Schablone ("Wann dieses Rezept passt", "Kern-Set", "Bewusst weggelassen") —
+    // dort ist die Wiederholung das gewünschte Verhalten, kein Befund.
+    if (f.rel.startsWith("knowledge/")) {
+      let inFence = false;
+      for (const line of text.split(/\r?\n/)) {
+        if (/^\s*```/.test(line)) { inFence = !inFence; continue; }
+        if (inFence) continue;
+        const h = line.match(/^#{2,3}\s+(.+?)\s*$/);
+        if (!h) continue;
+        const key = h[1].toLowerCase().replace(/^[\d.\s]+/, "").trim();
+        if (key.length < 8) continue;
+        (alleTitel.get(key) || alleTitel.set(key, []).get(key)).push(f.rel);
+      }
+    }
+  }
+
+  for (const [titel, dateien] of alleTitel) {
+    const uniq = [...new Set(dateien)];
+    if (uniq.length > 1) {
+      add("mittel", uniq.join(", "), `Gleiche Überschrift "${titel}" in mehreren Dateien — Redundanz oder Widerspruch. Zusammenführen oder abgrenzen.`);
+    }
+  }
+
+  // --- Rohquellen ohne Auswertung ---
+  const rawDir = path.join(ROOT, "Learnings");
+  if (fs.existsSync(rawDir)) {
+    const roh = fs.readdirSync(rawDir).filter((f) => /\.(md|txt|pdf)$/i.test(f));
+    const wissenText = files.map((f) => safeRead(f.abs)).join("\n").toLowerCase();
+    const unerwaehnt = roh.filter((r) => {
+      const stamm = r.replace(/\.[^.]+$/, "").split(/[—_]/)[0].trim().toLowerCase();
+      return stamm.length > 6 && !wissenText.includes(stamm.slice(0, Math.min(30, stamm.length)));
+    });
+    if (unerwaehnt.length) {
+      add("mittel", "Learnings/", `${unerwaehnt.length} Rohquelle(n) tauchen in keiner Wissensdatei auf:\n      ${unerwaehnt.slice(0, 8).map((u) => u.slice(0, 70)).join("\n      ")}`);
+    }
+  }
+
+  // --- Ausgabe ---
+  const rang = { hoch: 0, mittel: 1, niedrig: 2 };
+  befunde.sort((a, b) => rang[a.schwere] - rang[b.schwere]);
+  const zaehler = { hoch: 0, mittel: 0, niedrig: 0 };
+  for (const b of befunde) zaehler[b.schwere]++;
+
+  console.log(`Wissensbank geprüft: ${files.length} Dateien, ${befunde.length} Befunde`);
+  console.log(`  ${zaehler.hoch} hoch · ${zaehler.mittel} mittel · ${zaehler.niedrig} niedrig\n`);
+
+  const zeigen = flags.all ? befunde : befunde.filter((b) => b.schwere !== "niedrig");
+  for (const b of zeigen) {
+    console.log(`[${b.schwere}] ${b.datei}`);
+    console.log(`      ${b.text}\n`);
+  }
+  if (!flags.all && zaehler.niedrig) console.log(`${zaehler.niedrig} Befunde niedriger Schwere ausgeblendet — mit --all anzeigen.`);
+
+  console.log("\nWas dieser Befehl nicht kann: inhaltliche Widersprüche zwischen Seiten");
+  console.log("erkennen. Das braucht ein Modell und gehört in den Einpflege-Ablauf.");
+}
+
 // ---------------------------------------------------------------- update
 
 function cmdUpdate() {
@@ -1192,6 +1321,10 @@ harness.mjs — Harness-Bibliothek
   node tools/harness.mjs knowledge "<frage>"       Wissensbank durchsuchen —
        [--limit N] [--lines N]                     liefert Abschnitte, nicht Dateien
   node tools/harness.mjs knowledge --list          Inhaltsverzeichnis der Wissensbank
+  node tools/harness.mjs lint [--all]              Wissensbank auf Verfall prüfen:
+                                                   fehlende Metadaten, abgelaufenes
+                                                   stale_after, tote Verweise,
+                                                   nicht ausgewertete Rohquellen
   node tools/harness.mjs stats                     Übersicht
 
 Klon-Verzeichnis: ${CLONE_DIR}
@@ -1208,6 +1341,7 @@ switch (cmd) {
   case "install": cmdInstall(rest); break;
   case "bootstrap": cmdBootstrap(rest); break;
   case "knowledge": case "know": case "why": cmdKnowledge(rest); break;
+  case "lint": cmdLint(rest); break;
   case "stats": cmdStats(); break;
   default: console.log(USAGE);
 }
