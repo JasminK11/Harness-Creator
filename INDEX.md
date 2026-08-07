@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-07 18:27 · 956 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
+> Stand: 2026-08-07 18:46 · 956 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
 
 ## Was das hier ist
 
@@ -72,11 +72,13 @@ Warnungen stehen im Aufruf ohne Argument.
 ## Bestand nach Domäne
 
 Einstieg über die Domäne (`search "<worte>" --domain <name>`), voller Detail-Index
-je Domäne unter `catalog/by-domain/<domäne>.md`:
+je Domäne unter `catalog/by-domain/<domäne>.md`. Die erste Zahl ist der
+Standardzugriff, die Zahl in Klammern kommt aus Massen-Repos hinzu — `--domain`
+liefert die Summe, der Detail-Index listet nur die erste Zahl:
 
-`general` 331 · `data-ai` 161 · `backend` 110 · `product` 106 · `meta` 101 ·
-`security` 80 · `frontend` 73 · `testing` 67 · `seo` 58 · `docs` 55 ·
-`devops` 53 · `media` 48
+`general` 331 · `data-ai` 161 (+42) · `backend` 110 (+38) · `product` 106 (+86) · `meta` 101 (+213) ·
+`security` 80 (+36) · `frontend` 73 (+10) · `testing` 67 (+23) · `seo` 58 (+6) · `docs` 55 (+17) ·
+`devops` 53 (+33) · `media` 48 (+50)
 
 ## Massen-Repos (opt-in)
 
@@ -96,3 +98,4 @@ node tools/harness.mjs search "<stichwort>" --all   # alles, inklusive Massen-Re
 - `recipes/` — fertige Baupläne pro Projekttyp, mit verifizierten Baustein-IDs.
 - `catalog/by-repo.md` — welches Repo was beisteuert, mit Stand und Link.
 - `README.md` — Installation, Repo aufnehmen, Aufbau des Projekts.
+- `CHANGELOG.md` — was sich beim letzten `update` geändert hat.

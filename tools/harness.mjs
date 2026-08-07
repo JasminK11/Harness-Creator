@@ -237,6 +237,10 @@ function cmdSync() {
     try {
       if (fs.existsSync(path.join(dest, ".git"))) {
         const before = git(["rev-parse", "HEAD"], dest);
+        // Auch bestehende Klone brauchen die Einstellung — sie wurden womöglich
+        // ohne sie angelegt, und `reset --hard` scheitert dann an jedem zu langen
+        // Pfad. Ohne diese Zeile blieb ein Repo dauerhaft auf altem Stand.
+        try { git(["config", "core.longpaths", "true"], dest); } catch { /* egal */ }
         git(["fetch", "--depth", "1", "origin"], dest);
         const branch = s.branch || git(["symbolic-ref", "--short", "HEAD"], dest);
         git(["reset", "--hard", `origin/${branch}`], dest);
@@ -244,7 +248,13 @@ function cmdSync() {
         report.push({ repo: s.dir, status: before === after ? "unchanged" : "updated", before, after });
         console.log(`${before === after ? "  =" : "  ^"} ${s.dir}`);
       } else {
-        const args = ["clone", "--depth", "1", "--quiet"];
+        // `core.longpaths` beim Klonen setzen, nicht danach: Windows bricht sonst
+        // schon beim ersten Auschecken ab. Das Rechts-Repo hat Pfade wie
+        // `arbeitszeugnisgenerator/testakte/.../06-reinhilde-eisentraeger-…` und
+        // reisst damit die 260-Zeichen-Grenze — der Klon schlug fehl, das Repo
+        // fror auf altem Stand ein, und im Changelog ging es zwischen den anderen
+        // Meldungen unter. Auf Nicht-Windows ist die Option wirkungslos.
+        const args = ["-c", "core.longpaths=true", "clone", "--depth", "1", "--quiet"];
         if (s.branch) args.push("--branch", s.branch);
         args.push(s.url, dest);
         execFileSync("git", args, { stdio: ["ignore", "pipe", "pipe"] });
@@ -264,6 +274,22 @@ function cmdSync() {
       report.push({ repo: d, status: "orphan" });
       console.log(`  ? ${d} — nicht mehr in sources.txt (bleibt liegen)`);
     }
+  }
+
+  // Ein fehlgeschlagenes Repo friert still auf altem Stand ein. Das ist
+  // gefährlicher als ein Abbruch: der Katalog sieht vollständig aus, enthält aber
+  // Bausteine, die es im Original längst nicht mehr gibt — genau so zeigten vier
+  // Rezept-IDs auf Skills, die ein Repo umbenannt hatte. Die Zeile weiter oben
+  // ging zwischen dreizehn anderen unter, deshalb hier noch einmal am Stück.
+  const fehler = report.filter((r) => r.status === "error");
+  if (fehler.length) {
+    console.log(`\n  ${fehler.length} Repo(s) NICHT aktualisiert — der Katalog zeigt für sie einen alten Stand:`);
+    for (const f of fehler) {
+      console.log(`      ${f.repo}`);
+      console.log(`        ${String(f.error).split("\n")[0].slice(0, 120)}`);
+    }
+    console.log("  Bis das behoben ist, können Bausteine dieser Repos im Katalog stehen,");
+    console.log("  die es im Original nicht mehr gibt.");
   }
   return report;
 }
@@ -715,13 +741,30 @@ function writeMarkdownIndexes(catalog) {
   l1.push("## Bestand nach Domäne");
   l1.push("");
   l1.push("Einstieg über die Domäne (`search \"<worte>\" --domain <name>`), voller Detail-Index");
-  l1.push("je Domäne unter `catalog/by-domain/<domäne>.md`:");
+  l1.push("je Domäne unter `catalog/by-domain/<domäne>.md`. Die erste Zahl ist der");
+  l1.push("Standardzugriff, die Zahl in Klammern kommt aus Massen-Repos hinzu — `--domain`");
+  l1.push("liefert die Summe, der Detail-Index listet nur die erste Zahl:");
   l1.push("");
   // Fliesstext statt Tabelle: dieselbe Information in einem Fünftel der Zeilen.
   // INDEX.md hat ein Zeilenbudget, die Domänenliste wächst mit dem Bestand.
+  //
+  // Die Zahl in Klammern ist der Anteil aus Massen-Repos. Ohne sie stand hier eine
+  // Zahl direkt neben dem Befehl, der eine andere liefert: `seo` zählte 58, weil
+  // `byDomain` nur den Standardzugriff kennt — `search --domain seo` gibt aber 64
+  // zurück, weil `--domain` das Massen-Repo einschliesst. Beide Zahlen waren
+  // richtig und widersprachen sich trotzdem, und zwei Wissensdateien zitierten je
+  // eine davon als "die" Domänengrösse.
+  const bulkProDomaene = {};
+  for (const it of catalog.items) {
+    if (!it.bulk) continue;
+    for (const d of it.domains) bulkProDomaene[d] = (bulkProDomaene[d] || 0) + 1;
+  }
   const domListe = Object.entries(byDomain)
     .sort((a, b) => b[1].length - a[1].length)
-    .map(([d, items]) => `\`${d}\` ${items.length}`);
+    .map(([d, items]) => {
+      const extra = bulkProDomaene[d] || 0;
+      return `\`${d}\` ${items.length}${extra ? ` (+${extra})` : ""}`;
+    });
   for (let i = 0; i < domListe.length; i += 5) {
     const zeile = domListe.slice(i, i + 5).join(" · ");
     l1.push(i + 5 < domListe.length ? zeile + " ·" : zeile);
