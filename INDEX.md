@@ -1,21 +1,60 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-07 08:57 · 954 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
+> Stand: 2026-08-07 10:51 · 954 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
 
-## Regel für Agenten
+## Was das hier ist
 
-Diese Datei lesen. **Nicht** `catalog/index.json` lesen (zu gross) und **nicht** die
-Quell-Repos durchsuchen. Für alles Weitere das CLI benutzen:
+Ein Katalog von Claude-Bausteinen aus fremden Repos — Skills, Subagents,
+Slash-Commands, Hooks, MCP-Konfigurationen — und eine Wissensbank, die begründet,
+wann welcher Typ der richtige ist. Du ziehst daraus die wenigen Bausteine, die
+*dein* Projekt wirklich braucht, und lässt den Rest liegen.
+
+## So fängst du an
 
 ```bash
-node tools/harness.mjs search "<stichwort>"     # Treffer als kompakte Zeilen
-node tools/harness.mjs show <id>                # Detail zu einem Baustein
-node tools/harness.mjs install <id> --to <proj> # in Zielprojekt kopieren
+cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+node tools/harness.mjs        # vollständige Befehlsübersicht mit allen Flaggen
 ```
+
+Dann in dieser Reihenfolge: `search` findet Kandidaten, `show` prüft einen davon,
+`install --to <projekt>` kopiert ihn. Steht keine Suche an, sondern eine
+Entscheidung — Hook oder Skill, lohnt hier ein Subagent, wie prüft man ohne
+Selbstbewertung —, dann fragst du die Wissensbank, statt zu raten:
+
+```bash
+node tools/harness.mjs knowledge "hook statt skill"
+```
+
+## Was du niemals tun darfst
+
+- **`catalog/index.json` lesen.** Rund 20 MB. Das CLI liest sie an deiner Stelle.
+- **Die Repo-Klone unter `C:\Users\info\.harness-sources` mit Glob, Grep oder Read durchsuchen.**
+  Derselbe Grund, und du bekommst dort keine Beschreibungen, sondern rohe Dateien.
+- **`knowledge/` oder `recipes/` am Stück lesen.** Der Befehl `knowledge` schneidet
+  den passenden Abschnitt heraus und nennt Datei und Zeile.
 
 Grund: Der volle Katalog umfasst 25497 Bausteine. Wer den einliest,
 hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode sieht.
+
+## Die Befehle
+
+Aus dem Dispatcher des CLI erzeugt — diese Liste kann nicht veralten. Flaggen und
+Warnungen stehen im Aufruf ohne Argument.
+
+| Befehl | Wofür | Anmerkung |
+|---|---|---|
+| `search` | Katalog durchsuchen | der übliche Einstieg |
+| `show` | Detail zu einem Baustein | vor dem Installieren |
+| `install` | Baustein(e) ins Zielprojekt kopieren | meldet danach, was wirkt und was nicht |
+| `uninstall` | Bausteine wieder entfernen | genau die Dateien aus dem Manifest, nichts sonst |
+| `bootstrap` | nur die Zugriffsregel schreiben | in die CLAUDE.md eines Projekts, ohne Bausteine |
+| `knowledge` | die Wissensbank befragen | liefert Abschnitte, nicht Dateien — auch `know`, `why` |
+| `lint` | Wissensbank und Nähte prüfen | tote Verweise, abgelaufene Metadaten, falsche IDs |
+| `stats` | Bestandszahlen | die Quelle für jede Zahl, die man über den Katalog sagt |
+| `update` | Repos pullen + Katalog neu bauen | dauert Minuten, schreibt den Katalog neu |
+| `sync` | nur Repos pullen/klonen | Teilschritt von `update` |
+| `extract` | nur Katalog neu bauen | Teilschritt von `update` |
 
 ## Bestand nach Typ
 
@@ -30,57 +69,28 @@ hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode sieht.
 
 ## Bestand nach Domäne
 
-Einstieg über die Domäne, dann `search` innerhalb davon.
+Einstieg über die Domäne (`search "<worte>" --domain <name>`), voller Detail-Index
+je Domäne unter `catalog/by-domain/<domäne>.md`:
 
-| Domäne | Bausteine | Detail-Index |
-|---|---:|---|
-| general | 331 | `catalog/by-domain/general.md` |
-| data-ai | 159 | `catalog/by-domain/data-ai.md` |
-| backend | 108 | `catalog/by-domain/backend.md` |
-| product | 106 | `catalog/by-domain/product.md` |
-| meta | 101 | `catalog/by-domain/meta.md` |
-| security | 80 | `catalog/by-domain/security.md` |
-| frontend | 73 | `catalog/by-domain/frontend.md` |
-| testing | 68 | `catalog/by-domain/testing.md` |
-| seo | 58 | `catalog/by-domain/seo.md` |
-| docs | 55 | `catalog/by-domain/docs.md` |
-| devops | 53 | `catalog/by-domain/devops.md` |
-| media | 48 | `catalog/by-domain/media.md` |
-
-## Quell-Repos
-
-| Repo | Bausteine | Schwerpunkt | Stand |
-|---|---:|---|---|
-| [affaan-m/ecc](https://github.com/affaan-m/ecc) | 520 | general:182, data-ai:100, meta:77, backend:67 | 2026-08-06 |
-| [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents) | 270 | general:117, product:52, data-ai:32, devops:22 | 2026-08-06 |
-| [AgriciDaniel/claude-seo](https://github.com/AgriciDaniel/claude-seo) | 52 | seo:50, product:14, backend:8, meta:5 | 2026-07-20 |
-| [mattpocock/skills](https://github.com/mattpocock/skills) | 36 | general:25, data-ai:5, docs:5, testing:2 | 2026-08-06 |
-| [Egonex-AI/Understand-Anything](https://github.com/Egonex-AI/Understand-Anything) | 22 | meta:12, data-ai:9, media:2, docs:1 | 2026-07-30 |
-| [anthropics/skills](https://github.com/anthropics/skills) | 21 | media:5, general:4, frontend:4, meta:4 | 2026-07-24 |
-| [nextlevelbuilder/ui-ux-pro-max-skill](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) | 12 | frontend:10, product:3, media:1, backend:1 | 2026-08-06 |
-| [multica-ai/multica](https://github.com/multica-ai/multica) | 10 | backend:6, data-ai:3, frontend:1, product:1 | 2026-08-07 |
-| [usestrix/strix](https://github.com/usestrix/strix) | 4 | security:4, backend:3, devops:2, data-ai:1 | 2026-08-06 |
-| [mvanhorn/last30days-skill](https://github.com/mvanhorn/last30days-skill) | 4 | general:2, data-ai:1, meta:1 | 2026-07-31 |
-| [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) | 2 | data-ai:1, docs:1, general:1 | 2026-08-06 |
-| [Bomx/qwoted-seo-backlinks-skill](https://github.com/Bomx/qwoted-seo-backlinks-skill) | 1 | seo:1 | 2026-05-01 |
+`general` 331 · `data-ai` 159 · `backend` 108 · `product` 106 · `meta` 101 ·
+`security` 80 · `frontend` 73 · `testing` 68 · `seo` 58 · `docs` 55 ·
+`devops` 53 · `media` 48
 
 ## Massen-Repos (opt-in)
 
 Diese Repos sind vollständig katalogisiert, tauchen aber **nicht** in der normalen
-Suche auf. Sie enthalten so viele Bausteine, dass jede Suche sonst von ihnen
-dominiert würde. Zugriff nur gezielt:
+Suche auf — sonst würde jede Suche von ihnen dominiert. Zugriff nur gezielt:
 
 ```bash
 node tools/harness.mjs search "<stichwort>" --repo Klotzkette__claude-fuer-deutsches-recht
 node tools/harness.mjs search "<stichwort>" --all   # alles, inklusive Massen-Repos
 ```
 
-| Repo | Bausteine | Schwerpunkt | Stand |
-|---|---:|---|---|
-| [Klotzkette/claude-fuer-deutsches-recht](https://github.com/Klotzkette/claude-fuer-deutsches-recht) | 24543 | legal-de:24161, meta:213, product:86, media:50 | 2026-08-05 |
+## Wohin für mehr
 
-## Weiterlesen
-
-- `knowledge/` — **warum** ein Harness so gebaut wird (Doktrin, Entscheidungsbaum, Anti-Patterns)
-- `recipes/` — fertige Baupläne pro Projekttyp
-- `CHANGELOG.md` — was sich beim letzten `/harness-update` geändert hat
+- `knowledge/` — **warum** ein Harness so gebaut wird: Doktrin, Entscheidungsbaum,
+  Anti-Patterns, ein Kapitel zum Aufsetzen eines neuen Projekts. Über
+  `node tools/harness.mjs knowledge "<frage>"` abfragen, nicht am Stück lesen.
+- `recipes/` — fertige Baupläne pro Projekttyp, mit verifizierten Baustein-IDs.
+- `catalog/by-repo.md` — welches Repo was beisteuert, mit Stand und Link.
+- `README.md` — Installation, Repo aufnehmen, Aufbau des Projekts.

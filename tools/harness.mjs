@@ -5,15 +5,10 @@
  * Aufgerufen von: den Skills `harness-update` und `harness-build`
  * (C:\Users\info\.claude\skills\...\SKILL.md) sowie direkt vom User.
  *
- * Subcommands:
- *   sync              Repos aus sources.txt klonen/pullen
- *   extract           Bausteine katalogisieren -> catalog/index.json + Markdown-Indizes
- *   update            sync + extract + CHANGELOG.md schreiben
- *   search <query>    Katalog durchsuchen (kompakte Trefferzeilen)
- *   show <id>         Detail zu einem Baustein
- *   install <id...>   Baustein(e) in ein Zielprojekt kopieren
- *   uninstall <id...> Bausteine anhand des Manifests wieder entfernen
- *   stats             Übersicht
+ * Subcommands: siehe `USAGE` und den `switch` am Dateiende. Hier stand einmal
+ * eine dritte Kopie derselben Liste — sie war nach zwei neuen Befehlen falsch.
+ * Der Dispatcher ist die Wahrheit; `USAGE` beschreibt ihn, `befehlsUebersicht()`
+ * liest ihn für INDEX.md aus.
  *
  * Warum ein CLI statt "Claude liest die Repos":
  * Die Quellen umfassen >2000 Bausteine. Ein Agent, der die durchliest, hat sein
@@ -543,6 +538,53 @@ const short = (s, n) => {
   return t.length > n ? t.slice(0, n - 1) + "\u2026" : t;
 };
 
+/**
+ * Die Befehlsliste für INDEX.md — gelesen aus dem Dispatcher, nicht gepflegt.
+ *
+ * Warum: Eine Handliste wäre die dritte Stelle, an der dieselben elf Namen
+ * stehen (Dispatcher, USAGE, INDEX), und die erste, die vergessen wird. Ein
+ * dokumentierter Befehl, den es nicht gibt, ist schlimmer als ein
+ * undokumentierter. Hier steht deshalb nur der *Zweck* von Hand; welche Befehle
+ * es gibt, entscheidet allein `cliOberflaeche()`. Ein neuer Subcommand ohne
+ * Zweckzeile taucht trotzdem auf — sichtbar unbeschrieben statt unsichtbar.
+ *
+ * Bewusst ohne Flaggen: die ändern sich häufiger als die Namen und stehen
+ * vollständig im Aufruf ohne Argument. Zwei Quellen für dieselbe Flagge sind
+ * eine Quelle zu viel.
+ */
+function befehlsUebersicht() {
+  const zweck = {
+    search:    ["Katalog durchsuchen", "der übliche Einstieg"],
+    show:      ["Detail zu einem Baustein", "vor dem Installieren"],
+    install:   ["Baustein(e) ins Zielprojekt kopieren", "meldet danach, was wirkt und was nicht"],
+    uninstall: ["Bausteine wieder entfernen", "genau die Dateien aus dem Manifest, nichts sonst"],
+    bootstrap: ["nur die Zugriffsregel schreiben", "in die CLAUDE.md eines Projekts, ohne Bausteine"],
+    knowledge: ["die Wissensbank befragen", "liefert Abschnitte, nicht Dateien — auch `know`, `why`"],
+    lint:      ["Wissensbank und Nähte prüfen", "tote Verweise, abgelaufene Metadaten, falsche IDs"],
+    stats:     ["Bestandszahlen", "die Quelle für jede Zahl, die man über den Katalog sagt"],
+    update:    ["Repos pullen + Katalog neu bauen", "dauert Minuten, schreibt den Katalog neu"],
+    sync:      ["nur Repos pullen/klonen", "Teilschritt von `update`"],
+    extract:   ["nur Katalog neu bauen", "Teilschritt von `update`"],
+  };
+  const alias = new Set(["know", "why"]);
+  const vorhanden = cliOberflaeche().subcommands;
+
+  const out = ["## Die Befehle", "",
+    "Aus dem Dispatcher des CLI erzeugt — diese Liste kann nicht veralten. Flaggen und",
+    "Warnungen stehen im Aufruf ohne Argument.", "",
+    "| Befehl | Wofür | Anmerkung |", "|---|---|---|"];
+  for (const [name, [was, wozu]] of Object.entries(zweck)) {
+    if (!vorhanden.has(name)) continue; // umbenannt oder entfernt: dann verschwindet die Zeile mit
+    out.push(`| \`${name}\` | ${was} | ${wozu} |`);
+  }
+  for (const name of [...vorhanden].sort()) {
+    if (zweck[name] || alias.has(name)) continue;
+    out.push(`| \`${name}\` | — | neu, noch nicht beschrieben — \`node tools/harness.mjs\` fragen |`);
+  }
+  out.push("");
+  return out;
+}
+
 function writeMarkdownIndexes(catalog) {
   // Bulk-Bausteine bleiben aus den Markdown-Indizes draussen — sonst besteht
   // by-domain/legal-de.md aus 24.500 Tabellenzeilen und ist unlesbar.
@@ -554,7 +596,9 @@ function writeMarkdownIndexes(catalog) {
   }
 
   // --- Ebene 1: INDEX.md — bewusst klein gehalten. Das ist die einzige Datei,
-  //     die ein Agent im Normalfall komplett liest.
+  //     die ein Agent im Normalfall komplett liest. Sie muss unter hundert
+  //     Zeilen bleiben, auch wenn sources.txt weiter wächst: deshalb stehen die
+  //     Repo-Tabellen in catalog/by-repo.md und nicht mehr hier.
   const l1 = [];
   l1.push("# Harness-Bibliothek — Index (Ebene 1)");
   l1.push("");
@@ -563,20 +607,41 @@ function writeMarkdownIndexes(catalog) {
     (bulkRepos.length ? ` (+ ${catalog.totals.items - normal.length} in Massen-Repos, siehe unten)` : "") +
     ` aus ${catalog.repos.length} Repos`);
   l1.push("");
-  l1.push("## Regel für Agenten");
+  l1.push("## Was das hier ist");
   l1.push("");
-  l1.push("Diese Datei lesen. **Nicht** `catalog/index.json` lesen (zu gross) und **nicht** die");
-  l1.push("Quell-Repos durchsuchen. Für alles Weitere das CLI benutzen:");
+  l1.push("Ein Katalog von Claude-Bausteinen aus fremden Repos — Skills, Subagents,");
+  l1.push("Slash-Commands, Hooks, MCP-Konfigurationen — und eine Wissensbank, die begründet,");
+  l1.push("wann welcher Typ der richtige ist. Du ziehst daraus die wenigen Bausteine, die");
+  l1.push("*dein* Projekt wirklich braucht, und lässt den Rest liegen.");
+  l1.push("");
+  l1.push("## So fängst du an");
   l1.push("");
   l1.push("```bash");
-  l1.push('node tools/harness.mjs search "<stichwort>"     # Treffer als kompakte Zeilen');
-  l1.push("node tools/harness.mjs show <id>                # Detail zu einem Baustein");
-  l1.push("node tools/harness.mjs install <id> --to <proj> # in Zielprojekt kopieren");
+  l1.push(`cd "${ROOT}"`);
+  l1.push("node tools/harness.mjs        # vollständige Befehlsübersicht mit allen Flaggen");
   l1.push("```");
+  l1.push("");
+  l1.push("Dann in dieser Reihenfolge: `search` findet Kandidaten, `show` prüft einen davon,");
+  l1.push("`install --to <projekt>` kopiert ihn. Steht keine Suche an, sondern eine");
+  l1.push("Entscheidung — Hook oder Skill, lohnt hier ein Subagent, wie prüft man ohne");
+  l1.push("Selbstbewertung —, dann fragst du die Wissensbank, statt zu raten:");
+  l1.push("");
+  l1.push("```bash");
+  l1.push('node tools/harness.mjs knowledge "hook statt skill"');
+  l1.push("```");
+  l1.push("");
+  l1.push("## Was du niemals tun darfst");
+  l1.push("");
+  l1.push("- **`catalog/index.json` lesen.** Rund 20 MB. Das CLI liest sie an deiner Stelle.");
+  l1.push(`- **Die Repo-Klone unter \`${catalog.cloneDir}\` mit Glob, Grep oder Read durchsuchen.**`);
+  l1.push("  Derselbe Grund, und du bekommst dort keine Beschreibungen, sondern rohe Dateien.");
+  l1.push("- **`knowledge/` oder `recipes/` am Stück lesen.** Der Befehl `knowledge` schneidet");
+  l1.push("  den passenden Abschnitt heraus und nennt Datei und Zeile.");
   l1.push("");
   l1.push("Grund: Der volle Katalog umfasst " + catalog.totals.items + " Bausteine. Wer den einliest,");
   l1.push("hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode sieht.");
   l1.push("");
+  l1.push(...befehlsUebersicht());
   l1.push("## Bestand nach Typ");
   l1.push("");
   l1.push("| Typ | Anzahl | Was es ist | Wann einbauen |");
@@ -596,20 +661,17 @@ function writeMarkdownIndexes(catalog) {
   l1.push("");
   l1.push("## Bestand nach Domäne");
   l1.push("");
-  l1.push("Einstieg über die Domäne, dann `search` innerhalb davon.");
+  l1.push("Einstieg über die Domäne (`search \"<worte>\" --domain <name>`), voller Detail-Index");
+  l1.push("je Domäne unter `catalog/by-domain/<domäne>.md`:");
   l1.push("");
-  l1.push("| Domäne | Bausteine | Detail-Index |");
-  l1.push("|---|---:|---|");
-  for (const [d, items] of Object.entries(byDomain).sort((a, b) => b[1].length - a[1].length)) {
-    l1.push(`| ${d} | ${items.length} | \`catalog/by-domain/${d}.md\` |`);
-  }
-  l1.push("");
-  l1.push("## Quell-Repos");
-  l1.push("");
-  l1.push("| Repo | Bausteine | Schwerpunkt | Stand |");
-  l1.push("|---|---:|---|---|");
-  for (const r of catalog.repos.filter((r) => !r.bulk).sort((a, b) => b.count - a.count)) {
-    l1.push(`| [${r.owner}/${r.repo}](${r.url}) | ${r.count} | ${r.domains.join(", ") || "—"} | ${(r.lastCommit || "").slice(0, 10)} |`);
+  // Fliesstext statt Tabelle: dieselbe Information in einem Fünftel der Zeilen.
+  // INDEX.md hat ein Zeilenbudget, die Domänenliste wächst mit dem Bestand.
+  const domListe = Object.entries(byDomain)
+    .sort((a, b) => b[1].length - a[1].length)
+    .map(([d, items]) => `\`${d}\` ${items.length}`);
+  for (let i = 0; i < domListe.length; i += 5) {
+    const zeile = domListe.slice(i, i + 5).join(" · ");
+    l1.push(i + 5 < domListe.length ? zeile + " ·" : zeile);
   }
   l1.push("");
 
@@ -617,8 +679,7 @@ function writeMarkdownIndexes(catalog) {
     l1.push("## Massen-Repos (opt-in)");
     l1.push("");
     l1.push("Diese Repos sind vollständig katalogisiert, tauchen aber **nicht** in der normalen");
-    l1.push("Suche auf. Sie enthalten so viele Bausteine, dass jede Suche sonst von ihnen");
-    l1.push("dominiert würde. Zugriff nur gezielt:");
+    l1.push("Suche auf — sonst würde jede Suche von ihnen dominiert. Zugriff nur gezielt:");
     l1.push("");
     l1.push("```bash");
     for (const r of bulkRepos) {
@@ -627,19 +688,44 @@ function writeMarkdownIndexes(catalog) {
     l1.push('node tools/harness.mjs search "<stichwort>" --all   # alles, inklusive Massen-Repos');
     l1.push("```");
     l1.push("");
-    l1.push("| Repo | Bausteine | Schwerpunkt | Stand |");
-    l1.push("|---|---:|---|---|");
-    for (const r of bulkRepos) {
-      l1.push(`| [${r.owner}/${r.repo}](${r.url}) | ${r.count} | ${r.domains.join(", ") || "—"} | ${(r.lastCommit || "").slice(0, 10)} |`);
-    }
-    l1.push("");
   }
-  l1.push("## Weiterlesen");
+  l1.push("## Wohin für mehr");
   l1.push("");
-  l1.push("- `knowledge/` — **warum** ein Harness so gebaut wird (Doktrin, Entscheidungsbaum, Anti-Patterns)");
-  l1.push("- `recipes/` — fertige Baupläne pro Projekttyp");
-  l1.push("- `CHANGELOG.md` — was sich beim letzten `/harness-update` geändert hat");
+  l1.push("- `knowledge/` — **warum** ein Harness so gebaut wird: Doktrin, Entscheidungsbaum,");
+  l1.push("  Anti-Patterns, ein Kapitel zum Aufsetzen eines neuen Projekts. Über");
+  l1.push('  `node tools/harness.mjs knowledge "<frage>"` abfragen, nicht am Stück lesen.');
+  l1.push("- `recipes/` — fertige Baupläne pro Projekttyp, mit verifizierten Baustein-IDs.");
+  l1.push("- `catalog/by-repo.md` — welches Repo was beisteuert, mit Stand und Link.");
+  l1.push("- `README.md` — Installation, Repo aufnehmen, Aufbau des Projekts.");
+  // Entsteht erst beim ersten `update`. Ein Verweis auf eine Datei, die es nicht
+  // gibt, kostet einen fremden Agenten einen Fehlversuch und etwas Vertrauen.
+  if (fs.existsSync(path.join(ROOT, "CHANGELOG.md"))) {
+    l1.push("- `CHANGELOG.md` — was sich beim letzten `update` geändert hat.");
+  }
   fs.writeFileSync(path.join(ROOT, "INDEX.md"), l1.join("\n") + "\n");
+
+  // --- Ebene 2: die Repo-Herkunft. Aus INDEX.md ausgelagert, weil diese Tabelle
+  //     mit jeder Zeile in sources.txt wächst und INDEX.md klein bleiben muss.
+  const rp = ["# Quell-Repos", "",
+    `${catalog.repos.length} Repos, Stand ${catalog.generatedAt.slice(0, 16).replace("T", " ")}. Erzeugt von \`tools/harness.mjs extract\`.`,
+    "",
+    "Die Bausteine stehen unter den Lizenzen ihrer jeweiligen Urheber. Dieses Repo",
+    "enthält keine Kopien, nur den Katalog.",
+    ""];
+  const repoTabelle = (liste) => {
+    rp.push("| Repo | Bausteine | Schwerpunkt | Stand |", "|---|---:|---|---|");
+    for (const r of liste) {
+      rp.push(`| [${r.owner}/${r.repo}](${r.url}) | ${r.count} | ${r.domains.join(", ") || "—"} | ${(r.lastCommit || "").slice(0, 10)} |`);
+    }
+    rp.push("");
+  };
+  repoTabelle(catalog.repos.filter((r) => !r.bulk).sort((a, b) => b.count - a.count));
+  if (bulkRepos.length) {
+    rp.push("## Massen-Repos", "",
+      "Nur mit `--repo`, `--domain` oder `--all` sichtbar.", "");
+    repoTabelle(bulkRepos);
+  }
+  fs.writeFileSync(path.join(CATALOG_DIR, "by-repo.md"), rp.join("\n") + "\n");
 
   // --- Ebene 2: pro Domäne eine Datei ---
   const domDir = path.join(CATALOG_DIR, "by-domain");
@@ -1216,8 +1302,14 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
   L.push("```");
   L.push("");
   L.push("Reihenfolge bei einer Frage nach passenden Bausteinen: erst `search`, dann");
-  L.push("`show` für die engere Auswahl, dann `install`. `INDEX.md` der Bibliothek darf");
-  L.push("komplett gelesen werden — sie ist dafür klein gehalten.");
+  L.push("`show` für die engere Auswahl, dann `install`.");
+  L.push("");
+  // Absoluter Pfad, kein blosses "INDEX.md": in einem fremden Projekt zeigt der
+  // relative Name auf die falsche Datei oder ins Leere — und dann rät der Agent.
+  L.push(`Wer mehr braucht — alle elf Befehle, Bestand nach Typ und Domäne, die vollen`);
+  L.push(`Verbote —, liest \`${path.join(ROOT, "INDEX.md")}\` **komplett**. Sie ist unter`);
+  L.push("hundert Zeilen lang und genau dafür da. Kein Ersatz dafür, im Verzeichnis der");
+  L.push("Bibliothek herumzusuchen.");
   L.push("");
   L.push("### Die Wissensbank befragen");
   L.push("");
@@ -1809,11 +1901,60 @@ function knowledgeFiles() {
 /** Dateien, die keine Wissensseiten sind, aber dieselben Aussagen tragen.
  *  Bewusst NICHT in `knowledgeFiles()` aufgenommen: dort liefe die
  *  Frontmatter-Prüfung mit, und eine README braucht kein `stale_after`. */
-const NAHT_EXTRA = ["README.md", "INDEX.md", "CLAUDE.md"];
+/** Dateien ausserhalb von knowledge/ und recipes/, die trotzdem auf Nähte geprüft
+ *  werden: Bestandszahlen, Baustein-IDs, Verweise auf CLI-Befehle.
+ *
+ *  Die Skills und Subagenten gehören dazu, weil sie dieselben Zahlen und IDs
+ *  nennen wie die Wissensbank — und weil genau dort ein veralteter Bestand
+ *  überlebt hat ("rund 1.050 Bausteine", tatsächlich 954), während lint sauber
+ *  meldete. Eine Prüfung, die den Ort auslässt, an dem der Fehler sitzt, prüft
+ *  das Falsche. */
+const NAHT_EXTRA = [
+  "README.md", "INDEX.md", "CLAUDE.md",
+  ...(() => {
+    const out = [];
+    for (const unter of ["skills", "agents"]) {
+      const dir = path.join(ROOT, ".claude", unter);
+      if (!fs.existsSync(dir)) continue;
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        if (e.isDirectory()) {
+          const f = path.join(dir, e.name, "SKILL.md");
+          if (fs.existsSync(f)) out.push(`.claude/${unter}/${e.name}/SKILL.md`);
+        } else if (/\.md$/i.test(e.name)) {
+          out.push(`.claude/${unter}/${e.name}`);
+        }
+      }
+    }
+    return out;
+  })(),
+];
 
 /** Absatz-Marke, mit der ein Autor eine bewusst tote Angabe stehen lässt.
  *  HTML-Kommentar, damit sie in jeder Markdown-Ansicht unsichtbar bleibt. */
 const LINT_HISTORISCH = "<!-- lint:historisch -->";
+
+/** Zeichenbereiche der Absätze, die `LINT_HISTORISCH` tragen.
+ *  Warum absatzweise und nicht zeilenweise: die Unterdrückung gilt dem Gedanken,
+ *  nicht dem Zeilenumbruch — eine Tabelle, die einen alten Bestand dem neuen
+ *  gegenüberstellt, ist ein Absatz, und die Marke steht einmal darunter.
+ *  Warum überhaupt: ein `revise`-Eintrag, der nicht sagt, was vorher galt,
+ *  erfüllt seinen Zweck nicht. Die Doktrin verlangt dieses Protokoll, also darf
+ *  die Zahlenprüfung nicht prinzipiell daran scheitern. */
+function historischBereiche(text) {
+  const out = [];
+  let pos = 0;
+  for (const teil of text.split(/(\r?\n[ \t]*\r?\n)/)) {
+    if (teil.includes(LINT_HISTORISCH)) out.push([pos, pos + teil.length]);
+    pos += teil.length;
+  }
+  return out;
+}
+
+const istHistorisch = (bereiche, idx) => bereiche.some(([a, b]) => idx >= a && idx < b);
+
+/** 1-basierte Zeilennummer zu einem Zeichenversatz. Ohne sie muss man bei sieben
+ *  Befunden in einer 500-Zeilen-Datei sieben Zahlen von Hand suchen. */
+const zeileVon = (text, idx) => text.slice(0, idx).split(/\r?\n/).length;
 
 /** Baustein-IDs im Fliesstext. Das Repo-Präfix ist optional, damit auch die
  *  Kurzform `nextlevelbuilder/agent/design-review` auffällt — sie liest sich
@@ -1936,33 +2077,59 @@ function cmdLint(argv) {
       { wert: cat.items.filter((i) => !i.bulk).length, was: "Bausteine im Standardzugriff" },
       { wert: cat.items.filter((i) => i.bulk).length, was: "Bausteine in Massen-Repos" },
     ];
+    // Jede Zahl, die der Katalog selbst hergibt, ist eine richtige Zahl — auch
+    // wenn sie keine der drei Leitgrössen ist. Ohne diese Menge meldete die
+    // Prüfung „24.700 Skills" als Abweichung von 25.497, obwohl `stats` genau
+    // 24.700 Skills ausweist: eine korrekte Teilmenge, kein Widerspruch. Wer
+    // eine Teilmenge nennt, soll sie nennen dürfen, ohne dafür angemeckert zu
+    // werden — sonst schreibt niemand mehr Zahlen in die Wissensbank.
     const alleWerte = new Set(kennzahlen.map((k) => k.wert));
+    for (const v of Object.values(cat.totals)) alleWerte.add(v);          // pro Typ
+    for (const r of cat.repos || []) alleWerte.add(r.count);              // pro Repo
+    const proDomain = {};
+    for (const i of cat.items) for (const d of i.domains || []) proDomain[d] = (proDomain[d] || 0) + 1;
+    for (const v of Object.values(proDomain)) alleWerte.add(v);           // pro Domäne
 
-    // Eine Zahl ist nur dann eine Bestandsangabe, wenn ihr Umfeld das sagt.
-    // Sonst meldet die Prüfung Zeilenzahlen und Token-Angaben als Widerspruch.
-    const BESTAND_RE = /\b(baustein|einträg|katalog|skills?\b|standardzugriff|verzeichnet|umfasst)/i;
+    // Eine Zahl ist nur dann eine Bestandsangabe, wenn das Bezugswort direkt an
+    // ihr klebt: „954 Bausteine", „Bestand: 954". Die frühere Fassung suchte im
+    // Umkreis von ±70 Zeichen nach irgendeinem Stichwort — in einer Wissensbank
+    // *über* Bausteine steht dort praktisch immer eines. Ergebnis waren Token-
+    // Budgets („25.000 Token"), Zeilenzahlen fremder Dateien („859 Zeilen"),
+    // KB-Angaben und Code-Zeilenverweise („Z. 897–945") als Bestandswiderspruch.
+    // Ein Lint, das Fehlalarme produziert, wird nicht mehr gelesen — und findet
+    // dann auch die echten Fehler nicht mehr.
+    // Die Endungen ausschreiben, nicht `\b` hinter den Stamm setzen: „954
+    // Bausteine" scheiterte sonst am Plural-e, und genau der Plural ist die
+    // Form, in der eine Bestandsangabe im Deutschen dasteht.
+    const BESTAND_NACH_RE = /^\s*(?:bausteine?n?|einträge?n?|eintrag|skills?|agents?|hooks?|commands?|plugins?|mcps?)\b/i;
+    const BESTAND_VOR_RE = /\b(?:bestand|bausteine?|einträge?|katalog|standardzugriff|massen-repos?|umfasst|verzeichnet|enthält)\b[^.:;\n]{0,24}?[\s:|=]+(?:rund|etwa|circa|ca\.|über|knapp|gut|mehr als)?\s*$/i;
+    // Steht hinter der Zahl eine Einheit, zählt sie etwas anderes als Bausteine.
+    const EINHEIT_RE = /^\s*(?:token|zeichen|zeilen?|wörter|wort|byte|bytes|[kmg]b|ms|sekunden?|minuten?|stunden?|tage?|%|€|\$)\b/i;
     // Bewusste Rundungen sind keine Widersprüche, sondern korrekte Prosa.
     const RUNDUNG_RE = /\b(rund|etwa|circa|ca\.|über|mehr als|knapp|gut)\s*$/i;
 
     for (const f of files) {
       const text = safeRead(f.abs);
+      const historisch = historischBereiche(text);
       const gesehen = new Set();
       for (const m of text.matchAll(/\b(\d{1,3}(?:[.,]\d{3})+|\d{3,6})\b/g)) {
         const roh = m[1];
         const zahl = Number(roh.replace(/[.,]/g, ""));
         if (!Number.isFinite(zahl) || zahl < 100 || gesehen.has(zahl)) continue;
         if (alleWerte.has(zahl)) continue;                      // stimmt
+        if (istHistorisch(historisch, m.index)) continue;        // absichtlich alt
 
         const vor = text.slice(Math.max(0, m.index - 70), m.index);
         const nach = text.slice(m.index + roh.length, m.index + roh.length + 70);
-        if (!BESTAND_RE.test(vor + nach)) continue;             // andere Art Zahl
-        if (RUNDUNG_RE.test(vor) && zahl % 1000 === 0) continue; // "über 25.000"
+        if (EINHEIT_RE.test(nach)) continue;                    // Token, Zeilen, KB
+        if (!BESTAND_NACH_RE.test(nach) && !BESTAND_VOR_RE.test(vor)) continue;
+        if (RUNDUNG_RE.test(vor) && zahl % 1000 === 0) continue; // „über 25.000"
 
         gesehen.add(zahl);
         for (const k of kennzahlen) {
           const abweichung = Math.abs(zahl - k.wert) / k.wert;
           if (abweichung > 0 && abweichung < 0.2) {
-            add("hoch", f.rel, `Bestandszahl \`${roh}\` weicht vom Katalog ab — aktuell ${k.wert} (${k.was}). Veraltete Zahl oder Verwechslung.`);
+            add("hoch", `${f.rel}:${zeileVon(text, m.index)}`, `Bestandszahl \`${roh}\` weicht vom Katalog ab — aktuell ${k.wert} (${k.was}). Veraltete Zahl oder Verwechslung. Ist der alte Wert absichtlich zitiert: \`${LINT_HISTORISCH}\` in denselben Absatz setzen.`);
             break;
           }
         }
@@ -2019,8 +2186,14 @@ function cmdLint(argv) {
         // Verzeichnisübersicht der README sonst als Aufruf von `Das` gilt.
         const m = line.match(/\bnode\s+\S*harness\.mjs\s+([a-zA-Z][\w-]*)/);
         if (m && !subcommands.has(m[1])) totSub.add(m[1]);
-        if (!/harness\.mjs/.test(line)) continue;
-        for (const g of line.matchAll(/\s(--[a-z][a-z-]*)/g)) {
+        // Nur was **hinter** `harness.mjs` steht, ist eine Flagge des CLI. Alles
+        // davor gehört dem Aufrufer: `node --check tools/harness.mjs` prüft die
+        // Syntax und ist ein völlig richtiger Befehl — die vorherige Fassung
+        // meldete das als unbekannte Flagge und hätte dazu verführt, eine korrekte
+        // Zeile zu ändern, statt die Prüfung zu schärfen.
+        const nachCli = line.split(/harness\.mjs/)[1];
+        if (nachCli === undefined) continue;
+        for (const g of nachCli.matchAll(/\s(--[a-z][a-z-]*)/g)) {
           if (!flaggen.has(g[1].slice(2))) totFlag.add(g[1]);
         }
       }
@@ -2214,10 +2387,14 @@ harness.mjs — Harness-Bibliothek
                  bleiben stehen; --force entfernt auch sie. Manifest-Einträge
                  ohne Dateiliste (ältere Version) führen zum Abbruch.
   node tools/harness.mjs bootstrap --to DIR        nur den Regelblock in die
-                                                   CLAUDE.md des Projekts schreiben
+       [--no-skills]                               CLAUDE.md des Projekts schreiben
+       Legt ausserdem die Bedien-Skills harness-plan und harness-build unter
+       .claude/skills/ des Zielprojekts ab — ein frisches Projekt kennt sie sonst
+       nicht. --no-skills unterdrückt das. Nur bootstrap tut das; install nicht.
   node tools/harness.mjs knowledge "<frage>"       Wissensbank durchsuchen —
        [--limit N] [--lines N]                     liefert Abschnitte, nicht Dateien
   node tools/harness.mjs knowledge --list          Inhaltsverzeichnis der Wissensbank
+       Kurzformen: "know" und "why" sind gleichwertige Namen für "knowledge".
   node tools/harness.mjs lint [--all] [--strict]   Wissensbank auf Verfall prüfen:
                                                    fehlende Metadaten, abgelaufenes
                                                    stale_after, tote Verweise,

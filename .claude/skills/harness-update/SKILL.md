@@ -1,6 +1,6 @@
 ---
 name: harness-update
-description: Hält die Harness-Bibliothek aktuell — zieht alle Quell-Repos neu, baut den Katalog neu und berichtet, was dazugekommen ist. Nimmt auch neue Repos auf oder entfernt sie. Nutzen bei "/update", "harness update", "Repos aktualisieren", "Bibliothek aktualisieren", "was gibt es Neues", "neues Repo hinzufügen", "Repo aufnehmen", "/harness-update".
+description: Wirkt auf die BIBLIOTHEK selbst, nie auf ein Zielprojekt. Zieht alle Quell-Repos neu, baut den Katalog neu und berichtet, was fachlich dazugekommen ist. Nimmt auch Repos in sources.txt auf oder entfernt sie. Nutzen bei "/update", "harness update", "Repos aktualisieren", "Bibliothek aktualisieren", "was gibt es Neues", "neues Repo hinzufügen", "Repo aufnehmen", "/harness-update". Installiert nichts in ein Projekt (das ist /harness-build) und plant kein Vorhaben (das ist /harness-plan).
 ---
 
 # /harness-update — Bibliothek aktualisieren
@@ -20,7 +20,8 @@ node tools/harness.mjs update
 ```
 
 Das führt drei Schritte aus: alle Repos aus `sources.txt` klonen oder pullen, den
-Katalog neu aufbauen, und einen Eintrag in `CHANGELOG.md` schreiben. Der Lauf dauert
+Katalog neu aufbauen, und einen Eintrag in `CHANGELOG.md` schreiben — diese Datei
+**entsteht bei diesem Lauf**; vor dem ersten `update` gibt es sie nicht. Der Lauf dauert
 je nach Netz und Repo-Zahl ein bis mehrere Minuten. Führ ihn im Hintergrund aus,
 wenn du parallel weiterarbeiten willst.
 

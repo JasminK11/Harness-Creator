@@ -58,7 +58,225 @@ zwei Einträge.
 
 ## Einträge
 
-## [2026-08-07] revise | Widersprüchliche Bestandszahlen, tote Zeilenverweise und nicht auflösbare Baustein-IDs korrigiert
+## [2026-08-07] revise | Einstiegspunkt für fremde Agenten: `INDEX.md` trägt jetzt Orientierung statt nur Bestand, die Befehlsliste wird aus dem Dispatcher gelesen
+
+**Anlass.** Der Besitzer gibt einem Claude in einem neuen Projekt Zugriff auf dieses
+Verzeichnis und sagt „richte mir das Harness ein". Dieser Agent hat ein begrenztes
+Kontextfenster und muss in Minuten wissen: was kann ich, wie fange ich an, was darf
+ich nicht. Was er vorfand, beantwortete die erste und die zweite Frage nicht.
+
+**Was vorher galt.** `INDEX.md` war eine reine Bestandsübersicht mit einer kurzen
+Zugriffsregel und nannte drei Befehle: `search`, `show`, `install`. Es gibt elf.
+`knowledge` — der Befehl, an dem das erklärte Ziel des Projekts hängt — kam dort nur
+als Verzeichnisname unter „Weiterlesen" vor. Ein Agent, der pflichtgemäss nur
+`INDEX.md` las, erfuhr nie, dass er die Wissensbank befragen kann.
+
+**Was jetzt gilt.** `INDEX.md` bleibt der Einstiegspunkt und wird weiter erzeugt —
+die Entscheidung gegen eine zweite, handgepflegte Einstiegsdatei fiel aus zwei
+Gründen: Alle vier vorhandenen Wegweiser (`README.md`, der Regelblock in jeder
+`CLAUDE.md`, `harness-build`, `harness-plan`) zeigen bereits auf `INDEX.md`; eine
+zweite Datei wäre ein zweiter Einstiegspunkt und damit genau das Problem, das dieser
+Auftrag beseitigen sollte. Und ihre Zahlen stammen aus dem Katalog, können also nicht
+veralten — eine handgeschriebene Einstiegsdatei trüge handgeschriebene Zahlen, und
+die Symptomtabelle in `CLAUDE.md` führt genau diesen Fehler.
+
+Geändert wurde deshalb `writeMarkdownIndexes()` in `tools/harness.mjs`. Die Datei hat
+jetzt vier neue Abschnitte — „Was das hier ist", „So fängst du an" (mit dem absoluten
+Pfad und dem einen Befehl `node tools/harness.mjs`), „Was du niemals tun darfst" (drei
+Verbote, jedes mit Grund), „Die Befehle" — und schliesst mit „Wohin für mehr" statt
+mit „Weiterlesen". Umfang: 96 Zeilen, gemessen mit `wc -l`.
+
+**Das Zeilenbudget wurde bezahlt, nicht ignoriert.** Die beiden Repo-Tabellen wuchsen
+mit jeder Zeile in `sources.txt` und hätten `INDEX.md` über hundert Zeilen getrieben.
+Sie liegen jetzt vollständig in `catalog/by-repo.md` (Ebene 2, ebenfalls erzeugt),
+mit Link, Schwerpunkt und Stand je Repo — nichts entfernt, nur umgehängt. Die
+Domänentabelle wurde zu einer Aufzählung verdichtet: dieselben Zahlen in einem
+Fünftel der Zeilen.
+
+**Die Befehlsliste wird gelesen, nicht gepflegt.** Neu ist `befehlsUebersicht()`. Sie
+holt sich die Namen aus `cliOberflaeche()`, also aus dem `switch` am Dateiende, und
+verbindet sie mit einer Zweckzeile. Ein Befehl, den es nicht mehr gibt, verschwindet
+aus der Tabelle; ein neuer taucht mit „noch nicht beschrieben" auf, statt unsichtbar
+zu bleiben. Flaggen stehen bewusst nicht darin — sie ändern sich häufiger als die
+Namen und stehen vollständig im Aufruf ohne Argument.
+
+**Gegenprobe.** Damit die Behauptung „diese Liste kann nicht veralten" belegt ist und
+nicht bloss plausibel: `case "probeweise": break;` in den Dispatcher eingesetzt,
+`extract` laufen lassen — Zeile 58 von `INDEX.md` lautete danach
+`` | `probeweise` | — | neu, noch nicht beschrieben — `node tools/harness.mjs` fragen | ``.
+Danach zurückgenommen und erneut erzeugt; `grep -c probeweise INDEX.md` gibt 0.
+
+**Widersprüche zwischen den Dokumenten.** Fünf, alle am laufenden System geprüft:
+
+| Wo | Behauptung | Wahrheit | Erledigt |
+|---|---|---|---|
+| `README.md` CLI-Block | acht Befehle | elf — `uninstall`, `knowledge`, `lint` fehlten | Block durch Verweis auf `node tools/harness.mjs` ersetzt, mit dem Grund im Text |
+| `README.md` | „`bootstrap` und `install` legen die Bedien-Skills ab" | nur `bootstrap` — `copySkillsTo()` hat genau einen Aufrufer, `cmdBootstrap()`; ein Testlauf von `install` legte keine Skills an | korrigiert, `install` ausdrücklich ausgenommen |
+| `README.md` Hintergrund | beschrieb `01`–`04` | es gibt `01`–`07`; `07` ist die für ein neues Projekt nützlichste Datei | `05`, `06`, `07` ergänzt, `06` als intern gekennzeichnet |
+| `USAGE` | kannte `--no-skills` nicht | die Flagge existiert und wirkt (`bootstrap --to <dir> --no-skills` kopiert nachweislich nichts) | in `USAGE` aufgenommen, samt Hinweis, dass nur `bootstrap` sie kennt |
+| Dateikopf `harness.mjs` | dritte Kopie der Subcommand-Liste, um `bootstrap`, `knowledge`, `lint` im Rückstand | der Dispatcher | Liste durch Verweis ersetzt |
+
+Dazu die `CHANGELOG.md`, die an mehreren Stellen als vorhanden angesprochen wurde,
+aber erst beim ersten `update` entsteht: `INDEX.md` nennt sie jetzt nur noch, wenn
+`fs.existsSync` sie findet; `README.md` und `harness-update` sagen dazu, dass sie bei
+diesem Lauf entsteht.
+
+**Die eine echte Falschzahl.** <!-- lint:historisch --> Der Altwert 1.050 muss in
+diesem Absatz stehen bleiben, sonst ist nicht dokumentiert, was korrigiert wurde.
+`harness-build/SKILL.md` behauptete einen Standardbestand von rund 1.050 Bausteinen;
+`stats` sagt 954. Die Stelle nennt jetzt gar keine Zahl mehr, sondern verweist auf
+`INDEX.md` und `stats` — denn `lint` prüft `.claude/` nicht, eine Zahl dort würde
+also erneut still verfallen. **Offen und hier festgehalten:** der Prüfumfang von
+`cmdLint()` (`NAHT_EXTRA`) sollte `.claude/skills/` und `.claude/agents/` einschliessen.
+
+**Trennschärfe der drei Skills.** Die drei `description:`-Zeilen nebeneinandergelegt:
+`harness-plan` entscheidet **was** gebaut wird (Objekt: das Vorhaben, Ergebnis
+`PLAN.md`), `harness-build` entscheidet **womit** (Objekt: das Zielprojekt, Ergebnis
+installierte Bausteine), `harness-update` wirkt auf **die Bibliothek selbst** (Objekt:
+`sources.txt` und der Katalog). Jede Zeile beginnt jetzt mit ihrem
+Unterscheidungsmerkmal und endet mit einer Abgrenzung gegen die beiden anderen.
+Entfernt wurde der Auslöser „Auch nutzen, wenn der User auf den Ordner ‚Harnes
+Creator' verweist" in seiner alten, unqualifizierten Form — er kollidierte mit
+`harness-update`, das genau dort arbeitet; er steht jetzt mit dem Zusatz „und
+Bausteine für sein Projekt will".
+
+**Prüfprotokoll.** `node --check` nach jeder Änderung. `extract` viermal gelaufen,
+Bestand jedes Mal unverändert. Danach jeder gefahrlose Subcommand einmal —
+`stats`, `search`, `show`, `knowledge`, `knowledge --list`, `lint --all`, `bootstrap`,
+`install --dry-run`, `uninstall --dry-run`, Aufruf ohne Argument sowie die Aliasse
+`know` und `why`: alle Exit-Code 0. `install` und `uninstall` zusätzlich einmal echt
+gegen ein Wegwerf-Zielprojekt. `sync` und `update` nicht gelaufen — sie gehen ans
+Netz und schreiben `CHANGELOG.md`, für diese Änderung nicht nötig. `lint --all`
+vorher wie nachher: 0 hoch, 1 mittel (die fünf unausgewerteten Rohquellen), Exit 0.
+
+## [2026-08-07] add | Zwei feste Subagenten ergänzt — `werkzeug-aenderer` und `wissensbank-autor`; Rezeptpflege bewusst nicht getrennt
+
+**Anlass.** Für jede grössere Aufgabe wurden Agenten im Workflow-Skript neu
+definiert — 25 im einen Lauf, 64 im nächsten, dieselben Rollen jedes Mal neu
+formuliert. Festgeschrieben waren nur `learning-auswerter` (Schritt 1 des
+Kreislaufs) und `behauptungs-pruefer` (Schritt 3). Die Schritte 4 und 5 — umsetzen
+und einarbeiten — hatten keinen Eigentümer.
+
+**Was angelegt wurde.**
+
+| Agent | Objekt | Werkzeuge | Warum eigenständig |
+|---|---|---|---|
+| `werkzeug-aenderer` | `tools/harness.mjs` | Read, Edit, Grep, Glob, Bash | Die Datei hat keine Tests; der Lauf ist der Test. Kein `Write` — weder das Werkzeug noch `LOG.md` darf als Ganzes überschrieben werden |
+| `wissensbank-autor` | `knowledge/`, `recipes/`, `LOG.md` | Read, Write, Edit, Grep, Glob, Bash | `knowledge` liefert Abschnitte, nicht Dateien. Kein `WebFetch` — Nachrecherche beim Schreiben ist der Moment, in dem unbelegtes Material einsickert |
+
+**Was bewusst nicht angelegt wurde — Rezeptpflege als eigene Rolle.** Die härteste
+Regel dieser Rolle ist bereits maschinell durchgesetzt: `cmdLint()` prüft jede
+Backtick-ID aus `recipes/` gegen den Katalog mit Schwere **hoch** (`NAHT_ID_RE`),
+und `lint --all` meldet dort derzeit null Befunde. Was übrig bleibt — OKF-Frontmatter,
+selbsttragende Abschnitte, Beleg pro Aussage — ist identisch mit den Regeln für
+`knowledge/`, und beide Verzeichnisse liegen ohnehin im selben Abfrageraum
+(`KNOWLEDGE_DIRS`). Eine zweite Beschreibung mit denselben Konventionen hätte das
+Routing verschlechtert, ohne eine Regel hinzuzufügen. Die ID-Verifikation per `show`
+steht deshalb als eigener Abschnitt in `wissensbank-autor`.
+
+Ebenfalls verworfen: ein Prüfer im fremden Zielprojekt. Der mechanische Teil ist
+durch den Zustandsbericht `[aktiv]`/`[inaktiv]` von `install` und Schritt 8 in
+`harness-build/SKILL.md` abgedeckt; der Rest ist ein Urteil über das fremde Projekt,
+für das die Bibliothek keine Belege hat.
+
+**Trennschärfe der vier Beschreibungen.** Vier Verben, vier Objekte, keine
+Überschneidung: *auswertet* eine Rohquelle aus `Learnings/` — *prüft* eine einzelne
+Behauptung adversarial — *ändert* `tools/harness.mjs` — *schreibt* die Texte der
+Bibliothek. Zwei ähnliche Beschreibungen hätten dazu geführt, dass das Modell die
+falsche oder gar keine zieht; das ist derselbe Effekt, der bei Skills gilt.
+
+**Prüfprotokoll.** `node tools/harness.mjs lint --all` → `0 hoch · 1 mittel · 0
+niedrig`, Exit-Code 0. Der mittlere Befund sind die fünf unausgewerteten Rohquellen
+unter `Learnings/` und ist von dieser Änderung unberührt. Die vier `description:`-Zeilen
+wurden nebeneinandergelegt und gegeneinander gelesen.
+
+**Betroffen.** `.claude/agents/werkzeug-aenderer.md` (neu),
+`.claude/agents/wissensbank-autor.md` (neu).
+
+## [2026-08-07] revise | Zahlenheuristik in `cmdLint()` präzisiert — 14 Fehlalarme beseitigt, ohne eine einzige Zahl zu ändern
+
+**Anlass.** `node tools/harness.mjs lint --all` meldete 14 Befunde hoher Schwere,
+alle aus derselben Prüfung: „Bestandszahl X weicht vom Katalog ab". Jeder einzelne
+wurde an der Fundstelle nachgeschlagen. **Kein einziger war ein echter
+Widerspruch.** Ein Lint, das ausschliesslich Fehlalarme produziert, wird nach
+kurzer Zeit nicht mehr gelesen — und findet dann auch die echten Fehler nicht mehr.
+Der Vorgänger-Eintrag unten hatte diese Grenze bereits benannt und die Befunde
+bewusst stehen lassen; dieser Eintrag behebt die Ursache im Code.
+
+**Ursache.** Die Prüfung entschied über den Umkreis: eine Zahl galt als
+Bestandsangabe, sobald irgendwo in ±70 Zeichen ein Wort wie `baustein`, `katalog`
+oder `skill` stand. In einer Wissensbank **über** Bausteine steht dort praktisch
+immer eines. Dazu kannte sie nur drei Kennzahlen (gesamt, Standardzugriff,
+Massen-Repos) und wertete jede andere richtige Zahl als Abweichung. Und sie hatte
+als einzige Prüfung keinen Ausweg für absichtlich zitierte Altwerte — `lint` konnte
+prinzipiell nie auf null gehen, solange die Bibliothek ihre eigene Historie
+protokolliert, und genau das verlangt die Doktrin.
+
+**Die 14 Befunde, nach Antwortart sortiert:**
+
+| Art | Zahlen | Fundstellen | Antwort |
+|---|---|---|---|
+| Zahl misst etwas anderes | `25.000` (2×), `859`, `1125` | Token-Budget, Zeilenzahl einer fremden Datei, KB-Angabe | Heuristik präzisiert |
+| Code-Zeilenverweis | `1118`, `915`, `918`, `897`, `945` | `Z. 897–945` u. ä. in `06-massnahmen.md` | Heuristik präzisiert |
+| Zahl ist richtig | `24.700`, `24.161` | Skills gesamt bzw. Domäne `legal-de` | Heuristik kennt jetzt alle Katalogwerte |
+| Altwert absichtlich zitiert | `1.050` (2×), `25.593`, `25.322` | `LOG.md`, `06-massnahmen.md` | Absatz mit `<!-- lint:historisch -->` markiert |
+
+**Was im Code geändert wurde** (`tools/harness.mjs`, Abschnitt „Bestandszahlen
+gegen den aktuellen Katalog"):
+
+1. **Nähe ersetzt durch Bindung.** Das Bezugswort muss an der Zahl kleben —
+   entweder direkt dahinter (`954 Bausteine`) oder unmittelbar davor
+   (`Bestand: 954`). `BESTAND_RE` ist durch `BESTAND_NACH_RE` und
+   `BESTAND_VOR_RE` ersetzt. Die Endungen stehen ausgeschrieben (`bausteine?n?`),
+   weil ein `\b` hinter dem Stamm am deutschen Plural-e scheitert — genau die
+   Form, in der eine Bestandsangabe dasteht.
+2. **Einheiten schliessen aus.** `EINHEIT_RE` erkennt Token, Zeichen, Zeilen,
+   Byte, KB/MB/GB, Zeitangaben, `%`, `€`, `$` hinter der Zahl.
+3. **Der Katalog liefert mehr als drei Wahrheiten.** Zusätzlich zu den drei
+   Leitgrössen zählen jetzt alle Werte aus `cat.totals` (pro Typ), `cat.repos`
+   (pro Repo) und die Summen pro Domäne als richtig. Wer eine korrekte Teilmenge
+   nennt, soll sie nennen dürfen.
+4. **`<!-- lint:historisch -->` wirkt endlich auch hier.** Neu:
+   `historischBereiche()` und `istHistorisch()` — absatzweise, weil die
+   Unterdrückung dem Gedanken gilt und nicht dem Zeilenumbruch. Der Marker galt
+   bisher nur für die Baustein-ID- und die CLI-Aufruf-Prüfung.
+5. **Die Meldung nennt die Zeile.** `zeileVon()`; die Datei steht jetzt als
+   `knowledge/06-massnahmen.md:371` da. Vorher musste man bei sieben Befunden
+   sieben Zahlen von Hand in einer 500-Zeilen-Datei suchen.
+
+**Wo der Marker gesetzt wurde** — drei Absätze, alle mit Begründung im Text:
+`LOG.md` (der Absatz „sank von 1.050 auf 954" und die Vorher/Jetzt-Tabelle des
+Vorgänger-Eintrags) sowie `06-massnahmen.md` (die Korrekturanweisung „Bestand
+1.050 → 954"). Eine Korrekturanweisung ohne den zu ersetzenden Wert ist nicht
+ausführbar; ein `revise`-Eintrag ohne das Vorher erfüllt seinen Zweck nicht.
+<!-- lint:historisch --> Der Absatz nennt den Altwert, um den Ort des Markers zu benennen.
+
+**Keine einzige Zahl wurde geändert.** Alle 14 Befunde waren Sache der Heuristik
+oder der fehlenden Kennzeichnung. Das war die Auflage und sie wurde eingehalten.
+
+**Gegenprobe, damit die Prüfung nicht bloss verstummt.** Eine Wegwerf-Datei unter
+`knowledge/` mit sechs Zeilen wurde eingeschleust und danach gelöscht. Ergebnis:
+die beiden erfundenen Falschzahlen (`rund 1.050 Bausteine`, `25.100 Bausteine
+verzeichnet`) wurden **gemeldet**; Token-Budget, Zeilenzahl, KB-Angabe,
+`Z. 897-945`, `24.700 Skills` und `24.161 Einträge` liefen durch; ein Altwert im
+markierten Absatz blieb stumm. <!-- lint:historisch --> Die beiden Falschzahlen in
+diesem Absatz sind der Beleg selbst und müssen wörtlich dastehen — dass `lint` sie
+beim ersten Lauf prompt gemeldet hat, ist die beste Bestätigung der neuen Bindung.
+Eine Prüfung, die nach der Entschärfung nichts mehr
+fängt, wäre der schlechtere Zustand — deshalb dieser Beleg.
+
+**Ergebnis.** `lint`: 14 hoch → **0 hoch**, Exit-Code 1 → **0**. Es bleibt **ein**
+mittlerer Befund: fünf Rohquellen unter `Learnings/` sind nicht ausgewertet. Der ist
+echt und inhaltlich, kein Heuristik-Problem — er gehört in einen `ingest`-Eintrag,
+nicht in diesen.
+
+**Geprüft.** `node --check tools/harness.mjs`; danach `stats`, `search`, `show`,
+`knowledge` samt Aliassen `know`/`why`, `knowledge --list`, `lint`, `lint --all`,
+`lint --strict`, `install --dry-run`, `install --yes`, `bootstrap`, `uninstall`
+(gegen ein Wegwerf-Zielprojekt) und der argumentlose Aufruf. `sync`, `extract` und
+`update` wurden **nicht** ausgeführt: sie schreiben den 20-MB-Katalog neu und hätten
+die Zahlen verändert, gegen die dieser Eintrag gerade belegt wurde.
+
 
 **Anlass.** Ein Prüflauf fand in `knowledge/02-bausteine.md`,
 `knowledge/03-vorbilder.md`, `knowledge/04-governance.md` und
@@ -83,6 +301,7 @@ Der Bestand im Standardzugriff sank dadurch von 1.050 auf **954**, der
 Gesamtbestand von 25.593 auf **25.497**. Zusätzlich wuchs `tools/harness.mjs`
 von 805 auf 1.397 Zeilen, wodurch sämtliche zeilengenauen Verweise ins Leere
 zeigten.
+<!-- lint:historisch --> Die Vorher-Werte stehen hier als Beleg der Korrektur.
 
 **Was vorher galt und was jetzt gilt.** Alle Werte per CLI ermittelt
 (`stats`, `lint`, `search`, `show`, `ls catalog/by-domain/`,
@@ -100,6 +319,7 @@ zeigten.
 | Regeln in `DOMAIN_RULES` | „13 Regex-Regeln" | **12** (+ `general` = 13 Werte, 12 Dateien in `by-domain/`) |
 | `search "code review"` / `"review"` | 231 / 107 | **49 / 112** |
 | Repo `affaan-m__ecc` | 585 | **520** |
+<!-- lint:historisch --> Die Spalte „vorher" ist der Zweck dieser Tabelle.
 
 **Wo eine Argumentation auf einer falschen Zahl aufbaute.** Drei Stellen in
 `knowledge/04-governance.md` trugen keine falsche Zahl, sondern eine falsche

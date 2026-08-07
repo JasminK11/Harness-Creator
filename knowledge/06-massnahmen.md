@@ -377,6 +377,8 @@ Umgekehrt unsichtbar: `last30days` mit 224.496 Bytes SKILL.md.
 5. Mitfixen, was `lint` nicht erreicht: `knowledge/02` Z. 176/413, `recipes/README.md`
    Z. 73, beide `SKILL.md` — dort durch einen Verweis auf `stats` ersetzen, nicht durch
    eine neue Zahl. Beide Kopien (`skills/` und `~/.claude/skills/`) ändern.
+<!-- lint:historisch --> Punkt 3 nennt die alten Werte (1.050, 25.593, 163, 152) absichtlich:
+eine Korrekturanweisung ohne den zu ersetzenden Wert ist nicht ausführbar.
 
 **Warum.** Salomon/Yosef: wer beschreibt statt zieht, hat Drift. Wang: veraltete
 Dokumentation ist Teil der Realität. Branco: Verfall muss gemeldet werden.

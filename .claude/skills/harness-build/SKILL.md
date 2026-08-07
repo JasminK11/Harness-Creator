@@ -1,6 +1,6 @@
 ---
 name: harness-build
-description: Baut das Harness für ein Projekt aus der Harness-Bibliothek zusammen — sucht passende Skills, Subagents, Commands und Hooks, legt sie zur Bestätigung vor und installiert sie. Nutzen bei "bau mir das Harness", "Harness aufsetzen", "welche Skills brauche ich hier", "welche Agenten passen zu dem Projekt", "Projekt-Setup mit Claude-Bausteinen", "/harness-build". Auch nutzen, wenn der User auf den Ordner "Harnes Creator" verweist.
+description: Entscheidet, WOMIT gearbeitet wird. Stattet ein Zielprojekt mit Bausteinen aus der Harness-Bibliothek aus — sucht passende Skills, Subagents, Commands und Hooks, legt die Auswahl zur Bestätigung vor und installiert sie. Nutzen bei "bau mir das Harness", "Harness aufsetzen", "welche Skills brauche ich hier", "welche Agenten passen zu dem Projekt", "Projekt-Setup mit Claude-Bausteinen", "/harness-build". Auch nutzen, wenn der User auf den Ordner "Harnes Creator" verweist und Bausteine für sein Projekt will. Durchdenkt das Vorhaben nicht selbst (das ist /harness-plan) und aktualisiert die Bibliothek nicht (das ist /harness-update).
 ---
 
 # /harness-build — Harness für dieses Projekt zusammenstellen
@@ -38,9 +38,13 @@ node tools/harness.mjs search "<worte>"            # Treffer als kompakte Zeilen
      [--domain <domäne>] [--repo <repo>] [--limit N] [--all]
 node tools/harness.mjs show <id> [--head N]        # Detail zu einem Baustein
 node tools/harness.mjs install <id...> --to <proj> # kopieren
-     [--dry-run] [--force] [--no-claude-md]
+     [--dry-run] [--yes] [--force] [--no-claude-md]
+node tools/harness.mjs uninstall <id...> --to <proj> # wieder entfernen
 node tools/harness.mjs bootstrap --to <proj>       # nur Zugriffsregel schreiben
 ```
+
+Das ist der Ausschnitt, den du hier brauchst. Alle elf Befehle mit sämtlichen Flaggen
+gibt `node tools/harness.mjs` ohne Argument aus; `INDEX.md` nennt sie mit Zweck.
 
 `install` legt im Zielprojekt zwei Dinge an: `.claude/harness-manifest.json` als
 Herkunftsnachweis und einen Regelblock in der `CLAUDE.md`, damit der Agent im
@@ -48,9 +52,11 @@ Projekt später weiss, wie er die Bibliothek benutzt. Beides ist idempotent.
 
 ### Massen-Repos
 
-Rund 24.500 der Bausteine stammen aus einem deutschen Rechts-Repo, das als `bulk`
-markiert ist. Es bleibt aus der Standardsuche ausgeblendet, sonst verdrängt es alles
-andere. Der normale Bestand umfasst rund 1.050 Bausteine.
+Der weit überwiegende Teil der Bausteine stammt aus einem deutschen Rechts-Repo, das
+als `bulk` markiert ist. Es bleibt aus der Standardsuche ausgeblendet, sonst verdrängt
+es alles andere. Wie gross der Bestand im Standardzugriff tatsächlich ist, steht in
+der Kopfzeile von `INDEX.md` und in `node tools/harness.mjs stats` — nenne die Zahl
+nie aus dem Gedächtnis, sie ändert sich mit jedem `update`.
 
 Für ein Projekt mit deutschem Rechtsbezug gezielt suchen:
 

@@ -1,6 +1,6 @@
 ---
 name: harness-plan
-description: Führt das Planungsgespräch für ein neues Projekt, bevor Code entsteht — klärt Zuschnitt, Abnahmekriterien, Architektur und Prüfverfahren und schreibt daraus eine PLAN.md. Nutzen bei "ich will ein Projekt planen", "neues Projekt besprechen", "lass uns ein Projekt aufsetzen", "wie fange ich das an", "ich habe eine Idee für ein Projekt", "Projekt durchdenken", "was muss ich vorher entscheiden", "/harness-plan". Nicht nutzen, wenn Bausteine gesucht oder installiert werden sollen — das ist /harness-build.
+description: Entscheidet, WAS gebaut wird. Führt das Planungsgespräch für ein neues Projekt, bevor Code entsteht — klärt Zuschnitt, Abnahmekriterien, Architektur und Prüfverfahren und schreibt daraus eine PLAN.md. Nutzen bei "ich will ein Projekt planen", "neues Projekt besprechen", "lass uns ein Projekt aufsetzen", "wie fange ich das an", "ich habe eine Idee für ein Projekt", "Projekt durchdenken", "was muss ich vorher entscheiden", "/harness-plan". Wählt selbst keine Bausteine aus und installiert nichts — sobald es um Skills, Agents oder Hooks geht, ist /harness-build dran; um die Bibliothek selbst kümmert sich /harness-update.
 ---
 
 # /harness-plan — Ein neues Projekt planen, bevor die erste Zeile entsteht
