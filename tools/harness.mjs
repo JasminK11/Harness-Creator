@@ -756,6 +756,27 @@ function loadCatalog() {
   return JSON.parse(fs.readFileSync(INDEX_JSON, "utf8"));
 }
 
+/** Erkennungsmerkmale einer deutschen Suchanfrage jenseits der Umlaute.
+ *  Bewusst knapp: der Hinweis darf nicht bei englischen Anfragen erscheinen, sonst
+ *  wird er zum Rauschen. Lieber einen deutschen Fall verpassen als einen englischen
+ *  Nutzer belehren. */
+const DEUTSCHE_WOERTER = /\b(und|oder|nicht|mit|ohne|für|von|beim|der|die|das|ein|eine|wie|was|warum|prüfen|testen|schreiben|bauen|finden|suchen|erstellen|verbessern|beheben|fehler|sicherheit|qualität|übersicht|bereitstellung)\b/i;
+
+/** Übersetzungen für die häufigsten Suchabsichten. Keine vollständige Tabelle —
+ *  nur so viel, dass die Sackgasse einen brauchbaren nächsten Befehl anbietet. */
+const UEBERSETZUNG = {
+  sicherheit: "security", sicher: "security", schwachstelle: "vulnerability",
+  test: "testing", tests: "testing", testen: "testing", testfall: "test",
+  prüfen: "review", prüfung: "review", überprüfen: "review", bewerten: "review",
+  qualität: "quality", fehler: "bug", fehlern: "bug", bug: "bug",
+  dokumentation: "documentation", doku: "documentation", schreiben: "writing",
+  bereitstellung: "deployment", ausrollen: "deployment", veröffentlichen: "release",
+  datenbank: "database", schnittstelle: "api", oberfläche: "ui",
+  leistung: "performance", geschwindigkeit: "performance",
+  übersicht: "onboarding", einarbeitung: "onboarding", architektur: "architecture",
+  aufräumen: "refactor", umbau: "refactor", bauen: "build", erstellen: "create",
+};
+
 function cmdSearch(argv) {
   const flags = parseFlags(argv);
   const query = flags._.join(" ").toLowerCase().trim();
@@ -796,12 +817,28 @@ function cmdSearch(argv) {
     relaxed = true;
   }
   scored.sort((a, b) => b.hits - a.hits || b.score - a.score || a.i.id.localeCompare(b.i.id));
-  if (relaxed) console.log(`Kein Baustein enthält alle Suchwörter — zeige Teiltreffer.\n`);
+  // Nur ankündigen, wenn tatsächlich Teiltreffer folgen. Sonst stand die Zeile
+  // "zeige Teiltreffer" direkt über "Keine Treffer" — eine Ankündigung von nichts.
+  if (relaxed && scored.length) console.log("Kein Baustein enthält alle Suchwörter — zeige Teiltreffer.\n");
 
   const limit = Number(flags.limit || 25);
   if (!scored.length) {
     console.log(`Keine Treffer für "${query}".`);
-    console.log("Tipp: breiter suchen, --type/--domain weglassen, oder --all für Massen-Repos.");
+    // Der Bestand stammt aus englischsprachigen Repos, die Nutzer denken deutsch.
+    // Ein Eval-Fall belegt es: "sicherheit prüfen" liefert null Treffer, "security"
+    // liefert reichlich. Statt einer Synonymtabelle, die gepflegt werden müsste und
+    // trotzdem lückenhaft bliebe, steht der Hinweis dort, wo er gebraucht wird —
+    // in der Sackgasse.
+    if (/[äöüß]/i.test(query) || DEUTSCHE_WOERTER.test(query)) {
+      console.log("");
+      console.log("Die Bausteine stammen aus englischsprachigen Repos — deutsche Begriffe");
+      console.log("finden dort selten etwas. Versuch es englisch:");
+      const vorschlag = query.split(/\s+/).map((w) => UEBERSETZUNG[w] || w).join(" ");
+      if (vorschlag !== query) console.log(`  node tools/harness.mjs search "${vorschlag}"`);
+      else console.log(`  z.B. security, testing, review, deployment, documentation`);
+    }
+    console.log("");
+    console.log("Sonst: breiter suchen, --type/--domain weglassen, oder --all für Massen-Repos.");
     console.log("Verfügbare Domänen siehe INDEX.md.");
     return;
   }
@@ -1858,6 +1895,147 @@ function cmdKnowledge(argv) {
   }
 }
 
+// ---------------------------------------------------------------- eval
+
+/**
+ * Führt die Routing-Evals aus `evals/*.jsonl` gegen die tatsächliche Suche aus.
+ *
+ * Warum das nötig ist: Suchqualität verschlechtert sich still. Ein neues Repo
+ * schiebt sich vor die bisherigen Treffer, eine geänderte Heuristik verschiebt das
+ * Ranking, ein Modellwechsel ändert, welche Formulierung ein Agent überhaupt
+ * eingibt. Nichts davon wirft einen Fehler — es liefert nur schlechtere Treffer,
+ * und das fällt erst auf, wenn eine Auswahl im echten Projekt danebengeht.
+ *
+ * Bewusst ohne Bewertung durch ein Modell: Ein Eval, das selbst geraten wird, misst
+ * nichts. Geprüft wird nur, was maschinell entscheidbar ist — steht die erwartete ID
+ * unter den ersten N, taucht eine unerwünschte auf, liefert eine präzisere Frage
+ * weniger Treffer als eine gröbere.
+ */
+function ladeEvalFaelle() {
+  const dir = path.join(ROOT, "evals");
+  if (!fs.existsSync(dir)) return [];
+  const faelle = [];
+  for (const datei of fs.readdirSync(dir).filter((f) => /\.jsonl$/i.test(f)).sort()) {
+    const text = safeRead(path.join(dir, datei));
+    text.split(/\r?\n/).forEach((zeile, i) => {
+      const t = zeile.trim();
+      if (!t) return;
+      let o;
+      try { o = JSON.parse(t); } catch {
+        console.log(`  ! ${datei}:${i + 1} ist kein gültiges JSON — übersprungen`);
+        return;
+      }
+      if (o._kommentar !== undefined) return;
+      faelle.push({ ...o, quelle: `${datei}:${i + 1}` });
+    });
+  }
+  return faelle;
+}
+
+/** Führt eine Suche aus und gibt die Treffer-IDs in Rangfolge zurück.
+ *  Nutzt dieselbe Bewertung wie `cmdSearch` — eine nachgebaute Zweitlogik würde
+ *  messen, was der Nutzer gerade nicht bekommt. */
+function sucheIds(cat, { frage, typ, domaene, repo }) {
+  const terms = String(frage).toLowerCase().split(/\s+/).filter(Boolean);
+  let items = cat.items;
+  const wantsBulk = repo || domaene;
+  if (!wantsBulk) items = items.filter((i) => !i.bulk);
+  if (typ) items = items.filter((i) => i.type === typ);
+  if (domaene) items = items.filter((i) => i.domains.includes(domaene));
+  if (repo) items = items.filter((i) => i.repo.toLowerCase().includes(String(repo).toLowerCase()));
+
+  const rated = items.map((i) => {
+    const hayName = (i.name + " " + i.id).toLowerCase();
+    const hayAll = (hayName + " " + i.description + " " + i.path + " " + i.domains.join(" ")).toLowerCase();
+    let score = 0, hits = 0;
+    for (const t of terms) {
+      const inAll = hayAll.includes(t);
+      if (inAll) hits++;
+      if (hayName.includes(t)) score += 10;
+      if (inAll) score += 3;
+    }
+    if (score > 0 && i.bytes < 20000) score += 1;
+    return { i, score, hits };
+  });
+  let found = rated.filter((x) => terms.length === 0 || x.hits === terms.length);
+  if (!found.length && terms.length > 1) found = rated.filter((x) => x.hits > 0);
+  found.sort((a, b) => b.hits - a.hits || b.score - a.score || a.i.id.localeCompare(b.i.id));
+  return found.map((x) => x.i.id);
+}
+
+function cmdEval(argv) {
+  const flags = parseFlags(argv);
+  const faelle = ladeEvalFaelle();
+  if (!faelle.length) die("Keine Evals gefunden. Erwartet: evals/*.jsonl");
+  const cat = loadCatalog();
+
+  // Für `hoechstensSoVieleWie` müssen die Trefferzahlen aller Fragen vorliegen.
+  const zahlen = new Map();
+  for (const f of faelle) if (f.frage) zahlen.set(f.frage, sucheIds(cat, f).length);
+
+  const ergebnisse = [];
+  for (const f of faelle) {
+    const ids = sucheIds(cat, f);
+    const topN = Number(f.topN || 5);
+    const oben = ids.slice(0, topN);
+    const maengel = [];
+
+    for (const soll of f.erwartet || []) {
+      if (!oben.includes(soll)) {
+        const rang = ids.indexOf(soll);
+        maengel.push(rang === -1
+          ? `\`${soll}\` fehlt vollständig`
+          : `\`${soll}\` steht auf Rang ${rang + 1}, verlangt sind die ersten ${topN}`);
+      }
+    }
+    for (const nicht of f.verboten || []) {
+      if (oben.includes(nicht)) maengel.push(`\`${nicht}\` steht unter den ersten ${topN}, gehört dort nicht hin`);
+    }
+    if (f.mindestens !== undefined && ids.length < f.mindestens) {
+      maengel.push(`${ids.length} Treffer, mindestens ${f.mindestens} verlangt`);
+    }
+    if (f.maxTreffer !== undefined && ids.length > f.maxTreffer) {
+      maengel.push(`${ids.length} Treffer, höchstens ${f.maxTreffer} erlaubt`);
+    }
+    if (f.hoechstensSoVieleWie) {
+      const grenze = zahlen.get(f.hoechstensSoVieleWie);
+      if (grenze !== undefined && ids.length > grenze) {
+        maengel.push(`${ids.length} Treffer — mehr als "${f.hoechstensSoVieleWie}" (${grenze}). Die präzisere Frage muss enger treffen.`);
+      }
+    }
+
+    ergebnisse.push({ f, ids, maengel, ok: maengel.length === 0 });
+  }
+
+  const pflicht = ergebnisse.filter((e) => !e.f.optional);
+  const bestanden = pflicht.filter((e) => e.ok).length;
+  const optionalOk = ergebnisse.filter((e) => e.f.optional && e.ok).length;
+  const optionalGesamt = ergebnisse.filter((e) => e.f.optional).length;
+
+  console.log(`Routing-Evals: ${bestanden} von ${pflicht.length} bestanden` +
+    (optionalGesamt ? `  ·  ${optionalOk} von ${optionalGesamt} bekannten Schwächen behoben` : ""));
+  console.log(`Katalog vom ${cat.generatedAt.slice(0, 16).replace("T", " ")}\n`);
+
+  for (const e of ergebnisse) {
+    if (e.ok && !flags.all) continue;
+    const marke = e.ok ? "+" : (e.f.optional ? "~" : "!");
+    const filter = [e.f.typ && `--type ${e.f.typ}`, e.f.domaene && `--domain ${e.f.domaene}`].filter(Boolean).join(" ");
+    console.log(`${marke} "${e.f.frage}"${filter ? " " + filter : ""}   (${e.f.quelle})`);
+    if (e.f.warum) console.log(`    ${e.f.warum}`);
+    for (const m of e.maengel) console.log(`    -> ${m}`);
+    if (!e.ok && e.ids.length) console.log(`    tatsächlich: ${e.ids.slice(0, 5).join(", ")}`);
+    console.log("");
+  }
+
+  if (bestanden === pflicht.length && !flags.all) {
+    console.log("Alle Pflichtfälle bestanden. Mit --all auch die bestandenen anzeigen.\n");
+  }
+  console.log("Was das misst: ob die Suche findet, was sie finden soll — nicht, ob ein");
+  console.log("Baustein gut ist. Nach einem Modellwechsel und nach neuen Repos erneut laufen lassen.");
+
+  if (bestanden < pflicht.length) process.exitCode = 1;
+}
+
 // ---------------------------------------------------------------- lint
 
 /**
@@ -2394,6 +2572,12 @@ harness.mjs — Harness-Bibliothek
   node tools/harness.mjs knowledge "<frage>"       Wissensbank durchsuchen —
        [--limit N] [--lines N]                     liefert Abschnitte, nicht Dateien
   node tools/harness.mjs knowledge --list          Inhaltsverzeichnis der Wissensbank
+  node tools/harness.mjs eval [--all]              Routing-Evals aus evals/*.jsonl:
+                                                   findet die Suche noch, was sie
+                                                   finden soll? Exit-Code 1, wenn ein
+                                                   Pflichtfall fehlschlägt. Nach einem
+                                                   Modellwechsel und nach neuen Repos
+                                                   laufen lassen.
        Kurzformen: "know" und "why" sind gleichwertige Namen für "knowledge".
   node tools/harness.mjs lint [--all] [--strict]   Wissensbank auf Verfall prüfen:
                                                    fehlende Metadaten, abgelaufenes
@@ -2425,6 +2609,7 @@ switch (cmd) {
   case "bootstrap": cmdBootstrap(rest); break;
   case "knowledge": case "know": case "why": cmdKnowledge(rest); break;
   case "lint": cmdLint(rest); break;
+  case "eval": cmdEval(rest); break;
   case "stats": cmdStats(); break;
   default: console.log(USAGE);
 }

@@ -1,0 +1,21 @@
+{"_kommentar":"Routing-Evals: Findet die Suche noch, was sie finden soll? Eine Zeile je Testfall, JSON. Zeilen mit _kommentar werden übersprungen. Ausgeführt mit: node tools/harness.mjs eval"}
+{"_kommentar":"Felder: frage (Suchbegriffe) | typ/domaene (optionale Filter) | erwartet (IDs, die unter topN stehen MÜSSEN) | verboten (IDs, die dort NICHT stehen dürfen) | topN (Standard 5) | mindestens/maxTreffer (Trefferzahl) | hoechstensSoVieleWie (Vergleich mit einer anderen Frage) | optional (bekannte Schwäche, zählt nicht als Fehlschlag) | warum (die Nutzerabsicht)"}
+{"_kommentar":"Warum das existiert: Suchqualität driftet still. Ein Modellwechsel, ein neues Repo oder eine geänderte Heuristik kann die Treffer verschlechtern, ohne dass irgendwo ein Fehler auftritt. Ohne Evals merkt das niemand, bis eine Auswahl im echten Projekt danebengeht."}
+{"frage":"code review","erwartet":["affaan-m__ecc/agent/code-reviewer"],"topN":5,"warum":"Häufigster Einstieg überhaupt: Reviews übersehen dieselben Fehler"}
+{"frage":"tdd testing","erwartet":["affaan-m__ecc/agent/tdd-guide"],"topN":5,"warum":"Tests fehlen oder brechen — der zweithäufigste Schmerzpunkt"}
+{"frage":"codebase onboarding","erwartet":["affaan-m__ecc/skill/codebase-onboarding"],"topN":5,"warum":"Fremde Codebasis übernehmen, niemand kennt den Code"}
+{"frage":"architecture decision","erwartet":["affaan-m__ecc/skill/architecture-decision-records"],"topN":5,"warum":"Architekturentscheidungen sind nicht festgehalten"}
+{"frage":"deployment patterns","erwartet":["affaan-m__ecc/skill/deployment-patterns"],"verboten":["AgriciDaniel__claude-seo/skill/seo-drift"],"topN":5,"warum":"Deployment bricht. Der SEO-Treffer auf Platz 2 belegt Domänenrauschen in der Trefferliste"}
+{"_kommentar":"Typfilter: liefert --type noch das, was der Typ verspricht?"}
+{"frage":"code review","typ":"agent","erwartet":["affaan-m__ecc/agent/code-reviewer"],"topN":3,"warum":"Wer einen Subagenten sucht, will keinen Command"}
+{"frage":"code review","typ":"command","erwartet":["affaan-m__ecc/command/code-review"],"topN":3,"warum":"Gegenprobe zum Typfilter"}
+{"_kommentar":"Massen-Repo: bleibt es draußen, wenn es nicht verlangt wird, und erscheint es, wenn doch?"}
+{"frage":"arbeitsvertrag","maxTreffer":0,"warum":"Rechts-Repo ist bulk und darf die Standardsuche nicht fluten"}
+{"frage":"arbeitsvertrag","domaene":"legal-de","mindestens":1,"warum":"Mit --domain muss dasselbe Repo erreichbar sein"}
+{"_kommentar":"Sprachgrenze: die Quellen sind englisch, die Nutzer denken deutsch. Diese Fälle dürfen fehlschlagen — sie messen eine bekannte Schwäche, damit eine Verbesserung sichtbar wird."}
+{"frage":"sicherheit prüfen","mindestens":1,"optional":true,"warum":"Deutsche Anfrage auf englischen Bestand — bekannte Lücke"}
+{"frage":"tests schreiben","mindestens":1,"optional":true,"warum":"Deutsche Anfrage auf englischen Bestand — bekannte Lücke"}
+{"_kommentar":"Präzision: mehr Wörter müssen weniger und gezieltere Treffer liefern, nicht mehr. Das war einmal umgekehrt, weil die Suche ODER statt UND wertete."}
+{"frage":"review","mindestens":1,"warum":"Grundfall für den Präzisionsvergleich"}
+{"frage":"code review","hoechstensSoVieleWie":"review","warum":"Zwei Wörter dürfen nie mehr Treffer liefern als eins"}
+{"frage":"react component testing","hoechstensSoVieleWie":"review","warum":"Drei Wörter, klar eingegrenzte Absicht"}
