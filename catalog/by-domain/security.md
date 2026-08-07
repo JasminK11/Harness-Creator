@@ -102,8 +102,8 @@
 | `AgriciDaniel__claude-seo/skill/seo-technical` | > Technical SEO audit across 9 categories: crawlability, indexability, security, URL structure, mobile, Core Web Vitals, structur… | 22 |
 | `mattpocock__skills/skill/writing-beats` | Writing, exploit — assemble raw material into a journey of beats, grounding each term before a beat leans on it. | 5 |
 | `mattpocock__skills/skill/writing-shape` | Writing, exploit — shape raw material into an article, paragraph by paragraph. | 6 |
-| `usestrix__strix/skill/strix-ci-setup` | Wire Strix security scanning into CI/CD — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped A… | 8 |
-| `usestrix__strix/skill/strix-cloud-api` | Drive the managed Strix platform headlessly through the app.strix.ai REST API — create an API token, register domain/repository a… | 8 |
-| `usestrix__strix/skill/strix-fix-findings` | Triage and remediate vulnerabilities found by a Strix pentest (open-source CLI or app.strix.ai cloud), then re-run Strix to verif… | 6 |
-| `usestrix__strix/skill/strix-pentest` | Run an autonomous AI penetration test with Strix against a codebase, repository, URL, domain, or IP — either self-hosted with the… | 8 |
+| `usestrix__strix/skill/ci-security-scanning-with-strix` | Add security scanning to CI/CD with Strix — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped… | 8 |
+| `usestrix__strix/skill/fix-security-vulnerabilities-with-strix` | Fix security vulnerabilities found by a Strix pentest (open-source CLI or app.strix.ai cloud) — triage by severity, patch the roo… | 6 |
+| `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
+| `usestrix__strix/skill/penetration-testing-with-strix` | Pentest a web app, API, codebase, repository, URL, domain, or IP with Strix — autonomous AI penetration testing that exploits and… | 8 |
 

@@ -33,6 +33,13 @@ z. B. `affaan-m__ecc/skill/vue-patterns`). React Native / Expo — dort greift
 `affaan-m__ecc/skill/react-native-patterns`, und Browser-Verifikation entfällt.
 Eine einzelne statische Seite ohne Interaktion braucht von diesem Rezept nichts.
 
+**Voraussetzung eines Kern-Set-Bausteins:** `anthropics__skills/skill/webapp-testing`
+fährt Playwright gegen eine **lokal startbare** App. Ohne `dev`-Skript, ohne
+installierbaren Browser oder in einer Umgebung ohne Prozessstart liefert er nichts —
+und dann fällt der Verifikationsweg weg, der die ganze Auswahl trägt. Das ist eine
+Aussage über den Baustein, keine Vermutung über dein Projekt: prüf sie einmal, bevor
+du ihn einbaust.
+
 ## Die Schmerzpunkte dieses Projekttyps
 
 | Symptom | Doktrin |
@@ -47,7 +54,12 @@ Daraus folgt die Auswahl: ein Verifikationsweg an der **laufenden** App (billigs
 echter Hebel, Doktrin 2), zwei prüfende Subagenten mit eigenem Kontext, und
 Musterwissen genau dort, wo der Compiler nichts merkt.
 
-## Kern-Set (Pflicht)
+## Kern-Set (Startauswahl, zu kürzen)
+
+**Bindend ist die Spalte „Welches Problem er löst", nicht die Liste.** Wer das
+Symptom im eigenen Projekt nicht wiederfindet, streicht die Zeile — vier passende
+Bausteine schlagen sieben plausible. Dass jede ID im Katalog auflöst, macht sie
+belegt, nicht verpflichtend.
 
 | ID | Typ | Welches Problem er löst | KB |
 |---|---|---|---:|
@@ -95,6 +107,22 @@ node tools/harness.mjs install \
 ```
 
 Vorher einmal mit `--dry-run` laufen lassen.
+
+## Verifikationspfad — auszufüllen, bevor eingeführt wird
+
+```
+Befehl im Zielprojekt, der ein Ja/Nein liefert:  ______________________
+Zuletzt grün gelaufen am:                        ______________________
+```
+
+Hier steht **kein** fester Befehl, weil kein Rezept die Skripte eines fremden
+Projekts kennt. Trag ein, was dort tatsächlich existiert und grün läuft — bei diesem
+Projekttyp typischerweise `npm run build`, `npm test` oder ein `tsc --noEmit`.
+
+**Existiert kein solcher Befehl, ist er der erste Arbeitsschritt**, nicht der letzte.
+Ohne ihn ist nach dem Einbau nicht messbar, ob sich etwas verbessert hat: alles, was
+bleibt, ist das Urteil des Agenten über sich selbst — genau die Schwäche, gegen die
+die halbe Auswahl oben gerichtet ist.
 
 ## Reihenfolge der Einführung
 

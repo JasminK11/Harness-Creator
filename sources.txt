@@ -14,33 +14,88 @@
 #           Automatik-Schwelle von 2000 Bausteinen liegt.
 #   Ohne Marker: ab 2000 Bausteinen automatisch bulk.
 #
+# Vertrauenszeile — unmittelbar ÜBER der Repo-Zeile, ohne Leerzeile dazwischen:
+#   # Vertrauen: offiziell | gepflegt | unbekannt — <Halbsatz Begründung>
+#
+#   offiziell  Vom Hersteller der Plattform selbst herausgegeben.
+#   gepflegt   Erkennbarer Qualitätsanspruch UND Belege dafür: laufende Commits,
+#              einheitliches Format, oder eine eigene Auswertung in knowledge/.
+#   unbekannt  Nichts davon geprüft. Kein Urteil über die Qualität — eine Aussage
+#              darüber, dass niemand hingesehen hat.
+#
+#   Die Stufe ist eine Angabe für Menschen. `show` hängt sie an die Repo-Zeile,
+#   sonst ändert sie nichts: keine Sortierung, keinen Punktwert, keine Auswahl.
+#   Ein Vertrauens-Tiebreaker in der Suche wurde gebaut und wieder verworfen —
+#   er hob beschreibungslose Einträge nach oben (knowledge/06, M5).
+#   Fachliche Passung schlägt Herkunft. Die Stufe entscheidet erst, wenn zwei
+#   Bausteine dasselbe Problem gleich gut lösen.
+#
+# Aufnahmekriterien für ein neues Repo (das einzige Human-in-the-Loop-Gate,
+# das diese Bibliothek hat — knowledge/04, Abschnitt 5.1):
+#   1. Enthält es überhaupt Claude-Bausteine? SKILL.md, agents/, commands/,
+#      hooks/, .claude/. Ein Repo ohne Bausteine kostet Klonzeit und liefert null.
+#   2. Ist der Bestand nach dem ersten `extract` grösser als null? `lint` meldet
+#      Repos mit null Katalogeinträgen.
+#   3. Trägt es eine Vertrauenszeile? Ohne Zeile gilt nicht "gut", sondern
+#      "ungeprüft" — dann schreib das hin, statt die Zeile wegzulassen.
+#
 # Die Klone liegen NICHT hier, sondern unter C:\Users\info\.harness-sources
 # (ausserhalb von OneDrive — sonst synct OneDrive hunderte MB .git-Objekte).
 
 # --- Security / Pentest ---
+# Vertrauen: gepflegt — Firmen-Repo hinter dem Strix-Produkt, Skills tragen Apache-2.0 im Frontmatter
 https://github.com/usestrix/strix
 
 # --- Engineering-Workflow / Skills ---
+# Vertrauen: gepflegt — erkennbarer Qualitätsanspruch, in knowledge/04 als gepflegte Quelle bewertet
 https://github.com/mattpocock/skills
+# Vertrauen: offiziell — vom Hersteller von Claude Code selbst herausgegeben
 https://github.com/anthropics/skills
+# Vertrauen: gepflegt — Einzelautor, taktet fast täglich nach; mit belegten Lücken: Übersetzungs-Platzhalter und beschreibungslose Hooks (knowledge/04, 3.2)
 https://github.com/affaan-m/ecc
+# Vertrauen: gepflegt — durchgehend einheitliches Agent-Format über alle Einträge
 https://github.com/msitarzewski/agency-agents
+# Vertrauen: unbekannt — eine Anwendung, deren hooks/-Ordner mitkatalogisiert wird; keine Bausteinsammlung (knowledge/04, 5.1)
 https://github.com/multica-ai/multica
 
 # --- SEO / Marketing ---
+# Vertrauen: gepflegt — ein durchgehend geschnittenes Set aus einer Hand, MIT-Lizenz im Frontmatter
 https://github.com/AgriciDaniel/claude-seo
+# Vertrauen: unbekannt — ein einzelner Baustein, kein Kontext zur Herkunft geprüft
 https://github.com/Bomx/qwoted-seo-backlinks-skill
+# Vertrauen: unbekannt — Einzelskill, nicht ausgewertet
 https://github.com/mvanhorn/last30days-skill
 
 # --- Wissensgraph / Codebase-Verstehen ---
+# Vertrauen: gepflegt — in knowledge/03 als Vorbild Zeile für Zeile ausgewertet
 https://github.com/Graphify-Labs/graphify
+# Vertrauen: gepflegt — in knowledge/03 als Vorbild Zeile für Zeile ausgewertet
 https://github.com/Egonex-AI/Understand-Anything
 
 # --- UI / UX ---
+# Vertrauen: unbekannt — geprüft ist nur der design-review-Agent; das Plugin daneben ist ein Sammelpaket (recipes/01, "Bewusst weggelassen")
 https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
 
 # --- Recht (DE) ---
 # ~24.500 Bausteine, fein nach Rechtsgebiet geschnitten. Deshalb !bulk:
 # in der Standardsuche unsichtbar, gezielt erreichbar mit
 #   --repo Klotzkette__claude-fuer-deutsches-recht   oder   --domain legal-de
+# Vertrauen: unbekannt — der grösste Bestand der Bibliothek, nie stichprobenweise geprüft
 https://github.com/Klotzkette/claude-fuer-deutsches-recht !bulk
+
+# ======================================================================
+# Lücken — was ein /harness-build-Lauf gesucht und nicht gefunden hat
+# ======================================================================
+#
+# Eine Zeile je Lücke, angelegt von /harness-build Schritt 9:
+#   # Lücke: <Suche> · <Projekt> · <Datum> · Kandidat: <Repo-URL oder "keiner">
+#
+# Warum hier und nicht in einer eigenen Datei: die Lücke ist ein Antrag auf ein
+# Repo, und dieser Antrag gehört neben die Liste der aufgenommenen Repos. Wer
+# sie liest, sieht sofort, ob ein Kandidat schon oben steht.
+#
+# Eine leere Liste ist ein gültiges Ergebnis. Sie bedeutet, dass der Bestand
+# gereicht hat — nicht, dass niemand hingesehen hat. Zeilen werden gestrichen,
+# sobald das Repo oben eingetragen ist, mit dem Datum der Aufnahme.
+#
+# (noch keine Lücke vermerkt)

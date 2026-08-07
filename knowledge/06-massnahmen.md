@@ -1,7 +1,7 @@
 ---
 type: Arbeitsliste
 title: Maßnahmen — was als Nächstes zu tun ist, und was bewusst nicht
-description: "Beantwortet, welche zwölf Maßnahmen an Bibliothek, CLI und Wissensbank anstehen, in welcher Reihenfolge, mit welchem Aufwand — und welche Vorschläge nach adversarialer Prüfung ausdrücklich verworfen wurden."
+description: "Beantwortet, welche Maßnahmen an Bibliothek, CLI und Wissensbank anstehen, welche erledigt sind, in welcher Reihenfolge, mit welchem Aufwand — und welche Vorschläge nach adversarialer Prüfung ausdrücklich verworfen wurden."
 status: stable
 sources:
   - id: adversariale-pruefung
@@ -26,10 +26,16 @@ tags: [massnahmen, roadmap, cli, governance, pruefung]
 ## Abstract
 
 Diese Datei ist die Arbeitsliste der Bibliothek: was als Nächstes zu tun ist, warum,
-und was bewusst unterbleibt. Jede der zwölf Maßnahmen wurde adversarial geprüft — ein
-Agent hat versucht, sie am laufenden Code und am CLI zu widerlegen, und **keine
-einzige hat die Prüfung unverändert überstanden**. Was hier steht, ist die korrigierte
-Fassung mit Belegen; das unterscheidet diese Liste von einer Wunschliste.
+und was bewusst unterbleibt. Jede Maßnahme wurde adversarial geprüft — ein Agent hat
+versucht, sie am laufenden Code und am CLI zu widerlegen, und **keine einzige hat die
+Prüfung unverändert überstanden**. Was hier steht, ist die korrigierte Fassung mit
+Belegen; das unterscheidet diese Liste von einer Wunschliste.
+
+Die Liste ist inzwischen weitgehend abgearbeitet. **Der Stand je Maßnahme steht in
+der Übersichtstabelle**, nicht in den Abschnitten darunter: dort ist der „Was zu tun
+ist"-Teil bewusst im Wortlaut des Auftrags stehengeblieben, damit die Begründung
+nachvollziehbar bleibt. Wer eine Maßnahme anfassen will, liest erst die Zeile in der
+Tabelle und dann den Abschnitt.
 
 Zwei Buchführungshinweise vorab: Die IDs M1–M12 dieser Datei sind **nicht** identisch
 mit den IDs M1–M10 in `knowledge/04-governance.md`. Kollisionen sind unten je Maßnahme
@@ -38,38 +44,52 @@ Aufwandsspalte trägt den korrigierten Wert, nicht den ursprünglich geschätzte
 
 ## Übersicht
 
-| ID | Titel | Art | Aufwand | Prio |
-|----|-------|-----|---------|------|
-| M1 | `lint` um drei Nahtprüfungen erweitern, mit Exit-Code | CLI | mittel (~90 Z.) | 1 |
-| M2 | Herkunft belegbar machen, `uninstall` ermöglichen | CLI | klein | 1 |
-| M3 | `install` meldet den erreichten Zustand, nicht den Kopiervorgang | CLI | klein | 1 |
-| M4 | Installationsgrenze absichern — `install` prüft, was ausführt | CLI | mittel (~3 Std) | 1 |
-| M6 | Kollisionen an der Installationsgrenze melden statt still mischen | CLI | klein | 2 |
-| M7 | `evals/routing.jsonl` + `harness.mjs eval` — Drifterkennung | CLI | klein | 2 |
-| M10 | Frontmatter-Schema erfüllen, Falschaussagen in `04` richtigstellen | Doku | klein | 2 |
-| M12a | `verify-recipes` als Subcommand | CLI | klein (~50 Z.) | 2 |
-| M5 | Vertrauensstufe als Dokumentation und Auswahlkriterium | Struktur | klein (~45 Min) | 2 |
-| M8 | Sprachhinweis in der Sackgasse statt Synonymtabelle | CLI | klein (~20 Min) | 3 |
-| M9 | Feuerpreis anzeigen statt Verzeichnisgröße | CLI | klein (~5 Z.) | 3 |
-| M11 | Rezepte auf Abschnittsebene selbsttragend machen | Struktur | klein | 3 |
-| M12b/c | Rauchtest für Ausführbares, `verified`-Feld setzen | Prozess | klein | 4 |
-| M13 | `harness-build` Schritt 1: Prüfschleifen erheben, Ausschlussfrage stellen | Doku | klein (~6 Z.) | 2 |
-| M14 | Rückkanal: was ein `harness-build`-Lauf hinterlässt | Doku | klein (~12 Z.) | 2 |
-| M15 | `eval` sichtbar machen und an `update` hängen | CLI | klein | 2 |
-| M16 | `cmdStats` bekommt seinen Einwand | CLI | klein (~2 Z.) | 3 |
-| M17 | Reibung kennzeichnen; `activationOf` bei unregistriertem Hook-Skript | Doku + CLI | klein | 3 |
-| M18 | Naht `/harness-plan` → `/harness-build` schliessen | Doku | klein | 2 |
+Die Spalte **Stand** ist am 2026-08-07 gegen den laufenden Code und die Textdateien
+nachgeprüft worden, nicht aus der Absicht abgeleitet. Sie ist der Grund, warum diese
+Tabelle überhaupt eine solche Spalte hat: eine Arbeitsliste ohne Stand ist nach dem
+ersten Umsetzungslauf eine Fehlerquelle, keine Liste.
+
+| ID | Titel | Art | Aufwand | Prio | Stand |
+|----|-------|-----|---------|------|-------|
+| M1 | `lint` um drei Nahtprüfungen erweitern, mit Exit-Code | CLI | mittel (~90 Z.) | 1 | erledigt |
+| M2 | Herkunft belegbar machen, `uninstall` ermöglichen | CLI | klein | 1 | erledigt |
+| M3 | `install` meldet den erreichten Zustand, nicht den Kopiervorgang | CLI | klein | 1 | erledigt |
+| M4 | Installationsgrenze absichern — `install` prüft, was ausführt | CLI | mittel (~3 Std) | 1 | erledigt |
+| M6 | Kollisionen an der Installationsgrenze melden statt still mischen | CLI | klein | 2 | erledigt |
+| M7 | `evals/routing.jsonl` + `harness.mjs eval` — Drifterkennung | CLI | klein | 2 | erledigt, ohne `--recipes` |
+| M10 | Frontmatter-Schema erfüllen, Falschaussagen in `04` richtigstellen | Doku | klein | 2 | erledigt |
+| M12a | `verify-recipes` als Subcommand | CLI | klein (~50 Z.) | 2 | **abgewandelt**: sitzt in `cmdLint` |
+| M5 | Vertrauensstufe als Dokumentation und Auswahlkriterium | Struktur | klein (~45 Min) | 2 | erledigt, ohne `INDEX.md` |
+| M8 | Sprachhinweis in der Sackgasse statt Synonymtabelle | CLI | klein (~20 Min) | 3 | erledigt |
+| M9 | Feuerpreis anzeigen statt Verzeichnisgröße | CLI | klein (~5 Z.) | 3 | im Code, wirkt erst nach `extract` |
+| M11 | Rezepte auf Abschnittsebene selbsttragend machen | Struktur | klein | 3 | erledigt |
+| M12b/c | Rauchtest für Ausführbares, `verified`-Feld setzen | Prozess | klein | 4 | (b) **verworfen**, (c) erledigt |
+| M13 | `harness-build` Schritt 1: Prüfschleifen erheben, Ausschlussfrage stellen | Doku | klein (~6 Z.) | 2 | erledigt |
+| M14 | Rückkanal: was ein `harness-build`-Lauf hinterlässt | Doku | klein (~12 Z.) | 2 | erledigt |
+| M15 | `eval` sichtbar machen und an `update` hängen | CLI | klein | 2 | erledigt |
+| M16 | `cmdStats` bekommt seinen Einwand | CLI | klein (~2 Z.) | 3 | erledigt |
+| M17 | Reibung kennzeichnen; `activationOf` bei unregistriertem Hook-Skript | Doku + CLI | klein | 3 | erledigt |
+| M18 | Naht `/harness-plan` → `/harness-build` schliessen | Doku | klein | 2 | erledigt |
+
+**Was offen bleibt.** M9 ist gebaut, aber unwirksam, bis einmal `extract` gelaufen
+ist: das Feld `entryBytes` entsteht beim Katalogbau, und der verändert die Zahlen,
+gegen die `lint` gerade prüft — deshalb nicht ungefragt. M7 ohne `--recipes` und M12a
+als eigener Subcommand sind begründet verworfen (siehe „Bewusst nicht umgesetzt");
+die Prüfung wohnt in `cmdLint`, damit es nicht zwei Grenzen gibt, die dasselbe
+bewachen. M5 ohne Spalte in `INDEX.md`: die Datei erzeugt `writeMarkdownIndexes()`,
+eine Änderung von Hand hielte bis zum nächsten `extract`.
 
 M13 bis M18 stammen aus der Auswertung von fünf Vorträgen zu Forward Deployed
 Engineering und simulationsbasiertem Prüfen; Belege und Grenzen jeweils in
 `knowledge/08`. Sie fassen drei Dateien an, die sonst nirgends in dieser Liste vorkommen:
 `harness-build/SKILL.md` (M13, M14, M17a, M18), `harness-plan/SKILL.md` (M18) und
 `werkzeug-aenderer.md` (M15). M13 und M18 betreffen beide Schritt 1 derselben Skill und
-sollten in einem Zug erledigt werden.
+wurden in einem Zug erledigt.
 
-Reihenfolge innerhalb Priorität 1: **M3 → M2 → M6 → M4 → M1**. M3, M2 und M6 fassen
-dieselbe Funktion (`cmdInstall`) an und sollten in einem Zug erledigt werden; M1 setzt
-auf den bis dahin korrigierten Zahlenbestand auf.
+<!-- lint:historisch --> Die ursprüngliche Reihenfolgeempfehlung lautete: „innerhalb
+Priorität 1 **M3 → M2 → M6 → M4 → M1**; M3, M2 und M6 fassen dieselbe Funktion
+(`cmdInstall`) an." Sie ist abgearbeitet und bleibt stehen, weil sie die Begründung
+für den Zuschnitt der Läufe trägt.
 
 ---
 
@@ -110,8 +130,10 @@ die Repos, den Katalog baut `extract`.
 **Betroffen.** `cmdLint()` Z. 1118–1214, Aufhängepunkt am Ende von `cmdUpdate()` als
 Schritt 4/4, dazu Schritt 2 in `skills/harness-update/SKILL.md`. Nicht enthalten:
 Auto-Korrektur der Zahlen — maschinell umgeschriebene Prosa stimmt nicht mehr.
-Kostenlos mitzunehmen: zwei md5-Vergleiche zwischen `skills/*/SKILL.md` und
-`~/.claude/skills/*/SKILL.md` (heute byte-identisch, ohne jeden Sync-Mechanismus).
+<!-- lint:historisch --> Der ursprüngliche Zusatz „kostenlos mitzunehmen: zwei
+md5-Vergleiche zwischen `skills/*/SKILL.md` und `~/.claude/skills/*/SKILL.md`" ist
+**gegenstandslos** — es gibt nur noch eine Ablage, `.claude/skills/` im Projekt.
+Damit entfällt die Fehlerklasse „eine Kopie geändert, die andere nicht" ersatzlos.
 
 ## M2 — Herkunft belegbar machen und Entfernen ermöglichen
 
@@ -208,9 +230,11 @@ aus — keine Rechte, keine Bestätigung, keine Größe, obwohl das Plugin 49.64
 3.438 Dateien mitbringt. Dies ist **keine neue Maßnahme, sondern die offene M8 aus
 `knowledge/04:390`**, dort mit 3 Std und Verortung „CLI + Skill" — „Aufwand klein" und
 „Art Prozess" waren beide falsch, und `knowledge/04:409` verbietet die Prozessvariante
-ausdrücklich. Widerlegt: Rechte-Flaggen aus Metadaten (nur 61 von 954 Bausteinen
-deklarieren Rechte) und Klartextanzeige (44 von 56 Hooks länger als 60 Zeilen, Median
-120, Maximum 1.279). Die Paarwarnung feuert über die sechs Rezept-Kernsets genau einmal
+ausdrücklich. Widerlegt: Rechte-Flaggen aus Metadaten (nur 61 von damals 954
+Bausteinen deklarieren Rechte — Messung am Katalogstand 2026-08-07 08:57, seither
+sind zwei Bausteine hinzugekommen und die Messung wurde nicht wiederholt
+<!-- lint:historisch -->) und Klartextanzeige (44 von 56 Hooks länger als 60 Zeilen,
+Median 120, Maximum 1.279). Die Paarwarnung feuert über die sechs Rezept-Kernsets genau einmal
 (05-seo) — richtige Größenordnung.
 
 **Betroffen.** `extractRepo`, `cmdInstall` Z. 897–945, `cmdBootstrap`, dazu Schritt 7 in
@@ -237,7 +261,7 @@ unterscheidet, ist nicht bereit für echtes Geld.
 **Was die Prüfung ergab.** Der Tiebreaker ist tatsächlich die alphabetische ID (Z. 710)
 und in ~7 von 10 Top-Treffern aktiv. Aber: der nachgebaute Vertrauens-Tiebreaker löst
 das genannte Problem nicht (`affaan-m__ecc` bleibt in 15 von 20 Abfragen auf Platz 1
-statt heute 18 von 20 — die Dominanz ist ein Bestandseffekt, 520 von 954) und erzeugt
+statt heute 18 von 20 — die Dominanz ist ein Bestandseffekt, 522 von 956) und erzeugt
 belegte Verschlechterungen: bei `search "hook"` hebt er einen beschreibungslosen
 `hooks.json`-Eintrag auf Platz 1, bei `search "performance"` einen SEO-Agenten über
 einen Performance-Optimizer. `!einzelquelle` ist am eigenen Wissensbestand widerlegt —
@@ -430,7 +454,10 @@ Umgekehrt unsichtbar: `last30days` mit 224.496 Bytes SKILL.md.
    löschen, sonst geht die Begründung verloren.
 5. Mitfixen, was `lint` nicht erreicht: `knowledge/02` Z. 176/413, `recipes/README.md`
    Z. 73, beide `SKILL.md` — dort durch einen Verweis auf `stats` ersetzen, nicht durch
-   eine neue Zahl. Beide Kopien (`skills/` und `~/.claude/skills/`) ändern.
+   eine neue Zahl. <!-- lint:historisch --> Der ursprüngliche Zusatz „Beide Kopien
+   (`skills/` und `~/.claude/skills/`) ändern" ist **gegenstandslos**: die globale
+   Ablage der Bedien-Skills unter `~/.claude/skills/` existiert nicht mehr, es gibt je
+   Skill genau eine Datei unter `.claude/skills/` im Projekt.
 <!-- lint:historisch --> Punkt 3 nennt die alten Werte (1.050, 25.593, 163, 152) absichtlich:
 eine Korrekturanweisung ohne den zu ersetzenden Wert ist nicht ausführbar.
 
@@ -479,8 +506,8 @@ danach automatisch hält — das ist M1.
    meisten Bausteine hier nichts"). Kandidaten mit harter Voraussetzung:
    `anthropics__skills/skill/webapp-testing` (lokal startbare App),
    `msitarzewski__agency-agents/agent/api-tester` (erreichbare Endpunkte),
-   `usestrix__strix/skill/strix-pentest` (ausführbares Ziel plus die in Rezept 04 bereits
-   genannte schriftliche Erlaubnis), die `AgriciDaniel__claude-seo`-Kette (abrufbare
+   `usestrix__strix/skill/penetration-testing-with-strix` (ausführbares Ziel plus die in
+   Rezept 04 bereits genannte schriftliche Erlaubnis), die `AgriciDaniel__claude-seo`-Kette (abrufbare
    Live-URL). Formuliert als Voraussetzung des **Bausteins**, nicht als Vermutung über
    das Zielprojekt. Keine neue Tabellenspalte, kein neuer Abschnitt. Grund: die harten
    Voraussetzungen stehen heute nur auf Rezept-Ebene, nicht am Baustein — und `knowledge`
@@ -815,7 +842,7 @@ vorgeschlagen werden.
 | Existenzprüfung der Zieldatei | `copyFileSync` wirft bei Fehlschlag; ein stiller Teilkopiervorgang kommt nicht vor. |
 | Automatisches Schreiben in `settings.json` | Bei 23 von 56 Hooks ist das Event nicht ableitbar, der `matcher` in keinem Fall. Fremden Code scharfzuschalten ist eine Sicherheitsentscheidung, keine Buchhaltung. |
 | Zweiter Schreiber für `.claude/settings.json` | `bootstrap-project` und `update-config` sind zuständig; ein zweiter erzeugt Konflikte. |
-| Rechte-Flaggen für Skills/Agents/Commands | Nur 61 von 954 Bausteinen deklarieren Rechte; ein Bash-Block in einer `SKILL.md` ist Dokumentation, kein Vollzug. |
+| Rechte-Flaggen für Skills/Agents/Commands | Nur 61 von damals 954 Bausteinen deklarieren Rechte (Messung am Katalogstand 2026-08-07 08:57, nicht wiederholt <!-- lint:historisch -->); ein Bash-Block in einer `SKILL.md` ist Dokumentation, kein Vollzug. |
 | Klartextanzeige von Hook-Code | 44 von 56 Hooks über 60 Zeilen, Median 120, Maximum 1.279. Sprengt das Budget, gegen das die Bibliothek gebaut ist. |
 | Paarwarnung als Matrix | Suggeriert eine Abdeckung, die es nicht gibt — das Zielumfeld trägt bereits vier aktivierte Plugins und mehrere MCP-Server, die die Bibliothek nie sieht. |
 | Vertrauens-Tiebreaker in der Sortierung | Greift in ~70 % der Top-10-Plätze, ändert die Reihenfolge in 13 von 20 Abfragen, verschlechtert Platz 1 in mindestens 2 Fällen. |
@@ -852,6 +879,18 @@ vorgeschlagen werden.
 | Eigenes Werkzeug zur Namensauflösung („meinen zwei IDs dasselbe?") | IDs sind `repo/typ/slug`, deterministisch und eindeutig; von 54 Namensgruppen sind 45 gewollte Typ-Sätze desselben Repos. Der Auflöser existiert bereits als `--type`. |
 | Zähler „Baustein wurde jemals ausgelöst" | Kein Register der Zielprojekte, Hooks hinterlassen keine Spur, und die Messung läge heute bei null verstrichener Zeit. `activationOf` liefert die ehrlichere Grösse: ob ein Baustein feuern **kann**. |
 
+**Nachgetragen beim Umsetzungslauf am 2026-08-07** — Teile, die erst bei der
+Ausführung als überflüssig erkennbar wurden:
+
+| Verworfen | Grund |
+|-----------|-------|
+| `verify-recipes` als eigener Subcommand (M12a) | Die ID-Prüfung sass zum Umsetzungszeitpunkt bereits in `cmdLint` als Naht 1, Typ- und Grössenabweichung kamen als Naht 7 dazu. Ein zweiter Subcommand wäre die Verdopplung, vor der der Abschnitt oben schon warnt. Damit ist die Frage entschieden, die M12a offengelassen hatte: **die Prüfung wohnt in `lint`.** |
+| `--dry-run` je Rezept in `verify-recipes` (M12a) | Fällt mit dem Subcommand weg. `install --dry-run` mit allen Kern-Set-IDs in einem Aufruf leistet dasselbe und ist der Befehl, den `harness-build` ohnehin fährt. |
+| `eval --recipes` (M7 Punkt 4) | Ein Rezept ist eine Auswahl, kein Routing-Fall: es hat keine Frage, gegen die eine Suche gemessen werden könnte. Was prüfbar ist — lösen die IDs auf, stimmen Typ und Grösse — prüft `lint`. |
+| `lint` als fünfter Schritt in `cmdUpdate` (M1) | `update` fährt schon `eval` als Schritt 4 und hängt seinen Exit-Code daran. Eine zweite Sperre im selben Lauf macht aus einem Katalogbau ein Gate mit zwei Ursachen, und `lint` prüft Text gegen Text — davon ändert `update` nichts. `cmdUpdate` weist stattdessen am Ende auf `lint` hin, wenn sich der Bestand geändert hat. |
+| Rauchtest für ausführbare Kern-Set-Bausteine (M12b) | `install --dry-run` über alle 32 Kern-Set-IDs meldet bei 31 „nichts Ausführbares gefunden". Einziger Träger ist `anthropics__skills/skill/webapp-testing`. Eine Markdown-Datei hat kein Ausfallverhalten — es gäbe bei 31 von 32 nichts zu testen. |
+| Spalte „Vertrauen" in `INDEX.md` / `catalog/by-repo.md` (M5 Punkt 2) | Beide Dateien erzeugt `writeMarkdownIndexes()`. Von Hand eingetragen hielte die Spalte bis zum nächsten `extract`. Als Codeänderung bleibt sie möglich; als Textmassnahme ist sie es nicht. |
+
 ---
 
 ## Wie diese Liste zu benutzen ist
@@ -871,7 +910,11 @@ Drei Regeln für den Umgang:
    für den Abschnitt „Bewusst nicht umgesetzt": er ist der eigentliche Wert dieser Datei.
 3. **Zahlen in dieser Datei sind Messwerte vom 2026-08-07.** Sie driften mit jedem
    `extract`. Vor einer Umsetzungsentscheidung neu messen — `node tools/harness.mjs stats`
-   und der jeweils im Abschnitt genannte Befehl. Ab M1 meldet `lint` die Drift selbst.
+   und der jeweils im Abschnitt genannte Befehl. `lint` meldet die Drift inzwischen selbst.
+4. **Die Übersichtstabelle ist die einzige Stelle, an der der Stand steht.** Wer eine
+   Maßnahme umsetzt, ändert die Zeile dort — nicht den Abschnitt darunter. Zwei
+   Standangaben derselben Sache an zwei Stellen sind genau die Fehlerklasse, gegen
+   die diese Wissensbank gebaut ist.
 
 Wenn eine Maßnahme umgesetzt wird, gehört ein Eintrag in `knowledge/LOG.md` — was
 getan wurde, wodurch es belegt ist, und was dadurch in dieser Liste hinfällig wird.

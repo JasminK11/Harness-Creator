@@ -19,11 +19,36 @@ cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
 node tools/harness.mjs update
 ```
 
-Das führt drei Schritte aus: alle Repos aus `sources.txt` klonen oder pullen, den
-Katalog neu aufbauen, und einen Eintrag in `CHANGELOG.md` schreiben — diese Datei
-**entsteht bei diesem Lauf**; vor dem ersten `update` gibt es sie nicht. Der Lauf dauert
-je nach Netz und Repo-Zahl ein bis mehrere Minuten. Führ ihn im Hintergrund aus,
-wenn du parallel weiterarbeiten willst.
+Das führt **vier** Schritte aus: alle Repos aus `sources.txt` klonen oder pullen, den
+Katalog neu aufbauen, den Changelog-Eintrag zusammenstellen, und die Routing-Evals
+fahren. Der Lauf dauert je nach Netz und Repo-Zahl ein bis mehrere Minuten. Führ ihn
+im Hintergrund aus, wenn du parallel weiterarbeiten willst.
+
+`CHANGELOG.md` **entsteht bei diesem Lauf**; vor dem ersten `update` gibt es sie nicht.
+Geschrieben wird sie erst nach Schritt 4, damit die Eval-Zeile im obersten Abschnitt
+steht und nicht als Nachtrag darunter.
+
+### Schritt 4 ist eine Sperre, kein Anhängsel
+
+`update` fährt am Ende `eval` über den **soeben gebauten** Katalog: findet die Suche
+noch, was sie finden soll? Ein neues Repo, das die bisherigen Treffer verdrängt, ist
+ein Ergebnis genau dieses Laufs — später gemessen wäre die Ursache nicht mehr
+zuzuordnen.
+
+**Der Exit-Code von `update` hängt damit am Eval-Lauf.** Ein Update, das die Suche
+verschlechtert, ist kein erfolgreiches Update. Fehlt das `evals/`-Verzeichnis, wird
+der Schritt übersprungen und der Lauf endet trotzdem regulär.
+
+**Ein roter Eval-Lauf geht an den User, nicht in die Rohausgabe.** Die Zeile
+`Routing-Evals: X von Y Pflichtfällen bestanden` steht im obersten Abschnitt von
+`CHANGELOG.md` — lies sie und melde sie ausdrücklich, wenn X kleiner als Y ist oder
+Rangänderungen gemeldet werden. Sag dazu, welcher Fall gefallen ist und welches Repo
+in diesem Lauf dazukam; das ist meistens dieselbe Antwort. Nachfahren lässt sich der
+Lauf jederzeit einzeln:
+
+```bash
+node tools/harness.mjs eval
+```
 
 Die Ausgabe verwendet folgende Zeichen pro Repo:
 

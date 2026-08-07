@@ -63,5 +63,5 @@
 | `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1100 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 241 |
-| `usestrix__strix/skill/strix-cloud-api` | Drive the managed Strix platform headlessly through the app.strix.ai REST API — create an API token, register domain/repository a… | 8 |
+| `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
 

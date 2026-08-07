@@ -49,7 +49,12 @@ braucht man hier **entweder** einen automatisierbaren Eval-Check **oder** einen
 separaten Bewerter. Das Kern-Set setzt auf den Check — `mle-workflow` liefert das
 Gerüst dafür — und ergänzt ihn um einen Reviewer mit eigenem Kontext.
 
-## Kern-Set (Pflicht)
+## Kern-Set (Startauswahl, zu kürzen)
+
+**Bindend ist die Spalte „Welches Problem er löst", nicht die Liste.** Wer das
+Symptom im eigenen Projekt nicht wiederfindet, streicht die Zeile — vier passende
+Bausteine schlagen sieben plausible. Dass jede ID im Katalog auflöst, macht sie
+belegt, nicht verpflichtend.
 
 | ID | Typ | Welches Problem er löst | KB |
 |---|---|---|---:|
@@ -59,8 +64,8 @@ Gerüst dafür — und ergänzt ihn um einen Reviewer mit eigenem Kontext.
 | `affaan-m__ecc/skill/python-patterns` | skill | Protocols, Dataclasses, Context Manager, Type Hints, Paketstruktur. Gegen den Notebook-Stil im Produktivcode. | 9 |
 | `affaan-m__ecc/agent/python-reviewer` | agent | PEP 8, Idiome, Type Hints, Sicherheit, Performance — eng, 3 KB, günstig einzusetzen. | 3 |
 
-Fünf Bausteine, rund 50 KB. Bewusst schlank: Die teuersten Fehler liegen in der
-Methodik, nicht in der Syntax.
+Fünf Bausteine, rund 50 KB. Das ist die Obergrenze für diesen Projekttyp. Bewusst
+schlank: Die teuersten Fehler liegen in der Methodik, nicht in der Syntax.
 
 ## Erweiterung (optional)
 
@@ -95,6 +100,23 @@ node tools/harness.mjs install \
   affaan-m__ecc/agent/python-reviewer \
   --to <projektpfad>
 ```
+
+## Verifikationspfad — auszufüllen, bevor eingeführt wird
+
+```
+Befehl im Zielprojekt, der ein Ja/Nein liefert:  ______________________
+Zuletzt grün gelaufen am:                        ______________________
+```
+
+Hier steht **kein** fester Befehl, weil kein Rezept die Skripte eines fremden
+Projekts kennt. Trag ein, was dort tatsächlich existiert und grün läuft — bei diesem
+Projekttyp typischerweise der Testlauf, ein Typ- oder Lint-Check, oder ein
+Trainingslauf auf festem Seed, dessen Kennzahl reproduzierbar ist.
+
+**Existiert kein solcher Befehl, ist er der erste Arbeitsschritt**, nicht der letzte.
+Ohne ihn ist nach dem Einbau nicht messbar, ob sich etwas verbessert hat: alles, was
+bleibt, ist das Urteil des Agenten über sich selbst — genau die Schwäche, gegen die
+die halbe Auswahl oben gerichtet ist.
 
 ## Reihenfolge der Einführung
 

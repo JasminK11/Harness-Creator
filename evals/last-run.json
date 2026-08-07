@@ -1,0 +1,46 @@
+{
+ "generatedAt": "2026-08-07T18:27:45.591Z",
+ "katalog": "2026-08-07T18:27:36.294Z",
+ "raenge": {
+  "code review|||": {},
+  "tdd testing|||": {
+   "affaan-m__ecc/agent/tdd-guide": 1
+  },
+  "codebase onboarding|||": {
+   "affaan-m__ecc/skill/codebase-onboarding": 1
+  },
+  "architecture decision|||": {
+   "affaan-m__ecc/skill/architecture-decision-records": 1
+  },
+  "deployment patterns|||": {
+   "affaan-m__ecc/skill/deployment-patterns": 1
+  },
+  "code review|agent||": {
+   "affaan-m__ecc/agent/code-reviewer": 1
+  },
+  "code review|command||": {
+   "affaan-m__ecc/command/code-review": 1
+  },
+  "arbeitsvertrag|||": {},
+  "arbeitsvertrag||legal-de|": {},
+  "sicherheit prüfen|||": {},
+  "tests schreiben|||": {},
+  "reviews miss the same mistakes|||": {
+   "affaan-m__ecc/agent/code-reviewer": 22
+  },
+  "nobody understands this codebase|||": {
+   "affaan-m__ecc/skill/codebase-onboarding": 2
+  },
+  "our releases keep breaking|||": {
+   "affaan-m__ecc/skill/deployment-patterns": 21
+  },
+  "how do I know the agent did it right|||": {
+   "affaan-m__ecc/skill/eval-harness": 733
+  },
+  "review|||": {},
+  "react component testing|||": {},
+  "react typescript app with tests and deployment|||": {
+   "affaan-m__ecc/skill/react-patterns": 103
+  }
+ }
+}

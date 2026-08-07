@@ -72,6 +72,6 @@
 | `affaan-m__ecc/skill/video-editing` | AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capt… | 10 |
 | `AgriciDaniel__claude-seo/skill/seo-drift` | > SEO drift monitoring: capture baselines of SEO-critical elements, detect changes, and track regressions over time. Git for SEO:… | 13 |
 | `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1100 |
-| `usestrix__strix/skill/strix-ci-setup` | Wire Strix security scanning into CI/CD — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped A… | 8 |
-| `usestrix__strix/skill/strix-cloud-api` | Drive the managed Strix platform headlessly through the app.strix.ai REST API — create an API token, register domain/repository a… | 8 |
+| `usestrix__strix/skill/ci-security-scanning-with-strix` | Add security scanning to CI/CD with Strix — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped… | 8 |
+| `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
 

@@ -216,7 +216,7 @@ Drei Scopes: `local` (Standard, in `~/.claude.json`, nur dieses Projekt, privat)
 
 Die Ausnahmen sind aber real und häufig: `alwaysLoad: true` in der Serverkonfiguration lädt alle Tools dieses Servers vorab; `ENABLE_TOOL_SEARCH=auto` lädt vorab, solange die Schemas in 10 % des Kontextfensters passen; hinter einem Nicht-Erstanbieter-Proxy oder auf einer Azure-gehosteten Microsoft-Foundry-Deployment lädt Claude Code grundsätzlich vorab. **Die strukturelle Aussage bleibt deshalb bestehen: MCP-Kosten fallen im Hauptfenster an und sind an die Session gebunden, nicht an die Aufgabe.** Dazu kommen Laufzeitkosten: Ausgaben über 10.000 Token lösen eine Warnung aus, bei 25.000 Token wird gekappt (`MAX_MCP_OUTPUT_TOKENS`).
 
-Ein Randbefund zur Bibliothek: Von 954 Bausteinen im Standardzugriff sind genau **drei** vom Typ `mcp`. MCP-Konfigurationen sind fast immer projekt- und zugangsdatenspezifisch — hier ist wenig zu holen, und das ist kein Mangel des Katalogs.
+Ein Randbefund zur Bibliothek: Von 956 Bausteinen im Standardzugriff sind genau **drei** vom Typ `mcp`. MCP-Konfigurationen sind fast immer projekt- und zugangsdatenspezifisch — hier ist wenig zu holen, und das ist kein Mangel des Katalogs.
 
 ### 2.6 Plugin
 
@@ -453,6 +453,6 @@ Alle URLs abgerufen am **2026-08-07**.
 - `affaan-m__ecc/command/pr` — Command-Frontmatter mit `argument-hint`
 - `affaan-m__ecc/hook/adapter`, `affaan-m__ecc/hook/before-shell-execution-block-no-verify` — Cursor-Hooks aus `.cursor/hooks/`, nicht direkt lauffähig
 - `affaan-m__ecc/mcp/mcp` — minimale `.mcp.json`
-- Bestandszahlen aus `node tools/harness.mjs stats` und `INDEX.md`, Katalogstand 2026-08-07 08:57: 25.497 Bausteine aus 13 Repos, davon 24.543 im ausgeblendeten Massen-Repo `Klotzkette__claude-fuer-deutsches-recht`; im Standardzugriff 954 — 402 Skills, 375 Agents, 112 Commands, 56 Hooks, 6 Plugins, 3 MCP-Konfigurationen
+- Bestandszahlen aus `node tools/harness.mjs stats` und `INDEX.md`, Katalogstand 2026-08-07 18:27: 25.499 Bausteine aus 13 Repos, davon 24.543 im ausgeblendeten Massen-Repo `Klotzkette__claude-fuer-deutsches-recht`; im Standardzugriff 956 — 404 Skills, 375 Agents, 112 Commands, 56 Hooks, 6 Plugins, 3 MCP-Konfigurationen
 
 **Haltbarkeit.** Frontmatter-Felder, Hook-Ereignisse und das Ladeverhalten von MCP-Tools ändern sich mit den Claude-Code-Versionen; Tool Search etwa ist eine vergleichsweise junge Voreinstellung. Prüfe die Formatangaben neu, statt sie zu glauben, wenn zwischen diesem Abrufdatum und deiner Sitzung eine größere Version liegt.

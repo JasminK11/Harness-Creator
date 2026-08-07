@@ -68,6 +68,284 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-07] revise | Nach dem `update` um 18:27 nachgezogen — Bestandszahlen in sechs Dateien, und vier Strix-IDs waren durch eine Umbenennung im Quell-Repo tot
+
+**Was vorher galt.** `lint` meldete nach dem Lauf **11 Befunde hoher Schwere und
+einen mittleren**: zehn veraltete Bestandszahlen in `knowledge/02`, `03`, `04`, `05`,
+`06` und `recipes/README.md`, dazu drei nicht auflösbare Baustein-IDs in
+`recipes/04-security-audit-pentest.md` (hoch) und eine vierte in `knowledge/06`
+(mittel). Nachher: **0 Befunde**, `lint --all` ebenfalls 0. Keine der Ursachen wurde
+stummgeschaltet; die beiden neu gesetzten `<!-- lint:historisch -->`-Marker stehen an
+Stellen, die ausdrücklich eine **Messung von damals** zitieren (siehe unten).
+
+**Was sich am Bestand geändert hat.** Das `update` zog `usestrix__strix`
+(2275007 → f8a8801) und `affaan-m__ecc` (fd27a0e → f16a6ff); `Klotzkette` schlug beim
+`git reset` fehl und blieb unverändert. Netto sechs neue, vier entfernte Bausteine:
+Standardzugriff **954 → 956**, Gesamtbestand **25.497 → 25.499**, Typ `skill`
+**402 → 404** (beide neuen sind `affaan-m__ecc/skill/ito-inference` und
+`…/ito-training`), Repo `affaan-m__ecc` **520 → 522**. Agents, Commands, Hooks,
+Plugins und MCP unverändert.
+<!-- lint:historisch --> Die jeweils linke Zahl ist der Altwert vom Katalogstand
+2026-08-07 08:57 und steht hier absichtlich: ohne das Vorher ist eine Korrektur nicht
+dokumentiert. Verbindlich ist die rechte Zahl, Katalogstand 2026-08-07 18:27.
+
+**Vier tote IDs durch eine Umbenennung im Quell-Repo.** `usestrix/strix` hat an einem
+Tag **alle vier** seiner Skills umbenannt — die Bausteine tun dasselbe wie vorher, nur
+unter neuem Slug. Jede Zuordnung wurde mit `show <id> --head 30` gegen die im Rezept
+beschriebene Aufgabe geprüft, nicht aus der Namensähnlichkeit geschlossen; alle vier
+hielten stand:
+
+| Alt | Neu | Geprüft |
+|---|---|---|
+| `strix-pentest` | `penetration-testing-with-strix` | OSS-CLI-Pentest gegen Code/Repo/URL/Domain/IP, validierte Findings mit PoC — identische Aufgabe |
+| `strix-ci-setup` | `ci-security-scanning-with-strix` | diff-bezogener Scan pro Pull Request, SARIF, Build-Fail — identische Aufgabe |
+| `strix-fix-findings` | `fix-security-vulnerabilities-with-strix` | Triage nach Schwere plus **erneuter Lauf zur Verifikation** — identische Aufgabe |
+| `strix-cloud-api` | `managed-pentesting-with-strix` | `app.strix.ai`-REST-API ohne lokales Docker — identische Aufgabe |
+
+Drei davon standen in `recipes/04`, die vierte (`strix-pentest`) zusätzlich in
+`knowledge/06` Punkt 7. `strix-cloud-api` stand in **keiner** Datei — die Kern-Set-
+Voraussetzung in `recipes/04` nannte den Cloud-Weg zwar als Alternative, ohne je eine
+ID dafür zu führen. Diese Lücke ist mit `managed-pentesting-with-strix` unter
+„Erweiterung" geschlossen, mit Bedingung. Alle übrigen 13 IDs in `recipes/04` wurden
+ebenfalls einzeln gegen den Katalog geprüft und lösen auf; dabei fielen zwei
+veraltete KB-Angaben unter „Bewusst weggelassen" auf (`security-scan` 6 → 4 KB,
+`security-bounty-hunter` 5 → 3 KB) und die dort behauptete Einschränkung „nur
+japanisch im Katalog", die seit `TRANSLATION_RE` für beide nicht mehr zutrifft —
+`show` liefert englisches Frontmatter. Beides korrigiert.
+
+**Welche Zahlen nachgezogen wurden.** Aktualisiert, weil sie eine Aussage über den
+**heutigen** Bestand sind: `02` (mcp-Randbefund, Quellenzeile samt Katalogstand
+08:57 → 18:27 und Typ-Aufschlüsselung 402 → 404), `03` (Stand-Absatz, Massen-Repo-
+Anteil, Herkunftssatz), `04` (Abstract, Regime-Tabelle, Trefferzahl-Absatz,
+Domänen-Urteil, Hygiene-Block, M9, „Wäre theoretisch schön", Quellenverzeichnis),
+`05` (Skill-gegen-Hook-Vergleich 24.700 → 24.702, Listing-Grösse, die Nachrechnung
+der drei Zugriffsebenen, Produkt-Absatz, Generik-Bias, Platte-gegen-Standardzugriff),
+`06` (Bestandseffekt 520 von 954 → 522 von 956).
+
+Abgeleitete Zahlen sind mitgewandert, statt den Nenner allein zu tauschen: Mirajes
+Schwellen-Faktor **9,5 → 9,6** (956/100) an zwei Stellen, der `general`-Anteil im
+Hygiene-Block **34,7 % → 34,6 %** (331/956). Unverändert richtig blieben der
+Massen-Repo-Anteil 96,3 % (24.543/25.499) und der Description-Anteil 5,9 %
+(56/956) — beide runden auf denselben Wert.
+
+**Was als historisch markiert wurde, und warum.** Zwei Stellen in `06` nennen „61 von
+954 Bausteinen deklarieren Rechte". Die 61 ist ein Messwert vom Katalogstand
+08:57; sie lässt sich nicht neu erheben, ohne `catalog/index.json` zu lesen, was die
+Zugriffsregel verbietet. Den Nenner auf 956 zu heben, ohne den Zähler neu zu zählen,
+wäre schlimmer als der alte Stand. Beide Stellen sagen deshalb jetzt „von damals 954"
+mit Katalogstand im Satz und tragen `<!-- lint:historisch -->` im selben Absatz. Aus
+demselben Grund ist im Quellenverzeichnis von `04` ausdrücklich vermerkt, dass die
+dort protokollierten `search`-Trefferzahlen aus dem Stand 08:57 stammen und nicht
+wiederholt wurden.
+
+**Was entfernt statt aktualisiert wurde.** Zwei Zahlen, die an ihrer Stelle nichts
+trugen und sich mit jedem `update` verschieben. Beide Wortlaute unten sind Altstand
+vom Katalogstand 2026-08-07 08:57 und werden nur zitiert, um zu zeigen, was ersetzt
+wurde — an keiner der beiden Stellen steht heute noch eine Zahl:
+
+- <!-- lint:historisch --> `recipes/README.md` warnte „`catalog/index.json` nie
+  direkt lesen — 25.497
+  Einträge, rund 19 MB". Die Warnung trägt die Dateigrösse, nicht die Eintragszahl.
+  Die Stelle verweist jetzt auf `stats`, statt eine Zahl zu führen.
+- <!-- lint:historisch --> Titel und Überschrift von `knowledge/04` lauteten „was ab 954 Bausteinen kippt".
+  Das Argument ist die Grössenordnung gegenüber Mirajes 100er-Schwelle, nicht der
+  exakte Bestand — eine Überschrift, die jedes `update` überlebt, heisst jetzt „was ab
+  **rund tausend** Bausteinen kippt". Die exakte Zahl steht im Abstract darunter,
+  wo sie belegt ist.
+
+**Woran der Irrtum bemerkt wurde.** An nichts — genau das ist der Punkt. Kein Mensch
+hat eine Datei angefasst; ein `update` hat den Katalog unter dem Text verschoben, und
+`lint` hat es gemeldet. Das ist der Kreislauf, wie er gedacht ist. Neu ist nur, dass
+diese Erfahrung jetzt aufgeschrieben steht: `recipes/README.md` hat einen Abschnitt
+**„Wenn eine Baustein-ID nicht mehr auflöst"** bekommen — fünf Schritte von `lint`
+über den `CHANGELOG`-Vergleich alter und neuer Namen bis zur Pflicht, jede Zuordnung
+mit `show` gegen die Aufgabe zu prüfen statt sie aus dem Namen zu raten. Die Zusage
+weiter oben in derselben Datei („jede ID ist per `show` geprüft, `install` schlägt
+also nicht fehl") war zu stark und ist auf eine Aussage über den Katalogstand von
+damals zurückgenommen, mit Verweis auf den neuen Abschnitt — die Einschränkung steht
+damit in demselben Abschnitt wie die Zusage, die sie relativiert. `recipes/04` trägt
+am `install`-Befehl einen kurzen Hinweis auf den konkreten Vorfall und zeigt auf
+diesen Abschnitt.
+
+**Nicht angefasst.** `tools/harness.mjs`. `Learnings/`. Die Altwerte in den
+bestehenden `lint:historisch`-Absätzen von `LOG.md` und `06`.
+
+## [2026-08-07] revise | Die Text-Maßnahmen aus `06` umgesetzt — Rezepte sagen jetzt „Startauswahl" statt „Pflicht", `sources.txt` trägt Vertrauensstufen und einen Lückenblock, und `harness-build` erhebt Prüfschleifen, bevor es sucht
+
+**Was vorher galt.** Alle sechs Rezepte überschrieben ihre ID-Tabelle mit
+`## Kern-Set (Pflicht)`. Die Entdogmatisierung existierte, aber ausschliesslich in
+`recipes/README.md` — und `knowledge` schneidet abschnittsweise aus, lieferte also
+„Pflicht" samt Tabelle ohne jede Relativierung. Genau der Mechanismus, gegen den die
+Doktrin gebaut ist: nicht die Aussage fehlte, sondern ihre Erreichbarkeit.
+
+`sources.txt` führte 13 Repos ohne eine einzige Angabe darüber, wie sehr man der
+Quelle traut, und ohne die Aufnahmekriterien, nach denen ein Repo hineinkommt. Ein
+Rückkanal aus einem `/harness-build`-Lauf war an zwei Stellen als Handlungsanweisung
+vorhanden und nirgends persistiert. `harness-build/SKILL.md` erhob Was, Stack,
+Reifegrad und Schmerz — die CI-Konfiguration tauchte nur als Informationsquelle über
+den Stack auf, nicht als Befund —, kannte `PLAN.md` an keiner Stelle, obwohl
+`harness-plan/SKILL.md` zusagt „es liest Abschnitt 5 und 6", und endete mit Schritt 8.
+`werkzeug-aenderer.md` listete `lint --all`, aber kein `eval`. `harness-update/SKILL.md`
+sagte „Das führt drei Schritte aus", während `cmdUpdate` seit dem Werkzeuglauf vier
+fährt. Und in `knowledge/04`, `05` und `06` standen an vier Stellen Anweisungen, die
+sich auf `~/.claude/skills/` bezogen — eine zweite, globale Ablage der Bedien-Skills,
+die es nicht mehr gibt.
+
+**Was jetzt gilt.**
+
+- **Rezepte (M11).** Alle sechs tragen `## Kern-Set (Startauswahl, zu kürzen)` und im
+  **selben** Abschnitt zwei Sätze: bindend ist die Spalte „Welches Problem er löst",
+  nicht die Liste. Die Bar-Zeile ist vereinheitlicht — 02 bis 06 bekommen den Satz aus
+  01 mit ihren **bestehenden** Summen (52/50/43/63/36 KB), keine neue Zahl. Jedes
+  Rezept hat einen Abschnitt „Verifikationspfad — auszufüllen, bevor eingeführt wird"
+  mit einem **leeren Feld** statt eines festen Befehls, plus der Regel: existiert
+  keiner, ist er der erste Arbeitsschritt. Und „Wann es nicht passt" nennt jetzt die
+  harten Voraussetzungen einzelner Kern-Set-Bausteine — lokal startbare App (01),
+  erreichbare Endpunkte (02), ausführbares Ziel plus schriftliche Erlaubnis (04),
+  abrufbare Live-URL (05). 03 und 06 bekommen keine, weil ihre Kern-Sets keine haben.
+- **Rückkanal (M14).** `harness-build/SKILL.md` hat einen Schritt 9 „Rückmeldung an
+  die Bibliothek": abgesetzte Suchen wörtlich mitschreiben, **auch die erfolglosen**;
+  daraus ersetzend ein Fall in `evals/routing.jsonl`; die Lücke als Zeile in den neuen
+  Kommentarblock am Ende von `sources.txt`; drei Fragen an den Besitzer; Einarbeitung
+  als `revise` über den `wissensbank-autor`. Eine leere Lückenliste ist ein gültiges
+  Ergebnis und wird als solches hingeschrieben.
+- **Vertrauen (M5, Textanteil).** `sources.txt` trägt je Repo eine Kommentarzeile
+  `# Vertrauen: offiziell | gepflegt | unbekannt — <Halbsatz>`, dazu im Kopf die drei
+  Aufnahmekriterien. `anthropics/skills` steht als einziges auf `offiziell`;
+  `multica-ai/multica`, `Bomx/qwoted-…`, `mvanhorn/last30days-skill`,
+  `nextlevelbuilder/…` und das Rechts-Repo auf `unbekannt`. `show` gibt die Stufe
+  bereits aus. `harness-build` Schritt 4 hat ein fünftes Auswahlkriterium mit der
+  ausdrücklichen Schranke: **fachliche Passung schlägt Herkunft**, die Stufe
+  entscheidet nur den Gleichstand.
+- **Prüfschleifen und die Naht zu `/harness-plan` (M13, M18).** Schritt 1 zerfällt in
+  1a bis 1d: `PLAN.md` lesen, falls vorhanden (Abschnitt 5 und 6 ersetzen die
+  Rückfragen); Prüfschleifen als **Befehl** erheben und „vorhanden" von „läuft und ist
+  grün" unterscheiden; die Ausschlussfrage stellen; die Schmerzpunkte als
+  **nummerierte** Liste vorlegen, auf die Kriterium 1 und Schritt 5 wörtlich zeigen.
+  Bei null Schleifen ist der erste Baustein der, der „fertig" entscheidbar macht — der
+  Hook erst danach. Eine leere Schmerzpunktliste heisst „kein Harness".
+- **Reibung kennzeichnen (M17a).** Die Auswahltabelle in Schritt 6 hat zwei neue
+  Spalten: `laden` und `hält an`. Der Eintrag in `hält an` kommt **nicht aus der
+  Description** — `affaan-m__ecc/skill/gateguard` schreibt „blocks Edit/Write/Bash",
+  besteht aber aus einer einzigen 5-KB-Datei —, sondern aus Typ `hook` mit
+  Lifecycle-Ereignis oder aus dem, was der Trockenlauf an ausführbaren Dateien listet.
+  Je „ja" eine Zeile darunter: was, wann, und wie man es wieder abstellt. Schritt 8
+  wiederholt das, plus den ausgefüllten Verifikationsbefehl.
+- **`eval` sichtbar (M15, Textanteil).** Der Nachweis-Block in `werkzeug-aenderer.md`
+  führt `eval --no-save` und `list --to DIR`, mit der Begründung, warum `lint` es nicht
+  ersetzt. `harness-update/SKILL.md` sagt „vier Schritte", erklärt Schritt 4 als Sperre
+  und verlangt, einen roten Lauf dem User zu melden statt in der Rohausgabe untergehen
+  zu lassen.
+- **`verified` (M12c).** `knowledge/04`, Abschnitt 5.4, unterscheidet jetzt in einer
+  Tabelle `generated` von `verified` und hält fest: `verified` setzt **ausschliesslich
+  ein Mensch**, und der Anker daneben ist der vorhandene `repos[].head`, kein neues
+  Feld. In diesem Lauf wurde kein `verified` gesetzt.
+- **Buchführung.** Die Übersichtstabelle in `knowledge/06` hat eine Spalte **Stand**,
+  gegen Code und Textdateien nachgeprüft. Der Abschnitt „Bewusst nicht umgesetzt" hat
+  einen Nachtrag mit sechs Punkten, die erst bei der Ausführung als überflüssig
+  erkennbar wurden. In `knowledge/04` sind M7 und M10 als erledigt durchgestrichen.
+
+**Woran der Irrtum bemerkt wurde.** Am Grep. `~/.claude/skills/` kam an vier Stellen
+in `knowledge/04`, `05` und `06` als Handlungsanweisung vor („Beide Kopien ändern",
+„zwei md5-Vergleiche"), während das Verzeichnis nicht existiert — die Bedien-Skills
+liegen nur noch unter `.claude/skills/` im Projekt. Alle vier Stellen sind mit
+`<!-- lint:historisch -->` als überholt gekennzeichnet statt gelöscht, weil die
+Begründung sonst verloren geht. Ebenso in `knowledge/04`: der Satz „Was fehlt: der
+Commit-Hash" war seit dem Werkzeuglauf falsch, das Manifest führt ihn.
+
+**Was bewusst nicht getan wurde.** Kein `verified` gesetzt — kein Mensch hat die
+Dateien gelesen. Keine Spalte „Vertrauen" in `INDEX.md` oder `catalog/by-repo.md`:
+beide erzeugt `writeMarkdownIndexes()`, ein Eintrag von Hand hielte bis zum nächsten
+`extract`. Kein Rauchtest für Kern-Set-Bausteine (M12b): `install --dry-run` über alle
+32 Kern-Set-IDs meldet bei 31 „nichts Ausführbares gefunden", einziger Träger ist
+`anthropics__skills/skill/webapp-testing` — eine Markdown-Datei hat kein
+Ausfallverhalten. Kein Textanteil zu `verify-recipes` und `eval --recipes`, weil der
+Werkzeuglauf beide verworfen hat.
+
+**Ein Befund, der bleibt.** Die sechs Kern-Sets bestehen aus 33 Zeilen mit 32
+verschiedenen IDs, **ausschliesslich vom Typ `skill` und `agent`** — kein Hook, kein
+Command, kein MCP. Der Pflichtteil aller Rezepte empfiehlt damit ausschliesslich
+Kontextmaterial und keinen einzigen Zwang. Das steht in Spannung zu Doktrin 1.1
+(„Hook = Zwang, nicht Bitte") und zu `harness-build` Schritt 4. Der Befund steht mit
+beiden Lesarten in `recipes/README.md` unter einer eigenen Überschrift; entschieden
+ist er nicht.
+
+**Prüfprotokoll.** `node tools/harness.mjs lint` → 16 Dateien, Nähte in 26, **1 Befund
+(0 hoch · 1 mittel · 0 niedrig)**, Exit-Code 0. Der eine mittlere Befund ist der
+bereits vorher bestehende: `CHANGELOG.md` wird an 6 Stellen zugesagt und entsteht erst
+beim ersten `update` — durch diesen Lauf ist keine Stelle dazugekommen. `eval
+--no-save` → alle Pflichtfälle bestanden. `knowledge "verifikationspfad zielprojekt
+auszufüllen"` findet die sechs neuen Rezept-Abschnitte; `knowledge "kern-set
+startauswahl kürzen"` liefert die umbenannten Abschnitte **mit** der Relativierung im
+Ausschnitt — die Probe, an der die alte Fassung scheiterte. Alle in diesem Lauf neu
+genannten IDs sind per `show` verifiziert; `update`, `sync` und `extract` liefen nicht.
+
+## [2026-08-07] revise | Die Werkzeug-Maßnahmen aus `06` umgesetzt — `update` fährt jetzt die Evals, `install` meldet Kollisionen statt still zu mischen, und der Katalog trennt Ladegröße von Ordnergröße
+
+**Was vorher galt.** `tools/harness.mjs` hatte zwölf Subcommands, von denen einer —
+`eval` — von nichts ausgelöst wurde und in keiner Übersicht stand. `install` prüfte
+Ziel-Kollisionen ausschließlich mit `fs.existsSync`, sah also nur, was bereits auf
+der Platte lag, und nie, was derselbe Aufruf eine Zeile später selbst dorthin
+schreiben würde; `--force` überschrieb nicht, sondern mischte zwei Autoren in einem
+Ordner. Der Zustandsbericht meldete jeden Skill bedingungslos als „aktiv … kein
+weiterer Schritt", auch wenn im Paket ein unregistriertes Hook-Skript lag. `search`
+und `show` gaben die Verzeichnisgröße als Kostenangabe aus. `stats` war der einzige
+zahlenausgebende Befehl ohne Einwand.
+
+**Was jetzt gilt.**
+
+- `cmdUpdate` hat vier Schritte; der vierte fährt `cmdEval` mit dem soeben gebauten
+  Katalog und schreibt das Ergebnis in den obersten Abschnitt der `CHANGELOG.md`.
+  Ein fehlendes `evals/`-Verzeichnis überspringt den Schritt, statt den Lauf
+  abzubrechen. **Der Exit-Code von `update` hängt damit auch am Eval-Lauf** — eine
+  bewusste Vertragsänderung: ein Update, das die Suche verschlechtert, ist kein
+  erfolgreiches Update.
+- `cmdEval` vergleicht die Ränge der erwarteten Treffer mit `evals/last-run.json` und
+  meldet Verschiebungen (`VERSCHOBEN`), bevor ein Fall durchfällt; `--json` gibt die
+  Bilanz maschinenlesbar aus, `--no-save` schreibt den Vergleichsstand nicht fort.
+- `cmdInstall` führt die geplanten Ziele in einer Map mit. Zwei Bausteine auf denselben
+  Pfad brechen den ganzen Aufruf ab — auch mit `--force`, denn das ist eine Auswahl
+  und keine Überschreibfrage. `--dry-run` sagt damit dieselbe Kollision voraus, die
+  der Echtlauf trifft. `--force` leert das Zielverzeichnis vor dem Kopieren.
+  Konfigurationsdateien (`hooks.json`, `.mcp.json`) werden gesondert gemeldet, mit den
+  Schlüsseln, die im Konflikt stehen.
+- `activationOf` prüft bei Skills, Subagenten und Commands, ob im Paket eine
+  ausführbare Datei mit einem Lifecycle-Ereignis liegt, und hängt der Meldung „aktiv"
+  die Einschränkung an. Belegfall: `affaan-m__ecc/skill/delivery-gate` bringt ein
+  Hook-Skript mit, das ohne Eintrag in `.claude/settings.json` nie feuert — der Skill
+  wirkte, sein Gate nicht, und der Bericht sagte das Gegenteil.
+- Der Katalog führt bei Skills `entryBytes` (was beim Greifen sofort lädt) neben
+  `bytes` (was kopiert wird) und `exec` (wie viele Dateien ausgeführt statt gelesen
+  werden). `search`, `show` und der Kleinheitsbonus der Suche hängen an der
+  Ladegröße. Bis zum nächsten `extract` fällt alles auf `bytes` zurück und verhält
+  sich unverändert — eine Warnung wird nur ausgegeben, wo die Zahl belegt ist.
+- `list --to DIR` ist neu: es liest das Manifest eines Zielprojekts und bestimmt den
+  Zustand jedes Eintrags neu, statt den des Installationslaufs zu wiederholen.
+- `lint` bekommt vier Nähte dazu: die von der Bibliothek zugesagten eigenen Dateien
+  gegen das Dateisystem, die `Stand:`-Zeile der erzeugten Indizes gegen den Katalog,
+  Repos ohne einen einzigen Katalogeintrag, und in den Rezept-Tabellen die Spalten
+  Typ und KB gegen den Katalogeintrag derselben ID.
+- `stats` trägt seinen Einwand jetzt selbst: was die Zahl nicht sagt, und dass sie mit
+  jedem aufgenommenen Repo wächst.
+
+**Woran der Irrtum bemerkt wurde.** An drei Stellen hat das Werkzeug etwas anderes
+behauptet als getan: `--dry-run` sagte eine Kollision nicht voraus, die der Echtlauf
+fing; der Zustandsbericht nannte ein totes Gate wirksam; und die Größenangabe lag bei
+einem Skill mit umfangreichem Referenzmaterial um Faktor 160 über dem, was er
+tatsächlich in den Kontext lädt — die Bibliothek rankte damit ihre gründlichsten
+Skills nach unten. Alle drei sind dieselbe Fehlerklasse: eine Meldung, die für einen
+Teil des Vorgangs stimmt und deshalb für den Rest geglaubt wird.
+
+**Was offen bleibt.** Die neuen Katalogfelder wirken erst nach dem nächsten
+`extract`; der wurde bewusst nicht ausgelöst, weil er die Zahlen verändert, gegen die
+`lint` gerade prüft. Die neue Naht meldet seither einen mittleren Befund, der stimmt:
+`CHANGELOG.md` wird an sechs Stellen als vorhanden angesprochen, entsteht aber erst
+beim nächsten `update`. Nicht umgesetzt wurden ein eigener Subcommand
+`verify-recipes` (die Prüfung wohnt jetzt in `lint`, wie es der Abschnitt „Bewusst
+nicht umgesetzt" in `04` verlangt) und `eval --recipes` aus demselben Grund. Die
+Vertrauensstufe aus M5 liest `show` aus Kommentarzeilen in `sources.txt`; solange dort
+keine stehen, gibt es unverändert aus.
+
 ## [2026-08-07] ingest | Fünf Vorträge zu Forward Deployed Engineering und simulationsbasiertem Prüfen ausgewertet — neues Kapitel `08`, sechs neue Maßnahmen, Korrekturen in fünf bestehenden Dateien
 
 **Woher das Wissen stammt.** Fünf Rohquellen unter `Learnings/`, alle Konferenzvorträge

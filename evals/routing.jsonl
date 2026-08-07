@@ -26,3 +26,4 @@
 {"frage":"review","mindestens":1,"warum":"Grundfall für den Präzisionsvergleich"}
 {"frage":"code review","hoechstensSoVieleWie":"review","warum":"Zwei Wörter dürfen nie mehr Treffer liefern als eins"}
 {"frage":"react component testing","hoechstensSoVieleWie":"review","warum":"Drei Wörter, klar eingegrenzte Absicht"}
+{"frage":"react typescript app with tests and deployment","erwartet":["affaan-m__ecc/skill/react-patterns"],"topN":5,"maxTreffer":60,"optional":true,"warum":"Profilartige Anfrage, wie sie aus Schritt 1 von harness-build entsteht: sieben Wörter, kein Baustein trägt alle. Die UND-Suche fällt auf ODER zurück und liefert 844 Treffer — die präzisere Frage wird schlechter beantwortet als die gröbere. Bekannte Schwäche, hier festgehalten statt vergessen."}

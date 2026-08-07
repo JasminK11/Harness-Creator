@@ -33,6 +33,13 @@ eigene Oberfläche — dort genügt Rezept 01 plus einzeln `api-design`. Ein rei
 Datenskript ohne Konsumenten braucht nichts davon. Für Python-Backends gilt
 zusätzlich Rezept 03 (FastAPI/Django haben eigene Bausteine).
 
+**Voraussetzung eines Kern-Set-Bausteins:**
+`msitarzewski__agency-agents/agent/api-tester` ruft Endpunkte tatsächlich auf. Er
+braucht eine **erreichbare Instanz** — lokal gestartet oder als Staging-URL — samt
+gültigen Zugangsdaten für die geschützten Routen. Gibt es beides nicht, liest er
+Code wie jeder andere Agent auch, und der Beobachtungs-Hebel dieses Projekttyps
+fällt weg. Das ist eine Aussage über den Baustein, keine Vermutung über dein Projekt.
+
 ## Die Schmerzpunkte dieses Projekttyps
 
 | Symptom | Doktrin |
@@ -48,7 +55,12 @@ Schema-Validierung). Nach Doktrin 8/Frage 3 heisst das: **kein Evaluator, sonder
 Checks.** Das Kern-Set setzt deshalb auf Vertragsprüfung und zwei enge Reviewer
 statt auf einen Bewertungs-Loop.
 
-## Kern-Set (Pflicht)
+## Kern-Set (Startauswahl, zu kürzen)
+
+**Bindend ist die Spalte „Welches Problem er löst", nicht die Liste.** Wer das
+Symptom im eigenen Projekt nicht wiederfindet, streicht die Zeile — vier passende
+Bausteine schlagen sieben plausible. Dass jede ID im Katalog auflöst, macht sie
+belegt, nicht verpflichtend.
 
 | ID | Typ | Welches Problem er löst | KB |
 |---|---|---|---:|
@@ -59,7 +71,7 @@ statt auf einen Bewertungs-Loop.
 | `affaan-m__ecc/agent/security-reviewer` | agent | Secrets, SSRF, Injection, unsichere Krypto, OWASP Top 10 — ausgelöst durch jeden Endpunkt mit Nutzereingabe. | 4 |
 | `msitarzewski__agency-agents/agent/api-tester` | agent | Endpunkte tatsächlich aufrufen statt Code lesen. Der Beobachtungs-Hebel dieses Projekttyps. | 12 |
 
-Sechs Bausteine, rund 52 KB.
+Sechs Bausteine, rund 52 KB. Das ist die Obergrenze für diesen Projekttyp.
 
 ## Erweiterung (optional)
 
@@ -94,6 +106,23 @@ node tools/harness.mjs install \
   msitarzewski__agency-agents/agent/api-tester \
   --to <projektpfad>
 ```
+
+## Verifikationspfad — auszufüllen, bevor eingeführt wird
+
+```
+Befehl im Zielprojekt, der ein Ja/Nein liefert:  ______________________
+Zuletzt grün gelaufen am:                        ______________________
+```
+
+Hier steht **kein** fester Befehl, weil kein Rezept die Skripte eines fremden
+Projekts kennt. Trag ein, was dort tatsächlich existiert und grün läuft — bei diesem
+Projekttyp typischerweise die Integrationstests, ein Schema- oder OpenAPI-Abgleich,
+oder ein Migrationslauf gegen eine Wegwerf-Datenbank.
+
+**Existiert kein solcher Befehl, ist er der erste Arbeitsschritt**, nicht der letzte.
+Ohne ihn ist nach dem Einbau nicht messbar, ob sich etwas verbessert hat: alles, was
+bleibt, ist das Urteil des Agenten über sich selbst — genau die Schwäche, gegen die
+die halbe Auswahl oben gerichtet ist.
 
 ## Reihenfolge der Einführung
 

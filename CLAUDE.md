@@ -127,7 +127,7 @@ node tools/harness.mjs install <id> --to "<dieses Projekt>"
 Reihenfolge bei einer Frage nach passenden Bausteinen: erst `search`, dann
 `show` für die engere Auswahl, dann `install`.
 
-Wer mehr braucht — alle elf Befehle, Bestand nach Typ und Domäne, die vollen
+Wer mehr braucht — alle 13 Befehle, Bestand nach Typ und Domäne, die vollen
 Verbote —, liest `C:\Users\info\OneDrive\Desktop\Harnes Creator\INDEX.md` **komplett**. Sie ist unter
 hundert Zeilen lang und genau dafür da. Kein Ersatz dafür, im Verzeichnis der
 Bibliothek herumzusuchen.

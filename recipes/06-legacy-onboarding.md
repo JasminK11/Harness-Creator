@@ -50,7 +50,12 @@ Die Gegenmassnahme ist nicht "mehr Agenten", sondern **Kontext-Isolation plus
 persistente Notizen**. Explorationsarbeit gehört in Subagenten mit eigenem
 Fenster; das Ergebnis gehört in Dateien, nicht in den Chatverlauf.
 
-## Kern-Set (Pflicht)
+## Kern-Set (Startauswahl, zu kürzen)
+
+**Bindend ist die Spalte „Welches Problem er löst", nicht die Liste.** Wer das
+Symptom im eigenen Projekt nicht wiederfindet, streicht die Zeile — vier passende
+Bausteine schlagen sieben plausible. Dass jede ID im Katalog auflöst, macht sie
+belegt, nicht verpflichtend.
 
 | ID | Typ | Welches Problem er löst | KB |
 |---|---|---|---:|
@@ -60,8 +65,9 @@ Fenster; das Ergebnis gehört in Dateien, nicht in den Chatverlauf.
 | `affaan-m__ecc/agent/spec-miner` | agent | Zieht aus dem bestehenden Code Requirements und Invarianten mit Test-Ankern. Erzeugt den Massstab, an dem "fertig" später messbar wird. | 15 |
 | `mattpocock__skills/skill/handoff` | skill | Verdichtet den Stand in ein Übergabedokument für die nächste Session. Der Handoff, den Doktrin 5 verlangt — 1 KB, keine Ausrede ihn wegzulassen. | 1 |
 
-Fünf Bausteine, rund 36 KB. Bewusst klein: In einer fremden Codebasis ist
-Kontext die knappste Ressource, und jeder Baustein verbraucht davon.
+Fünf Bausteine, rund 36 KB. Das ist die Obergrenze für diesen Projekttyp. Bewusst
+klein: In einer fremden Codebasis ist Kontext die knappste Ressource, und jeder
+Baustein verbraucht davon.
 
 ## Erweiterung (optional)
 
@@ -105,6 +111,23 @@ node tools/harness.mjs install \
   mattpocock__skills/skill/handoff \
   --to <projektpfad>
 ```
+
+## Verifikationspfad — auszufüllen, bevor eingeführt wird
+
+```
+Befehl im Zielprojekt, der ein Ja/Nein liefert:  ______________________
+Zuletzt grün gelaufen am:                        ______________________
+```
+
+Hier steht **kein** fester Befehl, weil kein Rezept die Skripte eines fremden
+Projekts kennt — und bei diesem Projekttyp weiss es zu Beginn nicht einmal der
+Mensch. Trag ein, was sich als Erstes zum Laufen bringen lässt: der Build, die
+vorhandene Test-Suite, notfalls nur ein Start ohne Absturz.
+
+**Existiert kein solcher Befehl, ist er der erste Arbeitsschritt**, nicht der letzte.
+In einer fremden Codebasis ist er sogar das erste Ergebnis überhaupt: solange nichts
+reproduzierbar läuft, ist jede Aussage über die Architektur unwiderlegbar — und genau
+das ist die Fehlermode, gegen die die halbe Auswahl oben gerichtet ist.
 
 ## Reihenfolge der Einführung
 

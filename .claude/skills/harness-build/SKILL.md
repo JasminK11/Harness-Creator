@@ -43,8 +43,10 @@ node tools/harness.mjs uninstall <id...> --to <proj> # wieder entfernen
 node tools/harness.mjs bootstrap --to <proj>       # nur Zugriffsregel schreiben
 ```
 
-Das ist der Ausschnitt, den du hier brauchst. Alle elf Befehle mit sämtlichen Flaggen
-gibt `node tools/harness.mjs` ohne Argument aus; `INDEX.md` nennt sie mit Zweck.
+Das ist der Ausschnitt, den du hier brauchst. **Alle** Befehle mit sämtlichen Flaggen
+gibt `node tools/harness.mjs` ohne Argument aus; `INDEX.md` nennt sie mit Zweck. Nenne
+die Zahl der Befehle nie aus dem Gedächtnis — sie wächst, und `lint` prüft jeden
+Aufruf aus einem Codeblock gegen den Dispatcher.
 
 `install` legt im Zielprojekt zwei Dinge an: `.claude/harness-manifest.json` als
 Herkunftsnachweis und einen Regelblock in der `CLAUDE.md`, damit der Agent im
@@ -81,8 +83,51 @@ Vieles davon kannst du dem Projekt selbst entnehmen — `package.json`, `pyproje
 `go.mod`, vorhandene CI-Konfiguration, `README`. Tu das zuerst. Frag nur nach, was du
 nicht sehen kannst, und nutz dafür `AskUserQuestion` statt einer offenen Frage.
 
-Fasse dein Verständnis in drei Sätzen zusammen und leg es dem User vor. Wenn deine
-Zusammenfassung falsch ist, ist alles Weitere falsch.
+#### 1a. Liegt eine `PLAN.md` im Projekt?
+
+Dann sind **Abschnitt 5 (Schmerzpunkte)** und **Abschnitt 6 (Prüfverfahren)** deine
+Symptomliste und deine Prüfschleifen-Erhebung; die Rückfragen aus diesem Schritt
+entfallen insoweit. `/harness-plan` schreibt die Datei genau dafür. Die dort notierten
+Erfolgs-Bars sind der Massstab, an dem du in Schritt 5 begründest, warum ein Baustein
+drin ist.
+
+Die Liste ist die **Ausgangshypothese, kein Deckel**: findest du beim Lesen des Codes
+einen Schmerzpunkt, den die `PLAN.md` nicht kennt, nimm ihn auf und sag dazu, dass er
+neu ist. Widerspricht der Code der `PLAN.md`, gewinnt der Code — und der Widerspruch
+gehört in den Bericht, nicht unter den Tisch.
+
+#### 1b. Welche Prüfschleifen liefern heute ein Ja/Nein?
+
+Erheben, bevor du suchst: Linter, Typechecker, Testsuite, Schema-Validierung,
+Security-Scan, CI-Gate. **Notiere den Befehl, nicht die Absicht** — `npm run lint`,
+`pytest -q`, `go vet ./...`, `mypy src/` — und unterscheide „vorhanden" von „läuft
+und ist grün": ein `"test": "echo no tests"` und eine rote CI sind keine Schleifen.
+
+Geht das aus den Projektdateien nicht hervor, ist **das** die eine Sache, die per
+`AskUserQuestion` an den User geht. Du sammelst Tatsachen und fällst kein
+Qualitätsurteil über das fremde Projekt.
+
+**Wenn es null Schleifen gibt**, ist der erste Baustein der, der „fertig" überhaupt
+entscheidbar macht — ein Check, den jemand ausführen kann. **Erst wenn ein Check
+existiert, der Hook**, der ihn bei jeder Änderung ausführt. Ein Hook führt eine
+Prüfung aus, er erzeugt keine: vorher installiert liegt er tot in `.claude/hooks/`.
+
+#### 1c. Was ausdrücklich nicht gebraucht wird
+
+Diese Angabe steht in keiner Projektdatei. Was du hier nicht fragst, setzt du selbst —
+und der User sieht es erst in der Auswahltabelle in Schritt 6, wo es zu spät ist.
+Frag es also: *Gibt es Bereiche, in denen du ausdrücklich keine Unterstützung willst?*
+
+#### 1d. Vorlegen
+
+Fasse dein Verständnis in drei Sätzen zusammen. Die Schmerzpunkte schreibst du als
+**nummerierte Liste** darunter — auf diese Nummern beziehen sich Auswahlkriterium 1 in
+Schritt 4 und die Begründung in Schritt 5 wörtlich. Leg beides zusammen dem User zur
+Bestätigung vor. Wenn deine Zusammenfassung falsch ist, ist alles Weitere falsch.
+
+**Eine leere Liste ist ein gültiges Ergebnis.** Findet sich kein benennbarer
+Schmerzpunkt, lautet die Antwort „kein Harness" — oder höchstens `bootstrap`, damit
+ein späterer Agent den Zugriffsweg zur Bibliothek kennt.
 
 ### 2. Bedarf in Suchen übersetzen
 
@@ -115,15 +160,27 @@ Vorauswahl. Nur bei der engeren Auswahl — höchstens fünf Bausteine — gehst
 
 Auswahlkriterien, in dieser Reihenfolge:
 
-1. **Löst er ein benanntes Problem dieses Projekts?** Wenn du nicht in einem Satz
-   sagen kannst, welchen Schmerz er nimmt, fliegt er raus.
+1. **Löst er ein benanntes Problem dieses Projekts?** Nenn die **Nummer** aus der
+   Schmerzpunkt-Liste aus Schritt 1d. Wenn du keine Nummer nennen kannst, fliegt er
+   raus — „passt gut zum Stack" ist keine Nummer.
 2. **Ist er spezifisch genug?** Ein Baustein für genau deinen Stack schlägt einen
    generischen. `react-reviewer` schlägt `code-reviewer`, wenn es eine React-Codebasis ist.
-3. **Ist er klein?** Die KB-Zahl steht in der Suchausgabe. Kleine Bausteine sind
-   leichter zu prüfen, leichter zu ändern und richten weniger Schaden an, wenn sie
-   nicht passen.
+3. **Wie viel lädt er, wenn er greift?** Entscheidend ist, was beim Greifen in den
+   Kontext geht — die Einstiegsdatei —, nicht die Ordnergrösse. Die beiden liegen
+   weit auseinander: `anthropics__skills/skill/docx` meldet 1125 KB bei einer
+   SKILL.md von 7 KB, weil 61 Dateien mitgezählt werden, die erst bei Bedarf gelesen
+   werden. Ein Baustein mit `references/` ist deshalb **nicht** automatisch teuer, und
+   umgekehrt kann eine einzelne riesige SKILL.md dauerhaft im Kontext liegen. Nimm die
+   Ladegrösse, wo das CLI sie ausgibt; sonst Ordnergrösse **und** Dateizahl zusammen
+   lesen und bei vielen Dateien nicht auf die KB-Zahl abstellen.
 4. **Ist er der einzige für dieses Problem?** Zwei Bausteine für dieselbe Sache sind
    schlechter als einer — das Modell muss dann raten, welchen es ziehen soll.
+5. **Erst bei fachlicher Gleichwertigkeit: die gepflegtere Quelle.** `show` hängt an
+   die `Repo`-Zeile die Vertrauensstufe aus `sources.txt` — `offiziell`, `gepflegt`
+   oder `unbekannt`, jeweils mit Halbsatz. Sie sortiert nichts und wählt nichts vor;
+   sie entscheidet nur den Gleichstand. **Fachliche Passung schlägt Herkunft**: ein
+   `unbekannt`-Baustein, der genau dieses Problem löst, schlägt einen `offiziell`-en,
+   der danebenliegt. Fehlt die Zeile, ist das kein Gütesiegel, sondern eine Lücke.
 
 Ein Hook, der eine Regel erzwingt, ist mehr wert als drei Skills, die sie empfehlen.
 Hooks laufen immer; Skills nur, wenn das Modell sie für einschlägig hält.
@@ -131,8 +188,10 @@ Hooks laufen immer; Skills nur, wenn das Modell sie für einschlägig hält.
 ### 5. Umfang begrenzen
 
 Es gibt keine feste Obergrenze, aber eine harte Regel: **Für jeden Baustein musst du
-in einem Satz benennen können, welches konkrete Problem dieses Projekts er löst.**
-Was diese Prüfung nicht besteht, kommt nicht rein.
+in einem Satz benennen können, welchen nummerierten Schmerzpunkt aus Schritt 1d er
+löst.** Was diese Prüfung nicht besteht, kommt nicht rein. Liegt eine `PLAN.md` vor,
+ist der Massstab die Erfolgs-Bar aus ihrem Abschnitt 2, an der sich zeigen müsste,
+dass der Baustein etwas geändert hat.
 
 In der Praxis landen die meisten Projekte bei 5 bis 12 Bausteinen. Wer bei 20 landet,
 hat meist nicht ausgewählt, sondern gesammelt.
@@ -145,10 +204,55 @@ schlagen mehr überlappende.
 
 ### 6. Auswahl vorlegen
 
-Bevor du irgendetwas kopierst, legst du die Auswahl vor:
+Bevor du irgendetwas kopierst, legst du die Auswahl vor. Eine Zeile über der Tabelle
+steht, was du in Schritt 1b erhoben hast:
 
-| Baustein | Typ | Löst welches Problem | KB |
-|---|---|---|---|
+```
+Prüfschleifen heute: npm run lint · npm test
+```
+
+oder, wenn es keine gibt:
+
+```
+Prüfschleifen heute: keine.
+```
+
+Dann die Tabelle:
+
+| Baustein | Typ | Löst welches Problem (Nr. aus Schritt 1) | laden | hält an |
+|---|---|---|---:|---|
+
+Die Spalte `laden` ist die Zahl, die `search` und `show` ausgeben — und zwar die
+Zahl vor `lädt`, sobald das CLI sie führt. Sie ist **nicht** die Ordnergrösse: die
+kann um ein Vielfaches darüber liegen, weil `references/` und mitgelieferte Skripte
+mitgezählt werden, aber erst bei Bedarf gelesen werden. `anthropics__skills/skill/docx`
+meldet 1125 KB bei einer SKILL.md von 7 KB — Faktor 160.
+
+Gibt die Ausgabe nur eine einzige Zahl aus, ist es die Ordnergrösse. Dann schreib sie
+hin **und** dazu, wie viele Dateien der Baustein hat: bei mehr als einer Handvoll
+Dateien ist die Zahl eine Obergrenze, kein Preis. Erfinde keine Ladegrösse.
+
+#### Die Spalte „hält an" — Bausteine, die den Menschen anhalten
+
+Ein Baustein, der den Ablauf **unterbricht**, ist etwas anderes als einer, der ihn
+unterstützt. Füll die Spalte, und zwar **nicht aus der Description**: die ist an genau
+dieser Stelle unzuverlässig — `affaan-m__ecc/skill/gateguard` schreibt „blocks
+Edit/Write/Bash", besteht aber nur aus einer `SKILL.md` und blockiert nichts.
+
+Der Eintrag kommt aus dem, was `show` und der Trockenlauf tatsächlich zeigen:
+
+| Befund | Eintrag |
+|---|---|
+| Typ `hook`, und `show` zeigt `PreToolUse`, `Stop` oder `SubagentStop` | **ja** |
+| Ausführbare Datei im Paket, die eines dieser Ereignisse nennt — der Trockenlauf listet sie namentlich, der Zustandsbericht schreibt „aber: enthält …" | **ja, sobald registriert** |
+| Nur Text, der ein Gate beschreibt | `—` — bremst, blockiert nicht |
+
+Unter der Tabelle je Baustein mit **ja** eine Zeile:
+
+- **was** blockiert wird — Ereignis und Werkzeug (`PreToolUse` auf `Write`),
+- **wann** es feuert — bei jeder Änderung, nur am Sitzungsende, nur bei Subagenten,
+- **wie man es wieder abstellt** — der Eintrag aus `.claude/settings.json`, der
+  entfernt wird, oder die Datei, die gelöscht wird.
 
 Dazu, was du geprüft und verworfen hast, mit Begründung. Dann `AskUserQuestion` zur
 Bestätigung. Kopieren ohne Bestätigung ist nicht vorgesehen — der User kennt sein
@@ -174,6 +278,21 @@ etwas Ausführbares mit, legst du die Fundstellen dem User vor und holst seine
 Zustimmung; erst dann der echte Lauf. `--yes` überspringt nur die Rückfrage des
 CLI, nicht die des Users — ohne `--yes` bricht `install` in einer Agenten-Sitzung
 ab, weil dort kein Terminal für die Rückfrage da ist.
+
+#### Wenn `install` eine Kollision meldet
+
+Zwei Bausteine, die auf denselben Zielpfad wollen (klassisch: `hooks.json` aus
+mehreren Repos, `.mcp.json`, gleichnamige Skills verschiedener Autoren), lassen den
+ganzen Lauf abbrechen — auch mit `--force`, und im Trockenlauf genauso wie im echten.
+Das ist Absicht.
+
+**Löse die Kollision durch Auswahl, nicht durch `--force`.** Geh zurück in Schritt 4,
+entscheide, welcher der beiden Bausteine das Problem besser löst, und nimm den anderen
+raus. `--force` überschreibt einen **vorhandenen** Bestand im Zielprojekt — es ist
+kein Mittel, zwei Autoren in denselben Ordner zu mischen; genau dieser Mischbestand war
+der Grund für den Abbruch. Bei `hooks.json` und `.mcp.json` nennt das CLI die
+Schlüssel, die im Konflikt stehen: das ist Konfiguration, kein Baustein, und die
+Zusammenführung entscheidet der User.
 
 ### 7b. Den Zustandsbericht auswerten
 
@@ -204,6 +323,50 @@ Berichte knapp: was installiert wurde, welches Problem es jeweils löst, und —
 wörtlich aus dem Zustandsbericht — welche Bausteine `[inaktiv]` sind und was ihnen
 fehlt (Hook-Registrierung, MCP-Zugangsdaten, Plugin-Aktivierung, Anpassung an den
 Stack). Melde nie "installiert", wo der Bericht `[inaktiv]` sagt.
+
+Drei Dinge gehören zusätzlich in den Bericht:
+
+- **Je „ja" in der Spalte „hält an" eine Zeile, was den Baustein zum Schweigen bringt.** Wer nicht weiss,
+  wie er ein Gate wieder loswird, umgeht es beim ersten Ärger — und dann steht es im
+  Projekt, ohne zu wirken. Nenne den Eintrag in `.claude/settings.json` oder die
+  Datei, die dafür weg muss.
+- **Der ausgefüllte Verifikationsbefehl.** Der Befehl aus Schritt 1b, mit dem sich im
+  Zielprojekt zeigen lässt, ob das Harness etwas geändert hat. Gab es keinen, steht
+  hier der Befehl, den einzurichten der erste Arbeitsschritt ist — und die Aussage,
+  dass bis dahin niemand messen kann, ob die Auswahl gewirkt hat.
+- **Was nur teilweise wirkt.** Der Zustandsbericht schreibt `[aktiv]` mit einem
+  `aber:` darunter, wenn ein Skill ein Hook-Skript mitbringt, das nicht registriert
+  ist. Diese Zeile wörtlich übernehmen — sie ist der Unterschied zwischen einem
+  scharfen und einem angekündigten Gate.
+
+### 9. Rückmeldung an die Bibliothek
+
+Ein Lauf gegen ein fremdes Projekt ist die einzige Gelegenheit, an der die Bibliothek
+erfährt, wo sie nicht trägt. Ohne diesen Schritt geht das Wissen mit der Sitzung
+verloren.
+
+1. **Die tatsächlich abgesetzten Suchen wörtlich mitschreiben** — Frage, Filter,
+   gewählter Baustein. **Und die Suchen, die nichts Brauchbares lieferten**: die sind
+   der eigentliche Ertrag. Aus einer solchen Notiz wird ein Fall in
+   `evals/routing.jsonl` (`frage`, `erwartet`, `warum`); ein sachlich falscher Treffer
+   kommt als `verboten` in denselben Fall. Die Falldatei hat einen Umfangsdeckel — ein
+   neuer Fall **ersetzt** einen schwächeren, er kommt nicht dazu.
+2. **Der fehlende Baustein bekommt einen benannten Ort.** Am Ende von `sources.txt`
+   steht ein Kommentarblock „Lücken", eine Zeile je Lücke:
+
+   ```
+   # Lücke: <Suche> · <Projekt> · <Datum> · Kandidat: <Repo-URL oder "keiner">
+   ```
+
+   **Eine leere Lückenliste ist ein gültiges Ergebnis.** Sie heisst, der Bestand hat
+   gereicht — nicht, dass niemand hingesehen hat. Schreib das hin.
+3. **Drei Fragen an den Besitzer, als Text, nicht als Auswahl:** Was hat gefehlt oder
+   nicht gepasst? War das an diesem Projekt oder allgemein? Wenn allgemein: welches
+   Rezept oder welcher Wissensabschnitt zieht nach?
+4. **Einarbeitung über die vorhandenen Bahnen.** Führt der Befund zu einer Rezept-
+   oder Wissensänderung, ist das ein `revise`-Eintrag in `knowledge/LOG.md`, und
+   zuständig bleibt der Subagent `wissensbank-autor`. Kein neues Protokoll, keine
+   neue Aktionsart, keine eigene Datei.
 
 ## Wenn nichts Passendes da ist
 

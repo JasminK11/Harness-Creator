@@ -65,6 +65,38 @@ function readSources() {
     .filter(Boolean);
 }
 
+/**
+ * Vertrauensstufen aus den Kommentarzeilen von `sources.txt`.
+ *
+ * Format: eine Zeile `# Vertrauen: offiziell | gepflegt | unbekannt — <Halbsatz>`
+ * unmittelbar über der Repo-Zeile, auf die sie sich bezieht.
+ *
+ * Warum in einer eigenen Funktion und nicht in `readSources()`: dort hinge
+ * `sync` und `extract` an einem Feld ohne jede Logik. Die Stufe ist eine Angabe
+ * für Menschen — sie ändert keine Sortierung, keine Auswahl, keinen Punktwert.
+ * Ein nachgebauter Vertrauens-Tiebreaker wurde ausprobiert und verworfen: er löste
+ * die Dominanz eines grossen Repos nicht (die ist ein Bestandseffekt) und hob
+ * dafür beschreibungslose Einträge nach oben.
+ *
+ * Fehlt die Zeile — heute bei allen Repos —, gibt `show` unverändert aus.
+ */
+function vertrauensstufen() {
+  const out = new Map();
+  if (!fs.existsSync(SOURCES_FILE)) return out;
+  let offen = null;
+  for (const roh of fs.readFileSync(SOURCES_FILE, "utf8").split(/\r?\n/)) {
+    const l = roh.trim();
+    if (!l) { offen = null; continue; }
+    const v = l.match(/^#\s*Vertrauen:\s*(.+)$/i);
+    if (v) { offen = v[1].trim(); continue; }
+    if (l.startsWith("#")) continue;
+    const m = l.match(/github\.com\/([^/]+)\/([^/.\s]+)/);
+    if (m && offen) out.set(`${m[1]}__${m[2]}`, offen);
+    offen = null;
+  }
+  return out;
+}
+
 function die(msg) {
   console.error("FEHLER: " + msg);
   process.exit(1);
@@ -138,13 +170,25 @@ function walk(dir, fn, depth = 0) {
   }
 }
 
+/**
+ * Grösse, Dateizahl — und wie viele davon ausgeführt statt gelesen werden.
+ *
+ * `exec` wird hier mitgezählt, weil der Baum ohnehin abgelaufen wird. Es ist
+ * bewusst nur die **Zahl** und bewusst nur nach Endung: der Fundort mit
+ * Zeilennummer und die Mustersuche bleiben, wo sie hingehören — in `inspectItem()`
+ * zur Installationszeit, wo eine geänderte Musterliste sofort wirkt und keinen
+ * Katalogneubau erzwingt. Was der Katalog trägt, ist die eine Angabe, die vor der
+ * Auswahl gebraucht wird und sich nur mit dem Bestand ändert: bringt dieser
+ * Baustein Code mit, oder ist er Text?
+ */
 function dirSize(dir) {
-  let bytes = 0, files = 0;
+  let bytes = 0, files = 0, exec = 0;
   walk(dir, (p, isDir) => {
     if (isDir) return;
     try { bytes += fs.statSync(p).size; files++; } catch { /* egal */ }
+    if (EXEC_EXT.test(path.basename(p))) exec++;
   });
-  return { bytes, files };
+  return { bytes, files, exec };
 }
 
 // ---------------------------------------------------------------- Domain-Klassifikation
@@ -276,7 +320,13 @@ function extractRepo(repoDir, repoName) {
         path: rel(skillDir),
         entry: r,
         bytes: size.bytes,
+        // Was beim Greifen **sofort** in den Kontext geht: die SKILL.md, nicht der
+        // Ordner. `references/` und `assets/` werden erst gelesen, wenn der Skill
+        // sie nennt — oder nie. Beide Zahlen zu führen ist der Punkt: `bytes`
+        // beantwortet "was kopiere ich", `entryBytes` "was kostet es mich".
+        entryBytes: safeSize(full),
         files: size.files,
+        exec: size.exec,
         meta: pick(fm, ["allowed-tools", "argument-hint", "model", "license", "version"]),
         domains: classify(name, fm.description, r),
       });
@@ -397,6 +447,7 @@ function extractRepo(repoDir, repoName) {
         entry: r,
         bytes: size.bytes,
         files: size.files,
+        exec: size.exec,
         meta: pick(j, ["version", "author"]),
         domains: classify(j.name, j.description, r),
       });
@@ -561,6 +612,8 @@ function befehlsUebersicht() {
     bootstrap: ["nur die Zugriffsregel schreiben", "in die CLAUDE.md eines Projekts, ohne Bausteine"],
     knowledge: ["die Wissensbank befragen", "liefert Abschnitte, nicht Dateien — auch `know`, `why`"],
     lint:      ["Wissensbank und Nähte prüfen", "tote Verweise, abgelaufene Metadaten, falsche IDs"],
+    eval:      ["Routing-Evals fahren", "findet die Suche noch, was sie finden soll — läuft als Schritt 4 von `update` mit"],
+    list:      ["zeigt, was in einem Zielprojekt liegt", "aus dessen Manifest, mit heutigem Wirksamkeitszustand"],
     stats:     ["Bestandszahlen", "die Quelle für jede Zahl, die man über den Katalog sagt"],
     update:    ["Repos pullen + Katalog neu bauen", "dauert Minuten, schreibt den Katalog neu"],
     sync:      ["nur Repos pullen/klonen", "Teilschritt von `update`"],
@@ -712,10 +765,14 @@ function writeMarkdownIndexes(catalog) {
     "Die Bausteine stehen unter den Lizenzen ihrer jeweiligen Urheber. Dieses Repo",
     "enthält keine Kopien, nur den Katalog.",
     ""];
+  // Die Commit-Spalte ist der Anker, gegen den ein installierter Baustein später
+  // geprüft werden kann: das Manifest im Zielprojekt führt denselben `head` unter
+  // `commit`. Ohne ihn steht dort ein Datum, und ein Datum sagt nicht, welcher
+  // Stand kopiert wurde — die Klone werden bei jedem `sync` hart zurückgesetzt.
   const repoTabelle = (liste) => {
-    rp.push("| Repo | Bausteine | Schwerpunkt | Stand |", "|---|---:|---|---|");
+    rp.push("| Repo | Bausteine | Schwerpunkt | Commit | Stand |", "|---|---:|---|---|---|");
     for (const r of liste) {
-      rp.push(`| [${r.owner}/${r.repo}](${r.url}) | ${r.count} | ${r.domains.join(", ") || "—"} | ${(r.lastCommit || "").slice(0, 10)} |`);
+      rp.push(`| [${r.owner}/${r.repo}](${r.url}) | ${r.count} | ${r.domains.join(", ") || "—"} | ${r.head ? `\`${r.head}\`` : "—"} | ${(r.lastCommit || "").slice(0, 10)} |`);
     }
     rp.push("");
   };
@@ -755,6 +812,35 @@ function loadCatalog() {
   if (!fs.existsSync(INDEX_JSON)) die("catalog/index.json fehlt — erst 'node tools/harness.mjs update' laufen lassen.");
   return JSON.parse(fs.readFileSync(INDEX_JSON, "utf8"));
 }
+
+/**
+ * Was ein Baustein beim Greifen sofort in den Kontext lädt.
+ *
+ * Warum das nicht `bytes` ist: `bytes` ist die Verzeichnisgrösse. Ein Skill mit
+ * 7 KB SKILL.md und 1.118 KB Referenzmaterial wurde damit als "1125 KB" angezeigt —
+ * Faktor 160 über dem, was er tatsächlich kostet. Zwei Stellen handelten auf diese
+ * Zahl (das Auswahlkriterium in `harness-build`, der Kleinheitsbonus der Suche),
+ * die Bibliothek rankte also ausgerechnet ihre gründlichsten Skills nach unten.
+ *
+ * Der Rückfall auf `bytes` ist kein Schönheitsfehler, sondern nötig: Kataloge, die
+ * vor dieser Änderung gebaut wurden, führen `entryBytes` nicht. Bis zum nächsten
+ * `extract` verhält sich alles wie zuvor, statt Unsinn anzuzeigen.
+ */
+const ladeBytes = (i) => (typeof i.entryBytes === "number" ? i.entryBytes : i.bytes);
+
+/** Ob die Ladegrösse **gemessen** ist oder nur der Rückfall auf die
+ *  Verzeichnisgrösse. Bei einer einzelnen Datei sind beide dasselbe, also ist sie
+ *  auch dort belegt. Nur wo sie belegt ist, darf eine Warnung darauf gestützt
+ *  werden — sonst meldet der Rückfall bei jedem grossen Ordner eine grosse
+ *  SKILL.md, und das ist genau die Falschaussage, gegen die diese Änderung ist. */
+const ladeBytesBelegt = (i) => typeof i.entryBytes === "number" || i.files === 1;
+
+/** Ab hier steht eine SKILL.md dauerhaft im Kontext, sobald der Skill greift.
+ *  Eine Schwelle, kein Budget: eine Summe über alle Bausteine misst nichts, weil
+ *  sie unterstellt, dass alle gleichzeitig greifen. */
+const ENTRY_GROSS = 40 * 1024;
+
+const kb = (b) => Math.max(1, Math.round(b / 1024));
 
 /** Erkennungsmerkmale einer deutschen Suchanfrage jenseits der Umlaute.
  *  Bewusst knapp: der Hinweis darf nicht bei englischen Anfragen erscheinen, sonst
@@ -803,7 +889,9 @@ function cmdSearch(argv) {
       if (inAll) score += 3;
     }
     // Kleine Bausteine bevorzugen: billiger einzubauen, leichter zu prüfen.
-    if (score > 0 && i.bytes < 20000) score += 1;
+    // Gemessen am Einstiegsdokument, nicht am Ordner — sonst bestraft der Bonus
+    // mitgeliefertes Referenzmaterial, das gar nicht geladen wird.
+    if (score > 0 && ladeBytes(i) < 20000) score += 1;
     return { i, score, hits };
   });
 
@@ -846,7 +934,19 @@ function cmdSearch(argv) {
   for (const { i } of scored.slice(0, limit)) {
     console.log(`${i.type.padEnd(7)} ${i.id}`);
     console.log(`        ${short(i.description, 150) || "(keine Beschreibung)"}`);
-    console.log(`        ${Math.max(1, Math.round(i.bytes / 1024))} KB · ${i.files} Datei(en) · ${i.domains.join(", ")}`);
+    const lade = ladeBytes(i);
+    // Bei einer einzelnen Datei sind beide Zahlen dieselbe — dann nicht zweimal
+    // dasselbe hinschreiben, sonst wird die Zeile länger und sagt weniger.
+    const groesse = lade === i.bytes
+      ? `${kb(i.bytes)} KB · ${i.files} Datei(en)`
+      : `${kb(lade)} KB lädt · ${kb(i.bytes)} KB gesamt in ${i.files} Datei(en)`;
+    // Vor der Auswahl sichtbar, nicht erst an der Installationsgrenze: wer zwischen
+    // zwei gleichwertigen Bausteinen wählt, soll wissen, dass einer davon Code
+    // mitbringt, den Claude Code später von selbst startet.
+    const codeHinweis = i.type === "hook" ? "Hook — startet von selbst"
+      : (i.exec > 0 ? `${i.exec} ausführbare Datei(en)` : "");
+    console.log(`        ${groesse} · ${i.domains.join(", ")}${codeHinweis ? " · " + codeHinweis : ""}`);
+    if (ladeBytesBelegt(i) && lade > ENTRY_GROSS) console.log(`        grosse ${path.basename(i.entry || "SKILL.md")} — steht ab dem Greifen dauerhaft im Kontext`);
     console.log("");
   }
   if (scored.length > limit) console.log(`... ${scored.length - limit} weitere. Mit --limit N mehr anzeigen.`);
@@ -868,9 +968,28 @@ function cmdShow(argv) {
 
   console.log(`ID          ${it.id}`);
   console.log(`Typ         ${it.type}`);
-  console.log(`Repo        ${it.repo}`);
+  // Die Stufe steht in `show`, nicht in `search`: sie ist ein Kriterium für die
+  // engere Wahl zwischen zwei fachlich gleichwertigen Bausteinen, keine Spalte für
+  // fünfundzwanzig Trefferzeilen — und fachliche Passung schlägt Herkunft.
+  const stufe = vertrauensstufen().get(it.repo);
+  console.log(`Repo        ${it.repo}${stufe ? `   (Vertrauen: ${stufe})` : ""}`);
   console.log(`Domänen     ${it.domains.join(", ")}`);
-  console.log(`Grösse      ${Math.max(1, Math.round(it.bytes / 1024))} KB in ${it.files} Datei(en)`);
+  const lade = ladeBytes(it);
+  console.log(`Grösse      ${kb(it.bytes)} KB in ${it.files} Datei(en)`);
+  if (lade !== it.bytes) {
+    // Die Token-Zahl ist eine Schätzung und wird so genannt: vier Zeichen je Token
+    // ist eine Faustregel, keine Messung, und sie gilt für englischen Fliesstext
+    // besser als für Codeblöcke. Trotzdem nützlicher als gar keine Grössenordnung.
+    console.log(`Lädt sofort ${kb(lade)} KB (${it.entry}) — grob geschätzt ~${Math.round(lade / 4 / 100) * 100} Token`);
+    console.log(`            Der Rest wird erst gelesen, wenn der Baustein selbst darauf verweist.`);
+  }
+  if (ladeBytesBelegt(it) && lade > ENTRY_GROSS) {
+    console.log(`            Achtung: über ${kb(ENTRY_GROSS)} KB Einstiegsdokument — das steht ab dem Greifen dauerhaft im Kontext.`);
+  }
+  if (it.exec > 0) {
+    console.log(`Ausführbar  ${it.exec} von ${it.files} Datei(en) haben eine Endung, unter der Code ausgeführt wird`);
+    console.log("            Was darin steht, meldet `install` vor dem Kopieren mit Fundstelle.");
+  }
   console.log(`Quelle      ${path.join(CLONE_DIR, it.path)}`);
   for (const [k, v] of Object.entries(it.meta || {})) console.log(`${k.padEnd(11)} ${v}`);
   console.log(`\nBeschreibung\n  ${short(it.description, 600) || "—"}`);
@@ -921,6 +1040,33 @@ function copyRecursive(src, dest, out = []) {
     fs.mkdirSync(path.dirname(dest), { recursive: true });
     fs.copyFileSync(src, dest);
     out.push(dest);
+  }
+  return out;
+}
+
+/**
+ * Konfigurationsdateien, die zufällig wie Bausteine aussehen.
+ *
+ * `hooks.json` und `.mcp.json` werden vom Extraktor katalogisiert wie alles andere,
+ * sind aber keine Pakete, sondern **Zustand des Zielprojekts**: dort stehen die
+ * Hooks und MCP-Server, die dieses Projekt schon hat. Eine solche Datei zu
+ * überschreiben heisst nicht "Baustein ersetzt", sondern "fremde Konfiguration
+ * gelöscht" — und zwar stumm, weil das Kopieren keinen Unterschied kennt.
+ */
+const KONFIG_DATEI_RE = /^(hooks\.json|\.mcp\.json|mcp\.json|settings\.json|settings\.local\.json)$/i;
+
+/** Schlüssel einer Claude-Konfiguration. Bei `hooks` und `mcpServers` trägt erst
+ *  die zweite Ebene die Aussage — "beide Dateien haben `hooks`" ist kein Befund,
+ *  "beide belegen `hooks.PreToolUse`" ist einer. */
+function konfigSchluessel(datei) {
+  let j;
+  try { j = JSON.parse(safeRead(datei)); } catch { return null; }
+  if (!j || typeof j !== "object") return null;
+  const out = new Set();
+  for (const [k, v] of Object.entries(j)) {
+    if ((k === "hooks" || k === "mcpServers" || k === "servers") && v && typeof v === "object") {
+      for (const k2 of Object.keys(v)) out.add(`${k}.${k2}`);
+    } else out.add(k);
   }
   return out;
 }
@@ -1066,6 +1212,14 @@ function printInspection(berichte) {
     if (restOhne > 0) console.log(`      ... ${restOhne} weitere ausführbare Datei(en) ohne Fundstelle`);
     if (b.gekuerzt) console.log("      (zu viele Dateien — nicht alle geöffnet, Rest ungeprüft)");
   }
+  // Die Summe, nicht nur die Einzelzeilen: die Auswahl wird als Menge getroffen
+  // ("dieses Kern-Set"), und die Frage vor dem Kopieren lautet, was das Paket
+  // zusammen kostet. Ohne diese Zeile muss sie jeder selbst addieren — und jede
+  // Bar-Formulierung in einem Rezept ("höchstens 50 KB") bliebe unprüfbar.
+  const summeBytes = berichte.reduce((s, b) => s + b.bytes, 0);
+  const summeDateien = berichte.reduce((s, b) => s + b.anzahl, 0);
+  console.log("");
+  console.log(`  Zusammen: ${berichte.length} Baustein(e), ${summeDateien} Datei(en), ~${fmtSize(summeBytes)}`);
   console.log("");
   console.log("  Das ist eine Sichtprüfung, kein Schutz: ein Textmuster-Abgleich erkennt keinen");
   console.log("  verschleierten Aufruf und sagt nichts über Absicht. Er zeigt, was sonst");
@@ -1184,6 +1338,37 @@ function hookSnippet(relPfad, ereignis, matcher) {
 }
 
 /**
+ * Ausführbare Dateien **im Paket eines Skills**, die ein Lifecycle-Ereignis nennen.
+ *
+ * Warum das gebraucht wird: `affaan-m__ecc/skill/delivery-gate` bringt ein
+ * `hooks/quality-gate.py` mit. Der Skill-Anteil wirkt durch blosses Vorhandensein —
+ * für ihn ist "aktiv, kein weiterer Schritt" richtig. Das mitgelieferte Skript
+ * dagegen bleibt unregistriert und feuert nie, das angekündigte Stop-Gate greift
+ * also nicht. Beides in einer Zeile "aktiv" zusammenzufassen ist die irreführendere
+ * Hälfte: wer den Bericht liest, hält das Gate für scharf.
+ *
+ * Bewusst nur Dateien mit einem Ereignisnamen im Code — ein Hilfsskript ohne
+ * `PreToolUse`/`Stop` ist Teil des Skills und wird von ihm aufgerufen, nicht von
+ * Claude Code. Der Deckel bei 200 Dateien hält Pakete mit Hunderten Dateien draussen.
+ */
+function mitgelieferteHooks(basis) {
+  const treffer = [];
+  try { if (!basis || !fs.statSync(basis).isDirectory()) return treffer; } catch { return treffer; }
+  let gesehen = 0;
+  walk(basis, (p, isDir) => {
+    if (isDir || gesehen >= 200 || treffer.length >= 4) return;
+    const b = path.basename(p);
+    if (!EXEC_EXT.test(b)) return;
+    gesehen++;
+    const ereignisse = hookEreignisse(safeRead(p), null);
+    if (ereignisse.length) {
+      treffer.push({ rel: path.relative(basis, p).split(path.sep).join("/"), ereignisse });
+    }
+  });
+  return treffer;
+}
+
+/**
  * Bestimmt den Zustand **eines** Manifest-Eintrags im Zielprojekt.
  *
  * Arbeitet auf der installierten Kopie, nicht auf dem Katalog. Damit gilt der
@@ -1203,7 +1388,18 @@ function activationOf(entry, target, extra = {}) {
     // Diese drei greifen durch blosses Vorhandensein — Claude Code liest die
     // Verzeichnisse beim Sitzungsstart selbst ein. Nichts einzutragen.
     const wo = entry.type === "skill" ? ".claude/skills" : entry.type === "agent" ? ".claude/agents" : ".claude/commands";
-    return { status: "aktiv", grund: null, wirkung: `wird aus ${wo}/ beim nächsten Sitzungsstart geladen — kein weiterer Schritt`, snippet: null };
+    // ... für den Skill-Anteil. Bringt das Paket ein Hook-Skript mit, gilt der Satz
+    // "kein weiterer Schritt" für dieses Skript **nicht**.
+    const hooks = mitgelieferteHooks(fs.existsSync(ziel) ? ziel : extra.quelle);
+    const einschraenkung = hooks.length
+      ? `enthält ${hooks.map((h) => `${h.rel} (${h.ereignisse.slice(0, 2).join("/")})`).join(", ")}` +
+        " — nicht in .claude/settings.json registriert, dieser Teil wirkt nicht"
+      : null;
+    return {
+      status: "aktiv", grund: null,
+      wirkung: `wird aus ${wo}/ beim nächsten Sitzungsstart geladen — kein weiterer Schritt`,
+      einschraenkung, snippet: null,
+    };
   }
 
   if (entry.type === "hook") {
@@ -1272,7 +1468,17 @@ function printActivation(zustaende, dry) {
   for (const { entry, z } of zustaende) {
     const marke = z.status === "aktiv" ? "[aktiv]  " : "[inaktiv]";
     console.log(`  ${marke} ${entry.id}  ->  ${entry.installedTo}`);
-    if (z.status === "aktiv") { console.log(`            ${z.wirkung}`); continue; }
+    if (z.status === "aktiv") {
+      console.log(`            ${z.wirkung}`);
+      // Die Einschränkung steht unter der aktiven Zeile, nicht als eigener Zustand:
+      // der Baustein *ist* aktiv, nur nicht in dem Teil, den seine Beschreibung
+      // am lautesten verspricht.
+      if (z.einschraenkung) {
+        console.log(`            aber: ${z.einschraenkung}`);
+        console.log("            Das Gate, das die Beschreibung verspricht, ist damit nicht scharf.");
+      }
+      continue;
+    }
     console.log(`            ${z.status}`);
     if (z.grund) console.log(`            ${z.grund}`);
     if (z.ereignisse && z.ereignisse.length > 1) {
@@ -1287,8 +1493,10 @@ function printActivation(zustaende, dry) {
     }
   }
   const aktiv = zustaende.filter((x) => x.z.status === "aktiv").length;
+  const teilweise = zustaende.filter((x) => x.z.status === "aktiv" && x.z.einschraenkung).length;
   const offen = zustaende.length - aktiv;
   console.log(`\n  Ergebnis: ${aktiv} von ${zustaende.length} wirksam, ${offen} brauchen einen Schritt von Hand.`);
+  if (teilweise) console.log(`  ${teilweise} davon nur teilweise: mitgeliefertes Hook-Skript nicht registriert (siehe "aber:").`);
   if (offen) console.log("  Wer diesen Lauf berichtet, nennt die [inaktiv]-Zeilen mit: kopiert heisst nicht wirksam.");
 }
 
@@ -1343,7 +1551,11 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
   L.push("");
   // Absoluter Pfad, kein blosses "INDEX.md": in einem fremden Projekt zeigt der
   // relative Name auf die falsche Datei oder ins Leere — und dann rät der Agent.
-  L.push(`Wer mehr braucht — alle elf Befehle, Bestand nach Typ und Domäne, die vollen`);
+  // Die Zahl aus dem Dispatcher lesen, nicht ausschreiben: "alle elf Befehle" stand
+  // hier, während der Dispatcher zwölf führte — und der Block wird in jedes
+  // Zielprojekt geschrieben, die falsche Zahl also vervielfältigt.
+  const befehlsZahl = [...cliOberflaeche().subcommands].filter((s) => !["know", "why"].includes(s)).length;
+  L.push(`Wer mehr braucht — alle ${befehlsZahl} Befehle, Bestand nach Typ und Domäne, die vollen`);
   L.push(`Verbote —, liest \`${path.join(ROOT, "INDEX.md")}\` **komplett**. Sie ist unter`);
   L.push("hundert Zeilen lang und genau dafür da. Kein Ersatz dafür, im Verzeichnis der");
   L.push("Bibliothek herumzusuchen.");
@@ -1381,7 +1593,10 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
     // ihn nicht auf Dauer als wirkungslos gemeldet bekommen. Die Angabe im
     // Manifest ist der Stand des Installationslaufs, die hier ist der von heute.
     for (const m of installed) {
-      const st = target ? activationOf(m, target).status : (m.status || "unbekannt");
+      const z = target ? activationOf(m, target) : null;
+      const st = z
+        ? z.status + (z.einschraenkung ? " (mitgeliefertes Hook-Skript nicht registriert)" : "")
+        : (m.status || "unbekannt");
       L.push(`| \`${m.id}\` | ${m.type} | \`${m.installedTo}\` | ${st} |`);
     }
     L.push("");
@@ -1436,13 +1651,13 @@ function writeClaudeMd(target, installed, catalogGeneratedAt) {
  *
  * Lieber ein Abbruch mit klarer Ansage als eine Aktion am falschen Ort.
  */
-function requireTarget(flags, befehl, { erlaubeSelbst = false, positional = false } = {}) {
+function requireTarget(flags, befehl, { erlaubeSelbst = false, positional = false, grund = "weil es in einem fremden Projekt schreibt" } = {}) {
   // `positional` nur dort, wo die freien Argumente nicht schon belegt sind:
   // bei install und uninstall sind das die Baustein-IDs, nicht das Ziel.
   const roh = flags.to || (positional ? flags._[0] : null);
   if (!roh || roh === true) {
     die(`Kein Zielverzeichnis angegeben.\n` +
-        `  ${befehl} verlangt --to, weil es in einem fremden Projekt schreibt.\n` +
+        `  ${befehl} verlangt --to, ${grund}.\n` +
         `  Beispiel: node tools/harness.mjs ${befehl} ... --to "C:\\Pfad\\zum\\Projekt"\n` +
         `  Für das aktuelle Verzeichnis ausdrücklich: --to .`);
   }
@@ -1467,6 +1682,13 @@ function cmdInstall(argv) {
   // Installationsgrenze: läge der Halt in der Kopierschleife, wäre der erste
   // Baustein längst geschrieben, während der zweite noch zur Bestätigung ansteht.
   const plan = [];
+  // Die bereits **geplanten** Ziele mitführen, nicht nur die vorhandenen.
+  // `fs.existsSync` sieht zur Planzeit nichts: geschrieben wird erst später. Genau
+  // daran ging die Kollision durch, die der Echtlauf dann traf — `--dry-run` sagte
+  // sie nicht voraus, und `--force` überschrieb nicht, sondern **mischte** zwei
+  // Autoren in einem Ordner.
+  const geplant = new Map();
+  let kollision = false;
   for (const id of flags._) {
     const it = findItem(cat, id);
     if (!it) { console.log(`  ! nicht gefunden: ${id}`); continue; }
@@ -1476,12 +1698,52 @@ function cmdInstall(argv) {
     const subdir = TARGET_BY_TYPE[it.type] || ".claude";
     const leaf = it.type === "skill" || it.type === "plugin" ? slug(it.name) : path.basename(it.path);
     const dest = path.join(target, subdir, leaf);
+    const zielRel = path.relative(target, dest).split(path.sep).join("/");
+    // Windows vergleicht Pfade ohne Rücksicht auf Gross-/Kleinschreibung; zwei
+    // Bausteine mit `Design-System` und `design-system` landen dort im selben Ordner.
+    const schluessel = path.resolve(dest).toLowerCase();
+
+    if (geplant.has(schluessel)) {
+      console.log(`  ! Kollision: \`${it.id}\` und \`${geplant.get(schluessel)}\` zielen beide auf ${zielRel}`);
+      kollision = true;
+      continue;
+    }
+    geplant.set(schluessel, it.id);
+
+    // Konfigurationsdateien sind kein Baustein-Paket, sondern Zustand des Projekts.
+    if (KONFIG_DATEI_RE.test(path.basename(dest)) && fs.existsSync(dest)) {
+      console.log(`  ! ${it.id} — \`${path.basename(dest)}\` ist eine Konfigurationsdatei des Projekts, kein Paket:`);
+      console.log("      sie würde als Ganzes ersetzt, nicht zusammengeführt.");
+      const vorhanden = konfigSchluessel(dest);
+      const neu = konfigSchluessel(src);
+      if (vorhanden && neu) {
+        const gemeinsam = [...neu].filter((k) => vorhanden.has(k));
+        console.log(gemeinsam.length
+          ? `      Im Konflikt: ${gemeinsam.slice(0, 8).join(", ")} — diese Einträge des Projekts gingen verloren.`
+          : `      Keine gemeinsamen Schlüssel (vorhanden: ${[...vorhanden].slice(0, 6).join(", ") || "—"}) — sie gingen trotzdem verloren.`);
+      } else {
+        console.log("      Eine der beiden Dateien ist kein lesbares JSON — Inhalt von Hand vergleichen.");
+      }
+      console.log("      Richtiger Weg: `show` lesen und die gewünschten Einträge von Hand übernehmen.");
+    }
 
     if (fs.existsSync(dest) && !flags.force) {
-      console.log(`  = ${it.id} — existiert schon (${path.relative(target, dest)}), --force zum Überschreiben`);
+      console.log(`  = ${it.id} — existiert schon (${zielRel}), --force zum Überschreiben`);
       continue;
     }
     plan.push({ it, src, dest });
+  }
+
+  // Eine Kollision im selben Aufruf ist kein Grund für "der letzte gewinnt": beide
+  // IDs wurden ausdrücklich genannt, und welche gemeint war, weiss nur der Aufrufer.
+  // Auch `--force` hebt das nicht auf — es erlaubt, Vorhandenes zu ersetzen, nicht,
+  // zwei Bausteine auf denselben Platz zu legen.
+  if (kollision) {
+    console.log("\n  Abbruch — nichts kopiert. Zwei Bausteine auf denselben Zielpfad ist");
+    console.log("  keine Frage von --force, sondern eine Auswahl: einen der beiden weglassen");
+    console.log("  oder den anderen in einem zweiten Aufruf mit --force installieren.");
+    process.exitCode = 1;
+    return;
   }
   if (!plan.length) return;
 
@@ -1512,6 +1774,19 @@ function cmdInstall(argv) {
   const now = new Date().toISOString();
   for (const { it, src, dest } of plan) {
     console.log(`  ${dry ? "~" : "+"} ${it.id} -> ${path.relative(target, dest).split(path.sep).join("/")}`);
+    // `--force` hiess bisher "Datei für Datei überschreiben". Was der neue Baustein
+    // nicht mitbringt, blieb liegen: eine `SKILL.md` des einen Autors über vierzehn
+    // `references/`-Dateien eines anderen. Das Ergebnis gehört niemandem, und das
+    // Manifest kann es nicht beschreiben. Also erst leeren, dann kopieren.
+    if (!dry && flags.force && fs.existsSync(dest)) {
+      const drin = path.resolve(dest).startsWith(path.resolve(target) + path.sep);
+      let istOrdner = false;
+      try { istOrdner = fs.statSync(dest).isDirectory(); } catch { /* egal */ }
+      if (drin && istOrdner) {
+        fs.rmSync(dest, { recursive: true, force: true });
+        console.log("      (--force: Zielordner vorher geleert — kein Mischbestand aus zwei Quellen)");
+      }
+    }
     const geschrieben = dry ? [] : copyRecursive(src, dest);
     // Die Dateiliste ist das, was den Weg zurück überhaupt erst möglich macht:
     // `installedTo` allein benennt nur den Ordner, und bei `mcp` sogar das
@@ -1727,6 +2002,61 @@ function cmdUninstall(argv) {
 }
 
 /**
+ * `list --to DIR` — was liegt in diesem Projekt, woher kam es, wirkt es heute?
+ *
+ * Warum als eigener Befehl und nicht als Nebenausgabe von `install`: Die Frage
+ * stellt sich vor allem dann, wenn gerade **nicht** installiert wird — beim
+ * Übernehmen eines fremden Projekts, vor einem `update`, nach einem Rückbau. Bis
+ * hierhin war der einzige Weg dorthin, das Manifest von Hand zu lesen; genau das
+ * verbietet der Rest dieses Werkzeugs an jeder anderen Stelle.
+ *
+ * Der Zustand wird **neu bestimmt** statt aus dem Manifest übernommen: `status`
+ * dort ist der Stand des Installationslaufs, nicht der von heute. Wer den Hook
+ * seither eingetragen hat, sieht ihn hier als aktiv.
+ */
+function cmdList(argv) {
+  const flags = parseFlags(argv);
+  // Der einzige lesende Befehl mit `--to`: kein Rückfall auf das
+  // Arbeitsverzeichnis, sonst berichtet er über ein anderes Projekt als gemeint.
+  const target = requireTarget(flags, "list", {
+    erlaubeSelbst: true, positional: true,
+    grund: "weil sonst offenbliebe, über welches Projekt es berichtet",
+  });
+  const mf = path.join(target, ".claude", "harness-manifest.json");
+  if (!fs.existsSync(mf)) {
+    console.log(`Kein Manifest in ${target}`);
+    console.log("  Dieses Projekt hat (noch) keine Bausteine aus der Bibliothek —");
+    console.log("  oder sie wurden von Hand kopiert und sind damit nicht nachweisbar.");
+    return;
+  }
+  let doc;
+  try { doc = JSON.parse(fs.readFileSync(mf, "utf8")); } catch (e) { die(`Manifest nicht lesbar: ${e.message}`); }
+  const items = Array.isArray(doc.items) ? doc.items : [];
+  console.log(`${items.length} Baustein(e) laut Manifest in ${target}`);
+  if (doc.catalogGeneratedAt) console.log(`Katalogstand bei der Installation: ${String(doc.catalogGeneratedAt).slice(0, 16).replace("T", " ")}`);
+  console.log("");
+
+  let aktiv = 0, fehlend = 0;
+  for (const e of items) {
+    const z = activationOf(e, target);
+    if (z.status === "aktiv") aktiv++;
+    const da = (e.files || []).filter((f) => fs.existsSync(path.resolve(target, f.path)));
+    const weg = (e.files || []).length - da.length;
+    if (weg) fehlend++;
+    console.log(`${z.status === "aktiv" ? "[aktiv]  " : "[inaktiv]"} ${e.id}`);
+    console.log(`          ${e.type} · ${e.installedTo} · aus ${e.from}${e.commit ? ` @ ${e.commit}` : ""}${e.installedAt ? ` · ${String(e.installedAt).slice(0, 10)}` : ""}`);
+    console.log(`          ${z.status === "aktiv" ? z.wirkung : z.status}`);
+    if (z.einschraenkung) console.log(`          ${z.einschraenkung}`);
+    if (weg) console.log(`          ${weg} von ${(e.files || []).length} Datei(en) nicht mehr vorhanden — von Hand entfernt oder verschoben`);
+  }
+  if (items.length) {
+    console.log(`\n  ${aktiv} von ${items.length} wirksam, ${items.length - aktiv} brauchen einen Schritt von Hand.`);
+    if (fehlend) console.log(`  ${fehlend} Eintrag/Einträge nennen Dateien, die es nicht mehr gibt — \`uninstall\` räumt den Rest auf.`);
+  }
+  meldeSchaden(target);
+}
+
+/**
  * Legt im Zielprojekt die Skills ab, mit denen es die Bibliothek bedient.
  *
  * Warum das zum Bootstrap gehört: Die Skills liegen bewusst im Projekt der
@@ -1777,6 +2107,38 @@ function cmdBootstrap(argv) {
       console.log("  /harness-build — passende Bausteine auswählen und installieren");
     }
   }
+
+  // Die Zugriffsregel steht bis hierher nur als Prosa in der CLAUDE.md. Prosa wird
+  // befolgt, bis sie unbequem wird — und der teuerste Fehlgriff (20 MB Katalog oder
+  // ein Repo-Klon im Kontext) passiert genau dann, wenn es eilig ist. Ein
+  // deny-Eintrag macht ihn unmöglich, statt ihn zu verbieten. Nicht automatisch
+  // geschrieben: `settings.json` gehört dem Projekt, und ungefragt in fremde
+  // Berechtigungen zu schreiben wäre dieselbe Grenzverletzung, gegen die der
+  // Rest dieses Befehls antritt.
+  const regelBlock = {
+    permissions: {
+      deny: [
+        `Read(${INDEX_JSON})`,
+        `Read(${path.join(CLONE_DIR, "**")})`,
+        `Glob(${path.join(CLONE_DIR, "**")})`,
+      ],
+      ask: [
+        "Bash(node *harness.mjs install*)",
+        "Bash(node *harness.mjs uninstall*)",
+      ],
+    },
+  };
+  console.log("\nEmpfohlener Block für .claude/settings.json dieses Projekts:\n");
+  for (const l of JSON.stringify(regelBlock, null, 2).split("\n")) console.log("  " + l);
+  console.log("");
+  console.log("  deny: macht die Zugriffsregel aus der CLAUDE.md maschinell wirksam — der");
+  console.log("        Katalog und die Repo-Klone sind über das CLI erreichbar, sonst nicht.");
+  console.log("  ask:  install und uninstall schreiben und löschen in diesem Projekt.");
+  console.log("  Nicht eingetragen, nur vorgeschlagen: settings.json gehört dem Projekt.");
+  console.log("  Die Musterform der Pfade richtet sich nach den Regeln von Claude Code —");
+  console.log("  nach dem Eintragen einmal prüfen, ob die Regel wirklich greift.");
+  console.log("\n  Ein ganzes Projekt neu aufsetzen (Profil, CLAUDE.md, MCPs) macht");
+  console.log("  /bootstrap-project. Dieser Befehl hier schreibt nur den Regelblock.");
 
   // `bootstrap` ist meist der erste Befehl in einem fremden Projekt — also die
   // beste Gelegenheit, auf Verschwundenes hinzuweisen, solange es noch jemand
@@ -2022,7 +2384,7 @@ function sucheIds(cat, { frage, typ, domaene, repo }) {
       if (hayName.includes(t)) score += 10;
       if (inAll) score += 3;
     }
-    if (score > 0 && i.bytes < 20000) score += 1;
+    if (score > 0 && ladeBytes(i) < 20000) score += 1;   // wie in cmdSearch
     return { i, score, hits };
   });
   let found = rated.filter((x) => terms.length === 0 || x.hits === terms.length);
@@ -2031,11 +2393,24 @@ function sucheIds(cat, { frage, typ, domaene, repo }) {
   return found.map((x) => x.i.id);
 }
 
-function cmdEval(argv) {
+/**
+ * `opts.cat` — bereits geladener Katalog. `update` hat ihn gerade gebaut; ihn ein
+ * zweites Mal von Platte zu lesen kostet 20 MB Parsen für nichts.
+ * `opts.weich` — kein `die()` bei fehlendem `evals/`. Aus `update` heraus ist der
+ * Eval-Lauf der letzte Schritt; ein Abbruch dort würde einen Lauf als gescheitert
+ * melden, dessen eigentliche Arbeit — Klone, Katalog, Changelog — längst getan ist.
+ */
+function cmdEval(argv, opts = {}) {
   const flags = parseFlags(argv);
   const faelle = ladeEvalFaelle();
-  if (!faelle.length) die("Keine Evals gefunden. Erwartet: evals/*.jsonl");
-  const cat = loadCatalog();
+  if (!faelle.length) {
+    if (opts.weich) {
+      console.log("  Keine Evals gefunden (erwartet: evals/*.jsonl) — Schritt übersprungen.");
+      return null;
+    }
+    die("Keine Evals gefunden. Erwartet: evals/*.jsonl");
+  }
+  const cat = opts.cat || loadCatalog();
 
   // Für `hoechstensSoVieleWie` müssen die Trefferzahlen aller Fragen vorliegen.
   const zahlen = new Map();
@@ -2072,7 +2447,13 @@ function cmdEval(argv) {
       }
     }
 
-    ergebnisse.push({ f, ids, maengel, ok: maengel.length === 0 });
+    // Rang jeder erwarteten ID, 0 = gar nicht gefunden. Nur daraus lässt sich
+    // später eine Verschiebung ablesen — ein bestandener Fall, dessen Treffer von
+    // Rang 3 auf Rang 5 gerutscht ist, sagt mehr über die Suche als sein "ok".
+    const raenge = {};
+    for (const soll of f.erwartet || []) raenge[soll] = ids.indexOf(soll) + 1;
+
+    ergebnisse.push({ f, ids, maengel, raenge, ok: maengel.length === 0 });
   }
 
   const pflicht = ergebnisse.filter((e) => !e.f.optional);
@@ -2080,28 +2461,83 @@ function cmdEval(argv) {
   const optionalOk = ergebnisse.filter((e) => e.f.optional && e.ok).length;
   const optionalGesamt = ergebnisse.filter((e) => e.f.optional).length;
 
-  console.log(`Routing-Evals: ${bestanden} von ${pflicht.length} bestanden` +
-    (optionalGesamt ? `  ·  ${optionalOk} von ${optionalGesamt} bekannten Schwächen behoben` : ""));
-  console.log(`Katalog vom ${cat.generatedAt.slice(0, 16).replace("T", " ")}\n`);
-
-  for (const e of ergebnisse) {
-    if (e.ok && !flags.all) continue;
-    const marke = e.ok ? "+" : (e.f.optional ? "~" : "!");
-    const filter = [e.f.typ && `--type ${e.f.typ}`, e.f.domaene && `--domain ${e.f.domaene}`].filter(Boolean).join(" ");
-    console.log(`${marke} "${e.f.frage}"${filter ? " " + filter : ""}   (${e.f.quelle})`);
-    if (e.f.warum) console.log(`    ${e.f.warum}`);
-    for (const m of e.maengel) console.log(`    -> ${m}`);
-    if (!e.ok && e.ids.length) console.log(`    tatsächlich: ${e.ids.slice(0, 5).join(", ")}`);
-    console.log("");
+  // --- Verschiebungen gegen den letzten Lauf -----------------------------
+  // Bestanden/durchgefallen ist ein grobes Raster: es schlägt erst an, wenn ein
+  // Treffer aus den ersten N gefallen ist. Die Bewegung davor — Rang 3 auf Rang 14 —
+  // ist dieselbe Verschlechterung, nur früher sichtbar. Der Schlüssel ist die Frage
+  // samt Filtern, nicht die Zeilennummer: die verschiebt sich beim ersten Einfügen
+  // eines neuen Falls und machte jeden Vergleich wertlos.
+  const schluessel = (f) => [f.frage, f.typ || "", f.domaene || "", f.repo || ""].join("|");
+  const LAST_RUN = path.join(ROOT, "evals", "last-run.json");
+  let vorher = null;
+  try { vorher = JSON.parse(safeRead(LAST_RUN)); } catch { /* erster Lauf */ }
+  const verschoben = [];
+  if (vorher && vorher.raenge) {
+    for (const e of ergebnisse) {
+      const alt = vorher.raenge[schluessel(e.f)];
+      if (!alt) continue;
+      for (const [id, rang] of Object.entries(e.raenge)) {
+        if (alt[id] === undefined || alt[id] === rang) continue;
+        verschoben.push({ frage: e.f.frage, id, von: alt[id], nach: rang });
+      }
+    }
   }
 
-  if (bestanden === pflicht.length && !flags.all) {
-    console.log("Alle Pflichtfälle bestanden. Mit --all auch die bestandenen anzeigen.\n");
+  const bilanz = {
+    generatedAt: new Date().toISOString(),
+    katalog: cat.generatedAt,
+    bestanden, pflicht: pflicht.length, optionalOk, optionalGesamt,
+    verschoben,
+    faelle: ergebnisse.map((e) => ({ frage: e.f.frage, quelle: e.f.quelle, optional: !!e.f.optional, ok: e.ok, maengel: e.maengel, raenge: e.raenge })),
+  };
+
+  if (flags.json) {
+    console.log(JSON.stringify(bilanz, null, 1));
+  } else {
+    console.log(`Routing-Evals: ${bestanden} von ${pflicht.length} bestanden` +
+      (optionalGesamt ? `  ·  ${optionalOk} von ${optionalGesamt} bekannten Schwächen behoben` : ""));
+    console.log(`Katalog vom ${cat.generatedAt.slice(0, 16).replace("T", " ")}\n`);
+
+    for (const e of ergebnisse) {
+      if (e.ok && !flags.all) continue;
+      const marke = e.ok ? "+" : (e.f.optional ? "~" : "!");
+      const filter = [e.f.typ && `--type ${e.f.typ}`, e.f.domaene && `--domain ${e.f.domaene}`].filter(Boolean).join(" ");
+      console.log(`${marke} "${e.f.frage}"${filter ? " " + filter : ""}   (${e.f.quelle})`);
+      if (e.f.warum) console.log(`    ${e.f.warum}`);
+      for (const m of e.maengel) console.log(`    -> ${m}`);
+      if (!e.ok && e.ids.length) console.log(`    tatsächlich: ${e.ids.slice(0, 5).join(", ")}`);
+      console.log("");
+    }
+
+    if (bestanden === pflicht.length && !flags.all) {
+      console.log("Alle Pflichtfälle bestanden. Mit --all auch die bestandenen anzeigen.\n");
+    }
+    if (verschoben.length) {
+      const rang = (n) => (n ? `Rang ${n}` : "nicht gefunden");
+      console.log(`${verschoben.length} Rangänderung(en) gegenüber dem letzten Lauf vom ${String(vorher.generatedAt).slice(0, 16).replace("T", " ")}:`);
+      for (const v of verschoben.slice(0, 12)) {
+        console.log(`  VERSCHOBEN ${v.id}  ${rang(v.von)} -> ${rang(v.nach)}   ("${v.frage}")`);
+      }
+      if (verschoben.length > 12) console.log(`  ... ${verschoben.length - 12} weitere`);
+      console.log("");
+    }
+    console.log("Was das misst: ob die Suche findet, was sie finden soll — nicht, ob ein");
+    console.log("Baustein gut ist. Nach einem Modellwechsel und nach neuen Repos erneut laufen lassen.");
   }
-  console.log("Was das misst: ob die Suche findet, was sie finden soll — nicht, ob ein");
-  console.log("Baustein gut ist. Nach einem Modellwechsel und nach neuen Repos erneut laufen lassen.");
+
+  // Der Vergleichsstand wird nach jedem Lauf fortgeschrieben. Folge: zweimal
+  // hintereinander laufen lassen zeigt beim zweiten Mal keine Verschiebung mehr —
+  // die Meldung gehört dem Lauf, der die Änderung zuerst gesehen hat.
+  if (!flags["no-save"]) {
+    try {
+      const raenge = {};
+      for (const e of ergebnisse) raenge[schluessel(e.f)] = e.raenge;
+      fs.writeFileSync(LAST_RUN, JSON.stringify({ generatedAt: bilanz.generatedAt, katalog: cat.generatedAt, raenge }, null, 1));
+    } catch { /* Schreibfehler darf keinen Prüflauf umbringen */ }
+  }
 
   if (bestanden < pflicht.length) process.exitCode = 1;
+  return bilanz;
 }
 
 // ---------------------------------------------------------------- lint
@@ -2209,6 +2645,34 @@ const NAHT_ID_RE = /`([A-Za-z0-9._-]+(?:__[A-Za-z0-9._-]+)?\/(?:skill|agent|comm
 
 /** Ab wann ein Katalog als veraltet gilt. */
 const KATALOG_MAX_TAGE = 30;
+
+/**
+ * Dateien, die **diese** Bibliothek herstellt oder pflegt.
+ *
+ * Warum eine feste Liste und nicht "jeder Dateiname in Backticks": ausprobiert und
+ * verworfen. Von 162 in Backticks genannten Dateinamen zeigen 137 auf fremde
+ * Projekte — auf die Dateien eines Bausteins, auf die eines Zielprojekts, auf
+ * Beispiele. Die Prüfung hätte 137 Fehlalarme und einen Fund geliefert, und ein
+ * Lint, das man wegklickt, findet auch den Fund nicht mehr.
+ *
+ * Geprüft wird deshalb nur, was die Bibliothek selbst zusagt. Genau dort ist die
+ * Zusage bindend: wer `CHANGELOG.md` nennt, schickt einen fremden Agenten zu einer
+ * Datei, die es geben muss.
+ */
+const WERKSTUECKE = [
+  "CHANGELOG.md", "INDEX.md", "README.md", "CLAUDE.md", "sources.txt",
+  "catalog/index.json", "catalog/by-repo.md", "catalog/by-domain/*.md",
+  "evals/routing.jsonl", "tools/harness.mjs", "knowledge/LOG.md",
+];
+
+/** Existiert das Werkstück? Mit `*` genügt **eine** passende Datei — die
+ *  Domänen-Indizes heissen nach dem Bestand und nicht nach einer festen Liste. */
+function werkstueckDa(name) {
+  if (!name.includes("*")) return fs.existsSync(path.join(ROOT, name));
+  const dir = path.join(ROOT, path.dirname(name));
+  const re = new RegExp("^" + path.basename(name).replace(/[.+^${}()|[\]\\]/g, "\\$&").replace(/\*/g, ".*") + "$", "i");
+  try { return fs.readdirSync(dir).some((f) => re.test(f)); } catch { return false; }
+}
 
 function nahtDateien() {
   const out = knowledgeFiles();
@@ -2460,6 +2924,92 @@ function cmdLint(argv) {
     }
   }
 
+  // --- Naht 4: zugesagte Werkstücke gegen das Dateisystem ---
+  // Ein Verweis auf eine Datei, die es nicht gibt, kostet einen fremden Agenten
+  // einen Fehlversuch und danach das Vertrauen in den ganzen Text. Aggregiert nach
+  // Datei**namen**, nicht nach Fundstelle: sechs Meldungen über dieselbe fehlende
+  // CHANGELOG.md sind sechsmal derselbe Fehler und einmal zu viel.
+  {
+    const zusagen = new Map();
+    for (const f of nahtDateien()) {
+      for (const block of safeRead(f.abs).split(/\r?\n\s*\r?\n/)) {
+        if (block.includes(LINT_HISTORISCH)) continue;
+        for (const m of block.matchAll(/`([^`\s]+\.(?:md|json|jsonl|txt|mjs))`/g)) {
+          const name = m[1].replace(/\\/g, "/").replace(/^\.\//, "");
+          if (!WERKSTUECKE.includes(name)) continue;
+          (zusagen.get(name) || zusagen.set(name, new Set()).get(name)).add(f.rel);
+        }
+      }
+    }
+    for (const [name, wo] of zusagen) {
+      if (werkstueckDa(name)) continue;
+      add("mittel", [...wo].slice(0, 6).join(", "),
+        `\`${name}\` wird an ${wo.size} Stelle(n) als vorhanden angesprochen, existiert aber nicht. ` +
+        `Entweder erzeugen (bei erzeugten Dateien: \`node tools/harness.mjs update\`) oder die Zusagen streichen.`);
+    }
+  }
+
+  // --- Naht 5: erzeugte Indizes gegen den Katalog, aus dem sie stammen ---
+  // INDEX.md trägt eine `Stand:`-Zeile aus `generatedAt`. Läuft `extract` nicht mehr,
+  // bleibt sie stehen und behauptet einen Stand, den der Katalog längst überholt hat.
+  // Das ist die eine Zahl, der ein fremder Agent ohne Nachprüfen glaubt.
+  if (cat?.generatedAt) {
+    for (const rel of ["INDEX.md", "catalog/by-repo.md"]) {
+      const abs = path.join(ROOT, rel);
+      if (!fs.existsSync(abs)) continue;
+      const m = safeRead(abs).match(/Stand:?\s*(\d{4}-\d{2}-\d{2})/);
+      if (!m) continue;
+      if (m[1] < cat.generatedAt.slice(0, 10)) {
+        add("mittel", rel, `\`Stand: ${m[1]}\` ist älter als der Katalog (${cat.generatedAt.slice(0, 10)}) — die Datei wurde seit dem letzten \`extract\` nicht neu erzeugt und beschreibt einen überholten Bestand.`);
+      }
+    }
+  }
+
+  // --- Naht 6: Repos, die nichts beisteuern ---
+  // Eine Zeile in sources.txt ohne einen einzigen Katalogeintrag ist entweder ein
+  // fehlgeschlagener Klon oder ein Repo, dessen Aufbau der Extraktor nicht erkennt.
+  // Beides sieht in `stats` wie ein Repo aus und liefert nichts.
+  if (cat?.repos) {
+    const leer = cat.repos.filter((r) => !r.count).map((r) => r.dir);
+    if (leer.length) {
+      add("mittel", "sources.txt", `${leer.length} Repo(s) ohne einen einzigen Katalogeintrag: ${leer.slice(0, 8).join(", ")}. Entweder ist der Klon fehlgeschlagen (\`sync\` ansehen) oder der Extraktor erkennt den Aufbau nicht — in beiden Fällen zählt das Repo in jeder Bestandsangabe mit, ohne etwas beizutragen.`);
+    }
+  }
+
+  // --- Naht 7: die Tabellen der Rezepte gegen den Katalog ---
+  // Die IDs prüft schon Naht 1. Hier gehen die **Spalten** dazu: ein Rezept, das
+  // einen Skill als `agent` führt, schickt den Leser auf den falschen Baustein-Typ,
+  // und eine KB-Angabe, die um das Vierfache danebenliegt, macht die Bar des
+  // Rezepts ("höchstens 50 KB") zu einer Zahl ohne Deckung. Regressionsschutz, kein
+  // Reparaturauftrag: heute stimmen alle 71 Zeilen.
+  if (cat) {
+    const nach = new Map(cat.items.map((i) => [i.id, i]));
+    const ZEILE_RE = /^\|\s*`([^`]+)`\s*\|\s*([a-z]+)\s*\|[^|]*\|\s*(\d+)\s*\|\s*$/;
+    for (const f of knowledgeFiles().filter((x) => x.rel.startsWith("recipes/"))) {
+      const text = safeRead(f.abs);
+      const historisch = historischBereiche(text);
+      let pos = 0;
+      for (const zeile of text.split(/\r?\n/)) {
+        const idx = pos; pos += zeile.length + 1;
+        const g = zeile.match(ZEILE_RE);
+        if (!g || istHistorisch(historisch, idx)) continue;
+        const it = nach.get(g[1]);
+        if (!it) continue;                                   // Naht 1 meldet das schon
+        if (it.type !== g[2]) {
+          add("hoch", `${f.rel}:${zeileVon(text, idx)}`, `\`${g[1]}\` steht als \`${g[2]}\` in der Tabelle, ist im Katalog aber \`${it.type}\` — der Baustein landet in einem anderen Verzeichnis und wirkt anders.`);
+        }
+        // Gegen beide Grössen prüfen: gemeint sein kann die Verzeichnisgrösse
+        // (`bytes`) oder das, was beim Greifen lädt (`entryBytes`). Eine Spalte,
+        // die einen der beiden Werte trifft, ist keine falsche Angabe — und die
+        // Prüfung überlebt damit den Wechsel von der einen auf die andere Zahl.
+        const soll = Number(g[3]);
+        if (soll !== kb(it.bytes) && soll !== kb(ladeBytes(it))) {
+          add("mittel", `${f.rel}:${zeileVon(text, idx)}`, `\`${g[1]}\` steht mit ${soll} KB in der Tabelle, der Katalog nennt ${kb(ladeBytes(it))} KB beim Greifen und ${kb(it.bytes)} KB gesamt. Die Summen unter dem Kern-Set stimmen damit auch nicht mehr.`);
+        }
+      }
+    }
+  }
+
   // --- Rohquellen ohne Auswertung ---
   const rawDir = path.join(ROOT, "Learnings");
   if (fs.existsSync(rawDir)) {
@@ -2518,11 +3068,11 @@ function cmdLint(argv) {
 
 function cmdUpdate() {
   const before = fs.existsSync(INDEX_JSON) ? loadCatalog() : null;
-  console.log("1/3  Repos synchronisieren");
+  console.log("1/4  Repos synchronisieren");
   const syncReport = cmdSync();
-  console.log("\n2/3  Bausteine katalogisieren");
+  console.log("\n2/4  Bausteine katalogisieren");
   const after = cmdExtract({ quiet: false });
-  console.log("\n3/3  Changelog schreiben");
+  console.log("\n3/4  Changelog schreiben");
 
   const beforeIds = new Set(before ? before.items.map((i) => i.id) : []);
   const afterIds = new Set(after.items.map((i) => i.id));
@@ -2543,7 +3093,16 @@ function cmdUpdate() {
   const repoLines = syncReport.filter((r) => r.status !== "unchanged");
   if (repoLines.length) {
     lines.push("**Repos:**", "");
-    for (const r of repoLines) lines.push(`- \`${r.repo}\` — ${r.status}${r.error ? `: ${r.error}` : ""}`);
+    // `before`/`after` sind die Commit-SHAs aus `cmdSync` und wurden bisher
+    // verworfen. Sie sind der einzige Anker, mit dem sich ein Katalogstand später
+    // gegen das Quell-Repo halten lässt: "updated" allein sagt nicht, wogegen.
+    for (const r of repoLines) {
+      const kurz = (s) => (s ? String(s).slice(0, 7) : null);
+      const spanne = r.before && r.after && r.before !== r.after
+        ? ` (${kurz(r.before)} → ${kurz(r.after)})`
+        : (r.after ? ` (${kurz(r.after)})` : "");
+      lines.push(`- \`${r.repo}\` — ${r.status}${spanne}${r.error ? `: ${r.error}` : ""}`);
+    }
     lines.push("");
   } else {
     lines.push("Alle Repos unverändert.", "");
@@ -2562,21 +3121,80 @@ function cmdUpdate() {
 
   if (!added.length && !changed.length && !removed.length) lines.push("Keine Änderungen am Katalog.", "");
 
+  // --- Schritt 4: Routing-Evals ------------------------------------------
+  // Warum an `update` und nicht an `lint`: die beiden prüfen Verschiedenes. `lint`
+  // liest Text gegen Text, `eval` misst die Suche gegen den Katalog — und genau
+  // dieser Katalog ist eine Zeile weiter oben neu gebaut worden. Ein neues Repo, das
+  // die bisherigen Treffer verdrängt, ist ein Ergebnis dieses Laufs; es hier nicht
+  // zu messen hiesse, die einzige Gelegenheit verstreichen zu lassen, bei der die
+  // Ursache noch benannt werden kann.
+  //
+  // Der Exit-Code von `update` hängt damit auch am Eval-Lauf. Das ist eine bewusste
+  // Vertragsänderung: ein Update, das die Suche verschlechtert, ist kein
+  // erfolgreiches Update.
+  console.log("\n4/4  Routing-Evals");
+  let evalZeile = "Routing-Evals: nicht gelaufen.";
+  try {
+    const bilanz = cmdEval([], { cat: after, weich: true });
+    if (bilanz) {
+      evalZeile = `Routing-Evals: **${bilanz.bestanden} von ${bilanz.pflicht}** Pflichtfällen bestanden` +
+        (bilanz.optionalGesamt ? `, ${bilanz.optionalOk} von ${bilanz.optionalGesamt} bekannten Schwächen behoben` : "") +
+        (bilanz.verschoben.length ? `, ${bilanz.verschoben.length} Rangänderung(en) gegenüber dem letzten Lauf` : "") + ".";
+    } else {
+      evalZeile = "Routing-Evals: übersprungen — kein `evals/`-Verzeichnis.";
+    }
+  } catch (e) {
+    // Ein gescheiterter Eval-Lauf darf das Changelog nicht kosten: Klone, Katalog
+    // und Vergleich sind zu diesem Zeitpunkt fertige Arbeit.
+    evalZeile = `Routing-Evals: Lauf abgebrochen — ${String(e.message || e).split("\n")[0]}`;
+    console.log(`  ! ${evalZeile}`);
+    process.exitCode = 1;
+  }
+  lines.push(evalZeile, "");
+
+  // Geschrieben wird erst jetzt, damit das Eval-Ergebnis im **obersten** Abschnitt
+  // steht statt in einem Nachtrag. Die Reihenfolge der Schritte auf dem Bildschirm
+  // bleibt davon unberührt.
   const cl = path.join(ROOT, "CHANGELOG.md");
   const head = "# Changelog der Harness-Bibliothek\n\nNeueste Einträge oben. Erzeugt von `/harness-update`.\n\n";
   const old = fs.existsSync(cl) ? fs.readFileSync(cl, "utf8").replace(head, "") : "";
   fs.writeFileSync(cl, head + lines.join("\n") + "\n---\n\n" + old);
 
   console.log(`\n  +${added.length} neu · ~${changed.length} geändert · -${removed.length} entfernt`);
+  console.log(`  ${evalZeile.replace(/\*\*/g, "")}`);
   console.log("  Details in CHANGELOG.md");
+  // Kein fünfter Schritt: `lint` liest Text gegen Text und braucht ein Urteil
+  // darüber, was zu ändern ist — das gehört in den Einpflege-Ablauf, nicht an das
+  // Ende eines Katalogbaus. Der Hinweis gehört trotzdem hierhin: jede Bestandszahl
+  // in der Wissensbank kann seit einer Minute falsch sein.
+  if (added.length || removed.length) {
+    console.log("  Der Bestand hat sich geändert — `node tools/harness.mjs lint` sagt, welche");
+    console.log("  Zahlen und IDs in der Wissensbank jetzt nicht mehr stimmen.");
+  }
 }
 
 // ---------------------------------------------------------------- stats
 
+/**
+ * Der Einwand steht in der Ausgabe, nicht nur hier: `stats` ist der Befehl, dessen
+ * Zahl weitergetragen wird ("die Bibliothek hat 25.497 Bausteine"), und eine Zahl
+ * ohne ihren Vorbehalt wird zur Leistungsangabe. `eval` und `lint` tragen ihren
+ * Einwand längst mit; `stats` war der einzige zahlenausgebende Befehl ohne.
+ *
+ * Bewusst **nicht** ergänzt: ein Zähler "wurde jemals ausgelöst". Die Bibliothek
+ * führt kein Register ihrer Zielprojekte — `install` schreibt das Manifest
+ * ausschliesslich ins Ziel —, Hooks hinterlassen ohnehin keine Spur, und eine
+ * Nutzungszahl, die immer null ist, wäre die unehrlichere Angabe.
+ */
 function cmdStats() {
   const cat = loadCatalog();
+  const standard = cat.items.filter((i) => !i.bulk).length;
   console.log(`Katalog vom ${cat.generatedAt.slice(0, 16).replace("T", " ")}`);
-  console.log(`${cat.totals.items} Bausteine aus ${cat.repos.length} Repos\n`);
+  console.log(`${cat.totals.items} Bausteine aus ${cat.repos.length} Repos`);
+  console.log(`  davon ${standard} im Standardzugriff, ${cat.totals.items - standard} in Massen-Repos (nur mit --repo/--domain/--all)`);
+  console.log("");
+  console.log("Was diese Zahl nicht sagt: ob ein Baustein gut ist oder je benutzt wurde.");
+  console.log("Sie wächst mit jedem aufgenommenen Repo — Bestand ist keine Leistung.\n");
   console.log("Nach Typ:");
   for (const [k, v] of Object.entries(cat.totals)) if (k !== "items") console.log(`  ${k.padEnd(9)} ${v}`);
   const byDomain = {};
@@ -2632,6 +3250,10 @@ harness.mjs — Harness-Bibliothek
                  Ordner. Dateien, die seit der Installation geändert wurden,
                  bleiben stehen; --force entfernt auch sie. Manifest-Einträge
                  ohne Dateiliste (ältere Version) führen zum Abbruch.
+  node tools/harness.mjs list --to DIR             was liegt in diesem Projekt?
+       Liest das Manifest des Zielprojekts und bestimmt den Zustand jedes Eintrags
+       neu — [aktiv] / [inaktiv] wie nach install, aber mit dem Stand von heute.
+       Meldet ausserdem Manifest-Einträge, deren Dateien nicht mehr da sind.
   node tools/harness.mjs bootstrap --to DIR        nur den Regelblock in die
        [--no-skills]                               CLAUDE.md des Projekts schreiben
        Legt ausserdem die Bedien-Skills harness-plan und harness-build unter
@@ -2641,11 +3263,14 @@ harness.mjs — Harness-Bibliothek
        [--limit N] [--lines N]                     liefert Abschnitte, nicht Dateien
   node tools/harness.mjs knowledge --list          Inhaltsverzeichnis der Wissensbank
   node tools/harness.mjs eval [--all]              Routing-Evals aus evals/*.jsonl:
-                                                   findet die Suche noch, was sie
+       [--json] [--no-save]                        findet die Suche noch, was sie
                                                    finden soll? Exit-Code 1, wenn ein
-                                                   Pflichtfall fehlschlägt. Nach einem
-                                                   Modellwechsel und nach neuen Repos
-                                                   laufen lassen.
+                                                   Pflichtfall fehlschlägt. Läuft als
+                                                   Schritt 4 von "update" mit.
+       Vergleicht ausserdem die Ränge der erwarteten Treffer mit dem letzten Lauf
+       (evals/last-run.json) und meldet Verschiebungen, bevor ein Fall durchfällt.
+       --no-save schreibt den Vergleichsstand nicht fort, --json gibt die Bilanz
+       maschinenlesbar aus.
        Kurzformen: "know" und "why" sind gleichwertige Namen für "knowledge".
   node tools/harness.mjs lint [--all] [--strict]   Wissensbank auf Verfall prüfen:
                                                    fehlende Metadaten, abgelaufenes
@@ -2654,7 +3279,11 @@ harness.mjs — Harness-Bibliothek
        Dazu die Nähte zwischen Text und Maschine: jede genannte Baustein-ID gegen
        den Katalog (in recipes/ hoch, sonst mittel), jeden Aufruf "node
        tools/harness.mjs <sub> --<flag>" aus einem Codeblock gegen den Dispatcher,
-       und das Alter von catalog/index.json gegen ${KATALOG_MAX_TAGE} Tage.
+       das Alter von catalog/index.json gegen ${KATALOG_MAX_TAGE} Tage, die zugesagten
+       eigenen Dateien (CHANGELOG.md, INDEX.md, catalog/by-domain/*.md, ...) gegen
+       das Dateisystem, die "Stand:"-Zeile der erzeugten Indizes gegen den Katalog,
+       Repos ohne einen einzigen Katalogeintrag, und in den Rezept-Tabellen die
+       Spalten Typ und KB gegen den Katalogeintrag derselben ID.
        Geprüft werden knowledge/, recipes/ sowie README.md, INDEX.md, CLAUDE.md.
        Eine absichtlich tote Angabe entschärft "${LINT_HISTORISCH}" im selben Absatz.
        Exit-Code: 1 bei jedem Befund hoher Schwere, sonst 0. Mit --strict zählen
@@ -2675,6 +3304,7 @@ switch (cmd) {
   case "install": cmdInstall(rest); break;
   case "uninstall": cmdUninstall(rest); break;
   case "bootstrap": cmdBootstrap(rest); break;
+  case "list": cmdList(rest); break;
   case "knowledge": case "know": case "why": cmdKnowledge(rest); break;
   case "lint": cmdLint(rest); break;
   case "eval": cmdEval(rest); break;

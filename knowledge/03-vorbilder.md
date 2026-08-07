@@ -242,7 +242,7 @@ Wer entscheidet was: **Der Agent entscheidet, aber nach einer Regel, die im Proj
 
 ## Teil D — Übernahme-Empfehlung für unsere Bibliothek
 
-Stand bei uns: `sources.txt` (13 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.497 Bausteine, davon 954 im Standardzugriff.
+Stand bei uns: `sources.txt` (13 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.499 Bausteine, davon 956 im Standardzugriff.
 
 Priorisiert, mit ehrlicher Einschätzung:
 
@@ -252,7 +252,7 @@ Priorisiert, mit ehrlicher Einschätzung:
 
 **3. Katalog-Schema als Tabelle in das lesende Skill (Vorbild: UA-Query-Skills).** Was fehlt: Ein Agent, der `index.json` benutzen *muss*, weiss nicht, welche Felder es gibt, und liest sich das an. Nutzen: gezieltes Greifen statt Explorieren. Aufwand: klein — eine Tabelle mit den Feldern aus `cmdExtract`. **Machen.**
 
-**4. Vorfilter und Domänen-Profil beim Install.** Was fehlt: Das Massen-Repo `Klotzkette__claude-fuer-deutsches-recht` stellt 24.543 von 25.497 Bausteinen (96,3 %) — das erdrückt jede Statistik und jede Suche. Nutzen: grösser als jede Kontext-Optimierung. Umsetzung: `.harnessignore`-Äquivalent für `extract`, plus ein Profil beim `install` (z. B. "nur `seo`, `frontend`, `meta`"). Aufwand: klein bis mittel. **Machen — das ist unser eigentliches "zu viel".**
+**4. Vorfilter und Domänen-Profil beim Install.** Was fehlt: Das Massen-Repo `Klotzkette__claude-fuer-deutsches-recht` stellt 24.543 von 25.499 Bausteinen (96,3 %) — das erdrückt jede Statistik und jede Suche. Nutzen: grösser als jede Kontext-Optimierung. Umsetzung: `.harnessignore`-Äquivalent für `extract`, plus ein Profil beim `install` (z. B. "nur `seo`, `frontend`, `meta`"). Aufwand: klein bis mittel. **Machen — das ist unser eigentliches "zu viel".**
 
 **5. Konfidenz-/Provenienz-Feld pro Baustein.** Was fehlt: `DOMAIN_RULES` in `tools/harness.mjs` ist eine Regex-Heuristik; im Katalog steht das Ergebnis aber so verbindlich wie ein Fakt. Nutzen: Der Agent weiss, wann er nachsehen muss. Umsetzung: Feld `domainConfidence: "EXTRACTED"` (aus Frontmatter) vs. `"INFERRED"` (aus Regex). Aufwand: klein. **Machen.**
 
@@ -278,7 +278,7 @@ Die Frage lautet immer *"Welchen Baustein baue ich in Projekt X ein?"*. Das ist 
 
 Drei konkrete Gegenargumente:
 
-1. **Uns fehlen die Kanten.** graphifys Wert entsteht aus `god nodes`, `surprising connections` und `community detection` — alles setzt einen *zusammenhängenden* Korpus voraus. Unsere 25.497 Bausteine stammen aus 13 fremden Repos, die nichts miteinander zu tun haben. Ein SEO-Skill und ein Rust-Review-Agent haben keine Beziehung, und ein Graph, der das behauptet, wäre schlechter als kein Graph. `GRAPH_REPORT.md` würde vor allem Rauschen ausweisen.
+1. **Uns fehlen die Kanten.** graphifys Wert entsteht aus `god nodes`, `surprising connections` und `community detection` — alles setzt einen *zusammenhängenden* Korpus voraus. Unsere 25.499 Bausteine stammen aus 13 fremden Repos, die nichts miteinander zu tun haben. Ein SEO-Skill und ein Rust-Review-Agent haben keine Beziehung, und ein Graph, der das behauptet, wäre schlechter als kein Graph. `GRAPH_REPORT.md` würde vor allem Rauschen ausweisen.
 
 2. **Der Lauf wäre teuer und graphify selbst würde bremsen.** Unsere Bausteine sind Markdown, nicht Code — damit greift nicht die kostenlose AST-Route, sondern die semantische Extraktion per LLM (`skill.md` Step 3, Part B). Ausserdem warnt `detect` ab 500 Dateien bzw. 2 Mio. Wörtern und verlangt Eingrenzung; wir liegen um Grössenordnungen darüber.
 

@@ -1,6 +1,6 @@
 # Domäne: testing
 
-68 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+67 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (17)
 
@@ -56,7 +56,7 @@
 |---|---|---:|
 | `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-… | 650 |
 
-## skill (34)
+## skill (33)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -93,5 +93,4 @@
 | `AgriciDaniel__claude-seo/skill/seo-profound` | Profound LLM citation tracker (extension). Time-series brand citation rates across ChatGPT, Perplexity, and other LLMs. Pairs wit… | 2 |
 | `anthropics__skills/skill/webapp-testing` | Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debu… | 22 |
 | `mattpocock__skills/skill/tdd` | TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, w… | 7 |
-| `usestrix__strix/skill/strix-pentest` | Run an autonomous AI penetration test with Strix against a codebase, repository, URL, domain, or IP — either self-hosted with the… | 8 |
 

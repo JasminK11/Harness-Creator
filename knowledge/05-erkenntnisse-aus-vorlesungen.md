@@ -107,7 +107,7 @@ intentional, will end up inducing these subtle undesirable behaviors."
    Prosa-Skills. Ein Baustein mit perfekter Beschreibung und flakigem Werkzeug
    richtet mehr Schaden an als ein mittelmässiger, der zuverlässig läuft — und der
    Schaden zeigt sich an einer Stelle, an der niemand sucht.
-4. Unser Bestand steht dazu im Widerspruch: 24.700 Skills gegen 56 Hooks und
+4. Unser Bestand steht dazu im Widerspruch: 24.702 Skills gegen 56 Hooks und
    3 MCP-Konfigurationen. Für `sources.txt` heisst das, gezielt nach Repos mit
    Hooks, Validierern und CI-Gates zu suchen statt nach weiteren Skill-Sammlungen.
 5. Einschränkung, die nicht verschwiegen wird: bei Feng entsteht der Effekt über
@@ -138,7 +138,7 @@ Die **Leseseite** haben wir richtig gebaut: `INDEX.md` (5 KB) als Einstieg,
 `catalog/by-domain/*.md` als Mittelschicht, `catalog/index.json` (20 MB)
 ausschliesslich über das CLI. Das ist von sechs Vorträgen bestätigt und keine
 Baustelle mehr. Davis liefert zusätzlich die Begründung, warum das keine
-Bequemlichkeit ist: ein ungefiltertes Listing über 25.497 Einträge ist nicht
+Bequemlichkeit ist: ein ungefiltertes Listing über 25.499 Einträge ist nicht
 „gross", es ist unbrauchbar. Konsequenz über die bestehende Regel hinaus: die
 Filterpflicht ins CLI einbauen statt in die Doku — `search` ohne `--type`/`--domain`
 und ohne `--limit` sollte nicht das Vollergebnis liefern, `--all` bleibt eine
@@ -260,11 +260,17 @@ Daraus folgen zwei Werkzeuge, die es nicht gibt:
   keine Aussage.
 
 Die drei Zugriffsebenen stimmen heute nur deshalb überein, weil sie aus demselben
-Lauf stammen (nachgerechnet: `INDEX.md` Typ-Tabelle 402+375+112+56+6+3 = 954,
-Repo-Tabelle ebenfalls 954; `stats` 24.700+241+385+112+56+3 = 25.497). Ungeprüft ist
+Lauf stammen (nachgerechnet am Katalogstand 2026-08-07 18:27: `INDEX.md` Typ-Tabelle
+404+375+112+56+6+3 = 956, Repo-Tabelle ebenfalls 956; `stats`
+24.702+241+385+112+56+3 = 25.499). Ungeprüft ist
 die Naht zwischen generiert und handgepflegt: `sources.txt` gegen tatsächlich
-katalogisierte Repos, in `recipes/` und `knowledge/` genannte IDs, und die Skills
-unter `~/.claude/skills`, die Zahlen zitieren.
+katalogisierte Repos, in `recipes/` und `knowledge/` genannte IDs, und die
+Bedien-Skills unter `.claude/skills/`, die Zahlen zitieren. <!-- lint:historisch -->
+Eine frühere Fassung nannte hier `~/.claude/skills` — die Skills lagen doppelt,
+im Projekt und global, byte-identisch und ohne Sync. Die globale Ablage ist weg;
+es gibt je Skill genau eine Datei. Diese Nähte prüft `lint` inzwischen: IDs gegen
+den Katalog, CLI-Aufrufe gegen den Dispatcher, zugesagte Dateien gegen das
+Dateisystem, Repos ohne Katalogeintrag.
 
 Ergänzend Fengs Regel gegen Schlupflöcher: **ein Gate darf den Zustand „nicht
 bewertbar" nie günstiger stellen als „bewertet und schlecht".** Bei ihm entstand
@@ -381,9 +387,9 @@ die Suche weiter Treffer liefert.
 | Wang | Erst vertikal tief, dann horizontal breit: „domain expertise is something that informs how high quality your data can be" und „lessons learned that going really vertical on a single domain like infrastructure do translate into other horizontal domains." |
 | Davis | „Task list has gone away. Good. Wasn't particularly useful anyway, especially at large scale." |
 
-**Was daraus folgt.** Die 954 im Standardzugriff sind das Produkt, nicht die 25.497 —
+**Was daraus folgt.** Die 956 im Standardzugriff sind das Produkt, nicht die 25.499 —
 und sie sollten eher schrumpfen als wachsen. Ein 14. Repo erhöht die Menge, nicht
-die Qualität. Zur Grössenordnung: 24.161 der 25.497 Bausteine stammen aus einem
+die Qualität. Zur Grössenordnung: 24.161 der 25.499 Bausteine stammen aus einem
 einzigen en bloc gespiegelten Mega-Repo, das für 12 der 13 Domänen nie gebraucht
 wird. Die Regel gehört explizit in `knowledge/01`: **aufgenommen wird ein Repo,
 ausgeliefert werden einzelne Bausteine**; ein Repo, aus dem über mehrere Projekte
@@ -400,7 +406,7 @@ was unter bestehenden IDs geändert wurde oder verschwunden ist — sonst instal
 
 Zwei Nebenbefunde, die hierher gehören:
 
-- **Generik-Bias.** Bei 25.497 Einträgen liefert jede Textsuche zuverlässig die
+- **Generik-Bias.** Bei 25.499 Einträgen liefert jede Textsuche zuverlässig die
   generischsten Bausteine; der eng passende Nischen-Baustein liegt am Rand der
   Verteilung. Das ist messbar: dieselbe Suchroutine über mehrere sehr verschiedene
   Projektprofile fahren und die Überlappung der Top-Treffer zählen. Gegenmittel im
@@ -431,10 +437,10 @@ fremden Oberfläche sind totes Gewicht. Rallabandi verlangt sogar aktives Verges
 **Unsere Position.** Wangs Satz gilt für **Trainingsdaten**, nicht für
 **Laufzeitkontext** — der Unterschied ist bei uns entscheidend und wird sonst
 stillschweigend übersprungen. Für den Katalog auf der Platte hat Wang recht:
-25.497 Einträge schaden niemandem, solange sie hinter dem CLI liegen. Für alles,
+25.499 Einträge schaden niemandem, solange sie hinter dem CLI liegen. Für alles,
 was im Kontextfenster landet, hat Branco recht: jeder zusätzlich sichtbare Baustein
 verschiebt das Routing aller anderen, weil Descriptions um dieselben Auslöser
-konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 954 bekommen
+konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 956 bekommen
 Aufnahmekriterien und einen Abgangsmechanismus, der Rest bleibt durchsuchbar, aber
 unempfohlen.
 

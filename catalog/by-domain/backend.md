@@ -1,6 +1,6 @@
 # Domäne: backend
 
-108 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+110 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (32)
 
@@ -66,7 +66,7 @@
 |---|---|---:|
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (64)
+## skill (66)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -90,7 +90,9 @@
 | `affaan-m__ecc/skill/homelab-wireguard-vpn` | WireGuard VPN server setup, peer configuration, key generation, split tunneling vs full tunnel routing, and remote access to a ho… | 10 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
 | `affaan-m__ecc/skill/ios-icon-gen` | Generate iOS app icons as PNG imagesets for Xcode asset catalogs from SF Symbols (5000+ Apple-native) or Iconify API (275k+ open … | 21 |
+| `affaan-m__ecc/skill/ito-inference` | Serve a model on a completed Itô compute booking through the canonical Itô backend. Use after ito-compute has booked GPU nodes an… | 2 |
 | `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 2 |
+| `affaan-m__ecc/skill/ito-training` | Run an ML training job on a completed Itô compute booking through the canonical Itô backend. Use after ito-compute has booked GPU… | 2 |
 | `affaan-m__ecc/skill/jira-integration` | Use this skill when retrieving Jira tickets, analyzing requirements, updating ticket status, adding comments, or transitioning is… | 9 |
 | `affaan-m__ecc/skill/kotlin-exposed-patterns` | JetBrains Exposed ORM patterns including DSL queries, DAO pattern, transactions, HikariCP connection pooling, Flyway migrations, … | 22 |
 | `affaan-m__ecc/skill/kotlin-ktor-patterns` | Ktor server patterns including routing DSL, plugins, authentication, Koin DI, kotlinx.serialization, WebSockets, and testApplicat… | 19 |
@@ -122,7 +124,7 @@
 | `AgriciDaniel__claude-seo/skill/seo-google` | > Google SEO APIs: Search Console (Search Analytics, URL Inspection, Sitemaps), PageSpeed Insights v5, CrUX field data with 25-we… | 61 |
 | `AgriciDaniel__claude-seo/skill/seo-maps` | > Maps intelligence for local SEO: geo-grid rank tracking, GBP profile auditing via API, review intelligence across Google/Tripad… | 12 |
 | `AgriciDaniel__claude-seo/skill/seo-unlighthouse` | Multi-page Lighthouse audit via the MIT-licensed Unlighthouse CLI. Free-tier alternative to running PageSpeed against every URL o… | 2 |
-| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 861 |
+| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 901 |
 | `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1100 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
 | `multica-ai__multica/skill/multica-autopilots` | Use when creating, updating, inspecting, triggering, or debugging a Multica autopilot (scheduled, webhook, or manual). | 7 |
@@ -131,7 +133,7 @@
 | `multica-ai__multica/skill/multica-skill-importing` | Use when asked to import or install a specific skill into this Multica workspace from a URL or slug. Not for choosing which skill… | 21 |
 | `multica-ai__multica/skill/multica-squads` | Use when creating, inspecting, updating, assigning to, or debugging a Multica squad, including how leader routing picks who runs. | 23 |
 | `multica-ai__multica/skill/multica-working-on-issues` | Use when acting on a Multica issue beyond what the brief covers: PR linking vs close intent, reading a linked PR's real state, me… | 26 |
-| `usestrix__strix/skill/strix-ci-setup` | Wire Strix security scanning into CI/CD — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped A… | 8 |
-| `usestrix__strix/skill/strix-cloud-api` | Drive the managed Strix platform headlessly through the app.strix.ai REST API — create an API token, register domain/repository a… | 8 |
-| `usestrix__strix/skill/strix-pentest` | Run an autonomous AI penetration test with Strix against a codebase, repository, URL, domain, or IP — either self-hosted with the… | 8 |
+| `usestrix__strix/skill/ci-security-scanning-with-strix` | Add security scanning to CI/CD with Strix — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped… | 8 |
+| `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
+| `usestrix__strix/skill/penetration-testing-with-strix` | Pentest a web app, API, codebase, repository, URL, domain, or IP with Strix — autonomous AI penetration testing that exploits and… | 8 |
 

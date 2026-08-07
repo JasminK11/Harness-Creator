@@ -117,8 +117,8 @@
 | `AgriciDaniel__claude-seo/skill/seo-profound` | Profound LLM citation tracker (extension). Time-series brand citation rates across ChatGPT, Perplexity, and other LLMs. Pairs wit… | 2 |
 | `AgriciDaniel__claude-seo/skill/seo-sxo` | > Search Experience Optimization: reads Google SERPs backwards to detect page-type mismatches, derives user stories from search i… | 36 |
 | `anthropics__skills/skill/brand-guidelines` | Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-an… | 14 |
-| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 861 |
-| `multica-ai__multica/skill/multica-onboarding` | Use when a product-authored kickoff starts or resumes Mika's interactive onboarding for a Multica workspace. Guide the member fro… | 8 |
+| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 901 |
+| `multica-ai__multica/skill/multica-onboarding` | Use when a product-authored kickoff starts or resumes Mika's interactive onboarding for a Multica workspace. The opening greeting… | 7 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/brand` | Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of vo… | 90 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 241 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variab… | 180 |

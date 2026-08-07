@@ -51,10 +51,19 @@ node tools/harness.mjs show <id-aus-der-suche>
 node tools/harness.mjs knowledge "evaluator agent"
 node tools/harness.mjs knowledge --list | head -20
 node tools/harness.mjs lint --all
+node tools/harness.mjs eval --no-save
 node tools/harness.mjs install <id> --to "<wegwerf-ordner>" --dry-run
 node tools/harness.mjs uninstall <id> --to "<wegwerf-ordner>" --dry-run
+node tools/harness.mjs list --to "<wegwerf-ordner>"
 node tools/harness.mjs bootstrap --to "<wegwerf-ordner>"
 ```
+
+`lint` und `eval` prüfen Verschiedenes und ersetzen einander nicht: `lint` hält Text
+gegen Text, `eval` misst die **Suche** gegen den Katalog. Jede Änderung an `cmdSearch`,
+am Score oder am Extraktor kann Treffer verschieben, ohne dass eine einzige
+Lint-Naht reisst — `eval` meldet die Verschiebung, bevor ein Fall durchfällt.
+`--no-save` verhindert, dass dein Probelauf den Vergleichsstand in
+`evals/last-run.json` fortschreibt und die echte Drift damit überschreibt.
 
 `update`, `sync` und `extract` schreiben den Katalog neu — **führ sie nicht
 ungefragt aus.** Wenn deine Änderung `extract` betrifft, sag das und lass den User

@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-07 10:51 · 954 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
+> Stand: 2026-08-07 18:27 · 956 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
 
 ## Was das hier ist
 
@@ -34,7 +34,7 @@ node tools/harness.mjs knowledge "hook statt skill"
 - **`knowledge/` oder `recipes/` am Stück lesen.** Der Befehl `knowledge` schneidet
   den passenden Abschnitt heraus und nennt Datei und Zeile.
 
-Grund: Der volle Katalog umfasst 25497 Bausteine. Wer den einliest,
+Grund: Der volle Katalog umfasst 25499 Bausteine. Wer den einliest,
 hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode sieht.
 
 ## Die Befehle
@@ -51,6 +51,8 @@ Warnungen stehen im Aufruf ohne Argument.
 | `bootstrap` | nur die Zugriffsregel schreiben | in die CLAUDE.md eines Projekts, ohne Bausteine |
 | `knowledge` | die Wissensbank befragen | liefert Abschnitte, nicht Dateien — auch `know`, `why` |
 | `lint` | Wissensbank und Nähte prüfen | tote Verweise, abgelaufene Metadaten, falsche IDs |
+| `eval` | Routing-Evals fahren | findet die Suche noch, was sie finden soll — läuft als Schritt 4 von `update` mit |
+| `list` | zeigt, was in einem Zielprojekt liegt | aus dessen Manifest, mit heutigem Wirksamkeitszustand |
 | `stats` | Bestandszahlen | die Quelle für jede Zahl, die man über den Katalog sagt |
 | `update` | Repos pullen + Katalog neu bauen | dauert Minuten, schreibt den Katalog neu |
 | `sync` | nur Repos pullen/klonen | Teilschritt von `update` |
@@ -60,7 +62,7 @@ Warnungen stehen im Aufruf ohne Argument.
 
 | Typ | Anzahl | Was es ist | Wann einbauen |
 |---|---:|---|---|
-| skill | 402 | Ordner mit `SKILL.md` + Assets | Wiederkehrendes Verfahren, das Claude nachschlagen soll |
+| skill | 404 | Ordner mit `SKILL.md` + Assets | Wiederkehrendes Verfahren, das Claude nachschlagen soll |
 | agent | 375 | Subagent mit eigenem Kontextfenster | Arbeit, die viel Kontext frisst oder unabhängig geprüft werden muss |
 | command | 112 | Slash-Command | Manuell ausgelöster Ablauf mit festem Namen |
 | hook | 56 | Skript an einem Lifecycle-Event | Regel, die *immer* greifen muss — nicht dem Modell überlassen |
@@ -72,8 +74,8 @@ Warnungen stehen im Aufruf ohne Argument.
 Einstieg über die Domäne (`search "<worte>" --domain <name>`), voller Detail-Index
 je Domäne unter `catalog/by-domain/<domäne>.md`:
 
-`general` 331 · `data-ai` 159 · `backend` 108 · `product` 106 · `meta` 101 ·
-`security` 80 · `frontend` 73 · `testing` 68 · `seo` 58 · `docs` 55 ·
+`general` 331 · `data-ai` 161 · `backend` 110 · `product` 106 · `meta` 101 ·
+`security` 80 · `frontend` 73 · `testing` 67 · `seo` 58 · `docs` 55 ·
 `devops` 53 · `media` 48
 
 ## Massen-Repos (opt-in)

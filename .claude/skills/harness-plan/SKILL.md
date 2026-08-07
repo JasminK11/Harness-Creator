@@ -239,11 +239,19 @@ User bestätigen, bevor du schreibst. Inhalt, in dieser Reihenfolge:
 3. **Schnitt AI / deterministisch** — die drei Spalten mit dem prüfbaren Grenzkriterium.
 4. **Architekturentscheidungen mit Begründung** — je Entscheidung ein Satz *warum*, und
    bei `später`/`nie` das Ereignis, das sie wieder aufruft.
-5. **Schmerzpunkte** — wo es erfahrungsgemäß weh tun wird. Das ist die Eingabe, aus der
-   `/harness-build` seine Suchen ableitet; ohne sie sucht es nach Stack statt nach
-   Problem.
+5. **Schmerzpunkte** — wo es erfahrungsgemäß weh tun wird, als **nummerierte Liste**.
+   Das ist die Eingabe, aus der `/harness-build` seine Suchen ableitet; ohne sie sucht
+   es nach Stack statt nach Problem. Nummeriert, weil `/harness-build` in seiner
+   Auswahltabelle je Baustein auf eine dieser Nummern zeigt — eine Prosa-Zusammenfassung
+   lässt sich nicht referenzieren. Die Liste ist die Ausgangshypothese, kein Deckel.
+   **Eine leere Liste ist ein gültiges Ergebnis:** dann lautet die Antwort „kein
+   Harness", und das ist eine Antwort.
 6. **Prüfverfahren** — pro Qualitätskriterium die zugeordnete Methode und der Befehl
-   bzw. die Instanz, die urteilt.
+   bzw. die Instanz, die urteilt. **Den Befehl wörtlich hinschreiben, nicht die
+   Absicht**, und „vorhanden" von „läuft und ist grün" unterscheiden: ein
+   `"test": "echo no tests"` ist keine Prüfschleife. Gibt es noch keine, steht hier,
+   welche als Erstes entsteht — `/harness-build` liest diesen Abschnitt als
+   Prüfschleifen-Erhebung und richtet die Reihenfolge danach aus.
 7. **Annahmen** — Nutzerzahl, Kanäle, Reifegrad der externen Abhängigkeiten, jeweils
    mit dem Auslöser, der sie kippt.
 

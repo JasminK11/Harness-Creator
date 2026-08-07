@@ -33,6 +33,15 @@ Reine Performance-Optimierung einer App — dafür ist `react-performance` aus
 Rezept 01 zuständig. Und: Wenn keine Live-URL abrufbar ist, liefern die meisten
 Bausteine hier nichts, weil sie auf tatsächlichem Abruf beruhen.
 
+**Voraussetzung der Kern-Set-Bausteine:** Die gesamte `AgriciDaniel__claude-seo`-Kette
+— `seo-audit`, `seo-technical`, `seo-content`, `seo-performance`, `seo-schema` —
+braucht eine **abrufbare Live-URL**, die crawlbar ist und nicht hinter Login oder
+Bot-Sperre liegt; `seo-performance` misst Core Web Vitals und braucht dafür echte
+Abrufe, keine Kopie im Dateisystem. Ohne das erzählen die Bausteine
+SEO-Allgemeinplätze aus dem Modellwissen — genau die erste Zeile der
+Schmerzpunkt-Tabelle unten.
+Das ist eine Aussage über die Bausteine, keine Vermutung über dein Projekt.
+
 ## Die Schmerzpunkte dieses Projekttyps
 
 | Symptom | Doktrin |
@@ -49,7 +58,12 @@ Hier fehlt der binäre Check fast vollständig. Nach Doktrin 8/Frage 3 heisst da
 `claude-seo` — spezialisierte Subagenten mit je eigenem Kontext statt eines
 Alleskönners.
 
-## Kern-Set (Pflicht)
+## Kern-Set (Startauswahl, zu kürzen)
+
+**Bindend ist die Spalte „Welches Problem er löst", nicht die Liste.** Wer das
+Symptom im eigenen Projekt nicht wiederfindet, streicht die Zeile — vier passende
+Bausteine schlagen sieben plausible. Dass jede ID im Katalog auflöst, macht sie
+belegt, nicht verpflichtend.
 
 | ID | Typ | Welches Problem er löst | KB |
 |---|---|---|---:|
@@ -60,8 +74,8 @@ Alleskönners.
 | `AgriciDaniel__claude-seo/skill/seo-schema` | skill | Structured Data erkennen, **validieren** und erzeugen. Der Validierungsschritt ist der Punkt. | 11 |
 | `AgriciDaniel__claude-seo/skill/seo-plan` | skill | Strategie, Seitenarchitektur, Content-Kalender vorab. Der Planner-Schritt — die Komponente, die laut Doktrin 7.2 am langsamsten altert. | 33 |
 
-Sechs Bausteine, rund 63 KB. `seo-plan` ist der grösste; er trägt den Scope-Teil
-und bleibt deshalb im Kern.
+Sechs Bausteine, rund 63 KB. Das ist die Obergrenze für diesen Projekttyp.
+`seo-plan` ist der grösste; er trägt den Scope-Teil und bleibt deshalb im Kern.
 
 ## Erweiterung (optional)
 
@@ -97,6 +111,22 @@ node tools/harness.mjs install \
   AgriciDaniel__claude-seo/skill/seo-plan \
   --to <projektpfad>
 ```
+
+## Verifikationspfad — auszufüllen, bevor eingeführt wird
+
+```
+Befehl im Zielprojekt, der ein Ja/Nein liefert:  ______________________
+Zuletzt grün gelaufen am:                        ______________________
+```
+
+Hier steht **kein** fester Befehl, weil kein Rezept die Umgebung eines fremden
+Auftritts kennt. Bei diesem Projekttyp ist die Prüfschleife ein **wiederholbarer
+Abruf**: derselbe Crawl oder Messlauf gegen dieselben URLs, dessen Ergebnis sich
+zwischen zwei Ständen vergleichen lässt.
+
+**Existiert kein solcher Befehl, ist er der erste Arbeitsschritt**, nicht der letzte.
+Ohne Vorher-Wert ist jede Empfehlung eine Meinung — und ein Deployment, das Titles
+oder `robots.txt` kippt, fällt monatelang niemandem auf.
 
 ## Reihenfolge der Einführung
 
