@@ -1,0 +1,15 @@
+# Der volle Katalog ist rund 20 MB und wird aus den Quell-Repos erzeugt.
+# Er gehört nicht ins Repo — nach dem Klonen einmal
+#   node tools/harness.mjs update
+# laufen lassen, dann ist er wieder da.
+catalog/index.json
+
+# Repo-Klone liegen ausserhalb (siehe sources.txt), aber falls jemand
+# HARNESS_SOURCES auf ein Verzeichnis hier drin setzt:
+.harness-sources/
+sources/
+
+node_modules/
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,46 @@
+# Harness-Quellen — Single Source of Truth
+#
+# Eine Zeile pro Repo. Format: <git-url> [#branch]
+# Zeilen mit # am Anfang sind Kommentare.
+#
+# Neues Repo aufnehmen:  Zeile hier eintragen, dann /harness-update laufen lassen.
+# Repo entfernen:        Zeile löschen (oder auskommentieren), dann /harness-update.
+#
+# Marker am Zeilenende:
+#   !bulk   Repo liefert sehr viele Bausteine. Bleibt katalogisiert, taucht aber
+#           nicht in der Standardsuche auf — sonst verdrängt es alles andere.
+#           Zugriff nur mit --repo, --domain oder --all.
+#   !full   Erzwingt volle Sichtbarkeit, auch wenn das Repo über der
+#           Automatik-Schwelle von 2000 Bausteinen liegt.
+#   Ohne Marker: ab 2000 Bausteinen automatisch bulk.
+#
+# Die Klone liegen NICHT hier, sondern unter C:\Users\info\.harness-sources
+# (ausserhalb von OneDrive — sonst synct OneDrive hunderte MB .git-Objekte).
+
+# --- Security / Pentest ---
+https://github.com/usestrix/strix
+
+# --- Engineering-Workflow / Skills ---
+https://github.com/mattpocock/skills
+https://github.com/anthropics/skills
+https://github.com/affaan-m/ecc
+https://github.com/msitarzewski/agency-agents
+https://github.com/multica-ai/multica
+
+# --- SEO / Marketing ---
+https://github.com/AgriciDaniel/claude-seo
+https://github.com/Bomx/qwoted-seo-backlinks-skill
+https://github.com/mvanhorn/last30days-skill
+
+# --- Wissensgraph / Codebase-Verstehen ---
+https://github.com/Graphify-Labs/graphify
+https://github.com/Egonex-AI/Understand-Anything
+
+# --- UI / UX ---
+https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
+
+# --- Recht (DE) ---
+# ~24.500 Bausteine, fein nach Rechtsgebiet geschnitten. Deshalb !bulk:
+# in der Standardsuche unsichtbar, gezielt erreichbar mit
+#   --repo Klotzkette__claude-fuer-deutsches-recht   oder   --domain legal-de
+https://github.com/Klotzkette/claude-fuer-deutsches-recht !bulk

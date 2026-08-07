@@ -1,0 +1,13 @@
+https://github.com/usestrix/strix
+https://github.com/mattpocock/skills
+https://github.com/Bomx/qwoted-seo-backlinks-skill
+https://github.com/mvanhorn/last30days-skill
+https://github.com/AgriciDaniel/claude-seo
+https://github.com/multica-ai/multica
+https://github.com/affaan-m/ecc
+https://github.com/msitarzewski/agency-agents
+https://github.com/Klotzkette/claude-fuer-deutsches-recht/tree/main
+https://github.com/Graphify-Labs/graphify
+https://github.com/anthropics/skills/tree/main/skills
+https://github.com/nextlevelbuilder/ui-ux-pro-max-skill
+https://github.com/Egonex-AI/Understand-Anything
