@@ -51,6 +51,8 @@ https://github.com/usestrix/strix
 https://github.com/mattpocock/skills
 # Vertrauen: offiziell — vom Hersteller von Claude Code selbst herausgegeben
 https://github.com/anthropics/skills
+# Vertrauen: offiziell — offizielles Plugin-Verzeichnis von Anthropic; aufgenommen 2026-08-08 auf Zuruf des Besitzers (enthält u.a. claude-code-setup, 179K Installs — das Mainstream-Gegenstück zu /harness-build, als Vergleichsmaßstab dokumentationswürdig)
+https://github.com/anthropics/claude-plugins-official
 # Vertrauen: gepflegt — Einzelautor, taktet fast täglich nach; mit belegten Lücken: Übersetzungs-Platzhalter und beschreibungslose Hooks (knowledge/04, 3.2)
 https://github.com/affaan-m/ecc
 # Vertrauen: gepflegt — durchgehend einheitliches Agent-Format über alle Einträge

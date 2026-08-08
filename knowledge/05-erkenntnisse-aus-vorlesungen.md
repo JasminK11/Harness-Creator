@@ -107,8 +107,8 @@ intentional, will end up inducing these subtle undesirable behaviors."
    Prosa-Skills. Ein Baustein mit perfekter Beschreibung und flakigem Werkzeug
    richtet mehr Schaden an als ein mittelmässiger, der zuverlässig läuft — und der
    Schaden zeigt sich an einer Stelle, an der niemand sucht.
-4. Unser Bestand steht dazu im Widerspruch: 24.702 Skills gegen 56 Hooks und
-   3 MCP-Konfigurationen. Für `sources.txt` heisst das, gezielt nach Repos mit
+4. Unser Bestand steht dazu im Widerspruch: 24.729 Skills gegen 70 Hooks und
+   4 MCP-Konfigurationen. Für `sources.txt` heisst das, gezielt nach Repos mit
    Hooks, Validierern und CI-Gates zu suchen statt nach weiteren Skill-Sammlungen.
 5. Einschränkung, die nicht verschwiegen wird: bei Feng entsteht der Effekt über
    Gewichtsupdates, bei uns nur in-context innerhalb einer Sitzung. Der Effekt ist
@@ -138,7 +138,7 @@ Die **Leseseite** haben wir richtig gebaut: `INDEX.md` (5 KB) als Einstieg,
 `catalog/by-domain/*.md` als Mittelschicht, `catalog/index.json` (20 MB)
 ausschliesslich über das CLI. Das ist von sechs Vorträgen bestätigt und keine
 Baustelle mehr. Davis liefert zusätzlich die Begründung, warum das keine
-Bequemlichkeit ist: ein ungefiltertes Listing über 25.499 Einträge ist nicht
+Bequemlichkeit ist: ein ungefiltertes Listing über 25.642 Einträge ist nicht
 „gross", es ist unbrauchbar. Konsequenz über die bestehende Regel hinaus: die
 Filterpflicht ins CLI einbauen statt in die Doku — `search` ohne `--type`/`--domain`
 und ohne `--limit` sollte nicht das Vollergebnis liefern, `--all` bleibt eine
@@ -161,7 +161,7 @@ Die **Schreibseite** fehlt komplett. Konkret:
   Zustand ist und keine Gesprächspause.
 - Dasselbe Änderungssignal, das `cmdSync` bereits erhebt, sollte den Extract
   steuern: nur geänderte Repos neu parsen. Heute läuft `cmdExtract` über alle
-  13 Repos, einschliesslich der 24.543 Bausteine aus dem Massen-Repo, auch wenn
+  14 Repos, einschliesslich der 24.543 Bausteine aus dem Massen-Repo, auch wenn
   dort nichts passiert ist. Das ist eine reine Auswertung von Daten, die das CLI
   heute schon erhebt und wegwirft.
 
@@ -199,7 +199,7 @@ Geprüft wird im Zielprojekt: liegt die Datei unter `.claude/skills/<name>/SKILL
 ist das Frontmatter parsebar, sind `name` und `description` gesetzt, gibt es keinen
 Namenskonflikt, sind deklarierte Hooks tatsächlich in `settings.json` registriert
 (heute macht `install` das nachweislich nicht). Dasselbe für `sync`/`update`: nicht
-„13 Repos gezogen" melden, sondern Katalogzahlen vorher gegen nachher stellen.
+„14 Repos gezogen" melden, sondern Katalogzahlen vorher gegen nachher stellen.
 
 **Zweitens: die Description eines fremden Autors ist eine Behauptung.** Sie ist bei
 uns das Routing-Signal, und bei 50 von 56 Hooks ist sie die Shebang-Zeile. Für
@@ -260,9 +260,9 @@ Daraus folgen zwei Werkzeuge, die es nicht gibt:
   keine Aussage.
 
 Die drei Zugriffsebenen stimmen heute nur deshalb überein, weil sie aus demselben
-Lauf stammen (nachgerechnet am Katalogstand 2026-08-07 18:27: `INDEX.md` Typ-Tabelle
-404+375+112+56+6+3 = 956, Repo-Tabelle ebenfalls 956; `stats`
-24.702+241+385+112+56+3 = 25.499). Ungeprüft ist
+Lauf stammen (nachgerechnet am Katalogstand 2026-08-08 19:36: `INDEX.md` Typ-Tabelle
+431+407+141+70+46+4 = 1.099, die Repo-Tabelle `catalog/by-repo.md` summiert über die
+14 Repos auf 25.642; `stats` 24.729+417+281+141+70+4 = 25.642). Ungeprüft ist
 die Naht zwischen generiert und handgepflegt: `sources.txt` gegen tatsächlich
 katalogisierte Repos, in `recipes/` und `knowledge/` genannte IDs, und die
 Bedien-Skills unter `.claude/skills/`, die Zahlen zitieren. <!-- lint:historisch -->
@@ -300,9 +300,9 @@ melden, zerstört Information unbemerkt.
 
 **Was daraus folgt.**
 
-1. **Vertrauensstufe in `sources.txt`.** Unsere 13 Repos sind nicht gleichwertig:
+1. **Vertrauensstufe in `sources.txt`.** Unsere 14 Repos sind nicht gleichwertig:
    `anthropics/skills` (21 Bausteine) ist die geprüfte Bilanz, `affaan-m/ecc`
-   (520 Bausteine) die Analystennotiz, ein Repo mit genau einem Baustein die
+   (522 Bausteine) die Analystennotiz, ein Repo mit genau einem Baustein die
    Gruppenchat-Nachricht. Der Tiebreaker der Suche ist heute die alphabetische ID,
    weshalb bei Gleichstand systematisch `affaan-m__ecc` gewinnt. Ein Feld
    `vertrauen: offiziell | kuratiert | einzelquelle` gehört in jede `search`- und
@@ -387,9 +387,12 @@ die Suche weiter Treffer liefert.
 | Wang | Erst vertikal tief, dann horizontal breit: „domain expertise is something that informs how high quality your data can be" und „lessons learned that going really vertical on a single domain like infrastructure do translate into other horizontal domains." |
 | Davis | „Task list has gone away. Good. Wasn't particularly useful anyway, especially at large scale." |
 
-**Was daraus folgt.** Die 956 im Standardzugriff sind das Produkt, nicht die 25.499 —
-und sie sollten eher schrumpfen als wachsen. Ein 14. Repo erhöht die Menge, nicht
-die Qualität. Zur Grössenordnung: 24.161 der 25.499 Bausteine stammen aus einem
+**Was daraus folgt.** Die 1.099 im Standardzugriff sind das Produkt, nicht die 25.642 —
+und sie sollten eher schrumpfen als wachsen. Ein weiteres Repo erhöht erst einmal die
+Menge, nicht die Qualität; das 14. (`anthropics__claude-plugins-official`, offiziell,
+aufgenommen 2026-08-08 auf Zuruf des Besitzers, +143 Bausteine) kam deshalb über die
+Aufnahmekriterien in `sources.txt`, nicht über Zuwachslogik. Zur Grössenordnung:
+24.161 der 25.642 Bausteine stammen aus einem
 einzigen en bloc gespiegelten Mega-Repo, das für 12 der 13 Domänen nie gebraucht
 wird. Die Regel gehört explizit in `knowledge/01`: **aufgenommen wird ein Repo,
 ausgeliefert werden einzelne Bausteine**; ein Repo, aus dem über mehrere Projekte
@@ -406,7 +409,7 @@ was unter bestehenden IDs geändert wurde oder verschwunden ist — sonst instal
 
 Zwei Nebenbefunde, die hierher gehören:
 
-- **Generik-Bias.** Bei 25.499 Einträgen liefert jede Textsuche zuverlässig die
+- **Generik-Bias.** Bei 25.642 Einträgen liefert jede Textsuche zuverlässig die
   generischsten Bausteine; der eng passende Nischen-Baustein liegt am Rand der
   Verteilung. Das ist messbar: dieselbe Suchroutine über mehrere sehr verschiedene
   Projektprofile fahren und die Überlappung der Top-Treffer zählen. Gegenmittel im
@@ -437,10 +440,10 @@ fremden Oberfläche sind totes Gewicht. Rallabandi verlangt sogar aktives Verges
 **Unsere Position.** Wangs Satz gilt für **Trainingsdaten**, nicht für
 **Laufzeitkontext** — der Unterschied ist bei uns entscheidend und wird sonst
 stillschweigend übersprungen. Für den Katalog auf der Platte hat Wang recht:
-25.499 Einträge schaden niemandem, solange sie hinter dem CLI liegen. Für alles,
+25.642 Einträge schaden niemandem, solange sie hinter dem CLI liegen. Für alles,
 was im Kontextfenster landet, hat Branco recht: jeder zusätzlich sichtbare Baustein
 verschiebt das Routing aller anderen, weil Descriptions um dieselben Auslöser
-konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 956 bekommen
+konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 1.099 bekommen
 Aufnahmekriterien und einen Abgangsmechanismus, der Rest bleibt durchsuchbar, aber
 unempfohlen.
 

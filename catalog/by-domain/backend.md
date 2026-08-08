@@ -1,8 +1,8 @@
 # Domäne: backend
 
-110 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+133 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (32)
+## agent (35)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -18,6 +18,9 @@
 | `affaan-m__ecc/agent/vue-reviewer` | Expert Vue.js code reviewer specializing in Composition API correctness, reactivity pitfalls, component architecture, template se… | 15 |
 | `AgriciDaniel__claude-seo/agent/seo-backlinks` | Backlink profile analyst using free and paid sources. Fetches data from Moz API, Bing Webmaster Tools, Common Crawl web graphs, a… | 7 |
 | `AgriciDaniel__claude-seo/agent/seo-google` | Google SEO API analyst. Fetches CWV field data via CrUX, indexation status via GSC, and organic traffic via GA4 for enriched audi… | 4 |
+| `anthropics__claude-plugins-official/agent/scaffolder` | Scaffolds one service of a reimagined system from the approved architecture and spec — project skeleton, domain model, API stubs,… | 2 |
+| `anthropics__claude-plugins-official/agent/silent-failure-hunter` | Use this agent when reviewing code changes in a pull request to identify silent failures, inadequate error handling, and inapprop… | 8 |
+| `anthropics__claude-plugins-official/agent/version-delta-analyst` | Identifies the breaking changes between two versions of the SAME stack (e.g. .NET Framework 4.8 → .NET 8, Java 8 → 17/21, Spring … | 7 |
 | `msitarzewski__agency-agents/agent/api-platform-engineer` | Expert API platform engineer for public and partner APIs — contract-first design (OpenAPI/gRPC), versioning and deprecation polic… | 13 |
 | `msitarzewski__agency-agents/agent/api-tester` | Expert API testing specialist focused on comprehensive API validation, performance testing, and quality assurance across all syst… | 12 |
 | `msitarzewski__agency-agents/agent/backend-architect` | Senior backend architect specializing in scalable system design, database architecture, API development, and cloud infrastructure… | 11 |
@@ -39,7 +42,7 @@
 | `msitarzewski__agency-agents/agent/wechat-mini-program-developer` | Expert WeChat Mini Program developer specializing in 小程序 development with WXML/WXSS/WXS, WeChat API integration, payment systems,… | 15 |
 | `msitarzewski__agency-agents/agent/wordpress-performance-engineer` | Expert WordPress performance engineer specializing in Core Web Vitals, object caching (Redis/Memcached), page caching, database a… | 24 |
 
-## command (7)
+## command (9)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -50,8 +53,10 @@
 | `affaan-m__ecc/command/react-build` | Fix React build failures (Vite, webpack, Next.js, CRA, Parcel, esbuild, Bun) incrementally — JSX/TSX compile errors, hydration mi… | 5 |
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 | `affaan-m__ecc/command/vue-review` | Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibili… | 6 |
+| `anthropics__claude-plugins-official/command/asana-setup` | Set up the Asana V2 MCP server connection (one-time OAuth app + claude mcp add) | 2 |
+| `anthropics__claude-plugins-official/command/create-docker-mcp-tunnel` | Stand up an Anthropic MCP tunnel locally with Docker Compose so Claude can call a private MCP server (manual-credentials quicksta… | 16 |
 
-## hook (4)
+## hook (7)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -59,14 +64,27 @@
 | `affaan-m__ecc/hook/gateguard-fact-force` | !/usr/bin/env node | 40 |
 | `affaan-m__ecc/hook/mcp-health-check` | !/usr/bin/env node | 23 |
 | `affaan-m__ecc/hook/pre-bash-dev-server-block` | !/usr/bin/env node | 6 |
+| `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
+| `anthropics__claude-plugins-official/hook/review-api` | --------------------------------------------------------------------------- | 25 |
+| `anthropics__claude-plugins-official/hook/stop-hook` | !/bin/bash | 8 |
 
-## plugin (1)
+## plugin (11)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
+| `anthropics__claude-plugins-official/plugin/asana` | Asana project management integration. Connects Claude Code to Asana's V2 MCP server (https://mcp.asana.com/v2/mcp) to create and … | 6 |
+| `anthropics__claude-plugins-official/plugin/context7` | Upstash Context7 MCP server for up-to-date documentation lookup. Connects to Context7's hosted remote MCP server (https://mcp.con… | 3 |
+| `anthropics__claude-plugins-official/plugin/firebase` | Google Firebase MCP integration. Manage Firestore databases, authentication, cloud functions, hosting, and storage. Build and man… | 1 |
+| `anthropics__claude-plugins-official/plugin/github` | Official GitHub MCP server for repository management. Create issues, manage pull requests, review code, search repositories, and … | 1 |
+| `anthropics__claude-plugins-official/plugin/laravel-boost` | Laravel development toolkit MCP server. Provides intelligent assistance for Laravel applications including Artisan commands, Eloq… | 1 |
+| `anthropics__claude-plugins-official/plugin/mcp-server-dev` | Skills for designing and building MCP servers that work seamlessly with Claude — guides you through deployment models (remote HTT… | 130 |
+| `anthropics__claude-plugins-official/plugin/mcp-tunnels` | Connect Claude to a private MCP server through an Anthropic MCP tunnel. Drives the Docker Compose quickstart end to end: certific… | 33 |
+| `anthropics__claude-plugins-official/plugin/playwright` | Browser automation and end-to-end testing MCP server by Microsoft. Enables Claude to interact with web pages, take screenshots, f… | 1 |
+| `anthropics__claude-plugins-official/plugin/serena` | Semantic code analysis MCP server providing intelligent code understanding, refactoring suggestions, and codebase navigation thro… | 1 |
+| `anthropics__claude-plugins-official/plugin/terraform` | The Terraform MCP Server provides seamless integration with Terraform ecosystem, enabling advanced automation and interaction cap… | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (66)
+## skill (71)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -90,8 +108,8 @@
 | `affaan-m__ecc/skill/homelab-wireguard-vpn` | WireGuard VPN server setup, peer configuration, key generation, split tunneling vs full tunnel routing, and remote access to a ho… | 10 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
 | `affaan-m__ecc/skill/ios-icon-gen` | Generate iOS app icons as PNG imagesets for Xcode asset catalogs from SF Symbols (5000+ Apple-native) or Iconify API (275k+ open … | 21 |
-| `affaan-m__ecc/skill/ito-inference` | Serve a model on a completed Itô compute booking through the canonical Itô backend. Use after ito-compute has booked GPU nodes an… | 2 |
-| `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 2 |
+| `affaan-m__ecc/skill/ito-inference` | Inspect the availability of model serving on a completed Itô compute booking and, when the canonical backend becomes available, h… | 6 |
+| `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 10 |
 | `affaan-m__ecc/skill/ito-training` | Run an ML training job on a completed Itô compute booking through the canonical Itô backend. Use after ito-compute has booked GPU… | 2 |
 | `affaan-m__ecc/skill/jira-integration` | Use this skill when retrieving Jira tickets, analyzing requirements, updating ticket status, adding comments, or transitioning is… | 9 |
 | `affaan-m__ecc/skill/kotlin-exposed-patterns` | JetBrains Exposed ORM patterns including DSL queries, DAO pattern, transactions, HikariCP connection pooling, Flyway migrations, … | 22 |
@@ -124,11 +142,16 @@
 | `AgriciDaniel__claude-seo/skill/seo-google` | > Google SEO APIs: Search Console (Search Analytics, URL Inspection, Sitemaps), PageSpeed Insights v5, CrUX field data with 25-we… | 61 |
 | `AgriciDaniel__claude-seo/skill/seo-maps` | > Maps intelligence for local SEO: geo-grid rank tracking, GBP profile auditing via API, review intelligence across Google/Tripad… | 12 |
 | `AgriciDaniel__claude-seo/skill/seo-unlighthouse` | Multi-page Lighthouse audit via the MIT-licensed Unlighthouse CLI. Free-tier alternative to running PageSpeed against every URL o… | 2 |
+| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 48 |
+| `anthropics__claude-plugins-official/skill/build-mcp-server` | This skill should be used when the user asks to "build an MCP server", "create an MCP", "make an MCP integration", "wrap an API f… | 50 |
+| `anthropics__claude-plugins-official/skill/build-mcpb` | This skill should be used when the user wants to "package an MCP server", "bundle an MCP", "make an MCPB", "ship a local MCP serv… | 19 |
+| `anthropics__claude-plugins-official/skill/hook-development` | This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "… | 66 |
+| `anthropics__claude-plugins-official/skill/mcp-integration` | This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "s… | 48 |
 | `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 901 |
 | `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1100 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
 | `multica-ai__multica/skill/multica-autopilots` | Use when creating, updating, inspecting, triggering, or debugging a Multica autopilot (scheduled, webhook, or manual). | 7 |
-| `multica-ai__multica/skill/multica-creating-agents` | Use when creating, inspecting, or debugging a Multica agent definition via the `multica agent` CLI or POST /api/agents. Not for a… | 32 |
+| `multica-ai__multica/skill/multica-creating-agents` | Use when creating, inspecting, or debugging a Multica agent definition via the `multica agent` CLI or POST /api/agents. Not for a… | 33 |
 | `multica-ai__multica/skill/multica-projects-and-resources` | Use when creating, inspecting, updating, or debugging Multica projects and their resources (github_repo, local_directory). | 9 |
 | `multica-ai__multica/skill/multica-skill-importing` | Use when asked to import or install a specific skill into this Multica workspace from a URL or slug. Not for choosing which skill… | 21 |
 | `multica-ai__multica/skill/multica-squads` | Use when creating, inspecting, updating, assigning to, or debugging a Multica squad, including how leader routing picks who runs. | 23 |

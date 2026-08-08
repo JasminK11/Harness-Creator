@@ -25,9 +25,9 @@ sources:
     last_modified: 2026-08-07
   - id: cli-laeufe-2026-08-07
     resource: catalog/index.json
-    title: CLI-Läufe stats/search/show vom 2026-08-07, aus denen alle Zahlen dieser Datei stammen
+    title: CLI-Läufe stats/search/show vom 2026-08-07; Bestandszahlen und die Description-Messung in 3.2 am 2026-08-08 neu erhoben
     author: Harness-Bibliothek (lokal)
-    last_modified: 2026-08-07
+    last_modified: 2026-08-08
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2027-05-07
 tags: [governance, katalog, routing, descriptions, eval, admission, lifecycle, coherence]
@@ -35,13 +35,13 @@ tags: [governance, katalog, routing, descriptions, eval, admission, lifecycle, c
 
 # 04 — Governance: was ab rund tausend Bausteinen kippt
 
-> **Abstract.** Unsere Bibliothek hat mit 956 Bausteinen im Standardzugriff Mirajes dritte Schwelle (~100) um den Faktor 9,6 überschritten — die Architektur ist dafür gebaut, die Governance ist bei null.
-> Die Diagnose ist hart: Domänen entstehen aus Regex-Treffern statt aus Nutzerabsicht, **jeder einzelne** der 56 Hooks trägt als Beschreibung seine Shebang-Zeile oder gar keine, und breite Suchen liefern über 100 Kandidaten mit austauschbaren Descriptions.
+> **Abstract.** Unsere Bibliothek hat mit 1.099 Bausteinen im Standardzugriff Mirajes dritte Schwelle (~100) um den Faktor 11,0 überschritten — die Architektur ist dafür gebaut, die Governance ist bei null.
+> Die Diagnose ist hart: Domänen entstehen aus Regex-Treffern statt aus Nutzerabsicht, 69 der 70 Hooks tragen als Beschreibung ihre Shebang-Zeile, ein Code-Fragment oder gar nichts (Messung in 3.2), und breite Suchen liefern über 100 Kandidaten mit austauschbaren Descriptions.
 > Weil wir fremde Repos katalogisieren statt eigene Skills zu besitzen, sind drei von Mirajes fünf Governance-Aspekten bei uns nicht anwendbar — wir brauchen Ersatzmechanismen an der Katalog-Grenze, nicht am Baustein.
 
 Anlass ist der Konferenzvortrag von **Yogendra Miraje** (Principal AI Engineer, FactSet), *„Building skill-centric agentic products"*. Er beschreibt eine Skill-Bibliothek, die dieselbe Kurve genommen hat wie unsere, und benennt die Punkte, an denen sie kippt. Diese Datei erzählt den Vortrag nicht nach, sondern misst unsere Bibliothek an seinen Aussagen.
 
-Alle Zahlen unten stammen aus Läufen von `node tools/harness.mjs stats` und `search` am 2026-08-07. Die Bestandszahlen sind auf den Katalogstand 2026-08-07 18:27 nachgezogen; die Trefferzahlen einzelner `search`-Läufe stammen aus dem Stand 08:57 desselben Tages und sind seither nicht neu erhoben.
+Alle Zahlen unten stammen aus Läufen von `node tools/harness.mjs stats` und `search`. Die Bestandszahlen sind auf den Katalogstand 2026-08-08 19:36 nachgezogen; die Trefferzahlen einzelner `search`-Läufe stammen, wo im Text nicht anders datiert, aus dem Stand 2026-08-07 08:57 und sind seither nicht neu erhoben.
 
 ---
 
@@ -53,15 +53,15 @@ Miraje nennt drei Regime:
 |---|---|---|
 | bis ~10 | alle Skills in den System-Prompt schieben | weit überschritten |
 | ab ~10 | Vorauswahl per Embeddings/Similarity oder kleinem Vorfilter-Modell | überschritten |
-| ab ~100 | Hierarchie, Metadaten-Filter, **Governance** | 956 — Faktor 9,6 darüber |
+| ab ~100 | Hierarchie, Metadaten-Filter, **Governance** | 1.099 — Faktor 11,0 darüber |
 
-**Die Architektur ist in Ordnung.** Wir haben genau das, was das dritte Regime verlangt: Hierarchie (`INDEX.md` mit 4,6 KB → `catalog/by-domain/*.md` → `search`/`show`), Metadaten-Filter (`--type`, `--domain`, `--repo`, `--limit`) und ein Mengen-Ventil (`!bulk` in `sources.txt` hält 24.543 Rechts-Bausteine aus der Standardsuche; ohne das wären wir bei 25.499 und jede Suche wertlos).
+**Die Architektur ist in Ordnung.** Wir haben genau das, was das dritte Regime verlangt: Hierarchie (`INDEX.md` mit 4,6 KB → `catalog/by-domain/*.md` → `search`/`show`), Metadaten-Filter (`--type`, `--domain`, `--repo`, `--limit`) und ein Mengen-Ventil (`!bulk` in `sources.txt` hält 24.543 Rechts-Bausteine aus der Standardsuche; ohne das wären wir bei 25.642 und jede Suche wertlos).
 
 **Die Governance fehlt vollständig.** Kein Admission-Gate, keine Ownership, keine Boundaries, keine Lifecycle-Policy, keine Audits. Genau die Dimension, die Miraje ab 100 fordert, ist bei uns die einzige, die wir nie gebaut haben.
 
 ### Die Schwelle, die uns tatsächlich bindet
 
-Mirajes Zahlen beschreiben, wie viele Skills ein Agent gleichzeitig unterscheiden muss. Unser Agent sieht nie 956 — er sieht die Trefferliste einer Suche. **Die relevante Grösse ist also nicht der Bestand, sondern die Trefferzahl pro Anfrage.** Und die liegt bei breiten Fragen weiterhin über Mirajes 100er-Schwelle:
+Mirajes Zahlen beschreiben, wie viele Skills ein Agent gleichzeitig unterscheiden muss. Unser Agent sieht nie 1.099 — er sieht die Trefferliste einer Suche. **Die relevante Grösse ist also nicht der Bestand, sondern die Trefferzahl pro Anfrage.** Und die liegt bei breiten Fragen weiterhin über Mirajes 100er-Schwelle:
 
 | Suchanfrage | Treffer (ohne Massen-Repo) |
 |---|---:|
@@ -142,8 +142,8 @@ Zwölf Einträge, davon zehn für Software; `vermarkten` und `rechtliches` sind 
 
 **Ein Austausch der Domänen gegen Absichten lohnt nicht.** Begründung:
 
-- Die Domänen sind als *Grobfilter* brauchbar. `--domain seo` (64) oder `--domain devops` (86) schneidet den Suchraum wirksam. `docs` ist mit M1 und M6 repariert; kaputt bleibt `general` (331 von 956 — der Auffangkorb).
-- Ein Austausch bedeutet, 956 Bausteine neu zu klassifizieren. Regex reicht dafür nicht: ob ein Baustein zu `verstehen` oder `umbauen` gehört, steht nicht in einem Stichwort. Das wäre ein LLM-Klassifikationslauf über den Gesamtbestand — bei jedem `/harness-update` erneut, für alle neuen Bausteine.
+- Die Domänen sind als *Grobfilter* brauchbar. `--domain seo` (64) oder `--domain devops` (90) schneidet den Suchraum wirksam. `docs` ist mit M1 und M6 repariert; kaputt bleibt `general` (365 von 1.099 — der Auffangkorb).
+- Ein Austausch bedeutet, 1.099 Bausteine neu zu klassifizieren. Regex reicht dafür nicht: ob ein Baustein zu `verstehen` oder `umbauen` gehört, steht nicht in einem Stichwort. Das wäre ein LLM-Klassifikationslauf über den Gesamtbestand — bei jedem `/harness-update` erneut, für alle neuen Bausteine.
 - Der Katalog wird von `extract` **vollständig neu erzeugt**. Eine von Hand gepflegte Absichts-Zuordnung würde bei jedem Update überschrieben, wenn sie nicht ausserhalb von `index.json` liegt.
 
 **Was stattdessen: eine Absichts-Ebene neben den Domänen, als Datei gepflegt statt berechnet.**
@@ -224,12 +224,12 @@ Die Stichprobe musste hier vollständig neu gezogen werden. Die ursprünglichen 
 
 Zwei der drei Kategorien lassen sich über das CLI auf den Gesamtbestand hochrechnen:
 
-- `search "usr/bin/env"` → **50 Bausteine** führen ihre Shebang-Zeile als Beschreibung; `search "usr/bin/env" --type hook` liefert dieselben 50, es ist also kein einziger Nicht-Hook darunter. Bei 56 Hooks sind das **89 % aller Hooks**. Ursache ist unverändert `hookDescription()` in `harness.mjs`: sie nimmt den ersten Kommentar der Datei — und das ist bei Skripten die Shebang.
+- `search "usr/bin/env"` → **56 Bausteine** führen ihre Shebang-Zeile als Beschreibung (Messung wiederholt am Katalogstand 2026-08-08 19:36; erste Wiederholung 2026-08-07: 50); `search "usr/bin/env" --type hook` liefert dieselben 56, es ist also kein einziger Nicht-Hook darunter. Dazu kommt `anthropics__claude-plugins-official/hook/stop-hook`, dessen `!/bin/bash`-Shebang diese Suche nicht fängt — 57 Shebang-Hooks bei 70 Hooks insgesamt, **81 %**. Ursache ist unverändert `hookDescription()` in `harness.mjs`: sie nimmt den ersten Kommentar der Datei — und das ist bei Skripten die Shebang.
 - **Der Anteil ist gegenüber der ersten Messung (45 % von 152) gestiegen, nicht gefallen.** Das ist keine Verschlechterung am Bestand, sondern eine Bereinigung: `isClaudeHook()` sortiert inzwischen React-`use*`-Hooks und Testdateien aus. Verschwunden sind dadurch vor allem die Einträge, die überhaupt eine Prosa-Beschreibung trugen — übrig bleibt der harte Kern echter Shell- und Node-Hooks, und der beschreibt sich geschlossen mit seiner Shebang.
-- 6 weitere Hooks tragen **gar keine** Beschreibung (`(keine Beschreibung)` in der Trefferzeile).
+- 7 weitere Hooks tragen **gar keine** Beschreibung (`(keine Beschreibung)` in der Trefferzeile; der siebte kam mit `anthropics__claude-plugins-official/hook/hooks` hinzu), und 5 Hooks desselben neuen Repos führen ein Code- oder Trennzeichen-Fragment als Beschreibung (`gitutil`, `llm`, `diffstate`, `review-api`, `extensibility`).
 - `search "日本語翻訳"` → **kein Treffer** mehr, `search "ja-jp"` noch **einer**. Die 163 Übersetzungseinträge der ersten Messung sind seit `TRANSLATION_RE` und `isPlaceholder()` aus dem Katalog.
 
-Nachgezählt statt geschätzt: **56 der 956 Bausteine (5,9 %) haben keine Description, die einen deutsch- oder englischsprachigen Agenten routen könnte** — 50 mit Shebang, 6 ohne jede Beschreibung. Das sind **exakt alle 56 Hooks des Katalogs**; kein Baustein eines anderen Typs ist betroffen. Der Bestand insgesamt ist damit deutlich sauberer als bei der ersten Messung (rund 230 ≙ 22 %), das Hook-Problem dafür vollständig: **es gibt im ganzen Katalog keinen einzigen Hook mit brauchbarer Beschreibung.**
+Nachgezählt statt geschätzt (Messung wiederholt am Katalogstand 2026-08-08 19:36): **69 der 1.099 Bausteine (6,3 %) haben keine Description, die einen deutsch- oder englischsprachigen Agenten routen könnte** — 57 mit Shebang, 7 ohne jede Beschreibung, 5 mit Code- oder Trennzeichen-Fragment. Das sind **69 der 70 Hooks des Katalogs**; kein Baustein eines anderen Typs ist betroffen. Die einzige Ausnahme ist `anthropics__claude-plugins-official/hook/patterns` („Security patterns configuration" — drei Wörter, Merkmalsliste, keine Situation). Der Bestand insgesamt ist damit deutlich sauberer als bei der ersten Messung (rund 230 ≙ 22 %), das Hook-Problem dafür praktisch vollständig: **auch das offizielle Plugin-Repo liefert 13 seiner 14 Hooks ohne routbare Beschreibung.**
 
 ### 3.3 Die Überlappungen, die tatsächlich schaden
 
@@ -308,7 +308,7 @@ Der Subcommand `eval` führt Stufe 1 aus und gibt eine Zeile pro auffälligem Fa
 
 | Symptom im Eval-Lauf | Wahrscheinliche Ursache |
 |---|---|
-| Ein `erwartet` fällt von Position 3 auf 14, sonst nichts | Katalog gewachsen — neue Konkurrenz aus einem der 13 Repos. Kein Handlungsbedarf, ausser `topN` war zu grosszügig |
+| Ein `erwartet` fällt von Position 3 auf 14, sonst nichts | Katalog gewachsen — neue Konkurrenz aus einem der 14 Repos. Kein Handlungsbedarf, ausser `topN` war zu grosszügig |
 | Mehrere `erwartet` fallen gleichzeitig weg | Ein Repo hat umbenannt oder umsortiert. `CHANGELOG.md` prüfen |
 | `erwartet` existiert gar nicht mehr | Baustein upstream gelöscht. Eval-Fall auf den Nachfolger umschreiben oder streichen — mit Notiz |
 | Bestehensquote unverändert grün, erwartete IDs rutschen aber im Rang | Score-Gewichtung eingeebnet. `eval` misst heute nur, *ob* die ID unter `topN` steht, nicht *wo* — deshalb bleibt der Lauf grün. Die Rangverschiebung gegen den letzten grünen Lauf ist die dafür fehlende zweite Zahl (`knowledge/06` M7 Punkt 1, offen) |
@@ -395,10 +395,10 @@ Miraje: periodische Audits und Validierungsläufe, damit die Bibliothek als Ganz
 Der Audit ist genau der Eval aus Abschnitt 4, plus eine Bestandshygiene-Prüfung, die `extract` nebenbei erhebt und in `CHANGELOG.md` schreibt:
 
 ```
-Katalog-Hygiene 2026-08-07 (Nenner: 956 im Standardzugriff):
-  ohne brauchbare Description       56  (5,9 %)  ← Ziel: < 5 %
+Katalog-Hygiene 2026-08-08 (Nenner: 1.099 im Standardzugriff):
+  ohne brauchbare Description       69  (6,3 %)  ← Ziel: < 5 %
   mit mehr als 3 Domänen             ?           ← Ziel: < 10 %
-  in Domäne 'general' (Auffang)    331  (34,6 %) ← Ziel: < 15 %
+  in Domäne 'general' (Auffang)    365  (33,2 %) ← Ziel: < 15 %
   Namensdubletten über Repos         ?           ← nur berichten
 ```
 
@@ -420,7 +420,7 @@ Vier Kennzahlen, bei jedem `/harness-update` erhoben, als Zeitreihe im Changelog
 | M6 | ~~Dateipfad aus `classify()` entfernen oder auf die letzten zwei Segmente begrenzen~~ — **erledigt** | Beseitigte die Ursache dafür, dass `docs` zu 73 % aus einem Ordnernamen bestand. Umgesetzt: `classify()` wertet den Pfad nur noch aus, wenn Name und Description nichts hergeben. Zusammen mit M1 ist `docs` erstmals eine echte Domäne | erledigt | CLI |
 | M7 | ~~Commit-Hash des Quell-Repos ins `harness-manifest.json` schreiben~~ — **erledigt** | Ownership-Ersatz. Das Manifest führt jetzt `commit`, `installedAt`, `bytes` und md5 je Datei; `list --to DIR` wertet sie aus und `uninstall` entfernt nur, was unverändert ist | erledigt | CLI |
 | M8 | `search` zeigt Tool-Rechte in der Trefferzeile; `install` verlangt Bestätigung für `Bash`/`Write` und für **alle** Hooks | Die einzige Boundary, die wir durchsetzen können. Hooks laufen ohne Modellentscheidung — sie ungeprüft zu kopieren ist der riskanteste Vorgang im ganzen Ablauf | 3 Std | CLI + Skill |
-| M9 | `catalog/intents.yaml` mit den zwölf Absichten + `harness.mjs intent <id>` | Der Absichts-Schnitt, den Miraje fordert, ohne 956 Bausteine neu zu klassifizieren. Ersetzt die hartkodierte Symptomtabelle in `harness-build` | 1,5 Tage | CLI + neue Datei + Skill |
+| M9 | `catalog/intents.yaml` mit den zwölf Absichten + `harness.mjs intent <id>` | Der Absichts-Schnitt, den Miraje fordert, ohne 1.099 Bausteine neu zu klassifizieren. Ersetzt die hartkodierte Symptomtabelle in `harness-build` | 1,5 Tage | CLI + neue Datei + Skill |
 | M10 | ~~Aufnahmekriterien für `sources.txt` festhalten, plus Stufe „Vertrauen"~~ — **erledigt** | Unser einziges echtes Human-in-the-Loop-Gate. Hätte `multica-ai/multica` (React-Hooks statt Claude-Bausteine) abgefangen. Umgesetzt **im Kopf von `sources.txt`**, nicht in `knowledge/`: die Kriterien stehen dort, wo die Entscheidung fällt, und die Vertrauenszeile steht neben dem Repo, das sie bewertet | erledigt | Doku |
 | M11 | Katalog-Hygiene-Kennzahlen bei jedem `extract` erheben und in `CHANGELOG.md` schreiben | Macht Coherence-Verfall sichtbar, bevor jemand ihn spürt. Vier Zahlen, keine Bürokratie | 2 Std | CLI |
 
@@ -434,7 +434,7 @@ Empfohlene Reihenfolge: **M1, M6, M7 und M10 sind erledigt**, und M4, M5 und M8 
 |---|---|
 | Embedding-basierte Suche statt Wort-Score | Behebt die 112-Treffer-Listen bei Einwortsuchen wirklich — das ist nach der UND-Umstellung das einzige verbliebene Trefferzahl-Problem. Aber: Index bauen, Modell einbinden, bei jedem Update neu berechnen — und der Nutzen hängt daran, dass die Descriptions etwas taugen. Erst nach M2 und M3 sinnvoll, sonst betten wir Shebangs ein |
 | ~~UND-Semantik oder Phrasensuche in `cmdSearch`~~ — **erledigt** | Die UND-Semantik mit Lockerung auf Teiltreffer ist umgesetzt (siehe Abschnitt 1). Das damals genannte Risiko — bestehende Suchen in `harness-build` und den Rezepten liefern schlagartig andere Ergebnisse — hat sich realisiert und ist der Grund, warum M5 (Eval) weiterhin fehlt: die Umstellung lief ohne Messung |
-| LLM-gestützte Neuklassifikation aller Bausteine nach Absicht | Der saubere Miraje-Schnitt. Kosten: ein Modelllauf über 956 Bausteine bei jedem Update, plus derselbe Lauf über 24.543 im Massen-Repo, wenn man es je öffnet. M9 liefert 80 % davon für 5 % der Kosten |
+| LLM-gestützte Neuklassifikation aller Bausteine nach Absicht | Der saubere Miraje-Schnitt. Kosten: ein Modelllauf über 1.099 Bausteine bei jedem Update, plus derselbe Lauf über 24.543 im Massen-Repo, wenn man es je öffnet. M9 liefert 80 % davon für 5 % der Kosten |
 | Automatisches Nachschreiben schlechter Descriptions beim `install` | Verlockend — und genau die Stelle, an der wir aufhören, fremde Bausteine zu katalogisieren, und anfangen, sie zu forken. Dann brauchen wir echtes Lifecycle-Management. Bewusst nicht |
 | `harness.mjs drift --to <projekt>` (Abschnitt 5.4) | Richtig gedacht, aber wertlos, solange kaum Projekte aus der Bibliothek installiert haben. Nachziehen, sobald das dritte Projekt ein Manifest hat |
 
@@ -462,7 +462,7 @@ Empfohlene Reihenfolge: **M1, M6, M7 und M10 sind erledigt**, und M4, M5 und M8 
 
 **CLI-Läufe, aus denen die Zahlen stammen** (alle 2026-08-07):
 
-- `stats`, Katalogstand 18:27 (25.499 gesamt, 956 im Standardzugriff, 24.543 im Massen-Repo, 13 Domänenzeilen)
+- `stats`, Katalogstand 2026-08-08 19:36 (25.642 gesamt, 1.099 im Standardzugriff, 24.543 im Massen-Repo, 13 Domänenzeilen)
 - Die folgenden `search`- und `show`-Läufe stammen aus dem Katalogstand **08:57** desselben Tages und sind nach dem Update um 18:27 **nicht** wiederholt worden. Betroffen sind nur Trefferzahlen, nicht der Bestand; das Update brachte zwei Skills hinzu (`affaan-m__ecc/skill/ito-inference`, `…/ito-training`) und benannte die vier `usestrix__strix`-Skills um. `affaan-m__ecc` steht seither bei 522 statt 520.
 - `lint`
 - `search` mit: `ja-jp` (1) · `日本語翻訳` (0) · `usr/bin/env` (50) · `usr/bin/env --type hook` (50) · `"" --type hook` (56) · `"" --type hook --domain meta` (42) · `review` (112) · `code review` (49) · `refactor` (18) · `api design` (10) · `documentation` (10) · `security audit` (5) · `"" --domain` für general (331), docs (72), seo (64), devops (86) · `"" --repo` für multica (10), mattpocock (36), anthropics (21), nextlevelbuilder (12), msitarzewski (270), affaan-m__ecc (520)

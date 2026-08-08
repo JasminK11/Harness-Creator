@@ -1,8 +1,8 @@
 # Domäne: frontend
 
-73 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+80 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (18)
+## agent (19)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -10,6 +10,7 @@
 | `affaan-m__ecc/agent/react-build-resolver` | Diagnose and fix React build failures across Vite, webpack, Next.js, CRA, Parcel, esbuild, and Bun. Handles JSX/TSX compile error… | 6 |
 | `affaan-m__ecc/agent/react-reviewer` | Expert React/JSX code reviewer specializing in hook correctness, render performance, server/client component boundaries, accessib… | 5 |
 | `affaan-m__ecc/agent/vue-reviewer` | Expert Vue.js code reviewer specializing in Composition API correctness, reactivity pitfalls, component architecture, template se… | 15 |
+| `anthropics__claude-plugins-official/agent/code-architect` | Designs feature architectures by analyzing existing codebase patterns and conventions, then providing comprehensive implementatio… | 2 |
 | `msitarzewski__agency-agents/agent/drupal-performance-engineer` | Expert Drupal 10/11 performance engineer specializing in Core Web Vitals, render and dynamic page caching, BigPipe, cache tags an… | 23 |
 | `msitarzewski__agency-agents/agent/frontend-developer` | Expert frontend developer specializing in modern web technologies, React/Vue/Angular frameworks, UI implementation, and performan… | 9 |
 | `msitarzewski__agency-agents/agent/roblox-experience-designer` | Roblox platform UX and monetization specialist - Masters engagement loop design, DataStore-driven progression, Roblox monetizatio… | 15 |
@@ -25,7 +26,7 @@
 | `msitarzewski__agency-agents/agent/wordpress-performance-engineer` | Expert WordPress performance engineer specializing in Core Web Vitals, object caching (Redis/Memcached), page caching, database a… | 24 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/agent/design-review` | >- Expert design reviewer for web UI. Use PROACTIVELY after any front-end change and before calling UI work complete, or when the… | 5 |
 
-## command (9)
+## command (10)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -36,22 +37,25 @@
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 | `affaan-m__ecc/command/react-test` | Enforce TDD workflow for React. Write React Testing Library tests first (behavior-focused, accessibility-first), then implement c… | 7 |
 | `affaan-m__ecc/command/vue-review` | Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibili… | 6 |
+| `anthropics__claude-plugins-official/command/create-plugin` | Guided end-to-end plugin creation workflow with component design, implementation, and validation | 16 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-plan` | Generate a concrete design system (tokens, style, type, UX) before building UI | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-review` | Run the 7-phase design review (WCAG AA, responsive, interaction) on a page or URL | 1 |
 
-## hook (1)
+## hook (2)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/design-quality-check` | !/usr/bin/env node | 4 |
+| `anthropics__claude-plugins-official/hook/patterns` | Security patterns configuration | 18 |
 
-## plugin (1)
+## plugin (2)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
+| `anthropics__claude-plugins-official/plugin/frontend-design` | Frontend design skill for UI/UX implementation | 31 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (44)
+## skill (47)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -87,6 +91,9 @@
 | `affaan-m__ecc/skill/ui-to-vue` | Use when the user has UI screenshots or design exports that need batch conversion into Vue 3 components, especially with Vant, El… | 5 |
 | `affaan-m__ecc/skill/vue-patterns` | Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigati… | 13 |
 | `affaan-m__ecc/skill/windows-desktop-e2e` | E2E testing for Windows native desktop apps (WPF, WinForms, Win32/MFC, Qt) using pywinauto and Windows UI Automation. | 30 |
+| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 48 |
+| `anthropics__claude-plugins-official/skill/frontend-design` | Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direc… | 18 |
+| `anthropics__claude-plugins-official/skill/plugin-structure` | This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize … | 76 |
 | `anthropics__skills/skill/frontend-design` | Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direc… | 18 |
 | `anthropics__skills/skill/slack-gif-creator` | Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation con… | 44 |
 | `anthropics__skills/skill/web-artifacts-builder` | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Ta… | 45 |

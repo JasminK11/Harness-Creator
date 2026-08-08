@@ -1,8 +1,8 @@
 # Domäne: general
 
-331 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+365 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (149)
+## agent (155)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -38,6 +38,12 @@
 | `affaan-m__ecc/agent/swift-build-resolver` | Swift/Xcode build, compilation, and dependency error resolution specialist. Fixes swift build errors, Xcode build failures, SPM d… | 7 |
 | `affaan-m__ecc/agent/swift-reviewer` | Expert Swift code reviewer specializing in protocol-oriented design, value semantics, ARC memory management, Swift Concurrency, a… | 5 |
 | `affaan-m__ecc/agent/type-design-analyzer` | Analyze type design for encapsulation, invariant expression, usefulness, and enforcement. | 2 |
+| `anthropics__claude-plugins-official/agent/architecture-critic` | Reviews proposed target architectures and transformed code against modern best practice. Adversarial — looks for over-engineering… | 3 |
+| `anthropics__claude-plugins-official/agent/business-rules-extractor` | Mines domain logic, calculations, validations, and policies from legacy code into testable Given/When/Then specifications. Use wh… | 4 |
+| `anthropics__claude-plugins-official/agent/code-explorer` | Deeply analyzes existing codebase features by tracing execution paths, mapping architecture layers, understanding patterns and ab… | 2 |
+| `anthropics__claude-plugins-official/agent/code-simplifier` | Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Focuses on recently… | 3 |
+| `anthropics__claude-plugins-official/agent/legacy-analyst` | Deep-reads legacy codebases (COBOL, Java, .NET, Node, anything) to build structural and behavioral understanding. Use for discove… | 4 |
+| `anthropics__claude-plugins-official/agent/uplift-migrator` | Migrates ONE project/module of an in-flight same-stack version uplift by applying a proven pilot playbook — minimal diff, then ru… | 5 |
 | `msitarzewski__agency-agents/agent/3d-scene-developer` | Web 3D visualization specialist who creates immersive 3D scenes, terrain models, point cloud visualizations, and interactive web … | 5 |
 | `msitarzewski__agency-agents/agent/accessibility-auditor` | Expert accessibility specialist who audits interfaces against WCAG standards, tests with assistive technologies, and ensures incl… | 15 |
 | `msitarzewski__agency-agents/agent/ad-creative-strategist` | Paid media creative specialist focused on ad copywriting, RSA optimization, asset group design, and creative testing frameworks a… | 5 |
@@ -156,7 +162,7 @@
 | `msitarzewski__agency-agents/agent/xr-interface-architect` | Spatial interaction designer and interface strategist for immersive AR/VR/XR environments | 2 |
 | `msitarzewski__agency-agents/agent/zk-steward` | Knowledge-base steward in the spirit of Niklas Luhmann's Zettelkasten. Default perspective: Luhmann; switches to domain experts (… | 11 |
 
-## command (62)
+## command (82)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -222,6 +228,26 @@
 | `affaan-m__ecc/command/skill-health` | Show skill portfolio health dashboard with charts and analytics | 4 |
 | `affaan-m__ecc/command/update-codemaps` | Update codemaps for codebase navigation | 1 |
 | `affaan-m__ecc/command/verify` | Run verification loop to validate implementation | 1 |
+| `anthropics__claude-plugins-official/command/cancel-ralph` | Cancel active Ralph Loop | 1 |
+| `anthropics__claude-plugins-official/command/clean-gone` | You need to execute the following bash commands to clean up stale local branches that have been deleted from the remote repositor… | 2 |
+| `anthropics__claude-plugins-official/command/code-review` | Code review a pull request | 7 |
+| `anthropics__claude-plugins-official/command/commit` | - Current git status: !git status | 1 |
+| `anthropics__claude-plugins-official/command/commit-push-pr` | - Current git status: !git status | 1 |
+| `anthropics__claude-plugins-official/command/configure` | Enable or disable hookify rules interactively | 3 |
+| `anthropics__claude-plugins-official/command/feature-dev` | Guided feature development with codebase understanding and architecture focus | 5 |
+| `anthropics__claude-plugins-official/command/hookify` | Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions | 8 |
+| `anthropics__claude-plugins-official/command/list` | List all configured hookify rules | 2 |
+| `anthropics__claude-plugins-official/command/maker-setup` | Onboard a Code-with-Claude Makers Cardputer — fetch the build-with-claude repo, flash firmware, and install the Claude Buddy apps. | 1 |
+| `anthropics__claude-plugins-official/command/modernize-assess` | Full discovery & portfolio analysis of a legacy system — inventory, complexity, debt, relative scale | 11 |
+| `anthropics__claude-plugins-official/command/modernize-brief` | Generate a phased Modernization Brief — the approved plan that transformation agents will execute against | 9 |
+| `anthropics__claude-plugins-official/command/modernize-extract-rules` | Mine business logic from legacy code into testable, human-readable rule specifications | 6 |
+| `anthropics__claude-plugins-official/command/modernize-map` | Dependency & topology mapping — call graphs, data lineage, batch flows, rendered as navigable diagrams | 9 |
+| `anthropics__claude-plugins-official/command/modernize-preflight` | Environment readiness check — analysis tools, build toolchain, source completeness, telemetry access | 12 |
+| `anthropics__claude-plugins-official/command/modernize-status` | Where am I in the modernization workflow — artifact inventory, staleness, secrets hygiene, next step | 3 |
+| `anthropics__claude-plugins-official/command/modernize-transform` | Transform one legacy module to the target stack — idiomatic rewrite with behavior-equivalence tests | 6 |
+| `anthropics__claude-plugins-official/command/ralph-loop` | Start Ralph Loop in current session | 1 |
+| `anthropics__claude-plugins-official/command/review-pr` | Comprehensive PR review using specialized agents | 5 |
+| `anthropics__claude-plugins-official/command/revise-claude-md` | Update CLAUDE.md with learnings from this session | 1 |
 
 ## hook (8)
 
@@ -236,7 +262,7 @@
 | `affaan-m__ecc/hook/suggest-compact` | !/usr/bin/env node | 10 |
 | `mvanhorn__last30days-skill/hook/hooks` | — | 1 |
 
-## skill (112)
+## skill (120)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -280,7 +306,7 @@
 | `affaan-m__ecc/skill/inventory-demand-planning` | > Codified expertise for demand forecasting, safety stock optimization, replenishment planning, and promotional lift estimation a… | 24 |
 | `affaan-m__ecc/skill/investor-materials` | Create and update pitch decks, one-pagers, investor memos, accelerator applications, financial models, and fundraising materials.… | 3 |
 | `affaan-m__ecc/skill/investor-outreach` | Draft cold emails, warm intro blurbs, follow-ups, update emails, and investor communications for fundraising. Use when the user w… | 3 |
-| `affaan-m__ecc/skill/ito-compute` | Query live GPU inventory, submit an authenticated Itô fixed-rate RFQ, inspect RFQ or procurement status, and run explicitly gated… | 5 |
+| `affaan-m__ecc/skill/ito-compute` | Query live GPU inventory, submit an authenticated Itô fixed-rate RFQ, inspect RFQ or procurement status, revoke device credential… | 6 |
 | `affaan-m__ecc/skill/java-coding-standards` | Java coding standards for Spring Boot and Quarkus services: naming, immutability, Optional usage, streams, exceptions, generics, … | 11 |
 | `affaan-m__ecc/skill/jpa-patterns` | JPA/Hibernate patterns for entity design, relationships, query optimization, transactions, auditing, indexing, pagination, and po… | 5 |
 | `affaan-m__ecc/skill/kotlin-coroutines-flows` | Kotlin Coroutines and Flow patterns for Android and KMP — structured concurrency, Flow operators, StateFlow, error handling, and … | 8 |
@@ -321,11 +347,19 @@
 | `affaan-m__ecc/skill/uncloud` | Use when managing an Uncloud cluster — deploying services, configuring Caddy ingress, adding static proxy routes for non-cluster … | 9 |
 | `affaan-m__ecc/skill/unified-notifications-ops` | Operate notifications as one ECC-native workflow across GitHub, Linear, desktop alerts, hooks, and connected communication surfac… | 5 |
 | `affaan-m__ecc/skill/vite-patterns` | Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, … | 17 |
+| `anthropics__claude-plugins-official/skill/access` | Manage Discord channel access — approve pairings, edit allowlists, set DM/group policy. Use when the user asks to pair, approve s… | 4 |
+| `anthropics__claude-plugins-official/skill/cardputer-buddy` | The buddy/ directory in the local build-with-claude clone is the MicroPython payload that m5-onboard installs onto /flash/. Work … | 2 |
+| `anthropics__claude-plugins-official/skill/claude-md-improver` | Audit and improve CLAUDE.md files in repositories. Use when user asks to check, audit, update, improve, or fix CLAUDE.md files. S… | 16 |
+| `anthropics__claude-plugins-official/skill/configure` | Set up the Discord channel — save the bot token and review access policy. Use when the user pastes a Discord bot token, asks to c… | 4 |
+| `anthropics__claude-plugins-official/skill/m5-onboard` | This skill automates the full cold-start workflow for an M5Stack ESP32 device: detect on USB, identify model, flash UIFlow 2.0, a… | 24 |
+| `anthropics__claude-plugins-official/skill/playground` | A playground is a self-contained HTML file with interactive controls on one side, a live preview on the other, and a prompt outpu… | 30 |
+| `anthropics__claude-plugins-official/skill/receipts` | Generates a markdown report of one developer's own Claude Code activity, | 82 |
+| `anthropics__claude-plugins-official/skill/session-report` | Produce a self-contained HTML report of Claude Code usage and save it to the current working directory. | 58 |
 | `anthropics__skills/skill/algorithmic-art` | Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request cr… | 60 |
 | `anthropics__skills/skill/doc-coauthoring` | This skill provides a structured workflow for guiding users through collaborative document creation. Act as an active guide, walk… | 16 |
 | `anthropics__skills/skill/internal-comms` | A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude … | 22 |
 | `anthropics__skills/skill/template-skill` | Insert instructions below | 1 |
-| `Graphify-Labs__graphify/skill/graphify` | Turn any folder of files into a navigable knowledge graph with community detection, an honest audit trail, and three outputs: int… | 3824 |
+| `Graphify-Labs__graphify/skill/graphify` | Turn any folder of files into a navigable knowledge graph with community detection, an honest audit trail, and three outputs: int… | 3838 |
 | `mattpocock__skills/skill/ask-matt` | Ask which skill or flow fits your situation. A router over the skills in this repo. | 16 |
 | `mattpocock__skills/skill/code-review` | Two-axis review of the diff between HEAD and a fixed point the user supplies: | 7 |
 | `mattpocock__skills/skill/codebase-design` | Design deep modules: a lot of behaviour behind a small interface, placed at a clean seam, testable through that interface. Use th… | 12 |
@@ -351,5 +385,5 @@
 | `mattpocock__skills/skill/to-tickets` | Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published… | 6 |
 | `mattpocock__skills/skill/wait-what` | Stop. That last message did not land — re-pitch it. | 1 |
 | `mattpocock__skills/skill/wizard` | A wizard is a bash script that walks a human, step by step, through a manual procedure that's tedious to do by hand and tedious t… | 13 |
-| `mvanhorn__last30days-skill/skill/last30days` | Research what people actually say about any topic in the last 30 days. Pulls posts and engagement from Reddit, X, YouTube, TikTok… | 16257 |
+| `mvanhorn__last30days-skill/skill/last30days` | Research what people actually say about any topic in the last 30 days. Pulls posts and engagement from Reddit, X, YouTube, TikTok… | 16261 |
 

@@ -169,7 +169,7 @@ der Code an anderer Stelle selbst ablehnt. Belegt fehlend: `cmdSync` berechnet d
 (nach dem zweiten `install` war der erste Zeitpunkt unwiederbringlich fort);
 `uninstall`/`list` existieren nicht. **Abgelehnt**: das Feld „bestätigt ja/nein" (der
 installierende Prozess kann über sich selbst nur „ja" sagen) und ein Rückrollpfad
-(uns gehört keines der 13 Repos; die Rollback-Einheit ist die Versionsverwaltung des
+(uns gehört keines der 14 Repos; die Rollback-Einheit ist die Versionsverwaltung des
 Projekts).
 
 **Betroffen.** `cmdSync` Z. 198/202, `cmdUpdate` Z. 1245, `cmdInstall` Z. 921,
@@ -268,7 +268,7 @@ unterscheidet, ist nicht bereit für echtes Geld.
 **Was die Prüfung ergab.** Der Tiebreaker ist tatsächlich die alphabetische ID (Z. 710)
 und in ~7 von 10 Top-Treffern aktiv. Aber: der nachgebaute Vertrauens-Tiebreaker löst
 das genannte Problem nicht (`affaan-m__ecc` bleibt in 15 von 20 Abfragen auf Platz 1
-statt heute 18 von 20 — die Dominanz ist ein Bestandseffekt, 522 von 956) und erzeugt
+statt heute 18 von 20 — die Dominanz ist ein Bestandseffekt, 522 von 1.099) und erzeugt
 belegte Verschlechterungen: bei `search "hook"` hebt er einen beschreibungslosen
 `hooks.json`-Eintrag auf Platz 1, bei `search "performance"` einen SEO-Agenten über
 einen Performance-Optimizer. `!einzelquelle` ist am eigenen Wissensbestand widerlegt —
@@ -858,7 +858,7 @@ vorgeschlagen werden.
 | Auto-Korrektur von Zahlen in Prosa | Maschinell umgeschriebene Sätze stimmen danach nicht mehr. Befund melden, Korrektur bleibt Handarbeit. |
 | `catalog/state.json` | Dritte Kopie von `repos[].head`, `lastCommit`, `generatedAt`. Der Code lehnt vorberechnete Zweitindizes an anderer Stelle selbst ab. |
 | Manifest-Feld „bestätigt ja/nein" | Selbstauskunft des installierenden Prozesses; kann nur „ja" sagen. Bestätigung fällt im Gespräch, nicht im CLI. |
-| Rückrollpfad im CLI | Uns gehört keines der 13 Repos. Rollback-Einheit ist die Versionsverwaltung des Projekts; der protokollierte SHA genügt. |
+| Rückrollpfad im CLI | Uns gehört keines der 14 Repos. Rollback-Einheit ist die Versionsverwaltung des Projekts; der protokollierte SHA genügt. |
 | Blankes `list` | Das Manifest ist klein und direkt lesbar. Lohnend nur als `list --to DIR` mit Commit-Abgleich. |
 | Frontmatter-Prüfung in `install` | 402 von 402 Skills bestehen sie; Agents ohne `name`/`description` kommen gar nicht in den Katalog. Null Nutzen. |
 | Namenskonflikt-Prüfung in `install` | Existiert und funktioniert (Z. 915–918). |

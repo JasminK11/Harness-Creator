@@ -1,8 +1,8 @@
 # Domäne: media
 
-48 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+51 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (23)
+## agent (24)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -10,6 +10,7 @@
 | `affaan-m__ecc/agent/performance-optimizer` | Performance analysis and optimization specialist. Use for identifying bottlenecks, optimizing slow code, reducing bundle sizes, a… | 5 |
 | `affaan-m__ecc/agent/react-reviewer` | Expert React/JSX code reviewer specializing in hook correctness, render performance, server/client component boundaries, accessib… | 5 |
 | `AgriciDaniel__claude-seo/agent/seo-image-gen` | SEO image analyst. Audits existing OG/social preview images, identifies missing or low-quality images, and creates an image gener… | 2 |
+| `anthropics__claude-plugins-official/agent/skill-reviewer` | / Use this agent when the user has created or modified a skill and needs quality review, asks to "review my skill", "check skill … | 6 |
 | `Egonex-AI__Understand-Anything/agent/design-analyzer` | / Analyzes Figma structural nodes (pages, screens, components, instances, tokens) from a deterministic manifest and adds semantic… | 3 |
 | `msitarzewski__agency-agents/agent/bilibili-content-strategist` | Expert Bilibili marketing specialist focused on UP主 growth, danmaku culture mastery, B站 algorithm optimization, community buildin… | 11 |
 | `msitarzewski__agency-agents/agent/carousel-growth-engine` | Autonomous TikTok and Instagram carousel generation specialist. Analyzes any website URL with Playwright, generates viral 6-slide… | 14 |
@@ -37,7 +38,7 @@
 | `affaan-m__ecc/command/marketing-campaign` | Plan and execute a full marketing campaign. Accepts a product brief and returns positioning, landing page copy, email sequence, s… | 4 |
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 
-## skill (23)
+## skill (25)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -56,6 +57,8 @@
 | `AgriciDaniel__claude-seo/skill/seo` | Comprehensive SEO analysis for any website or business type. Full site audits, single-page analysis, technical SEO (crawlability,… | 106 |
 | `AgriciDaniel__claude-seo/skill/seo-image-gen` | AI image generation for SEO assets: OG/social preview images, blog hero images, schema images, product photography, infographics.… | 9 |
 | `AgriciDaniel__claude-seo/skill/seo-images` | > Image optimization analysis for SEO and performance. Checks alt text, file sizes, formats, responsive images, lazy loading, CLS… | 17 |
+| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 48 |
+| `anthropics__claude-plugins-official/skill/math-olympiad` | "Solve competition math problems (IMO, Putnam, USAMO, AIME) with adversarial verification that catches the errors self-verificati… | 64 |
 | `anthropics__skills/skill/canvas-design` | Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to c… | 5427 |
 | `anthropics__skills/skill/docx` | Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx… | 1125 |
 | `anthropics__skills/skill/pdf` | Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, … | 59 |

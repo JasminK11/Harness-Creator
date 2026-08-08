@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-08-08T19:26:48.769Z",
- "katalog": "2026-08-07T18:46:33.377Z",
+ "generatedAt": "2026-08-08T19:36:35.384Z",
+ "katalog": "2026-08-08T19:36:34.796Z",
  "raenge": {
   "code review|||": {},
   "tdd testing|||": {
@@ -26,7 +26,7 @@
   "sicherheit prüfen|||": {},
   "tests schreiben|||": {},
   "reviews miss the same mistakes|||": {
-   "affaan-m__ecc/agent/code-reviewer": 3
+   "affaan-m__ecc/agent/code-reviewer": 4
   },
   "nobody understands this codebase|||": {
    "msitarzewski__agency-agents/agent/codebase-onboarding-engineer": 7
@@ -35,12 +35,12 @@
    "affaan-m__ecc/skill/deployment-patterns": 4
   },
   "how do I know the agent did it right|||": {
-   "affaan-m__ecc/skill/eval-harness": 432
+   "affaan-m__ecc/skill/eval-harness": 467
   },
   "review|||": {},
   "react component testing|||": {},
   "react typescript app with tests and deployment|||": {
-   "affaan-m__ecc/skill/react-patterns": 53
+   "affaan-m__ecc/skill/react-patterns": 59
   }
  }
 }

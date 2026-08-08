@@ -1,8 +1,8 @@
 # Domäne: testing
 
-67 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+76 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (17)
+## agent (20)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -12,6 +12,9 @@
 | `affaan-m__ecc/agent/spec-miner` | Extracts behavioral specs from existing codebases for OpenSpec. Produces flat Requirement and Invariant blocks with structured me… | 15 |
 | `affaan-m__ecc/agent/tdd-guide` | Test-Driven Development specialist enforcing write-tests-first methodology. Use PROACTIVELY when writing new features, fixing bug… | 3 |
 | `AgriciDaniel__claude-seo/agent/seo-visual` | Visual analyzer. Captures screenshots, tests mobile rendering, and analyzes above-the-fold content using Playwright. | 2 |
+| `anthropics__claude-plugins-official/agent/agent-creator` | / Use this agent when the user asks to "create an agent", "generate an agent", "build a new agent", "make me an agent that...", o… | 7 |
+| `anthropics__claude-plugins-official/agent/pr-test-analyzer` | Use this agent when you need to review a pull request for test coverage quality and completeness. This agent should be invoked af… | 5 |
+| `anthropics__claude-plugins-official/agent/test-engineer` | Writes characterization, contract, and equivalence tests that pin down legacy behavior so transformation can be proven correct. U… | 3 |
 | `msitarzewski__agency-agents/agent/carousel-growth-engine` | Autonomous TikTok and Instagram carousel generation specialist. Analyzes any website URL with Playwright, generates viral 6-slide… | 14 |
 | `msitarzewski__agency-agents/agent/civil-engineer` | Expert civil and structural engineer with global standards coverage — Eurocode, DIN, ACI, AISC, ASCE, AS/NZS, CSA, GB, IS, AIJ, a… | 17 |
 | `msitarzewski__agency-agents/agent/evidence-collector` | Screenshot-obsessed, fantasy-allergic QA specialist - Default to finding 3-5 issues, requires visual proof for everything | 8 |
@@ -24,7 +27,7 @@
 | `msitarzewski__agency-agents/agent/workflow-architect` | Workflow design specialist who maps complete workflow trees for every system, user journey, and agent interaction — covering happ… | 26 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/agent/design-review` | >- Expert design reviewer for web UI. Use PROACTIVELY after any front-end change and before calling UI work complete, or when the… | 5 |
 
-## command (12)
+## command (13)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -40,8 +43,9 @@
 | `affaan-m__ecc/command/rust-test` | Rust TDD workflow with unit and property tests | 2 |
 | `affaan-m__ecc/command/tdd` | Enforce TDD workflow with 80%+ coverage | 2 |
 | `affaan-m__ecc/command/test-coverage` | Analyze and improve test coverage | 2 |
+| `anthropics__claude-plugins-official/command/modernize-uplift` | Same-stack version uplift (e.g. .NET Framework 4.8 → .NET 8) — preserve the code, fix the version deltas, prove equivalence by ru… | 24 |
 
-## hook (4)
+## hook (6)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -49,11 +53,16 @@
 | `affaan-m__ecc/hook/post-bash-build-complete` | !/usr/bin/env node | 1 |
 | `affaan-m__ecc/hook/post-bash-pr-created` | !/usr/bin/env node | 2 |
 | `affaan-m__ecc/hook/pre-bash-git-push-reminder` | !/usr/bin/env node | 2 |
+| `anthropics__claude-plugins-official/hook/gitutil` | core.quotePath=false: emit raw UTF-8 in path-emitting commands instead | 35 |
+| `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
 
-## plugin (1)
+## plugin (4)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
+| `anthropics__claude-plugins-official/plugin/fakechat` | Localhost iMessage-style web chat for Claude Code — test surface with file upload and edits. No tokens, no access control. | 43 |
+| `anthropics__claude-plugins-official/plugin/playwright` | Browser automation and end-to-end testing MCP server by Microsoft. Enables Claude to interact with web pages, take screenshots, f… | 1 |
+| `anthropics__claude-plugins-official/plugin/skill-creator` | Create new skills, improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, up… | 237 |
 | `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-… | 650 |
 
 ## skill (33)

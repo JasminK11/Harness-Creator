@@ -68,6 +68,71 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-08] revise | Nach dem `update` um 19:36 nachgezogen — Bestandszahlen in fünf Dateien auf 25.642/1.099, die Description-Messung aus `04` 3.2 wiederholt, das 14. Repo dokumentiert
+
+**Was vorher galt.** `lint` meldete nach dem `update` vom 2026-08-08 19:36 **8 Befunde
+hoher Schwere**: veraltete Bestandszahlen in `knowledge/02` (2), `03` (2), `04` (1)
+und `05` (3). Nachher: **0 Befunde**, `lint --all` ebenfalls 0, Exit-Code 0. Die
+tatsächliche Stellenzahl war höher als acht: `lint` meldet jede abweichende Zahl nur
+**einmal je Datei** (`gesehen.add(zahl)` in `cmdLint`) — nachgezogen wurden alle
+Vorkommen, sonst wäre beim nächsten Lauf die jeweils nächste Stelle nachgerückt.
+Kein neuer `lint:historisch`-Marker wurde gesetzt; jede geänderte Stelle ist eine
+Aussage über den heutigen Bestand oder eine am System wiederholte Messung.
+
+**Was sich am Bestand geändert hat.** Das `update` nahm `anthropics__claude-plugins-official`
+auf (Vertrauen: **offiziell** — offizielles Plugin-Verzeichnis von Anthropic;
+aufgenommen 2026-08-08 auf Zuruf des Besitzers, so die Vertrauenszeile in
+`sources.txt`; **143 Bausteine**, Aufnahmekriterium 2 erfüllt: Bestand nach dem
+ersten `extract` grösser als null, und `lint` meldet kein Repo ohne Katalogeintrag).
+Gesamtbestand **25.499 → 25.642**, Standardzugriff **956 → 1.099**, Repos **13 → 14**.
+Typen im Standardzugriff (`INDEX.md`): Skills **404 → 431**, Agents **375 → 407**,
+Commands **112 → 141**, Hooks **56 → 70**, Plugins **6 → 46**, MCP **3 → 4**; Skills
+gesamt (`stats`) **24.702 → 24.729**. `Klotzkette` unverändert 24.543.
+<!-- lint:historisch --> Die jeweils linke Zahl ist der Altwert vom Katalogstand
+2026-08-07 18:27 und steht hier absichtlich: ohne das Vorher ist eine Korrektur nicht
+dokumentiert. Verbindlich ist die rechte Zahl, Katalogstand 2026-08-08 19:36.
+
+**Welche Zahlen nachgezogen wurden.** Aktualisiert, weil sie eine Aussage über den
+**heutigen** Bestand sind: `02` (mcp-Randbefund drei → vier von 1.099, Quellenzeile
+samt Katalogstand und Typ-Aufschlüsselung), `03` (Stand-Absatz mit Repo-Zahl,
+Massen-Repo-Anteil, Herkunftssatz in Teil E), `04` (Abstract, Datierungszeile,
+Regime-Tabelle, Trefferzahl-Absatz, Domänen-Urteil, Drift-Tabelle, Hygiene-Block,
+M9, „Wäre theoretisch schön", Quellenverzeichnis, Frontmatter-Quellzeile), `05`
+(Skill-gegen-Hook-Vergleich 24.702 → 24.729 samt 70 Hooks und 4 MCP, Listing-Grösse,
+Extract-über-alle-Repos, sync-Meldebeispiel, Nachrechnung der drei Zugriffsebenen
+neu am Stand 19:36 — `catalog/by-repo.md` per Summenprobe auf 25.642 geprüft —,
+Vertrauensstufen-Absatz, Produkt-Absatz, Generik-Bias, Platte-gegen-Standardzugriff),
+`06` (Bestandseffekt 522 von 956 → 522 von 1.099, zweimal „keines der 13 Repos" → 14).
+Der Produkt-Absatz in `05` sagte „Ein 14. Repo erhöht die Menge, nicht die Qualität"
+— das 14. ist jetzt da; der Absatz benennt die Aufnahme samt Kriterium, statt still
+auf „ein 15." weiterzuzählen.
+
+**Abgeleitete Zahlen sind mitgewandert**, statt den Nenner allein zu tauschen:
+Mirajes Schwellen-Faktor **9,6 → 11,0** (1.099/100) an zwei Stellen, der
+`general`-Anteil im Hygiene-Block **34,6 % → 33,2 %** (365/1.099, Zähler aus der
+`stats`-Domänenliste, deckungsgleich mit der `INDEX.md`-Domänenliste ohne
+Massen-Anteil), der Massen-Repo-Anteil **96,3 % → 95,7 %** (24.543/25.642 — diesmal
+ändert sich die Rundung, anders als beim Nachzug vom 2026-08-07). Der
+Description-Anteil wurde nicht umgerechnet, sondern **neu gemessen**, weil die
+Messmethode in `04` 3.2 dokumentiert ist: `search "usr/bin/env"` **50 → 56** (weiterhin
+ausschliesslich Hooks), dazu `stop-hook` mit `!/bin/bash`-Shebang, **7 statt 6** ohne
+jede Beschreibung, **5** Code-/Trennzeichen-Fragmente aus dem neuen Repo — zusammen
+**69 von 1.099 (5,9 % → 6,3 %)**, und zwar 69 der 70 Hooks. Einzige Ausnahme:
+`anthropics__claude-plugins-official/hook/patterns` („Security patterns
+configuration"). Die Allaussage „kein einziger Hook mit brauchbarer Beschreibung"
+ist damit auf **69 von 70** abgeschwächt — auch das offizielle Repo löst das
+Hook-Beschreibungsproblem nicht.
+
+**Unverändert richtig geblieben** und deshalb nicht angefasst: `seo` 64, `legal-de`
+24.161, `anthropics__skills` 21, Massen-Repo 24.543, „12 der 13 Domänen", die 13
+Domänenzeilen in `stats`. Nebenbefund: `05` Abschnitt 1.5 führte `affaan-m/ecc`
+noch mit 520 Bausteinen — beim Nachzug vom 2026-08-07 18:27 übersehen, 522 war
+schon damals richtig; jetzt 522.
+
+**Woran der Drift bemerkt wurde:** `lint` direkt nach `update` — der Kreislauf, wie
+er gedacht ist. Das Prüfpflicht-Hook-Skript hätte ihn ab der nächsten Session am
+Turn-Ende erzwungen.
+
 ## [2026-08-08] revise | Rezept 04: die zwei generischen Schutz-Hooks bewertet — `block-no-verify` unter „Erweiterung (optional)", `config-protection` unter „Bewusst weggelassen"
 
 Teil desselben Laufs wie die Einträge zu Rezept 01/02/03/05/06 weiter unten; der

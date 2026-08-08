@@ -1,6 +1,6 @@
 # Domäne: devops
 
-53 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+57 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (26)
 
@@ -33,17 +33,26 @@
 | `msitarzewski__agency-agents/agent/weibo-strategist` | Full-spectrum operations expert for Sina Weibo, with deep expertise in trending topic mechanics, Super Topic community management… | 15 |
 | `msitarzewski__agency-agents/agent/x-twitter-intelligence-analyst` | Social intelligence specialist for X/Twitter research, trend detection, account monitoring, and evidence-backed audience insights… | 10 |
 
+## command (1)
+
+| ID | Beschreibung | KB |
+|---|---|---:|
+| `anthropics__claude-plugins-official/command/create-docker-mcp-tunnel` | Stand up an Anthropic MCP tunnel locally with Docker Compose so Claude can call a private MCP server (manual-credentials quicksta… | 16 |
+
 ## hook (1)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/insaits-security-monitor` | !/usr/bin/env python3 | 8 |
 
-## plugin (1)
+## plugin (4)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4119 |
+| `anthropics__claude-plugins-official/plugin/gitlab` | GitLab DevOps platform integration. Manage repositories, merge requests, CI/CD pipelines, issues, and wikis. Full access to GitLa… | 1 |
+| `anthropics__claude-plugins-official/plugin/mcp-tunnels` | Connect Claude to a private MCP server through an Anthropic MCP tunnel. Drives the Docker Compose quickstart end to end: certific… | 33 |
+| `anthropics__claude-plugins-official/plugin/terraform` | The Terraform MCP Server provides seamless integration with Terraform ecosystem, enabling advanced automation and interaction cap… | 1 |
 
 ## skill (25)
 

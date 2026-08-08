@@ -90,10 +90,10 @@
 | `affaan-m__ecc/skill/frontend-design-direction` | Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applic… | 4 |
 | `affaan-m__ecc/skill/growth-log` | Use after a complex task, failure, or when reviewing what was learned. Teaches how to write growth logs that extract reusable pat… | 7 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
-| `affaan-m__ecc/skill/ito-basket-compare` | Compare Itô prediction-market baskets against a user's knowledge base, portfolio notes, financial context, watchlist, or research… | 2 |
-| `affaan-m__ecc/skill/ito-data-atlas-agent` | Design background Data Atlas style agents for Itô basket research, market discovery, parameter drafting, and human-in-the-loop ed… | 2 |
-| `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 2 |
-| `affaan-m__ecc/skill/ito-trade-planner` | Build a non-advisory prediction-market trade planning worksheet for Itô or venue workflows. Use to inspect venues, underliers, co… | 2 |
+| `affaan-m__ecc/skill/ito-basket-compare` | Compare Itô prediction-market baskets against a user's knowledge base, portfolio notes, financial context, watchlist, or research… | 12 |
+| `affaan-m__ecc/skill/ito-data-atlas-agent` | Design source-grounded Data Atlas style agents for Itô basket research, market discovery, parameter drafting, and human-in-the-lo… | 8 |
+| `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 10 |
+| `affaan-m__ecc/skill/ito-trade-planner` | Build a non-advisory prediction-market trade planning worksheet for Itô or venue workflows. Use to inspect venues, underliers, co… | 6 |
 | `affaan-m__ecc/skill/latency-critical-systems` | Use for latency-sensitive systems such as realtime dashboards, market data, streaming agents, execution gateways, queues, caches,… | 2 |
 | `affaan-m__ecc/skill/manim-video` | Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the w… | 6 |
 | `affaan-m__ecc/skill/market-research` | Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and deci… | 2 |

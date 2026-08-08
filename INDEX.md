@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-07 18:46 · 956 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 13 Repos
+> Stand: 2026-08-08 19:36 · 1099 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 14 Repos
 
 ## Was das hier ist
 
@@ -34,7 +34,7 @@ node tools/harness.mjs knowledge "hook statt skill"
 - **`knowledge/` oder `recipes/` am Stück lesen.** Der Befehl `knowledge` schneidet
   den passenden Abschnitt heraus und nennt Datei und Zeile.
 
-Grund: Der volle Katalog umfasst 25499 Bausteine. Wer den einliest,
+Grund: Der volle Katalog umfasst 25642 Bausteine. Wer den einliest,
 hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode sieht.
 
 ## Die Befehle
@@ -62,12 +62,12 @@ Warnungen stehen im Aufruf ohne Argument.
 
 | Typ | Anzahl | Was es ist | Wann einbauen |
 |---|---:|---|---|
-| skill | 404 | Ordner mit `SKILL.md` + Assets | Wiederkehrendes Verfahren, das Claude nachschlagen soll |
-| agent | 375 | Subagent mit eigenem Kontextfenster | Arbeit, die viel Kontext frisst oder unabhängig geprüft werden muss |
-| command | 112 | Slash-Command | Manuell ausgelöster Ablauf mit festem Namen |
-| hook | 56 | Skript an einem Lifecycle-Event | Regel, die *immer* greifen muss — nicht dem Modell überlassen |
-| plugin | 6 | Gebündeltes Paket | Mehrere zusammengehörige Bausteine auf einmal |
-| mcp | 3 | MCP-Server-Konfiguration | Zugriff auf externes System (DB, API, Browser) |
+| skill | 431 | Ordner mit `SKILL.md` + Assets | Wiederkehrendes Verfahren, das Claude nachschlagen soll |
+| agent | 407 | Subagent mit eigenem Kontextfenster | Arbeit, die viel Kontext frisst oder unabhängig geprüft werden muss |
+| command | 141 | Slash-Command | Manuell ausgelöster Ablauf mit festem Namen |
+| hook | 70 | Skript an einem Lifecycle-Event | Regel, die *immer* greifen muss — nicht dem Modell überlassen |
+| plugin | 46 | Gebündeltes Paket | Mehrere zusammengehörige Bausteine auf einmal |
+| mcp | 4 | MCP-Server-Konfiguration | Zugriff auf externes System (DB, API, Browser) |
 
 ## Bestand nach Domäne
 
@@ -76,9 +76,9 @@ je Domäne unter `catalog/by-domain/<domäne>.md`. Die erste Zahl ist der
 Standardzugriff, die Zahl in Klammern kommt aus Massen-Repos hinzu — `--domain`
 liefert die Summe, der Detail-Index listet nur die erste Zahl:
 
-`general` 331 · `data-ai` 161 (+42) · `backend` 110 (+38) · `product` 106 (+86) · `meta` 101 (+213) ·
-`security` 80 (+36) · `frontend` 73 (+10) · `testing` 67 (+23) · `seo` 58 (+6) · `docs` 55 (+17) ·
-`devops` 53 (+33) · `media` 48 (+50)
+`general` 365 · `data-ai` 192 (+42) · `meta` 174 (+213) · `backend` 133 (+38) · `product` 106 (+86) ·
+`security` 101 (+36) · `frontend` 80 (+10) · `testing` 76 (+23) · `docs` 63 (+17) · `seo` 58 (+6) ·
+`devops` 57 (+33) · `media` 51 (+50)
 
 ## Massen-Repos (opt-in)
 

@@ -1,8 +1,8 @@
 # Domäne: docs
 
-55 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+63 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (18)
+## agent (21)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -13,6 +13,9 @@
 | `affaan-m__ecc/agent/opensource-packager` | Generate complete open-source packaging for a sanitized project. Produces CLAUDE.md, setup.sh, README.md, LICENSE, CONTRIBUTING.m… | 8 |
 | `affaan-m__ecc/agent/security-reviewer` | Security vulnerability detection and remediation specialist. Use PROACTIVELY after writing code that handles user input, authenti… | 4 |
 | `affaan-m__ecc/agent/tdd-guide` | Test-Driven Development specialist enforcing write-tests-first methodology. Use PROACTIVELY when writing new features, fixing bug… | 3 |
+| `anthropics__claude-plugins-official/agent/agent-sdk-verifier-py` | Use this agent to verify that a Python Agent SDK application is properly configured, follows SDK best practices and documentation… | 5 |
+| `anthropics__claude-plugins-official/agent/agent-sdk-verifier-ts` | Use this agent to verify that a TypeScript Agent SDK application is properly configured, follows SDK best practices and documenta… | 5 |
+| `anthropics__claude-plugins-official/agent/comment-analyzer` | Use this agent when you need to analyze code comments for accuracy, completeness, and long-term maintainability. This includes (1… | 5 |
 | `Egonex-AI__Understand-Anything/agent/article-analyzer` | / Analyzes markdown files using pre-parsed structural data and LLM inference to extract knowledge graph nodes and edges (entities… | 4 |
 | `Graphify-Labs__graphify/agent/graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ e… | 62 |
 | `msitarzewski__agency-agents/agent/blockchain-security-auditor` | Expert smart contract security auditor specializing in vulnerability detection, formal verification, exploit analysis, and compre… | 21 |
@@ -33,13 +36,21 @@
 | `affaan-m__ecc/command/ecc-guide` | Navigate ECC's current agents, skills, commands, hooks, install profiles, and docs from the live repository surface. | 3 |
 | `affaan-m__ecc/command/update-docs` | Update documentation for recent changes | 1 |
 
-## hook (1)
+## hook (2)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/doc-file-warning` | !/usr/bin/env node | 3 |
+| `anthropics__claude-plugins-official/hook/security-reminder-hook` | !/usr/bin/env python3 | 111 |
 
-## skill (33)
+## plugin (2)
+
+| ID | Beschreibung | KB |
+|---|---|---:|
+| `anthropics__claude-plugins-official/plugin/claude-security` | Deep vulnerability scanning of your own code, run entirely inside your Claude Code session at a chosen effort tier, with every fi… | 244 |
+| `anthropics__claude-plugins-official/plugin/context7` | Upstash Context7 MCP server for up-to-date documentation lookup. Connects to Context7's hosted remote MCP server (https://mcp.con… | 3 |
+
+## skill (35)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -69,6 +80,8 @@
 | `AgriciDaniel__claude-seo/skill/seo-cluster` | > SERP-based semantic topic clustering for content architecture planning. Groups keywords by actual Google SERP overlap (not text… | 50 |
 | `AgriciDaniel__claude-seo/skill/seo-content-brief` | > Generate competitive SEO content briefs with per-section word counts, competitor scoring, keyword density guidance, and page-ty… | 24 |
 | `AgriciDaniel__claude-seo/skill/seo-image-gen` | AI image generation for SEO assets: OG/social preview images, blog hero images, schema images, product photography, infographics.… | 9 |
+| `anthropics__claude-plugins-official/skill/project-artifact` | Generate and publish a project status artifact — an opinionated, tabbed status page for a project too big for one update (overvie… | 46 |
+| `anthropics__claude-plugins-official/skill/writing-hookify-rules` | This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify… | 9 |
 | `anthropics__skills/skill/docx` | Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx… | 1125 |
 | `anthropics__skills/skill/theme-factory` | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 1… | 141 |
 | `mattpocock__skills/skill/grill-with-docs` | A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go. | 1 |
