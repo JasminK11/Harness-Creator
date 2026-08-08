@@ -68,6 +68,338 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-08] revise | Rezept 04: die zwei generischen Schutz-Hooks bewertet — `block-no-verify` unter „Erweiterung (optional)", `config-protection` unter „Bewusst weggelassen"
+
+Teil desselben Laufs wie die Einträge zu Rezept 01/02/03/05/06 weiter unten; der
+Autor dieser Datei hatte seinen Eintrag versäumt, nachgetragen vom koordinierenden
+Lauf mit den Fakten aus dem Autorenbericht. `affaan-m__ecc/hook/block-no-verify`
+(hook, 14 KB, per `show` verifiziert) steht jetzt unter „Erweiterung (optional)" —
+Bedingung: das Zielprojekt hat sicherheitsrelevante pre-commit-Hooks (gitleaks,
+detect-secrets) und committet in der Fix-Phase; Symptom: der Agent hängt
+`--no-verify` an und schleust das Secret wieder ein. Mit Registrier-Hinweis
+(feuert erst nach Eintrag in `.claude/settings.json`; `install` druckt das
+Snippet) und ehrlicher Reichweite (No-op bei lesendem Audit und bei
+URL-/Domain-/IP-Zielen ohne Repo). `affaan-m__ecc/hook/config-protection` (hook,
+5 KB) steht unter „Bewusst weggelassen": Er schützt gegen das Weichklopfen von
+Lint-Configs, aber die Fehlermode dieses Rezepttyps ist das Kleinreden von
+Befunden (Doktrin 4.3), und die Prüfagenten arbeiten lesend — kein Symptom, das
+der Hook träfe. Kern-Set unverändert (Entscheid vom 2026-08-08, siehe
+`recipes/README.md`). `lint` nach der Änderung: 0 Befunde.
+
+## [2026-08-08] revise | Kern-Set-Hook-Frage in `recipes/README.md` von offen auf entschieden — kein Pflicht-Hook im Kern-Set, zwei generische Schutz-Hooks je Rezept zu bewerten
+
+Der Abschnitt hiess bislang „Kein Kern-Set enthält einen Zwang — und das ist zu
+entscheiden, nicht zu übersehen", weil die Entscheidung ausstand. Sie ist am
+2026-08-08 in beidseitiger adversarialer Prüfung (drei Agenten; jede Lesart musste
+die Gegenposition am laufenden System widerlegen) gefallen; der Abschnitt heisst
+jetzt „Kein Pflicht-Hook im Kern-Set — entschieden 2026-08-08, generische
+Schutz-Hooks je Rezept bewertet". Lesart A (Pflicht-Verifikations-Hook im
+Kern-Set) ist widerlegt: `search "verification" --type hook` liefert null Treffer,
+und die Doktrin meint mit dem billigsten Hebel den Verifikationsweg des
+Zielprojekts, nicht einen Katalog-Baustein (Reyes-Geltungsbereich). Lesart B
+(skill/agent-only) hält im Kern, fiel aber im Allsatz „ein generischer Hook wäre
+wirkungslos oder falsch": `affaan-m__ecc/hook/config-protection` und
+`affaan-m__ecc/hook/block-no-verify` sind generisch wirksam und standalone-fähig,
+waren aber in keinem Rezept je geprüft (Grep über `recipes/`: 0 Treffer) — die
+Zusammensetzung war ungeprüfter Zustand, kein Prüfergebnis. Beide Kandidaten sind
+je Rezept zu bewerten (Erweiterung mit Bedingung oder Bewusst weggelassen mit
+Grund); die Rezept-Einträge desselben Tages unten sind die Umsetzung. Nebenbefund
+korrigiert: die Behauptung, Hooks stünden „in allen sechs Rezepten nur unter
+Erweiterung", war falsch — real nur 01 und 02 unter Erweiterung, 04 nur unter
+„Bewusst weggelassen", 03/05/06 gar nicht; der Altstand steht im Abschnitt mit
+`lint:historisch`-Marker samt Begründung.
+
+## [2026-08-08] revise | `knowledge/08` Abschnitt 5: Scorer-Beschreibung auf den Suchfix vom 2026-08-08 nachgezogen — `bewerteTreffer()`, Präfix-Matching, Stoppwortfilter statt „reiner Substring-Scorer"
+
+Der Absatz „Was uns das betrifft" beschrieb `sucheIds` als reinen
+Substring-Scorer; seit dem Suchfix vom 2026-08-08 bewerten `cmdSearch` und
+`sucheIds` über die gemeinsame Funktion `bewerteTreffer()` mit
+Wortanfangs-Präfix-Matching (`termRegex()`) und Stoppwortfilter (`STOPPWOERTER`)
+— vorher zwei driftgefährdete Kopien. Determinismus am laufenden System
+nachgemessen (drei `eval`-Läufe: der erste meldet die Rangänderungen aus dem
+Umbau gegen den gespeicherten Vorlauf, der zweite und dritte byte-identisch) und
+die Fallzählung präzisiert: 7 der 19 Fälle ohne erwartete ID statt „die Hälfte".
+Der Altstand vom 2026-08-07 bleibt als eigener Absatz mit
+`<!-- lint:historisch -->` stehen, weil er zusammen mit der Nachmessung belegt,
+dass der Determinismus nicht am Matching-Verfahren hängt. Kernaussage des
+Abschnitts (Obergrenze erst bei Stufe 2 relevant) unverändert.
+
+## [2026-08-08] revise | 06-massnahmen: Suchfix eingearbeitet — M7-Altstand als historisch markiert, M9 erledigt, M8-Abgrenzung Stoppwortliste, zwei Nachträge unter „Bewusst nicht umgesetzt"
+
+Vorher galt in `knowledge/06-massnahmen.md`: `cmdSearch` sei ein namensgewichteter
+Substring-Matcher (zwei Stellen), und M9 stehe auf „im Code, wirkt erst nach
+`extract`". Jetzt gilt: seit 2026-08-08 matcht `cmdSearch` auf Wortanfangs-Präfixe
+mit Stoppwortfilter (`bewerteTreffer()`, `STOPPWOERTER`, `termRegex()`); der
+Substring-Altstand bleibt an der Messstelle mit `<!-- lint:historisch -->` und
+Begründung stehen. M9 ist erledigt — der `extract` ist gelaufen, nachgeprüft am
+System: `show anthropics__skills/skill/webapp-testing` meldet „Lädt sofort 4 KB".
+Bemerkt wurde der Drift durch die Messläufe des Suchfixes vom 2026-08-08 (Umsetzer
+und adversarialer Prüfer unabhängig). Neu dokumentiert: die Stoppwortliste ist keine
+Wiederbelebung der in M8 abgelehnten Synonymtabelle (geschlossene Grammatikklasse
+statt offener Bedeutungstabelle); unter „Bewusst nicht umgesetzt" zwei Nachträge —
+E2/IDF-Coverage-Suche zurückgestellt mit Wiedervorlage-Auslöser, und die
+`hayName`-Restschwäche (Repo-Teil der ID als Inhaltssignal, belegt an z22) als
+erkannte, nicht sofort behobene Schwäche.
+
+## [2026-08-08] revise | Rezept 05: die zwei generischen Schutz-Hooks bewertet — `config-protection` unter „Erweiterung (optional)", `block-no-verify` unter „Bewusst weggelassen"
+
+Folge des Kern-Set-Entscheids vom 2026-08-08 (kein Hook im Kern-Set; die zwei
+standalone-fähigen generischen Schutz-Hooks werden je Rezept einzeln bewertet;
+Begründung in `recipes/README.md`). In `recipes/05-seo-content-marketing.md`,
+beide IDs vorab per `show` verifiziert (Typ `hook`):
+`affaan-m__ecc/hook/config-protection` (5 KB) steht jetzt unter „Erweiterung
+(optional)" — Bedingung: Der Auftritt ist selbst eine Codebasis mit bestehenden
+Lint-/Format-Configs, und der Agent weicht bei Code-Fixes (typisch:
+Core-Web-Vitals-Nacharbeit nach `seo-performance`-Befunden) die Config auf, statt
+den Code zu reparieren; ohne solche Configs ein No-op (fail-open), feuert erst
+nach Registrierung in `.claude/settings.json` (`install` druckt das Snippet).
+`affaan-m__ecc/hook/block-no-verify` (14 KB) steht unter „Bewusst weggelassen":
+Er erzwingt nur etwas, wo Git-Hooks existieren — dieses Rezept setzt einen
+Projekttyp voraus, in dem der binäre Check fast vollständig fehlt; ohne Git-Hooks
+feuert er nie und wäre eine Komponente ohne Wirkung (Doktrin 6.4). Anders als in
+den Code-Rezepten, wo beide Hooks in die Erweiterung kamen, trägt die typische
+Ziel-Codebasis hier keine Git-Hooks. Kern-Set und bestehende Abschnitte
+unverändert.
+
+## [2026-08-08] revise | Rezept 03: die zwei generischen Schutz-Hooks bewertet — beide unter „Erweiterung (optional)", weil Ruff-Configs in der Schutzliste stehen und Git-Hooks via `pre-commit` bei Python realistisch sind
+
+Folge des Kern-Set-Entscheids vom 2026-08-08 (kein Hook im Kern-Set, siehe
+`recipes/README.md`; die zwei standalone-fähigen generischen Schutz-Hooks werden je
+Rezept einzeln bewertet). Vorher enthielt `recipes/03-python-daten-ml.md` das Wort
+„Hook" nirgends — ungeprüfter Zustand, kein Prüfergebnis. Jetzt stehen
+`affaan-m__ecc/hook/config-protection` (5 KB) und `affaan-m__ecc/hook/block-no-verify`
+(14 KB) unter „Erweiterung (optional)", beide per `show` verifiziert und per
+`install --dry-run` am laufenden System geprüft: Ablage `.claude/hooks/`, Zustand
+`[inaktiv]` bis zur Registrierung in `.claude/settings.json`; `block-no-verify`
+bekommt von `install` das fertige PreToolUse-Snippet gedruckt, `config-protection`
+nicht („Ereignis nicht aus dem Code ableitbar" — Handarbeit). Ehrliche Reichweite
+steht im Rezept: `config-protection` schützt `ruff.toml`/`.ruff.toml`, aber bewusst
+nicht `[tool.ruff]` in `pyproject.toml` (dort liegen auch Abhängigkeiten);
+`block-no-verify` erzwingt nur etwas, wo Git-Hooks tatsächlich existieren.
+
+## [2026-08-08] revise | Rezept 06: die zwei generischen Schutz-Hooks bewertet — beide unter „Erweiterung (optional)", weil bei einer Legacy-Übernahme an fremden Checks gedreht wird
+
+Folge des Kern-Set-Entscheids vom 2026-08-08 (kein Hook im Kern-Set, siehe
+`recipes/README.md`; die zwei standalone-fähigen generischen Schutz-Hooks werden
+je Rezept einzeln bewertet). Vorher enthielt `recipes/06-legacy-onboarding.md`
+das Wort „Hook" nirgends — die skill/agent-only-Zusammensetzung war ungeprüfter
+Zustand, kein Prüfergebnis. Jetzt stehen `affaan-m__ecc/hook/config-protection`
+(5 KB) und `affaan-m__ecc/hook/block-no-verify` (14 KB) — beide vorab per `show`
+verifiziert — in der Erweiterungs-Tabelle: mit Symptom-Bedingung, ehrlicher
+Reichweite (config-protection ist ohne Lint-/Format-Configs ein No-op und
+blockiert auch legitime Config-Modernisierung; block-no-verify erzwingt nur
+etwas, wo Git-Hooks existieren) und dem Hinweis, dass ein installierter Hook
+erst nach Registrierung in `.claude/settings.json` feuert (`install` druckt das
+Snippet). Begründung der Aufnahme statt Ablehnung: Gerade bei der Übernahme
+einer fremden Codebasis wird an fremden Checks gedreht — Configs weichklopfen
+statt Code fixen und `--no-verify` gegen unverstandene alte pre-commit-Hooks
+sind exakt die Fehlermuster dieses Projekttyps; vorhandene Configs und Git-Hooks
+sind dort geronnene Konvention beziehungsweise das einzige funktionierende Gate,
+solange der Verifikationspfad noch leer ist. Kern-Set und bestehende Abschnitte
+unverändert.
+
+## [2026-08-08] revise | Rezept 01: die zwei generischen Schutz-Hooks bewertet — beide unter „Erweiterung (optional)" mit Bedingung, ehrlicher Reichweite und Registrier-Hinweis
+
+Folge des Kern-Set-Entscheids vom 2026-08-08 (kein Hook im Kern-Set; die zwei
+standalone-fähigen generischen Schutz-Hooks werden je Rezept einzeln bewertet;
+Begründung in `recipes/README.md`). In `recipes/01-web-app-react-nextjs.md` wurden
+`affaan-m__ecc/hook/config-protection` (5 KB) und `affaan-m__ecc/hook/block-no-verify`
+(14 KB) — beide vorab per `show` verifiziert (Typ `hook`) — in die
+Erweiterungs-Tabelle aufgenommen: mit Symptom-Bedingung, ehrlicher Reichweite
+(config-protection ist ohne Lint-/Format-Configs ein No-op; block-no-verify erzwingt
+nur etwas, wo Git-Hooks existieren) und einer Notiz unter der Tabelle, dass ein
+installierter Hook erst nach Registrierung in `.claude/settings.json` feuert
+(`install` druckt das Snippet). Begründung der Aufnahme statt Ablehnung: Die typische
+Ziel-Codebasis dieses Rezepts (React/Next.js) führt ESLint-/Prettier-/Biome-Configs,
+auf die config-protection wirkt, und die im Hook-Kopf dokumentierte Modellschwäche
+("Agents frequently modify these to make checks pass instead of fixing the actual
+code") greift genau dort; block-no-verify bleibt an die Bedingung vorhandener
+Git-Hooks (husky/pre-commit) geknüpft. Vor dieser Runde tauchte keiner der beiden
+Kandidaten in irgendeinem Rezept auf (Grep-Befund der Prüfung: 0 Treffer) — die
+skill/agent-lastige Zusammensetzung war ungeprüfter Zustand, kein Prüfergebnis.
+Kern-Set und bestehende Abschnitte unverändert.
+
+## [2026-08-08] revise | Rezept 02: die zwei generischen Schutz-Hooks bewertet — beide unter „Erweiterung (optional)" mit Bedingung und Registrier-Hinweis
+
+Folge des Kern-Set-Entscheids vom 2026-08-08 (kein Hook im Kern-Set; die zwei
+standalone-fähigen generischen Schutz-Hooks werden je Rezept einzeln bewertet).
+In `recipes/02-backend-api.md` wurden `affaan-m__ecc/hook/config-protection`
+(5 KB) und `affaan-m__ecc/hook/block-no-verify` (14 KB) — beide vorab per `show`
+verifiziert — in die Erweiterungs-Tabelle aufgenommen: mit Symptom-Bedingung,
+ehrlicher Reichweite (config-protection ist ohne Lint-/Format-Configs ein No-op;
+block-no-verify erzwingt nur etwas, wo Git-Hooks existieren) und dem Hinweis,
+dass ein installierter Hook erst nach Registrierung in `.claude/settings.json`
+feuert (`install` druckt das Snippet). Begründung der Aufnahme statt Ablehnung:
+Die typische Ziel-Codebasis dieses Rezepts (Node/TypeScript- oder Python-Backend)
+trägt genau die Configs und Git-Hooks, auf die beide Hooks wirken. Kern-Set und
+bestehende Abschnitte unverändert.
+
+## [2026-08-08] revise | Suchfix: Wortanfangs-Präfix-Matching, Stoppwortliste, eine Bewertungsfunktion statt zwei Suchkopien
+
+**Was vorher galt.** Die Suche in `tools/harness.mjs` traf Terme als Substring
+irgendwo im Text (Mittwort-Treffer: „sql" fand `postgresql`/`mysql`), englische
+Funktionswörter fluteten das Ranking (der Pseudo-Treffer „this" hob eine falsche
+ID auf Rang 2, siehe z22 unten), und `cmdSearch` und `sucheIds` führten **zwei
+driftgefährdete Kopien** der Bewertungslogik.
+
+**Was jetzt gilt.** Eine gemeinsame Bewertungsfunktion `bewerteTreffer()` für
+beide Aufrufer; eine Modul-Konstante `STOPPWOERTER` mit 89 englischen
+Funktionswörtern inkl. `same`/`know`/`right` (Variantenmessung: mit den dreien
+z21 Rang 3/119, ohne Rang 5/121, Pflichtfälle in beiden grün); `termRegex()` mit
+Wortanfangs-Präfix-Matching plus Plural-s-Stamm — gekoppelte Invariante: der
+s-Stamm ist nur gefahrlos, **weil** Präfix-Matching gilt; steht als Kommentar am
+Code. `cmdSearch` gibt im Fallback-/Nullfall eine Termbilanz aus; der
+M8-Sprachhinweis blieb unangetastet.
+
+**Woran der Irrtum bemerkt wurde.** Die Routing-Evals führten die Schwächen als
+optionale Fälle (2/7 grün); der Design-Workflow diagnostizierte die Ursachen am
+laufenden System statt aus der Plausibilität.
+
+**Einzelwort-Verhaltensänderung.** `search "sql"` 9 → 3 Treffer, `"ops"`
+81 → 13 — Mittwort-Treffer wie `postgresql`/`mysql` entfallen. `.js`-Endungen
+bleiben treffbar, weil der Punkt Wortgrenze ist („js" 92 Treffer).
+
+**Prüfprotokoll** (von Umsetzer und adversarialem Prüfer unabhängig
+verifiziert): 12/12 Pflichtfälle vorher wie nachher grün; optionale Fälle
+2/7 → 3/7. Ränge: `code-reviewer` bei „reviews miss the same mistakes" 22 → 3
+(grün); `deployment-patterns` bei „our releases keep breaking" 21 → 4 (grün);
+`eval-harness` bei „how do I know the agent did it right" 733 → 432 (bleibt
+deklariert rot — Vokabellücke, kein Ranking-Problem); `react-patterns` bei der
+7-Wort-Profilanfrage 103 → 53 bei 215 Treffern (bleibt rot); „sicherheit
+prüfen" 0 Treffer (bleibt deklariert rot, M8). Performance `search "code
+review"`: 0,255 s → 0,250 s. Gegenprobe: ein eingeschleuster verboten-Fall in
+`routing.jsonl` wurde von `eval` mit Exit 1 gemeldet und wieder entfernt.
+
+**z22-Erwartungspflege als Beschluss.** Im Eval-Fall z22 („nobody understands
+this codebase") wurde die Erwartung **ersetzt** durch
+`msitarzewski__agency-agents/agent/codebase-onboarding-engineer` (per `show`
+verifiziert; `cmdEval` verlangt ALLE erwarteten IDs in topN); die alte ID
+`affaan-m__ecc/skill/codebase-onboarding` ist im warum-Feld vermerkt — ihr
+alter Rang 2 war ein Artefakt des Füllwort-Pseudo-Treffers „this", real jetzt
+Rang 14. z22 bleibt trotzdem ROT: die neue ID steht auf Rang 7, weil sechs
+`Egonex-AI__Understand-Anything`-Bausteine den Namensbonus über den Repo-Teil
+der ID kassieren („Understand" trifft „understands" als Präfix) — dokumentierte
+Restschwäche: der Repo-Teil der ID zählt in `hayName` als Inhaltssignal.
+Beschluss des Projektverantwortlichen im autonomen Mandat vom 2026-08-08.
+
+**E2-Wiedervorlage.** Im Design-Vorlauf standen 3 Entwürfe vor 3 adversarialen
+Judges (Punktesummen E1 21,5 / E3 19 / E2 16,5). E2 (IDF-Coverage-Suche mit
+Fallback-Kappung) wurde NICHT umgesetzt: eine Messbehauptung („z22 bleibt
+Top 5") wurde am System falsifiziert, die Spezifikation war unterbestimmt (zwei
+werkgetreue Nachbauten lieferten z21 Rang 3 bzw. Rang 14), und der Konflikt mit
+dem M5-Wortlaut „Sortierung bleibt unverändert" blieb unadressiert.
+Wiedervorlage-Auslöser: erst wenn die M2/M3-Beschreibungspflege trägt ODER ein
+Pflichtfall bzw. ein echter `harness-build`-Lauf Fallback-Fluten als Problem
+belegt.
+
+**Abgrenzung zu M8.** Die Stoppwortliste ist KEINE Wiederbelebung der in M8
+abgelehnten Synonymtabelle: sie übersetzt und expandiert nichts, sondern
+entfernt Terme einer geschlossenen Grammatikklasse — endlich, sprachstabil,
+keine Domänenpflege.
+
+## [2026-08-08] add | Zwei Hooks für das eigene Projekt-Harness: Zugriffsschutz (PreToolUse) und Prüfpflicht (Stop)
+
+**Was entsteht.** Das Projekt hat erstmals eine `.claude/settings.json` mit
+zwei Hooks (Prüflauf mit 5 adversarialen Agenten, 2026-08-08):
+
+1. `zugriffsschutz.mjs`, PreToolUse auf `Read|Grep|Glob`: blockiert
+   `catalog/index.json` (gemessen 20.764.187 Bytes) und `.harness-sources` mit
+   Exit 2 und Ersatzweg-Meldung. Bei Grep wird NUR das `path`-Feld geprüft —
+   `pattern` ist Regex über Inhalte, ein belegter Falsch-Positiv-Fall; bei Glob
+   auch `pattern`. Der Matcher wurde bewusst NICHT auf Bash ausgeweitet:
+   `extract` schreibt `index.json` über Bash, `lint` liest in-process — ein
+   überblockender Hook würde nach Fehlerklasse 7.3 im Ganzen abgeschaltet.
+   12/12 synthetische stdin-Fixtures grün.
+2. `pruefpflicht.mjs`, Stop-Hook: einmal pro Turn `git status --porcelain`; bei
+   geändertem `tools/harness.mjs` → `eval --no-save` UND `lint`, bei geänderten
+   `knowledge/recipes/catalog/evals/INDEX.md` → `lint`; Befunde als Exit 2 mit
+   gekürzten Befundzeilen; `stop_hook_active`-Guard. Gemessen: `lint` Ø 338 ms,
+   `eval` Ø 526 ms. Bewusst NICHT PostToolUse pro Edit: `lint` liest
+   `harness.mjs` nicht — pro Edit gäbe es nur Stille, Altbefunde oder
+   Stacktraces halb editierter Zwischenstände.
+
+**Wozu.** Für den Zugriffsschutz gibt es keinen dokumentierten Vorfall, aber
+die Regel ist als „bindend" deklariert, wird an ≥8 Stellen als Prosa dupliziert,
+der Schaden wäre still und sitzungszerstörend, und die eintägige Erfolgsbilanz
+stammt von derselben Modellgeneration, die die Regel schrieb — der
+Generationswechsel Opus 5 → Fable 5 ist bereits eingetreten (Doktrin-Kurzform
+10). Für die Prüfpflicht ist das Symptom belegt: acht widersprüchliche
+Bestandszahlen, still verfallene 1.050, die undefinierte Aktionsart `add` — der
+Abgleich unterblieb genau dann, wenn nichts ihn erzwang; Präzedenz ist
+`cmdUpdate` Schritt 4. Rotpfad-Test: eingeschleuste Wegwerf-Datei ohne
+Frontmatter → Exit 2 mit Befundzeilen; sauberer Baum → Exit 0.
+
+**Welche Zuständigkeit sich verschiebt.** Zugriffsregel und Prüfpflicht waren
+bisher reine Prosa-Disziplin der lesenden Agenten (CLAUDE.md, INDEX.md und
+weitere Duplikate); die Durchsetzung liegt jetzt beim Werkzeug. Die Prosa
+bleibt als Begründung stehen, ist aber nicht mehr die einzige Verteidigung.
+
+**Abgelehnt: K2 mit Kippbedingung.** K2 (Rohschicht-Schutz für `Learnings/`
+per `Edit|Write`-Block) wurde abgelehnt: null Verstöße über die gesamte
+Git-Historie (nur A-Status), git ist das vorhandene billigere Netz —
+„Komplexität ohne Symptom". KIPPBEDINGUNG festgehalten: der erste M-Status auf
+`Learnings/` in einem Diff dreht das Urteil. Ebenfalls geprüft und verworfen:
+ein separater Selbstlern-Mechanismus (alle Ablage-Bahnen existieren; in
+Stichproben ging keine Erkenntnis verloren).
+
+**Restrisiken.** Die Bash-Umgehung des Zugriffsschutzes ist dokumentiertes
+Restrisiko (bewusste Folge des engen Matchers, siehe oben). Die Hooks greifen
+erst ab der nächsten Session — Claude Code lädt `settings.json` beim Start.
+
+## [2026-08-08] revise | Kern-Set-Befund entschieden: kein Pflicht-Hook im Kern-Set, zwei Schutz-Hooks werden je Rezept einzeln bewertet
+
+**Was vorher galt.** Offene Entscheidung: gehört ein Verifikations-Hook in
+jedes Kern-Set, oder ist die skill/agent-only-Zusammensetzung der Rezepte
+korrekt? Die skill/agent-only-Zusammensetzung war dabei **ungeprüfter Zustand,
+kein Prüfergebnis** — keiner der generischen Hook-Kandidaten wurde je in einem
+Rezept geprüft, weder unter „Erweiterung" noch unter „Bewusst weggelassen"
+(Grep-Befund: 0 Treffer).
+
+**Was jetzt gilt.** Entscheidung des Projektverantwortlichen: Der Befund ist
+geschlossen. Die Absicht-Lesart ist für Verifikations-Hooks bestätigt — **kein
+Pflicht-Hook im Kern-Set**. Die zwei standalone-fähigen generischen
+Schutz-Hooks `affaan-m__ecc/hook/config-protection` und
+`affaan-m__ecc/hook/block-no-verify` werden je Rezept einzeln bewertet und
+landen entweder unter „Erweiterung (optional)" mit Bedingung und
+Registrier-Hinweis oder unter „Bewusst weggelassen" mit Grund.
+
+**Woran es bemerkt wurde: beidseitige adversariale Widerlegung** (3 Agenten,
+2026-08-08). Lesart A („mindestens ein Verifikations-Hook gehört in jedes
+Kern-Set") ist WIDERLEGT: die Doktrin meint mit dem billigsten Hebel den
+Verifikationsweg des Zielprojekts, nicht einen Hook-Baustein
+(Reyes-Geltungsbereich); `search "verification" --type hook` liefert null
+Treffer, es existiert kein stack-agnostischer Verifikations-Hook im Katalog;
+ein blind installierter Hook wäre nach Fehlerklassen 7.6/7.3 tot oder schädlich
+— die Illusion eines Gates ist schlechter als das ehrliche leere
+Verifikationspfad-Feld. Lesart B („skill/agent-only ist korrekt") hält im KERN
+(Reihenfolge erst Verifikationspfad, dann Zwang; kein hartkodierter
+Verifikationsbefehl im Rezept; die Bibliothek schaltet fremde Hooks bewusst
+nicht scharf — ein installierter Hook ist zunächst inaktiv), fällt aber im
+ALLSATZ „ein generischer Hook wäre wirkungslos oder falsch": Der Katalog
+enthält mindestens drei generisch wirksame Hooks — `config-protection`
+(blockiert Änderungen an bestehenden Lint-/Format-Configs von
+ESLint/Prettier/Biome/Ruff; dokumentierte Modellschwäche „Checks weichklopfen
+statt Code fixen"; Neuanlage erlaubt, fail-open; bester Einzelkandidat),
+`block-no-verify` (blockiert git-Hook-Bypass `--no-verify`/`core.hooksPath`
+rein aus dem Kommandostring, flag-positionsbewusst tokenisiert, null
+Projektwissen; wirkt nur, wo Git-Hooks existieren) und
+`affaan-m__ecc/hook/post-edit-format` (detektiert Formatter selbst, schweigt
+sonst; ABER `require` auf `../lib/resolve-formatter` aus der ECC-Repo-Struktur
+— nicht standalone, daher kein Kandidat).
+
+**Zusatzbefund.** Der Satz in `recipes/README.md` „Hooks stehen in allen sechs
+Rezepten nur unter Erweiterung (optional)" ist falsch: tatsächlich nennen nur
+Rezept 01 (`post-edit-typecheck`) und Rezept 02 (`pre-bash-dev-server-block`)
+überhaupt einen Hook; 03/05/06 enthalten das Wort „hook" nirgends; 04 nennt
+einen Hook nur unter „Bewusst weggelassen".
+
+**Verweis.** Die Umsetzung — je-Rezept-Bewertung der beiden Schutz-Hooks und
+Korrektur des falschen README-Satzes — erfolgt in den Rezept-Änderungen
+desselben Laufs (2026-08-08, `recipes/`), siehe u. a. den Rezept-02-Eintrag
+weiter oben. Die Spannung „kein einziger Zwang im eigenen Haus" ist am selben
+Tag teilentschieden: siehe den add-Eintrag über diesem zu den ersten eigenen
+Hooks in `.claude/settings.json`.
+
 ## [2026-08-07] revise | Nach dem `update` um 18:27 nachgezogen — Bestandszahlen in sechs Dateien, und vier Strix-IDs waren durch eine Umbenennung im Quell-Repo tot
 
 **Was vorher galt.** `lint` meldete nach dem Lauf **11 Befunde hoher Schwere und

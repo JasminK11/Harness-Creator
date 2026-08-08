@@ -78,6 +78,18 @@ schlank: Die teuersten Fehler liegen in der Methodik, nicht in der Syntax.
 | `msitarzewski__agency-agents/agent/statistician` | agent | Nur wenn Signifikanz-, A/B- oder Kausalaussagen getroffen werden. Prüft Versuchsaufbau, nicht Code. | 11 |
 | `msitarzewski__agency-agents/agent/rag-pipeline-engineer` | agent | Nur bei Retrieval-Systemen: Chunking, Hybrid-Suche, Re-Ranking, Eval-getriebene Iteration. | 18 |
 | `affaan-m__ecc/skill/recsys-pipeline-architect` | skill | Nur wenn "Top-K Items für (User, Kontext)" die Kernaufgabe ist — Feed, Ranking, Notification-Triage, Search-Reranking. | 8 |
+| `affaan-m__ecc/hook/config-protection` | hook | Nur wenn der Agent Lint-Regeln lockert, statt den Code zu fixen — der Hook-Quelltext nennt das Muster selbst: "Agents frequently modify these to make checks pass instead of fixing the actual code". Blockiert Edits an bestehenden Configs; für diesen Projekttyp relevant: `ruff.toml` und `.ruff.toml` stehen in der Schutzliste. Neuanlage bleibt erlaubt, ohne solche Config-Dateien ist er ein No-op. Ehrliche Lücke: `[tool.ruff]` in `pyproject.toml` schützt er bewusst **nicht**, weil dort auch Abhängigkeiten und Projektmetadaten liegen — wer seine Ruff-Config nur dort führt, gewinnt durch diesen Hook nichts. | 5 |
+| `affaan-m__ecc/hook/block-no-verify` | hook | Nur wenn Git-Hooks existieren (bei Python-Projekten z. B. über das `pre-commit`-Framework eingerichtet) und Commits mit `--no-verify` daran vorbeigehen. Blockiert `--no-verify` und `core.hooksPath`-Umleitungen rein aus dem Kommandostring, ohne Projektwissen. Wo keine Git-Hooks installiert sind, erzwingt er nichts — dann zuerst die Prüfschleife bauen (siehe Verifikationspfad), nicht den Wächter davor. | 14 |
+
+**Hooks feuern nicht durch Installation allein.** `install` legt die Datei unter
+`.claude/hooks/` ab und meldet sie als `[inaktiv]` — ein Hook feuert erst, wenn er
+unter einem Ereignis in `.claude/settings.json` registriert ist. Bei
+`block-no-verify` druckt `install` das fertige PreToolUse-Snippet mit aus; bei
+`config-protection` kann es das Ereignis nicht aus dem Code ableiten („Hook öffnen
+und selbst zuordnen") — die Registrierung ist dort Handarbeit. Ins Kern-Set gehört
+keiner der beiden (entschieden 2026-08-08, siehe `recipes/README.md`): ein Rezept
+kennt die Prüfschleifen des Zielprojekts nicht und kann deshalb keinen Zwang zur
+Pflicht machen.
 
 ## Bewusst weggelassen
 

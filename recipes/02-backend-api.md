@@ -83,6 +83,17 @@ Sechs Bausteine, rund 52 KB. Das ist die Obergrenze für diesen Projekttyp.
 | `affaan-m__ecc/agent/silent-failure-hunter` | agent | Nur wenn bereits ein Fall auftrat, in dem ein Fehler geschluckt wurde. Sehr klein, sehr eng. | 2 |
 | `affaan-m__ecc/skill/docker-patterns` | skill | Nur wenn der Dienst containerisiert läuft und der Agent Compose-Dateien anfasst. | 8 |
 | `affaan-m__ecc/hook/pre-bash-dev-server-block` | hook | Nur wenn der Agent wiederholt einen blockierenden Dev-Server startet und die Session hängt. Hook, weil eine Bitte hier nicht zuverlässig greift. | 6 |
+| `affaan-m__ecc/hook/config-protection` | hook | Nur wenn der Agent schon einmal eine Lint-/Format-Config aufgeweicht hat, um einen roten Check grün zu bekommen, statt den Code zu fixen — eine dokumentierte Modellschwäche. Blockiert Änderungen an bestehenden ESLint-/Prettier-/Biome-/Ruff-Configs; Neuanlage bleibt erlaubt, im Fehlerfall lässt er durch (fail-open). Ehrliche Reichweite: In einem Projekt ohne solche Configs ist er ein No-op. | 5 |
+| `affaan-m__ecc/hook/block-no-verify` | hook | Nur wenn Git-Hooks (husky, pre-commit) die Prüfschleife tragen und der Agent sie schon einmal per `--no-verify` oder `-c core.hooksPath=` umgangen hat. Prüft rein den Kommandostring, flag-positionsbewusst tokenisiert, braucht null Projektwissen. Ehrliche Reichweite: Er erzwingt nur dort etwas, wo Git-Hooks existieren — ohne sie gibt es nichts zu umgehen. | 14 |
+
+Die Hooks dieser Tabelle sind nach `install` zunächst **inaktiv**: Ein installierter
+Hook feuert erst, wenn er in `.claude/settings.json` des Zielprojekts registriert
+ist — `install` druckt das nötige Snippet mit aus. Die Bibliothek schaltet fremde
+Hooks bewusst nicht selbst scharf. Ins Kern-Set gehört keiner davon: Kern-Set-Entscheid
+vom 2026-08-08, dokumentiert in `recipes/README.md` — die generischen Schutz-Hooks
+werden je Rezept einzeln bewertet, hier mit dem Ergebnis „Erweiterung mit Bedingung",
+weil Backends dieses Zuschnitts typischerweise sowohl Lint-/Format-Configs als auch
+Git-Hooks tragen.
 
 ## Bewusst weggelassen
 

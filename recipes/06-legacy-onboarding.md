@@ -89,6 +89,14 @@ Baustein verbraucht davon.
 > das Werkzeug.
 | `affaan-m__ecc/agent/refactor-cleaner` | agent | **Erst** wenn Specs oder Tests existieren. Toten Code ohne Sicherheitsnetz zu entfernen, ist der klassische Legacy-Unfall. | 3 |
 | `affaan-m__ecc/skill/search-first` | skill | Nur wenn eigene Implementierungen dazukommen: erst nach vorhandenen Lösungen suchen, dann bauen. | 8 |
+| `affaan-m__ecc/hook/config-protection` | hook | Sobald der erste Diff eine bestehende Lint-/Format-Config anfasst (`.eslintrc`, Prettier, Biome, Ruff u. a.), um Checks zum Schweigen zu bringen statt den Code zu fixen — die dokumentierte Modellschwäche, gegen die der Hook gebaut ist. In einer übernommenen Codebasis sind diese Configs geronnene Konvention: dasselbe, was `inherit-legacy-style` auf Textebene schützt, erzwingt der Hook auf Dateiebene. Ehrliche Reichweite: Ohne vorhandene Lint-/Format-Configs im Repo ist er ein No-op; Neuanlage bleibt erlaubt. Er blockiert auch legitime Config-Modernisierung — die gehört bei einer Übernahme ohnehin in einen bewussten, menschlich entschiedenen Schritt, nicht in einen Nebenbei-Diff. | 5 |
+| `affaan-m__ecc/hook/block-no-verify` | hook | Nur wenn das Repo Git-Hooks hat (husky, `.git/hooks`, `core.hooksPath`) — er erzwingt nichts, wo keine existieren. Wo sie existieren, sind sie in einem Legacy-Repo oft das einzige funktionierende Gate, solange der Verifikationspfad oben noch leer ist. Das Symptom: Ein Commit läuft mit `--no-verify` durch, weil ein alter pre-commit-Hook rot war und niemand verstand, warum — bei diesem Projekttyp ist dieses Rot ein Befund, kein Hindernis. Der Hook blockt die Bypass-Flags (`--no-verify`, `core.hooksPath=`) rein aus dem Kommandostring und braucht dafür null Projektwissen. | 14 |
+
+**Zu den beiden Schutz-Hooks:** Ein installierter Hook ist zunächst inaktiv — er
+feuert erst, wenn er in der `.claude/settings.json` des Zielprojekts registriert
+ist; `install` legt nur die Datei ab und druckt das nötige Snippet. Ins Kern-Set
+gehören sie nicht: Der erste Hebel bleibt der Verifikationspfad des Zielprojekts,
+Zwang kommt danach (Entscheid vom 2026-08-08, `recipes/README.md`).
 
 ## Bewusst weggelassen
 

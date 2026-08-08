@@ -14,6 +14,11 @@ sources:
     title: Harness-Doktrin — Abschnitte 3.1, 3.3, 3.4, 3.5, 5, 6.2, 6.4, 7.2 und Checkliste 8 als Begründung der Auswahl
     author: Harness-Bibliothek (lokal)
     last_modified: 2026-08-07
+  - id: kern-set-entscheid
+    resource: recipes/README.md
+    title: Kern-Set-Entscheid vom 2026-08-08 — kein Hook im Kern-Set; die zwei standalone-fähigen generischen Schutz-Hooks werden je Rezept einzeln bewertet
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-08
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2027-05-07
 tags: [rezept, seo, content, structured-data, core-web-vitals, ai-overviews]
@@ -88,6 +93,12 @@ Sechs Bausteine, rund 63 KB. Das ist die Obergrenze für diesen Projekttyp.
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | skill | Nur mit DataForSEO-Zugang. Ohne API-Schlüssel liefert der Baustein nichts. | 23 |
 | `affaan-m__ecc/skill/marketing-campaign` | skill | Nur wenn über SEO hinaus ein Launch ansteht: Positionierung, Landingpage-Copy, E-Mail-Strecken, Content-Kalender. | 5 |
 | `affaan-m__ecc/skill/brand-voice` | skill | Nur wenn ein erkennbarer Ton gehalten werden muss. Leitet das Stilprofil aus echten Texten ab statt aus Adjektiven. | 5 |
+| `affaan-m__ecc/hook/config-protection` | hook | Nur wenn der Auftritt selbst eine Codebasis mit **bestehenden** Lint-/Format-Configs ist (ESLint, Prettier, Biome, Ruff) und das Symptom auftritt, dass der Agent bei Code-Fixes — typisch: Core-Web-Vitals-Nacharbeit nach `seo-performance`-Befunden — die Config aufweicht, statt den beanstandeten Code zu reparieren. Ohne solche Configs ist der Hook ein No-op (fail-open). Feuert erst nach Registrierung in `.claude/settings.json`; `install` druckt das Snippet. | 5 |
+
+Hooks kommen in keinem Rezept ins Kern-Set (entschieden 2026-08-08, Begründung in
+`recipes/README.md`): Ein Rezept kennt die Prüfschleifen eines fremden Projekts
+nicht, und ein installierter Hook ist bis zur Registrierung in
+`.claude/settings.json` ohnehin inaktiv.
 
 ## Bewusst weggelassen
 
@@ -97,6 +108,7 @@ Sechs Bausteine, rund 63 KB. Das ist die Obergrenze für diesen Projekttyp.
 | `affaan-m__ecc/skill/seo` (6 KB) und `affaan-m__ecc/agent/seo-specialist` (3 KB) | Doppelung zum `claude-seo`-Bestand, deutlich flacher, ohne die spezialisierten Subagenten. Der Skill liegt zudem nur japanisch vor. Wenn zwei Bausteine dasselbe lösen, bleibt einer. |
 | `AgriciDaniel__claude-seo/skill/seo-cluster` (50 KB, 5 Dateien) | Grösster Baustein der Domäne und teuer im Betrieb: paarweiser SERP-Vergleich kostet viele Abfragen. Lohnt erst, wenn die Content-Architektur wirklich neu entworfen wird — nicht beim Audit. |
 | `AgriciDaniel__claude-seo/skill/seo-firecrawl` (8 KB), `seo-ahrefs`, `seo-profound`, `seo-seranking` | Extension-Skills, die ohne den jeweiligen API-Zugang keinen Wert haben. Nur nachrüsten, wenn der Zugang nachweislich vorliegt — sonst sind es Komponenten ohne Wirkung (Doktrin 6.4). |
+| `affaan-m__ecc/hook/block-no-verify` (14 KB) | Blockiert Git-Hook-Bypässe (`--no-verify`, `core.hooksPath=`) — erzwingt also nur etwas, wo Git-Hooks (pre-commit, pre-push) existieren. Dieses Rezept setzt einen Projekttyp voraus, in dem der binäre Check fast vollständig fehlt (siehe Schmerzpunkte); ohne Git-Hooks feuert der Hook nie und ist eine Komponente ohne Wirkung (Doktrin 6.4). Das Risiko liegt hier in der unbelegten Empfehlung, nicht im übersprungenen Commit-Gate. Trägt das konkrete Projekt doch pre-commit-Hooks, ist er nachrüstbar — dann erst in `.claude/settings.json` registrieren, sonst bleibt er inaktiv. |
 
 ## Installationsbefehl
 

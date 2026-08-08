@@ -8,7 +8,7 @@ sources:
     resource: catalog/index.json
     title: Katalog der Harness-Bibliothek — jede genannte ID über `node tools/harness.mjs show <id>` geprüft
     author: Harness-Bibliothek (lokal)
-    last_modified: 2026-08-07
+    last_modified: 2026-08-08
   - id: harness-doktrin
     resource: knowledge/01-harness-doktrin.md
     title: Harness-Doktrin — Abschnitte 2, 3.3, 3.5, 6.1, 6.2 als Begründung der Auswahl
@@ -82,6 +82,16 @@ Sechs Bausteine, rund 69 KB. Das ist die Obergrenze für diesen Projekttyp.
 | `affaan-m__ecc/skill/nextjs-turbopack` | skill | Nur Next.js 16+ und nur, wenn die Dev-Laufzeit stört. | 2 |
 | `affaan-m__ecc/command/react-test` | command | Nur wenn TDD verbindlich gelten soll — der Command erzwingt Test-zuerst und prüft Coverage-Ziele. | 7 |
 | `affaan-m__ecc/hook/post-edit-typecheck` | hook | Nur wenn der Agent typfehlerhafte Zwischenstände als fertig meldet. Hook = Zwang, nicht Bitte (Doktrin 1.1). | 3 |
+| `affaan-m__ecc/hook/config-protection` | hook | Nur wenn der Agent Lint-/Format-Configs anfasst, um Checks grün zu bekommen, statt den Code zu reparieren — laut Hook-Kopf eine häufige Modellschwäche ("Agents frequently modify these to make checks pass instead of fixing the actual code"). Blockiert Änderungen an **bestehenden** ESLint-/Prettier-/Biome-Configs; Neuanlage bleibt erlaubt, fail-open. Ehrliche Reichweite: ohne solche Configs im Projekt ein No-op — vorher prüfen, ob z. B. `eslint.config.mjs` oder `.prettierrc` überhaupt existiert; bei diesem Projekttyp meist ja. | 5 |
+| `affaan-m__ecc/hook/block-no-verify` | hook | Nur wenn das Projekt Git-Hooks hat (z. B. husky/lint-staged mit pre-commit) **und** der Agent sie per `git commit --no-verify` oder `-c core.hooksPath=` umgangen hat. Prüft rein den Kommandostring, braucht null Projektwissen. Ehrliche Reichweite: erzwingt nur etwas, wo Git-Hooks existieren — ohne sie ist er ein Gate vor einer Tür, die es nicht gibt. | 14 |
+
+**Hooks feuern erst nach Registrierung.** Die drei Hooks dieser Tabelle sind nach
+`install` zunächst inaktiv: ein Hook wirkt erst, wenn er in `.claude/settings.json`
+des Zielprojekts eingetragen ist — `install` druckt das nötige Snippet. Das ist
+Absicht, kein Versäumnis: die Bibliothek schaltet fremde Hooks nicht ungefragt
+scharf. Ins Kern-Set kommt keiner von ihnen (Entscheid vom 2026-08-08, Begründung
+in `recipes/README.md`): ein Rezept kennt die Prüfschleifen des Zielprojekts nicht
+und kann deshalb keinen Zwang zur Pflicht machen.
 
 ## Bewusst weggelassen
 

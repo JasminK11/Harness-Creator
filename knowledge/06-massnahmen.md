@@ -16,6 +16,10 @@ sources:
     resource: knowledge/04-governance.md
     title: Governance — offene Maßnahmen M1–M10, Aufwandsschätzungen, Reihenfolge
     author: Harness-Bibliothek (lokal)
+  - id: suchfix-2026-08-08
+    resource: tools/harness.mjs
+    title: Suchfix Wortanfangs-Präfix-Matching mit Stoppwortfilter — Messläufe am laufenden System, von Umsetzer und adversarialem Prüfer unabhängig verifiziert
+    author: Harness-Bibliothek (lokal, Beschluss des Projektverantwortlichen im autonomen Mandat vom 2026-08-08)
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2026-11-07
 tags: [massnahmen, roadmap, cli, governance, pruefung]
@@ -45,7 +49,8 @@ Aufwandsspalte trägt den korrigierten Wert, nicht den ursprünglich geschätzte
 ## Übersicht
 
 Die Spalte **Stand** ist am 2026-08-07 gegen den laufenden Code und die Textdateien
-nachgeprüft worden, nicht aus der Absicht abgeleitet. Sie ist der Grund, warum diese
+nachgeprüft worden (M9 nach dem `extract`-Lauf erneut am 2026-08-08), nicht aus der
+Absicht abgeleitet. Sie ist der Grund, warum diese
 Tabelle überhaupt eine solche Spalte hat: eine Arbeitsliste ohne Stand ist nach dem
 ersten Umsetzungslauf eine Fehlerquelle, keine Liste.
 
@@ -61,7 +66,7 @@ ersten Umsetzungslauf eine Fehlerquelle, keine Liste.
 | M12a | `verify-recipes` als Subcommand | CLI | klein (~50 Z.) | 2 | **abgewandelt**: sitzt in `cmdLint` |
 | M5 | Vertrauensstufe als Dokumentation und Auswahlkriterium | Struktur | klein (~45 Min) | 2 | erledigt, ohne `INDEX.md` |
 | M8 | Sprachhinweis in der Sackgasse statt Synonymtabelle | CLI | klein (~20 Min) | 3 | erledigt |
-| M9 | Feuerpreis anzeigen statt Verzeichnisgröße | CLI | klein (~5 Z.) | 3 | im Code, wirkt erst nach `extract` |
+| M9 | Feuerpreis anzeigen statt Verzeichnisgröße | CLI | klein (~5 Z.) | 3 | erledigt |
 | M11 | Rezepte auf Abschnittsebene selbsttragend machen | Struktur | klein | 3 | erledigt |
 | M12b/c | Rauchtest für Ausführbares, `verified`-Feld setzen | Prozess | klein | 4 | (b) **verworfen**, (c) erledigt |
 | M13 | `harness-build` Schritt 1: Prüfschleifen erheben, Ausschlussfrage stellen | Doku | klein (~6 Z.) | 2 | erledigt |
@@ -71,9 +76,11 @@ ersten Umsetzungslauf eine Fehlerquelle, keine Liste.
 | M17 | Reibung kennzeichnen; `activationOf` bei unregistriertem Hook-Skript | Doku + CLI | klein | 3 | erledigt |
 | M18 | Naht `/harness-plan` → `/harness-build` schliessen | Doku | klein | 2 | erledigt |
 
-**Was offen bleibt.** M9 ist gebaut, aber unwirksam, bis einmal `extract` gelaufen
-ist: das Feld `entryBytes` entsteht beim Katalogbau, und der verändert die Zahlen,
-gegen die `lint` gerade prüft — deshalb nicht ungefragt. M7 ohne `--recipes` und M12a
+**Was offen bleibt.** M9 war gebaut, aber unwirksam, bis einmal `extract` gelaufen
+ist — das Feld `entryBytes` entsteht beim Katalogbau. Der Lauf ist inzwischen erfolgt;
+nachgeprüft am 2026-08-08: `show anthropics__skills/skill/webapp-testing` meldet
+„Lädt sofort 4 KB" bei 22 KB Gesamtgröße in 6 Dateien. Damit ist M9 erledigt.
+M7 ohne `--recipes` und M12a
 als eigener Subcommand sind begründet verworfen (siehe „Bewusst nicht umgesetzt");
 die Prüfung wohnt in `cmdLint`, damit es nicht zwei Grenzen gibt, die dasselbe
 bewachen. M5 ohne Spalte in `INDEX.md`: die Datei erzeugt `writeMarkdownIndexes()`,
@@ -364,10 +371,16 @@ Quote zu einer Aussage über die Güte eines Bausteins; dafür hilft keine Wiede
 sondern nur ein neuer, anders gelagerter Fall. Für Stufe 1 entfällt die Frage —
 `cmdSearch` ist deterministisch, zwei Läufe liefern byteidentische Ausgabe.
 
-**Was die Prüfung ergab.** Die vorgeschlagene Baseline ist entartet: `cmdSearch` **ist**
-bereits ein namensgewichteter Substring-Matcher (+10 auf `name + id`), die „Baseline"
-also ein Spezialfall des Prüfgegenstands — gemessen 8/10 gegen 7/10 bei identischem
-Top-1 in 9 von 10 Fällen. Der Umfang (bis zu 120 Fälle) widerspricht `knowledge/04:284`;
+**Was die Prüfung ergab.** Die vorgeschlagene Baseline ist entartet: `cmdSearch` ist
+selbst ein namensgewichteter Term-Matcher, die „Baseline" also ein Spezialfall des
+Prüfgegenstands. <!-- lint:historisch --> Zum Prüfzeitpunkt 2026-08-07 arbeitete
+`cmdSearch` als Substring-Matcher (+10 auf `name + id`) — gemessen 8/10 gegen 7/10 bei
+identischem Top-1 in 9 von 10 Fällen; dieser Altstand bleibt stehen, weil die Messung
+gegen genau dieses Verhalten lief und ohne ihn nicht nachvollziehbar wäre. Seit
+2026-08-08 matcht `cmdSearch` auf Wortanfangs-Präfixe mit Stoppwortfilter
+(`bewerteTreffer()`, `STOPPWOERTER`, `termRegex()` in `tools/harness.mjs`); am
+Argument ändert das nichts — die „Baseline" bliebe ein Spezialfall des
+Prüfgegenstands. Der Umfang (bis zu 120 Fälle) widerspricht `knowledge/04:284`;
 die Spezifikation verrottet an sich selbst (ihr Beispielfall `keine-jp-stummel` ist
 bereits falsch). Deutsche Fälle sind auf Rot konstruiert: 5 von 6 realistischen deutschen
 Anfragen liefern null Treffer.
@@ -402,6 +415,16 @@ an deutscher Morphologie ohne Stemming. Zudem kollidiert sie mit `catalog/intent
 **Nebenbefund, separat**: Z. 711 gibt „zeige Teiltreffer" aus und direkt danach Z. 715
 „Keine Treffer" — Fix `if (relaxed && scored.length)`. Neue ID vergeben, M8 ist in
 `knowledge/04:355` belegt.
+
+**Nachtrag (2026-08-08): die Stoppwortliste ist keine Synonymtabelle.** Der Suchfix
+vom 2026-08-08 hat eine Stoppwortliste eingeführt (`STOPPWOERTER` in
+`tools/harness.mjs`, 89 englische Funktionswörter). Das ist keine Wiederbelebung der
+hier abgelehnten Synonymtabelle: die Tabelle hätte übersetzt und expandiert — eine
+offene Bedeutungstabelle, die mit jeder Domäne wächst und gepflegt werden muss. Die
+Stoppwortliste übersetzt und expandiert nichts, sie entfernt Terme einer
+geschlossenen Grammatikklasse — endlich, sprachstabil, ohne Domänenpflege. Die
+Ablehnung oben bleibt in Kraft; der M8-Sprachhinweis selbst blieb beim Suchfix
+unangetastet.
 
 ## M9 — Den Feuerpreis anzeigen statt der Verzeichnisgröße
 
@@ -850,7 +873,7 @@ vorgeschlagen werden.
 | Kollisionshinweise oder Gruppierung in `search` | 33 von 43 Slug-Gruppen sind gewollte agent/skill-Paare desselben Autors; die Warnung wäre überwiegend falsch. |
 | Ähnlichkeitsvergleich von Descriptions | Kein belegtes Symptom, und Beinahe-Gleichheit ist ohne Schwellenwert nicht entscheidbar. |
 | Weiterreichen der Auswahl an den Besitzer | Widerspricht `harness-build/SKILL.md` Z. 115/119–120 — Auswählen **ist** die Aufgabe des Skills. |
-| Naive Baseline im Eval | `cmdSearch` ist selbst ein namensgewichteter Substring-Matcher; die „Baseline" ist ein Spezialfall des Prüfgegenstands. |
+| Naive Baseline im Eval | `cmdSearch` ist selbst ein namensgewichteter Term-Matcher (seit 2026-08-08 Wortanfangs-Präfix mit Stoppwortfilter, davor Substring); die „Baseline" ist ein Spezialfall des Prüfgegenstands. |
 | 60–120 Eval-Fälle, deutsch und englisch | `knowledge/04:284`: „12–20 Fälle. Mehr wird nicht gepflegt und verrottet." Deutsche Fälle wären Dauerrot. |
 | `catalog/synonyms.json` mit Query-Expansion | Schlechter als das Modell, arbeitet gegen die bewusste UND-Semantik, scheitert an deutscher Morphologie, kollidiert mit `catalog/intents.yaml` (M9 in `04`). |
 | Token-Feld, `eager/lazy`-Kennzeichen, Budgetsumme | Kontextverhalten ist eine Eigenschaft des Typs (`knowledge/02:62`), nicht der Datei; zwölf Bausteine kosten dauerhaft ~555 Token — eine Obergrenze dagegen wäre Theater. |
@@ -890,6 +913,16 @@ Ausführung als überflüssig erkennbar wurden:
 | `lint` als fünfter Schritt in `cmdUpdate` (M1) | `update` fährt schon `eval` als Schritt 4 und hängt seinen Exit-Code daran. Eine zweite Sperre im selben Lauf macht aus einem Katalogbau ein Gate mit zwei Ursachen, und `lint` prüft Text gegen Text — davon ändert `update` nichts. `cmdUpdate` weist stattdessen am Ende auf `lint` hin, wenn sich der Bestand geändert hat. |
 | Rauchtest für ausführbare Kern-Set-Bausteine (M12b) | `install --dry-run` über alle 32 Kern-Set-IDs meldet bei 31 „nichts Ausführbares gefunden". Einziger Träger ist `anthropics__skills/skill/webapp-testing`. Eine Markdown-Datei hat kein Ausfallverhalten — es gäbe bei 31 von 32 nichts zu testen. |
 | Spalte „Vertrauen" in `INDEX.md` / `catalog/by-repo.md` (M5 Punkt 2) | Beide Dateien erzeugt `writeMarkdownIndexes()`. Von Hand eingetragen hielte die Spalte bis zum nächsten `extract`. Als Codeänderung bleibt sie möglich; als Textmassnahme ist sie es nicht. |
+
+**Nachgetragen beim Suchfix am 2026-08-08** — dem Fix ging ein Design-Vorlauf mit
+drei Entwürfen und drei adversarialen Judges voraus (Punktesummen E1 21,5 / E3 19 /
+E2 16,5); umgesetzt wurde E1, das Wortanfangs-Präfix-Matching mit Stoppwortfilter.
+Zwei Entscheidungen daraus gehören in diesen Abschnitt:
+
+| Verworfen / zurückgestellt | Grund |
+|-----------|-------|
+| E2: IDF-Coverage-Suche mit Fallback-Kappung | **Zurückgestellt, nicht verworfen.** Eine Messbehauptung des Entwurfs („z22 bleibt Top 5") wurde am System falsifiziert; die Spezifikation ist unterbestimmt — zwei werkgetreue Nachbauten lieferten für z21 Rang 3 bzw. Rang 14; der Konflikt mit dem M5-Wortlaut „Sortierung bleibt unverändert" blieb unadressiert. **Wiedervorlage-Auslöser:** erst wenn die M2/M3-Beschreibungspflege trägt ODER ein Pflichtfall bzw. ein echter `harness-build`-Lauf Fallback-Fluten als Problem belegt. |
+| Sofortfix der `hayName`-Restschwäche: der Repo-Teil der ID zählt als Inhaltssignal | Erkannte, bewusst nicht sofort behobene Schwäche. Beleg am Eval-Fall z22 („nobody understands this codebase"): sechs `Egonex-AI__Understand-Anything`-Bausteine kassieren den Namensbonus über den Repo-Teil der ID („Understand" trifft „understands" als Präfix) und stehen vor dem einschlägigen Treffer `msitarzewski__agency-agents/agent/codebase-onboarding-engineer` (Rang 7 statt Top 5 — z22 bleibt deklariert rot). Derselbe Fehlertyp wie der behobene `classify()`-Präzedenzfall, bei dem der Dateipfad als Klassifikationssignal zählte: ein Pfad- bzw. ID-Bestandteil gilt fälschlich als Inhalt. |
 
 ---
 

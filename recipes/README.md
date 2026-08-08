@@ -9,7 +9,12 @@ sources:
     title: Harness-Doktrin — Abschnitt 0 und Checkliste 8, Begründungspflicht je Baustein sowie Load-Bearing-Test 7.1
     author: Harness-Bibliothek (lokal)
     last_modified: 2026-08-07
-generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
+  - id: kern-set-hook-entscheid
+    resource: "Beidseitige adversariale Prüfung des Kern-Set-Hook-Befunds, drei Agenten, 2026-08-08"
+    title: Kern-Set-Hook-Entscheid — Lesart A widerlegt, Lesart B im Kern bestätigt, Allsatz gefallen
+    author: Harness-Bibliothek (lokal, Prüf-Workflow)
+    last_modified: 2026-08-08
+generated: { by: claude-fable-5, at: 2026-08-08T00:00:00Z }
 stale_after: 2027-08-07
 tags: [rezept, wegweiser, harness-bibliothek, projekttypen]
 ---
@@ -118,33 +123,76 @@ wieder auf ihre englische Fassung auf. Wo sie in einzelnen Rezepten noch unter
 "Bewusst weggelassen" stehen, ist die dortige Begründung überholt. `show <id>
 --head 20` vor der Übernahme bleibt trotzdem richtig.
 
-## Kein Kern-Set enthält einen Zwang — und das ist zu entscheiden, nicht zu übersehen
+## Kein Pflicht-Hook im Kern-Set — entschieden 2026-08-08, generische Schutz-Hooks je Rezept bewertet
 
 Die sechs Kern-Sets bestehen zusammen aus 33 Zeilen mit 32 verschiedenen IDs
 (`affaan-m__ecc/agent/security-reviewer` steht in 02 und 04), **ausschliesslich vom
-Typ `skill` und `agent`**. Kein einziger Hook, kein Command, kein MCP-Server. Der
-Pflichtteil aller Rezepte empfiehlt damit ausschliesslich Kontextmaterial — Wissen,
-das das Modell heranziehen *kann* — und keinen einzigen Mechanismus, der etwas
-erzwingt.
-
-Das steht in Spannung zu Doktrin 1.1 („Hook = Zwang, nicht Bitte") und zu
+Typ `skill` und `agent`**. Kein einziger Hook, kein Command, kein MCP-Server. Das
+stand in Spannung zu Doktrin 1.1 („Hook = Zwang, nicht Bitte") und zu
 `harness-build/SKILL.md` Schritt 4: „Ein Hook, der eine Regel erzwingt, ist mehr wert
-als drei Skills, die sie empfehlen." Hooks stehen in allen sechs Rezepten nur unter
-"Erweiterung (optional)", mit einer Bedingung davor.
+als drei Skills, die sie empfehlen." Am **2026-08-08** wurde die Frage in einer
+**beidseitigen adversarialen Prüfung** (drei Agenten; jede Lesart musste die
+Gegenposition am laufenden System widerlegen) entschieden.
 
-Zwei Lesarten, und die Entscheidung ist noch nicht gefallen:
+**Lesart A — „mindestens ein Verifikations-Hook gehört in jedes Kern-Set" — ist
+widerlegt.** Die Doktrin meint mit dem billigsten Hebel den **Verifikationsweg des
+Zielprojekts**, nicht einen Hook-Baustein aus dem Katalog (Reyes-Geltungsbereich).
+`search "verification" --type hook` liefert **null Treffer** — es existiert kein
+stack-agnostischer Verifikations-Hook, den ein Rezept zur Pflicht machen könnte.
+Ein blind installierter Hook wäre nach den Fehlerklassen 7.6/7.3 tot oder
+schädlich: die Illusion eines Gates ist schlechter als das ehrliche leere
+Verifikationspfad-Feld, das jedes Rezept trägt.
 
-- **Absicht.** Ein Hook ohne vorhandene Prüfschleife führt nichts aus — er liegt tot
-  in `.claude/hooks/`. Ein Rezept kennt die Prüfschleifen des Zielprojekts nicht und
-  kann deshalb keinen Hook zur Pflicht machen. Dann ist der Ort für Hooks genau
-  „Erweiterung, sobald der Check existiert".
-- **Lücke.** Die Rezepte sind aus Kontextmaterial gebaut, weil der Katalog davon am
-  meisten hergibt (`skill` und `agent` stellen den Bestand), nicht weil es die
-  richtige Wahl war.
+**Lesart B — „skill/agent-only ist korrekt" — hält im Kern, fällt im Allsatz.**
+Bestätigt ist die Reihenfolge: erst Verifikationspfad, dann Zwang; kein
+hartkodierter Verifikationsbefehl im Rezept, weil es die Skripte eines fremden
+Projekts nicht kennt; und die Bibliothek schaltet fremde Hooks bewusst nicht
+scharf — ein installierter Hook ist zunächst inaktiv, bis ihn jemand registriert.
+Der Allsatz „ein generischer Hook wäre wirkungslos oder falsch" ist dagegen
+gefallen: der Katalog enthält mindestens drei generisch wirksame Hooks, alle am
+2026-08-08 per `show` geprüft:
 
-Bis das entschieden ist, gilt die erste Lesart als Arbeitsannahme, und
-`harness-build` Schritt 1b erhebt die Prüfschleifen des Zielprojekts, bevor
-überhaupt gesucht wird.
+- `affaan-m__ecc/hook/config-protection` — blockiert Änderungen an **bestehenden**
+  Lint-/Format-Configs (ESLint, Prettier, Biome, Ruff); adressiert die dokumentierte
+  Modellschwäche „Checks weichklopfen statt Code fixen"; Neuanlage bleibt erlaubt,
+  fail-open. Bester Einzelkandidat.
+- `affaan-m__ecc/hook/block-no-verify` — blockiert git-Hook-Bypass (`--no-verify`,
+  `core.hooksPath`) rein aus dem Kommandostring, flag-positionsbewusst tokenisiert,
+  null Projektwissen nötig; wirkt allerdings nur, wo Git-Hooks existieren.
+- `affaan-m__ecc/hook/post-edit-format` — detektiert den Formatter selbst und
+  schweigt sonst, hängt aber per `require` an `../lib/resolve-formatter` aus der
+  ECC-Repo-Struktur: **nicht standalone**, darum kein Kandidat.
+
+Keiner dieser Kandidaten war je in einem Rezept geprüft worden — weder unter
+„Erweiterung" noch unter „Bewusst weggelassen" (Grep über `recipes/`: 0 Treffer,
+nachgestellt 2026-08-08). Die skill/agent-only-Zusammensetzung war also
+**ungeprüfter Zustand, kein Prüfergebnis**.
+
+**Die Entscheidung.** Die Absicht-Lesart ist für Verifikations-Hooks bestätigt:
+**kein Pflicht-Hook im Kern-Set.** Die zwei standalone-fähigen generischen
+Schutz-Hooks (`config-protection`, `block-no-verify`) werden **je Rezept einzeln
+bewertet** und landen entweder unter „Erweiterung (optional)" mit Bedingung und
+dem Hinweis, dass der Hook nach `install` erst durch Registrierung in
+`settings.json` wirkt, oder unter „Bewusst weggelassen" mit Grund. Der Ort für das
+Ergebnis sind die Erweiterungs- und Weggelassen-Abschnitte der sechs Rezepte —
+wer wissen will, warum ein Schutz-Hook in einem Rezept fehlt oder steht, liest
+dort nach, nicht hier.
+
+**Korrektur einer Falschaussage dieser Datei.** Frühere Fassungen behaupteten:
+„Hooks stehen in allen sechs Rezepten nur unter ‚Erweiterung (optional)', mit
+einer Bedingung davor." <!-- lint:historisch --> Der widerlegte Satz bleibt hier
+als Altstand zitiert, weil die Korrektur ohne das Vorher nicht dokumentiert wäre;
+verbindlich ist der Folgesatz. Tatsächlich nannten am 2026-08-08 nur Rezept 01
+(`affaan-m__ecc/hook/post-edit-typecheck`) und Rezept 02
+(`affaan-m__ecc/hook/pre-bash-dev-server-block`) überhaupt einen Hook unter
+„Erweiterung"; Rezept 04 nannte einen nur unter „Bewusst weggelassen"
+(`affaan-m__ecc/hook/insaits-security-monitor`); die Rezepte 03, 05 und 06
+enthielten das Wort „Hook" nirgends.
+
+**Teilentschieden ist damit auch die Eigenanwendung.** Dieses Projekt hat am
+selben Tag seine ersten eigenen Hooks bekommen (`.claude/settings.json` registriert
+`zugriffsschutz.mjs` und `pruefpflicht.mjs`) — die Spannung „die Bibliothek predigt
+Zwang und hat im eigenen Haus keinen einzigen" ist nicht mehr offen.
 
 Ein Rauchtest für ausführbare Kern-Set-Bausteine wurde erwogen und fällt aus:
 `install --dry-run` über alle 32 IDs meldet bei 31 „nichts Ausführbares gefunden";
