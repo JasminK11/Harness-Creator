@@ -906,29 +906,79 @@ const UEBERSETZUNG = {
   aufräumen: "refactor", umbau: "refactor", bauen: "build", erstellen: "create",
 };
 
-function cmdSearch(argv) {
-  const flags = parseFlags(argv);
-  const query = flags._.join(" ").toLowerCase().trim();
-  const cat = loadCatalog();
-  const terms = query.split(/\s+/).filter(Boolean);
+/** Englische Funktionswörter, die vor der Bewertung aus der Anfrage fallen.
+ *  Warum: Füllwörter kippten den UND-Filter auf ODER — "how do I know the agent
+ *  did it right" fand keinen Baustein mit allen acht Wörtern, fiel auf Teiltreffer
+ *  zurück und flutete 953 Ergebnisse, in denen der gesuchte auf Rang 733 stand.
+ *  Ob 'same'/'know'/'right' hineingehören, wurde an beiden Varianten gemessen
+ *  (Fälle z21/z24 in evals/routing.jsonl, 2026-08-08): mit ihnen z21 Rang 3 von
+ *  119 und z24 Rang 432 von 496, ohne sie z21 Rang 5 von 121 und z24 Rang 438
+ *  von 512 — die Variante mit ihnen hat in beiden Fällen den grösseren Puffer,
+ *  ohne einen Pflichtfall oder anderen optionalen Fall zu kippen. */
+const STOPPWOERTER = new Set([
+  "a", "an", "the", "and", "or", "but", "of", "to", "in", "on", "at", "with",
+  "for", "from", "by", "about", "how", "what", "when", "where", "why", "who",
+  "which", "do", "does", "did", "done", "i", "you", "we", "they", "it", "its",
+  "my", "our", "your", "their", "this", "that", "these", "those", "is", "are",
+  "was", "were", "be", "been", "being", "have", "has", "had", "can", "could",
+  "should", "would", "will", "shall", "may", "might", "must", "keep", "keeps",
+  "know", "right", "same", "get", "gets", "got", "make", "makes", "made",
+  "need", "needs", "want", "wants", "let", "lets", "use", "using", "not", "no",
+  "so", "if", "then", "than", "as", "up", "out", "off",
+]);
 
-  let items = cat.items;
-  // Massen-Repos nur, wenn ausdrücklich verlangt: sonst verdrängen 24.500 Rechts-Skills
-  // jeden anderen Treffer.
-  const wantsBulk = flags.all || flags.repo || flags.domain;
-  if (!wantsBulk) items = items.filter((i) => !i.bulk);
-  if (flags.type) items = items.filter((i) => i.type === flags.type);
-  if (flags.domain) items = items.filter((i) => i.domains.includes(flags.domain));
-  if (flags.repo) items = items.filter((i) => i.repo.toLowerCase().includes(String(flags.repo).toLowerCase()));
+/** Baut aus einem Suchterm einen Wortanfangs-Präfix-Regex.
+ *
+ *  Warum kein `includes` mehr: Mittwort-Substrings erzeugten Phantom-Treffer
+ *  samt Namensbonus — "our" traf mitten in "opensource", "and" mitten in
+ *  "command", und diese Zufallstreffer standen dann vor den echten. Der Regex
+ *  verlangt einen Wortanfang (`^` oder Nicht-Alphanumerikum davor), lässt das
+ *  Wort aber weiterlaufen: "review" trifft "reviews" und "reviewer".
+ *
+ *  Gekoppelte Invariante: Der Plural-s-Stamm (aus "releases" wird "release")
+ *  ist NUR gefahrlos, weil das Matching Präfix-Matching ist — "kubernetes"
+ *  wird zu "kubernete" gestammt und trifft "kubernetes" trotzdem weiter. Wer
+ *  einen der beiden Teile isoliert zurückbaut, bricht den anderen. */
+function termRegex(t) {
+  let stamm = t;
+  if (stamm.length > 3 && stamm.endsWith("s") && !stamm.endsWith("ss")) stamm = stamm.slice(0, -1);
+  const esc = stamm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Bewusst ohne g-Flag: ein g-Regex trägt lastIndex über test()-Aufrufe hinweg
+  // und würde denselben Term in jedem zweiten Baustein "nicht finden".
+  return new RegExp("(^|[^a-z0-9])" + esc);
+}
+
+/**
+ * Bewertet, filtert und sortiert die übergebenen (bereits vorgefilterten) Items
+ * gegen eine Suchanfrage. Eine Funktion für beide Aufrufer, weil `eval` über
+ * `sucheIds` misst, was der Nutzer über `cmdSearch` sieht — zwei Kopien der
+ * Bewertungslogik waren eine belegte Drift-Gefahr: jede Änderung an Gewichten
+ * oder Filtern musste zweimal identisch passieren, und niemand prüfte das.
+ *
+ * Liefert neben der Trefferliste die Termbilanz-Rohdaten: welche Terme als
+ * Stoppwörter fielen (`gefiltert`) und welche im durchsuchten Bestand keinen
+ * Wortanfangs-Treffer haben (`unerfuellbar`).
+ */
+function bewerteTreffer(items, frage) {
+  const roh = String(frage).toLowerCase().split(/\s+/).filter(Boolean);
+  const gefiltert = roh.filter((t) => STOPPWOERTER.has(t));
+  let terms = roh.filter((t) => !STOPPWOERTER.has(t));
+  // Guard: eine Anfrage nur aus Stoppwörtern behält ihre Originalterme — sonst
+  // wäre die Termliste leer und der UND-Filter liesse den Gesamtbestand durch.
+  if (!terms.length && roh.length) terms = roh;
+  // Einmal pro Suchlauf kompilieren, nicht einmal pro Baustein: der Katalog hat
+  // fünfstellig viele Items, und Regex-Kompilierung dominiert sonst die Suche.
+  const regexe = terms.map(termRegex);
+  const treffbar = new Array(terms.length).fill(false);
 
   const rated = items.map((i) => {
     const hayName = (i.name + " " + i.id).toLowerCase();
     const hayAll = (hayName + " " + i.description + " " + i.path + " " + i.domains.join(" ")).toLowerCase();
     let score = 0, hits = 0;
-    for (const t of terms) {
-      const inAll = hayAll.includes(t);
-      if (inAll) hits++;
-      if (hayName.includes(t)) score += 10;
+    for (let k = 0; k < regexe.length; k++) {
+      const inAll = regexe[k].test(hayAll);
+      if (inAll) { hits++; treffbar[k] = true; }
+      if (regexe[k].test(hayName)) score += 10;
       if (inAll) score += 3;
     }
     // Kleine Bausteine bevorzugen: billiger einzubauen, leichter zu prüfen.
@@ -948,13 +998,50 @@ function cmdSearch(argv) {
     relaxed = true;
   }
   scored.sort((a, b) => b.hits - a.hits || b.score - a.score || a.i.id.localeCompare(b.i.id));
+
+  const unerfuellbar = terms.filter((_, k) => !treffbar[k]);
+  return { scored, relaxed, terms, gefiltert, unerfuellbar };
+}
+
+function cmdSearch(argv) {
+  const flags = parseFlags(argv);
+  const query = flags._.join(" ").toLowerCase().trim();
+  const cat = loadCatalog();
+
+  let items = cat.items;
+  // Massen-Repos nur, wenn ausdrücklich verlangt: sonst verdrängen 24.500 Rechts-Skills
+  // jeden anderen Treffer.
+  const wantsBulk = flags.all || flags.repo || flags.domain;
+  if (!wantsBulk) items = items.filter((i) => !i.bulk);
+  if (flags.type) items = items.filter((i) => i.type === flags.type);
+  if (flags.domain) items = items.filter((i) => i.domains.includes(flags.domain));
+  if (flags.repo) items = items.filter((i) => i.repo.toLowerCase().includes(String(flags.repo).toLowerCase()));
+
+  const { scored, relaxed, gefiltert, unerfuellbar } = bewerteTreffer(items, query);
+
+  // Termbilanz nur in der Sackgasse (UND-Filter leer oder gar kein Treffer):
+  // sie benennt, was die Suche stillschweigend entschieden hat, damit das Modell
+  // die unerfüllbaren Nutzerwörter gezielt durch Katalogvokabular ersetzen kann
+  // (M8: Übersetzen ist Aufgabe des Modells, die Bilanz liefert die Fakten).
+  const termbilanz = () => {
+    if (gefiltert.length) console.log(`Als Füllwörter übergangen: ${gefiltert.join(", ")}`);
+    for (const t of unerfuellbar) {
+      console.log(`'${t}' kommt im durchsuchten Bestand nicht vor — ${scored.length ? "ignoriert" : "nicht erfüllbar"}`);
+    }
+    if (gefiltert.length || unerfuellbar.length) console.log("");
+  };
+
   // Nur ankündigen, wenn tatsächlich Teiltreffer folgen. Sonst stand die Zeile
   // "zeige Teiltreffer" direkt über "Keine Treffer" — eine Ankündigung von nichts.
-  if (relaxed && scored.length) console.log("Kein Baustein enthält alle Suchwörter — zeige Teiltreffer.\n");
+  if (relaxed && scored.length) {
+    console.log("Kein Baustein enthält alle Suchwörter — zeige Teiltreffer.\n");
+    termbilanz();
+  }
 
   const limit = Number(flags.limit || 25);
   if (!scored.length) {
     console.log(`Keine Treffer für "${query}".`);
+    termbilanz();
     // Der Bestand stammt aus englischsprachigen Repos, die Nutzer denken deutsch.
     // Ein Eval-Fall belegt es: "sicherheit prüfen" liefert null Treffer, "security"
     // liefert reichlich. Statt einer Synonymtabelle, die gepflegt werden müsste und
@@ -2409,31 +2496,16 @@ function ladeEvalFaelle() {
  *  Nutzt dieselbe Bewertung wie `cmdSearch` — eine nachgebaute Zweitlogik würde
  *  messen, was der Nutzer gerade nicht bekommt. */
 function sucheIds(cat, { frage, typ, domaene, repo }) {
-  const terms = String(frage).toLowerCase().split(/\s+/).filter(Boolean);
   let items = cat.items;
+  // Abweichung von cmdSearch, bewusst: hier gibt es kein --all, weil kein
+  // Eval-Fall den Gesamtbestand samt Massen-Repos abfragt.
   const wantsBulk = repo || domaene;
   if (!wantsBulk) items = items.filter((i) => !i.bulk);
   if (typ) items = items.filter((i) => i.type === typ);
   if (domaene) items = items.filter((i) => i.domains.includes(domaene));
   if (repo) items = items.filter((i) => i.repo.toLowerCase().includes(String(repo).toLowerCase()));
 
-  const rated = items.map((i) => {
-    const hayName = (i.name + " " + i.id).toLowerCase();
-    const hayAll = (hayName + " " + i.description + " " + i.path + " " + i.domains.join(" ")).toLowerCase();
-    let score = 0, hits = 0;
-    for (const t of terms) {
-      const inAll = hayAll.includes(t);
-      if (inAll) hits++;
-      if (hayName.includes(t)) score += 10;
-      if (inAll) score += 3;
-    }
-    if (score > 0 && ladeBytes(i) < 20000) score += 1;   // wie in cmdSearch
-    return { i, score, hits };
-  });
-  let found = rated.filter((x) => terms.length === 0 || x.hits === terms.length);
-  if (!found.length && terms.length > 1) found = rated.filter((x) => x.hits > 0);
-  found.sort((a, b) => b.hits - a.hits || b.score - a.score || a.i.id.localeCompare(b.i.id));
-  return found.map((x) => x.i.id);
+  return bewerteTreffer(items, frage).scored.map((x) => x.i.id);
 }
 
 /**

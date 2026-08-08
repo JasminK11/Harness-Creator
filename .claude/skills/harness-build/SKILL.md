@@ -145,6 +145,12 @@ Aus den Schmerzpunkten werden 4 bis 8 konkrete Suchen. Nicht aus dem Stack allei
 
 Prüf vorher in `INDEX.md`, welche Domänen es überhaupt gibt.
 
+Wenn die Suche eine Termbilanz ausgibt — welche Wörter als Füllwörter übergangen
+wurden und welche im Bestand keinen Treffer haben —, ersetze die unerfüllbaren
+Terme durch Katalogvokabular und such erneut. Die Übersetzung von Nutzersprache
+in Katalogsprache ist deine Aufgabe als Modell; die Bilanz liefert dir dafür die
+Fakten.
+
 ### 3. Rezept prüfen
 
 Sieh in `recipes/` nach, ob für diesen Projekttyp schon ein Bauplan existiert. Wenn
