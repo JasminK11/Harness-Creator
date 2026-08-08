@@ -80,8 +80,16 @@ Bevor du irgendetwas suchst, musst du wissen, wofür. Klär ab:
   übersehen dieselben Fehler, Deployments schlagen fehl, niemand kennt die Codebasis.
 
 Vieles davon kannst du dem Projekt selbst entnehmen — `package.json`, `pyproject.toml`,
-`go.mod`, vorhandene CI-Konfiguration, `README`. Tu das zuerst. Frag nur nach, was du
-nicht sehen kannst, und nutz dafür `AskUserQuestion` statt einer offenen Frage.
+`go.mod`, vorhandene CI-Konfiguration, `README`, dazu Issue-Tracker-Referenzen
+(Linear-/Jira-IDs in Commits) und Doku-Muster (OpenAPI, JSDoc), die auf gelebte
+Abläufe zeigen. Tu das zuerst. Frag nur nach, was du nicht sehen kannst, und nutz
+dafür `AskUserQuestion` statt einer offenen Frage.
+
+Erhebe außerdem, was schon da ist: `node tools/harness.mjs list --to <projekt>`
+zeigt bereits installierte Bausteine samt Zustand, und ein Blick in `.claude/`
+zeigt Handgebautes. Wer empfiehlt, ohne den Bestand zu kennen, empfiehlt doppelt —
+das offizielle Setup-Plugin macht diese Bestandsaufnahme als Allererstes, und darin
+hat es recht (`anthropics__claude-plugins-official/skill/claude-automation-recommender`).
 
 #### 1a. Liegt eine `PLAN.md` im Projekt?
 

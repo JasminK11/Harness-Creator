@@ -68,6 +68,155 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-08] ingest | `08-pruefbarkeit-und-pruefdaten.md` Abschnitt 1: Das offizielle Setup-Plugin als externer Beleg für Readiness-über-Existenz
+
+**Quelle.** Adversarial geprüfte Erkenntnisse zum offiziellen Setup-Plugin aus
+dem Workflow-Lauf (Task `w3da4z86w`, `result.setupPlugin.erkenntnisse`, Befund
+„Frage 3 — Schwachpunkt der Signal-Logik"); die Baustein-ID
+`anthropics__claude-plugins-official/skill/claude-automation-recommender` am
+laufenden System per `show` verifiziert (Vertrauen offiziell, Plugin
+`claude-code-setup`, 179K Installs laut Aufnahmevermerk).
+
+**Was gewachsen ist.** Abschnitt 1 trägt jetzt den extern belegten Fall: Das
+offizielle Setup-Plugin bestimmt Automatisierungs-Empfehlungen ausschließlich
+über Datei-Existenz (`ls`/`cat`/`grep` auf Configs; „Tests directory exists |
+PostToolUse: run related tests" genügt für einen Test-Hook) und führt in
+keiner Phase eine Prüfschleife aus — der Mainstream misst Readiness über
+Vorhandensein, nicht über „läuft und ist grün". Genau die Lücke, die Kapitel 8
+begründet; `harness-build` Schritt 1b ist an dieser Stelle strenger als das
+offizielle Werkzeug und bleibt unverändert. Geltungsbereich benannt
+(dokumentierter Einzelfall; Signal-Logik, nicht Empfehlungsinhalte) und gegen
+`knowledge/02` Abschnitt 2.4 abgegrenzt, wo derselbe Baustein die
+Hook-Kopplungs-Seite belegt.
+
+**Nebenher nachgezogen.** Der Absatz „Was uns das betrifft" in Abschnitt 1
+führte die Prüfdichte-Erhebung noch als offene Maßnahme; `knowledge/06` M13
+ist erledigt und `harness-build` Schritt 1b existiert — der Absatz spiegelt
+jetzt diesen Stand. Der Vorspann-Satz über Zitate präzisiert auf „Zitate aus
+den fünf Vorträgen", weil Abschnitt 1 nun zusätzlich aus einer SKILL.md
+zitiert. Frontmatter der Datei um den Baustein als Quelle ergänzt.
+
+## [2026-08-08] revise | Rezept 06: Kern-Set-Tausch auf `legacy-analyst`, drei Erweiterungszeilen, zwei widerlegte Weglass-Begründungen korrigiert
+
+**Quelle.** Adversarial geprüfte Urteile aus dem Workflow-Lauf (Task
+`w3da4z86w`, `result.gepruefteVorschlaege` und `result.abgelehnteVorschlaege`);
+jede geschriebene ID am laufenden System per `show` verifiziert.
+
+**Was vorher galt, was jetzt gilt** (`recipes/06-legacy-onboarding.md`):
+
+1. **Kern-Set-Tausch.** `msitarzewski__agency-agents/agent/codebase-onboarding-engineer`
+   (9 KB) raus, `anthropics__claude-plugins-official/agent/legacy-analyst` (4 KB)
+   rein — der Alte verbietet Inferenz komplett („Avoid inference, assumptions,
+   and speculation completely"), was bei undokumentierter Basis still verletzt
+   wird (Doktrin 3.5); der Neue macht Inferenz sichtbar (Pflicht-`file:line`,
+   „is" vs. „appears to be", Confidence-&-Gaps-Footer). Nachgezogen:
+   Installationsbefehl, Reihenfolge Schritt 1, Summenzeile jetzt 31 KB (vorher
+   „rund 36 KB"); der Getauschte steht mit Grund unter „Bewusst weggelassen".
+2. **Drei Erweiterungszeilen neu:** `test-engineer` (3 KB, vor
+   `refactor-cleaner`, füllt den leeren Verifikationspfad, Rewrite-Vorbehalte
+   dokumentiert; dazu neuer Reihenfolge-Schritt 5), `business-rules-extractor`
+   (4 KB, Fachabnahme durch SMEs, kein `Write`-Tool — Persistenz via `handoff`
+   zwingend), `architecture-critic` (3 KB, nur bei Umbau/Neuentwurf,
+   `code-reviewer` bleibt daneben stehen).
+3. **Zwei widerlegte Begründungen korrigiert:** `affaan-m__ecc/skill/codebase-onboarding`
+   ist 8 KB und englisch, nicht „2 KB, ausschliesslich japanisch"; die fünf
+   Skills der Sammelzeile lösen als englische Skills unter `skills/` auf, nicht
+   unter `docs/ja-JP/…` — bemerkt durch die adversariale Prüfung per `show`,
+   Ursache mutmasslich ein Katalog-`update` nach dem Schreiben des Rezepts.
+4. **Zwei Ablehnungen dokumentiert:** `scaffolder` (an
+   `modernize-reimagine`-Blueprints gekoppelt, solo funktionslos) und der
+   offizielle `code-explorer` (Duplikat des Bestands mit breiterem Tool-Set
+   inkl. Netzzugriff) unter „Bewusst weggelassen".
+
+## [2026-08-08] ingest | `02-bausteine.md`: Offizieller Zweitbeleg für die Hook-Regel und der Kontrast Kategorie-Quote gegen Problem-Anker
+
+**Quelle.** Adversarial geprüfte Erkenntnisse zum offiziellen Setup-Plugin aus
+dem Workflow-Lauf (Task `w3da4z86w`, `result.setupPlugin.erkenntnisse`); die
+Baustein-ID `anthropics__claude-plugins-official/skill/claude-automation-recommender`
+am laufenden System per `show` verifiziert (Vertrauen offiziell, Plugin
+`claude-code-setup`, 179K Installs).
+
+**Was gewachsen ist.** Zwei Stellen in `knowledge/02-bausteine.md`:
+
+1. Abschnitt 2.4 (Hook) trägt die Regel „Ein Hook führt eine Prüfung aus, er
+   erzeugt keine" jetzt mit offiziellem Zweitbeleg: Die Hook-Empfehlungstabelle
+   des Setup-Plugins koppelt jeden empfohlenen `PostToolUse`-Hook an ein
+   bereits konfiguriertes Werkzeug („Prettier configured | PostToolUse:
+   auto-format on edit", „Tests directory exists | PostToolUse: run related
+   tests"; SKILL.md, Phase 2). Geltungsbereich benannt: Der Beleg deckt die
+   `PostToolUse`-Zeilen und bestätigt nur die Kopplung, nicht die Härte — das
+   Plugin misst Existenz per `ls`/`cat`/`grep`, nie ob das Werkzeug läuft;
+   „vorhanden" gegen „läuft und ist grün" bleibt die strengere eigene Regel
+   (`knowledge/06`, M13).
+2. Neuer Fehlerfall 7.8 „Umfang per Kategorie-Quote gedeckelt statt per
+   Problem-Anker": Die Quote des Setup-Plugins („top 1-2 … per category",
+   doppelt im Baustein belegt) gegen den Schmerzpunkt-Anker aus
+   `harness-build` Schritt 5 (jede Zeile nennt eine Schmerzpunkt-Nummer;
+   „Eine leere Liste ist ein gültiges Ergebnis"). Kernsatz: Eine Quote je
+   Kategorie lädt ein, jede Kategorie zu füllen; ein Problem-Anker lässt
+   Kategorien leer.
+
+Frontmatter und Quellenliste der Datei um den Baustein als Quelle ergänzt.
+
+## [2026-08-08] revise | Rezept 04: `security-auditor` als bedingte Erweiterung, claude-security-Verbund als Sammelablehnung
+
+**Quelle.** Adversarial geprüfte Urteile aus dem Workflow-Lauf (Task
+`w3da4z86w`); alle fünf IDs am laufenden System per `show` verifiziert.
+
+**Was jetzt gilt.** `recipes/04-security-audit-pentest.md` führt
+`anthropics__claude-plugins-official/agent/security-auditor` (5 KB, Vertrauen
+offiziell, standalone aus dem Plugin `code-modernization`) als
+Erweiterungszeile — Bedingung: der Prüfbericht geht an Dritte (Deck, Ticket,
+committetes Markdown) oder das Prüfobjekt kann instruction-shaped Inhalte
+enthalten. Differenzierer sind die verpflichtende Secret-Redaktion im Report
+und die Untrusted-Content-Disziplin, die dem statischen Kern-Prüfer
+`affaan-m__ecc/agent/security-reviewer` fehlen; die Redaktionsregel des
+`secrets-credential-hygiene-engineer` deckt den Secret-Lebenszyklus ab, nicht
+den Prüfbericht. Kein Kern-Tausch — der statische Slot bleibt besetzt. Die
+Zeile benennt zudem die Spannung zwischen seiner Severity-Regel und dem
+Herabstufungs-Verbot (Doktrin 4.3) und löst sie auf: verboten ist Kleinreden
+trotz Beleg, nicht Einstufung nach Beweislage.
+
+**Bewusst nicht getan.** Unter „Bewusst weggelassen" eine Sammelzeile für
+`anthropics__claude-plugins-official/agent/claude-security` samt
+`scan-inventory`, `scan-researcher` und `scan-verifier`: per `show` belegt
+aneinander gekoppelt ("not for direct invocation", Dispatch-Parameter wie
+`SCAN_ROOT`, `${CLAUDE_PLUGIN_ROOT}`-Referenzen) — einzeln installiert tot,
+nur als Gesamtworkflow sinnvoll, der weder dynamisch ausführt wie Strix noch
+die lesende Beschränkung (4.2) einhält. Mit dem Vermerk, dass das
+Voting-Muster des `scan-verifier`
+(`anthropics__claude-plugins-official/agent/scan-verifier`) die hauseigene
+Prüfdoktrin — Standardhaltung „ablehnen", Beleg mit file:line, Auszählung
+ausserhalb jedes Modells — von offizieller Seite bestätigt.
+
+## [2026-08-08] ingest | Rezept 02: `pr-test-analyzer` (offiziell) als Erweiterung — nur dort, Sekundärempfehlungen 01/03 vom Prüfer gestrichen
+
+**Quelle.** Adversarial geprüfter Befund (Urteil `aufnehmen_mit_aenderung`,
+Prüflauf 2026-08-08); Baustein per `show` verifiziert:
+`anthropics__claude-plugins-official/agent/pr-test-analyzer`, 5 KB, 1 Datei,
+Vertrauen offiziell, model inherit.
+
+**Was gewachsen ist.** `recipes/02-backend-api.md`, Tabelle „Erweiterung
+(optional)": neue Zeile mit Bedingung „nur wenn PRs der Arbeitsmodus sind
+**und** eine Test-Suite den Verifikationspfad trägt" (diff-/PR-zentriert,
+`git diff` und `gh` vorausgesetzt), Abgrenzung zum Kern-Set (`api-tester`
+prüft Laufzeitverhalten, dieser Agent verhaltensbezogene Testabdeckung —
+ergänzt ein Coverage-Gate dort, wo Zeilenabdeckung grün ist,
+Verhaltensabdeckung aber fehlt) und dem Hinweis, dass der Agent aus dem
+Plugin `pr-review-toolkit` stammt, einzeln funktionsfähig ist und der
+dispatchende `command/review-pr` bewusst nicht mitinstalliert wird.
+Quellenzeile `harness-katalog` im Frontmatter auf 2026-08-08 nachgezogen.
+
+**Bewusst nicht getan.** Die im Sichtungsvorschlag genannten
+Sekundäraufnahmen in Rezept 01 und 03 hat der Prüfer gestrichen: In 01
+kollidiert die Zeile ohne Abgrenzung mit der bestehenden Erweiterung
+`affaan-m__ecc/command/react-test` (benachbartes Symptom), in 03 ist der
+PR-Arbeitsmodus untypisch und `python-testing` deckt das Testfeld als
+Skill. Die katalogseitige Kurzfassung `affaan-m__ecc/agent/pr-test-analyzer`
+(2 KB) bleibt draussen — per `show`-Vergleich als verlustbehaftete
+Zusammenfassung des offiziellen 5-KB-Originals belegt (ohne
+Rating-Leitplanken und Brittle-Test-Heuristik).
+
 ## [2026-08-08] revise | Nach dem `update` um 19:36 nachgezogen — Bestandszahlen in fünf Dateien auf 25.642/1.099, die Description-Messung aus `04` 3.2 wiederholt, das 14. Repo dokumentiert
 
 **Was vorher galt.** `lint` meldete nach dem `update` vom 2026-08-08 19:36 **8 Befunde

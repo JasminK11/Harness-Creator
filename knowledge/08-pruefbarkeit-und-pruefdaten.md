@@ -29,6 +29,11 @@ sources:
     author: Aman Gupta (Principal ML Engineer, Nubank) & Shreya Rajpal (CEO, Snowglobe)
     resource: "Konferenzvortrag AI Engineer, veröffentlicht 2026-07-29, https://www.youtube.com/watch?v=KMR_RBoCa4M"
     retrieved: 2026-08-07
+  - id: claude-automation-recommender
+    title: "claude-automation-recommender — SKILL.md des offiziellen Setup-Plugins claude-code-setup (Beleg nur in Abschnitt 1)"
+    author: Anthropic (Plugin-Verzeichnis anthropics/claude-plugins-official)
+    resource: "Katalog-Baustein anthropics__claude-plugins-official/skill/claude-automation-recommender, per node tools/harness.mjs show verifiziert"
+    retrieved: 2026-08-08
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2027-02-07
 tags: [pruefbarkeit, validator, evals, pruefdaten, forward-deployed, autonomie, messung, herkunft]
@@ -42,7 +47,7 @@ tags: [pruefbarkeit, validator, evals, pruefdaten, forward-deployed, autonomie, 
 
 **Abgrenzung zu den Nachbarkapiteln.** `knowledge/05` wertet neun andere Vorträge aus und bleibt inhaltlich unberührt. `knowledge/04` Abschnitt 4 hält die Eval-**Spezifikation** dieser Bibliothek (Stufen, Dateiformat, Drift-Tabelle), `knowledge/06` M7 die **Maßnahme**. Dieses Kapitel liefert die Befunde und ihre Belege — es vergibt keine M-Nummern und ersetzt keine Spezifikation.
 
-Alle Zitate stammen aus automatisch erzeugten Transkripten und bleiben englisch. Namen und Zahlen sind nur übernommen, wo der Sprecher sie selbst nennt; Einordnungen aus dieser Bibliothek sind als solche gekennzeichnet.
+Alle Zitate aus den fünf Vorträgen stammen aus automatisch erzeugten Transkripten und bleiben englisch; die Zitate in Abschnitt 1 aus der SKILL.md des offiziellen Setup-Plugins sind wörtlich aus der Datei übernommen. Namen und Zahlen sind nur übernommen, wo der Sprecher sie selbst nennt; Einordnungen aus dieser Bibliothek sind als solche gekennzeichnet.
 
 ---
 
@@ -52,12 +57,14 @@ Alle Zitate stammen aus automatisch erzeugten Transkripten und bleiben englisch.
 
 **Beleg.** Eno Reyes (Factory, 12:10): „What agent readiness really is is it's a measure of how many of these deterministic validation loops are present inside of your code base." Er zählt Linter, Typechecker, Security-Scans und End-to-End-Tests dazu — „it's like check mark. Like, it passes or it doesn't" — und schreibt die Folge dem Umfeld zu, nicht dem Modell (15:33): „if your code base isn't agent ready, you won't see any of the success."
 
-**Was uns das betrifft.** `harness-build/SKILL.md` erhebt in Schritt 1 Projekttyp, Stack, Reifegrad und Schmerzpunkt, aber nicht die Prüfdichte — obwohl derselbe Schritt `package.json`, `pyproject.toml`, `go.mod` und die CI-Konfiguration ohnehin liest. Die Rezepte setzen sie stillschweigend voraus: `recipes/01` empfiehlt Bausteine, deren Nutzen an einem laufenden Typecheck hängt, `recipes/02` schreibt die Annahme sogar hin („Für ein Backend gibt es fast immer einen automatischen Check"). Als Maßnahme notiert in `knowledge/06` M13.
+**Was uns das betrifft.** `harness-build/SKILL.md` erhob in Schritt 1 zunächst Projekttyp, Stack, Reifegrad und Schmerzpunkt, aber nicht die Prüfdichte — obwohl derselbe Schritt `package.json`, `pyproject.toml`, `go.mod` und die CI-Konfiguration ohnehin liest. Die Rezepte setzen sie stillschweigend voraus: `recipes/01` empfiehlt Bausteine, deren Nutzen an einem laufenden Typecheck hängt, `recipes/02` schreibt die Annahme sogar hin („Für ein Backend gibt es fast immer einen automatischen Check"). Als Maßnahme notiert in `knowledge/06` M13 und dort inzwischen als erledigt geführt: Schritt 1b („Welche Prüfschleifen liefern heute ein Ja/Nein?") erhebt die Schleifen seither vor der Suche, mit Befehl statt Absicht.
 
 **Zwei Präzisierungen, ohne die die Frage falsch beantwortet wird.**
 
 - **Vorhanden ist nicht gleich läuft.** Aus `package.json` liest man Skripte, keine Ergebnisse. Ein `"test": "echo no tests"` und eine rote CI sind keine Prüfschleifen. Gefragt ist der **Befehl**, und ob er heute grün durchläuft.
 - **Ein Hook stellt keine Schleife her, er führt eine vorhandene aus.** `affaan-m__ecc/hook/post-edit-typecheck` sucht laut eigenem Quelltext die nächste `tsconfig.json` und ruft `tsc --noEmit` — ohne konfigurierten Typechecker ist er ein No-op und damit exakt der Fehler „kopierter Hook, der nie läuft" aus `knowledge/02` Abschnitt 7. Bei null Schleifen ist der erste Baustein deshalb der, der einen **Massstab herstellt**: bei bestehender Codebasis ohne Tests ein Agent, der Invarianten aus dem Code zieht (`affaan-m__ecc/agent/spec-miner`, so bereits in `recipes/06` begründet), bei jungem Projekt ein TDD-erzwingender Command. Der Hook kommt danach.
+
+**Extern belegter Fall: das offizielle Setup-Plugin misst Datei-Existenz, keine laufende Prüfschleife.** Das offizielle Empfehlungswerkzeug `anthropics__claude-plugins-official/skill/claude-automation-recommender` (aus dem Plugin `claude-code-setup`; der Aufnahmevermerk des Repos vom 2026-08-08, sichtbar in `show`, führt es mit 179K Installs als „das Mainstream-Gegenstück zu /harness-build") beantwortet die Readiness-Frage genau so, wie die erste Präzisierung es verbietet: Phase 1 seiner SKILL.md besteht vollständig aus `ls`-, `cat`- und `grep`-Kommandos auf Konfigurationsdateien — „# Detect project type and tools / ls -la package.json pyproject.toml Cargo.toml go.mod pom.xml 2>/dev/null" — und keine Phase des Ablaufs führt einen Test oder Linter aus. Für die Empfehlung eines Test-Hooks genügt die Signalzeile „Tests directory exists | PostToolUse: run related tests"; ob die Suite grün ist oder das `test`-Script ein `echo no tests` ist, prüft nichts. Das meistinstallierte offizielle Setup-Werkzeug bestimmt Readiness also über **Vorhandensein**, nicht über „läuft und ist grün" — ein Beleg von außen für genau die Lücke, die dieses Kapitel begründet. `harness-build` Schritt 1b ist an dieser Stelle strenger als das offizielle Werkzeug („Notiere den Befehl, nicht die Absicht", „unterscheide ‚vorhanden' von ‚läuft und ist grün'") und bleibt unverändert. **Geltungsbereich:** ein dokumentierter Einzelfall, keine Vermessung des Feldes; und er betrifft die Signal-Logik der Empfehlung, nicht deren Inhalte — dieselbe SKILL.md koppelt jeden empfohlenen `PostToolUse`-Hook korrekt an ein bereits konfiguriertes Werkzeug; dieser Kopplungs-Befund steht mit demselben Baustein als Zweitbeleg in `knowledge/02` Abschnitt 2.4.
 
 **Grenze des Belegs.** Reyes ist Anbieter eines Agentenprodukts und nennt keine Messung; die Zahl im selben Absatz („maybe 30 to 40% of the low-hanging fruit") ist mit „maybe" gehedgt. Belastbar ist die Frage, nicht die Quote.
 

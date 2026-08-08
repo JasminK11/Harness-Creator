@@ -34,6 +34,11 @@ sources:
     title: Katalog der Harness-Bibliothek — gelesen über `node tools/harness.mjs show` und `stats`
     author: Harness-Bibliothek (lokal)
     last_modified: 2026-08-07
+  - id: claude-automation-recommender
+    resource: anthropics__claude-plugins-official/skill/claude-automation-recommender
+    title: claude-automation-recommender — SKILL.md des Plugins claude-code-setup, gelesen über `node tools/harness.mjs show`
+    author: Anthropic (claude-plugins-official)
+    last_modified: 2026-08-08
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2027-02-07
 tags: [claude-code, skill, subagent, slash-command, hook, mcp-server, plugin, kontextkosten, progressive-disclosure]
@@ -186,6 +191,8 @@ Geprüfte Eckdaten: Die Doku listet rund 30 Ereignisse; die im Harness-Alltag tr
 **Warum genau dieser Typ.** Weil er der einzige Typ ist, der nicht von einer Modellentscheidung abhängt. Alles andere in dieser Liste ist eine Bitte.
 
 **Wann er die falsche Wahl ist.** Wenn die Regel Urteilsvermögen braucht („guten Code schreiben") — das kann ein Hook nicht prüfen, und ein Hook, der es versucht, blockiert falsch. Wenn das Ereignis zu oft eintritt (Abschnitt 7). Wenn die Regel nur eine Empfehlung ist: Ein Hook, der bei jeder zweiten legitimen Aktion blockt, wird abgeschaltet, und dann ist auch die berechtigte Hälfte weg.
+
+**Ein Hook führt eine Prüfung aus, er erzeugt keine — mit offiziellem Zweitbeleg.** Die Regel stammt aus dem eigenen Bestand (`knowledge/06`, M13: erst wenn ein Check existiert, der Hook — vorher installiert liegt er tot in `.claude/hooks/`). Dieselbe Kopplung fährt das offizielle Setup-Plugin aus Anthropics Plugin-Verzeichnis: In der Hook-Empfehlungstabelle von `anthropics__claude-plugins-official/skill/claude-automation-recommender` (SKILL.md, Phase 2; Teil des Plugins `claude-code-setup`, 179K Installs) setzt jeder empfohlene `PostToolUse`-Hook ein bereits konfiguriertes Werkzeug voraus — wörtlich „Prettier configured | PostToolUse: auto-format on edit" und „Tests directory exists | PostToolUse: run related tests". Geltungsbereich des Belegs: Er deckt die `PostToolUse`-Zeilen der Tabelle; die `PreToolUse`-Zeilen desselben Bausteins sind Blockaden, keine Prüfungen („`.env` files present | PreToolUse: block `.env` edits"). Und er bestätigt nur die Kopplung, nicht deren Härte: Das Plugin misst per `ls`/`cat`/`grep` ausschließlich, **ob** ein Werkzeug konfiguriert ist, nie ob es läuft — „Tests directory exists" genügt ihm als Signal, ein `"test": "echo no tests"` fiele nicht auf. Die strengere Unterscheidung „vorhanden" gegen „läuft und ist grün" bleibt Bestand der eigenen Regel (`knowledge/06`, M13).
 
 **Kontext-Kosten.** Im Ruhezustand null — Hooks stehen in `settings.json`, nicht im Prompt. Kosten entstehen nur beim Feuern, in Höhe der zurückgegebenen Nachricht. Das macht Hooks zum billigsten Typ überhaupt, solange sie selten feuern.
 
@@ -431,6 +438,11 @@ Beide feuern auf „neues Feature" und „Bug beheben". Installiert man beide, k
 *Ursache:* Die Bibliothek katalogisiert Bausteine aus 13 fremden Repos, die für Kiro, Cursor, OpenAI-Agenten oder eigene Formate geschrieben wurden. Belegt: `allowedTools:` statt `tools:` in `affaan-m__ecc/agent/code-reviewer`; `name: Code Reviewer` mit Großbuchstaben und Leerzeichen plus `emoji:`/`vibe:` in `msitarzewski__agency-agents/agent/code-reviewer`. Subagent-`name` muss aus Kleinbuchstaben und Bindestrichen bestehen.
 *Korrektur:* Nach dem Kopieren immer das Frontmatter gegen die Feldliste aus Abschnitt 2 prüfen, nicht nur den Body lesen. Unbekannte Felder sind meist harmlos, falsch benannte Pflichtfelder nicht.
 
+**7.8 Umfang per Kategorie-Quote gedeckelt statt per Problem-Anker**
+*Symptom:* Jede Empfehlungsrunde liefert aus jeder Baustein-Kategorie etwas, auch dort, wo das Projekt gar kein Problem hat. Das Ergebnis „kein Harness" kommt nie vor.
+*Ursache:* Der Umfangsdeckel hängt an der Kategorie, nicht am Problem. So arbeitet der Mainstream-Ansatz, wörtlich belegt im offiziellen Setup-Plugin `anthropics__claude-plugins-official/skill/claude-automation-recommender` (SKILL.md): „**Recommend 1-2 of each type**: Don't overwhelm - surface the top 1-2 most valuable automations per category", in Phase 3 wiederholt als „**Only include 1-2 recommendations per category** - the most valuable ones for this specific codebase. Skip categories that aren't relevant." Vorgesehen ist dort nur das Überspringen irrelevanter Kategorien — ein leeres Gesamtergebnis nicht.
+*Korrektur:* Den Deckel am Problem verankern statt an der Kategorie. So arbeitet `.claude/skills/harness-build/SKILL.md` Schritt 5: Jede Zeile der Auswahl nennt eine nummerierte Schmerzpunkt-Nummer, und „Eine leere Liste ist ein gültiges Ergebnis" — „kein Harness" ist ausdrücklich vorgesehen. Der Kernunterschied: Eine Quote je Kategorie lädt ein, jede Kategorie zu füllen; ein Problem-Anker lässt Kategorien leer.
+
 ---
 
 ## Quellen
@@ -453,6 +465,7 @@ Alle URLs abgerufen am **2026-08-07**.
 - `affaan-m__ecc/command/pr` — Command-Frontmatter mit `argument-hint`
 - `affaan-m__ecc/hook/adapter`, `affaan-m__ecc/hook/before-shell-execution-block-no-verify` — Cursor-Hooks aus `.cursor/hooks/`, nicht direkt lauffähig
 - `affaan-m__ecc/mcp/mcp` — minimale `.mcp.json`
+- `anthropics__claude-plugins-official/skill/claude-automation-recommender` — Empfehlungs-Skill des offiziellen Plugins `claude-code-setup` (179K Installs); Zweitbeleg zu 2.4 (jeder empfohlene `PostToolUse`-Hook setzt ein konfiguriertes Werkzeug voraus) und Beleg zu 7.8 (Kategorie-Quote als Umfangsdeckel)
 - Bestandszahlen aus `node tools/harness.mjs stats` und `INDEX.md`, Katalogstand 2026-08-08 19:36: 25.642 Bausteine aus 14 Repos, davon 24.543 im ausgeblendeten Massen-Repo `Klotzkette__claude-fuer-deutsches-recht`; im Standardzugriff 1.099 — 431 Skills, 407 Agents, 141 Commands, 70 Hooks, 46 Plugins, 4 MCP-Konfigurationen
 
 **Haltbarkeit.** Frontmatter-Felder, Hook-Ereignisse und das Ladeverhalten von MCP-Tools ändern sich mit den Claude-Code-Versionen; Tool Search etwa ist eine vergleichsweise junge Voreinstellung. Prüfe die Formatangaben neu, statt sie zu glauben, wenn zwischen diesem Abrufdatum und deiner Sitzung eine größere Version liegt.
