@@ -68,6 +68,44 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-08] revise | `04-governance.md` 3.5: Duplikat-Familien offiziell/ecc — sieben Paare per `show` verglichen, Auswahlregel präzisiert, Vertrauenszeile richtiggestellt
+
+**Quelle.** Adversarial geprüfte Urteile aus dem Workflow-Lauf (Task
+`w3da4z86w`, `result.abgelehnteVorschlaege`); alle 14 Fassungen (7 Paare) am
+laufenden System per `show` nachvollzogen, die Kontaminationszitate
+(`constants/errorIds.ts`/Sentry; „Apply Project Standards … from CLAUDE.md",
+„autonomously and proactively") per `show <id> --lines 300` verifiziert.
+
+**Was vorher galt.** Die Vertrauenszeile von `affaan-m__ecc` in `sources.txt`
+(seit heute früh) nannte den Ableitungsbefund, ließ aber bei „code-simplifier
+mit fremden Projektregeln kontaminiert" offen, welche Fassung gemeint ist — im
+Satzkontext der ecc-Zeile las es sich als ecc-Befund. Per `show` belegt ist das
+Gegenteil: die **offizielle** Fassung trägt die TS/React-Regeln als „established
+coding standards from CLAUDE.md", die ecc-Ableitung ist generisch; dasselbe
+Muster beim `silent-failure-hunter` (Original fragt nach `errorIds.ts` für
+Sentry). Auch der Auftragstext dieses Laufs trug die falsche Richtung — bemerkt
+durch die angeordnete Gegenprüfung per `show` vor dem Schreiben. Einen
+Abschnitt zur Duplikat-Frage gab es in der Wissensbank nicht; die Erkenntnisse
+lagen nur in der Task-Output-Datei.
+
+**Was jetzt gilt.** `knowledge/04-governance.md` trägt Abschnitt 3.5
+„Duplikat-Familien: Ableitungen erkennen und das Original vorziehen": die
+sieben Namensvettern-Paare als Tabelle mit KB beider Fassungen und Befund
+(sechs Ableitungen, `code-reviewer` als eigenständiger Namensvetter
+abgegrenzt); die Präzisierung der Auswahlregel aus `sources.txt` in beide
+Richtungen — Original gegen verlustbehaftete Kopie ist **kein** Gleichstand,
+und „offiziell" schützt nicht vor Projekt-Kontamination, zwei der sieben
+Originale tragen fremde Projektregeln. Dazu die drei betroffenen ecc-IDs in
+Rezepten als Tauschkandidaten-Liste: zwei offen (`silent-failure-hunter` in
+02/Erweiterung, `code-reviewer` in 06/Erweiterung), einer bereits entschieden
+(`code-explorer`, Kern-Set 06 — Tausch heute adversarial geprüft und
+abgelehnt). **Keine Rezept-Änderung in diesem Lauf**; jeder Tausch braucht
+erst eine Einzelprüfung wie beim `legacy-analyst`-Tausch (Eintrag weiter
+unten). Die `sources.txt`-Vertrauenszeile ist auf die belegte Richtung
+präzisiert und verweist auf 3.5; die Frontmatter von `04` führt die Sichtung
+als Quelle. Die Auftrags-Prämisse „`code-reviewer` steht in Rezept 01/02"
+bestätigte sich nicht — per Grep steht er nur in 06, Erweiterung.
+
 ## [2026-08-08] ingest | `08-pruefbarkeit-und-pruefdaten.md` Abschnitt 1: Das offizielle Setup-Plugin als externer Beleg für Readiness-über-Existenz
 
 **Quelle.** Adversarial geprüfte Erkenntnisse zum offiziellen Setup-Plugin aus

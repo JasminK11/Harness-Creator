@@ -53,7 +53,7 @@ https://github.com/mattpocock/skills
 https://github.com/anthropics/skills
 # Vertrauen: offiziell — offizielles Plugin-Verzeichnis von Anthropic; aufgenommen 2026-08-08 auf Zuruf des Besitzers (enthält u.a. claude-code-setup, 179K Installs — das Mainstream-Gegenstück zu /harness-build, als Vergleichsmaßstab dokumentationswürdig)
 https://github.com/anthropics/claude-plugins-official
-# Vertrauen: gepflegt — Einzelautor, taktet fast täglich nach; mit belegten Lücken: Übersetzungs-Platzhalter und beschreibungslose Hooks (knowledge/04, 3.2). Mehrere Agenten sind erkennbar vom offiziellen Plugin-Repo abgeleitet, teils verkürzt (comment-analyzer, type-design-analyzer), code-simplifier mit fremden Projektregeln kontaminiert — bei Namensgleichheit Original per show vergleichen (Sichtung 2026-08-08)
+# Vertrauen: gepflegt — Einzelautor, taktet fast täglich nach; mit belegten Lücken: Übersetzungs-Platzhalter und beschreibungslose Hooks (knowledge/04, 3.2). Mehrere Agenten sind erkennbar vom offiziellen Plugin-Repo abgeleitet, teils verlustbehaftet verkürzt (comment-analyzer, type-design-analyzer) — bei Namensgleichheit beide Fassungen per show vergleichen; die Richtung ist nicht ausgemacht: beim code-simplifier und silent-failure-hunter ist das offizielle Original mit fremden Projektregeln kontaminiert und die ecc-Ableitung die generische Fassung (knowledge/04, 3.5; Sichtung 2026-08-08)
 https://github.com/affaan-m/ecc
 # Vertrauen: gepflegt — durchgehend einheitliches Agent-Format über alle Einträge
 https://github.com/msitarzewski/agency-agents

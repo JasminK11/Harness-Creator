@@ -28,6 +28,11 @@ sources:
     title: CLI-Läufe stats/search/show vom 2026-08-07; Bestandszahlen und die Description-Messung in 3.2 am 2026-08-08 neu erhoben
     author: Harness-Bibliothek (lokal)
     last_modified: 2026-08-08
+  - id: duplikat-sichtung-2026-08-08
+    resource: tools/harness.mjs
+    title: show-Vergleiche der sieben Namensvettern-Paare offiziell/ecc (Abschnitt 3.5) am Katalogstand 2026-08-08; adversarial geprüfte Urteile aus Workflow-Lauf w3da4z86w, result.abgelehnteVorschlaege
+    author: Harness-Bibliothek (lokal)
+    last_modified: 2026-08-08
 generated: { by: claude-opus-5, at: 2026-08-07T00:00:00Z }
 stale_after: 2027-05-07
 tags: [governance, katalog, routing, descriptions, eval, admission, lifecycle, coherence]
@@ -255,6 +260,33 @@ Anwendbar vor dem `install`, allein auf Basis dessen, was `search`/`show` ausgeb
 | R8 | Bei über 100 Treffern: nicht die Top-25 durchgehen, sondern mit `--type` und `--domain` nachfiltern oder das Suchwort verengen | Sonst ist die sichtbare Auswahl vom Score-Zufall bestimmt |
 
 R1–R3 sind harte Gates und gehören perspektivisch ins CLI (`search --strict`), damit der Agent unbrauchbare Bausteine gar nicht erst sieht. R4–R8 sind Urteilsregeln und gehören in `harness-build/SKILL.md`.
+
+### 3.5 Duplikat-Familien: Ableitungen erkennen und das Original vorziehen
+
+**Befund (Sichtung 2026-08-08).** Sieben Agenten tragen in `affaan-m__ecc` denselben Namen wie Agenten des offiziellen Plugin-Repos `anthropics__claude-plugins-official`, und bei sechs davon ist die ecc-Fassung erkennbar die Ableitung: gleicher Description-Kern, gleiche Analysestruktur, ergänzt um den repo-einheitlichen Prompt-Defense-Vorspann. Das ist ein anderes Phänomen als der `code-review`-Cluster aus 3.3 — dort kollidieren unabhängig entstandene Bausteine mit austauschbaren Beschreibungen, hier existieren Original und Kopie desselben Bausteins in zwei Vertrauensstufen, und die Frage ist, welche Fassung die Bibliothek empfiehlt. Alle sieben Paare wurden per `show` an beiden Fassungen verglichen (adversarial geprüfter Workflow-Lauf, Task `w3da4z86w`; jede Zeile unten am laufenden System nachvollzogen):
+
+| Offiziell (`anthropics__claude-plugins-official/agent/…`) | Ableitung (`affaan-m__ecc/agent/…`) | Befund per `show` |
+|---|---|---|
+| `comment-analyzer`, 5 KB | `comment-analyzer`, 2 KB, haiku | Verlustbehaftete Kurzfassung: das Original verifiziert Kommentare gegen die Implementierung und sucht aktiv nach Fehldeutungspotenzial („Identify Misleading Elements"); die Ableitung destilliert auf eine Seite. Bei Bedarf Original vorziehen. |
+| `type-design-analyzer`, 5 KB | `type-design-analyzer`, 2 KB | Verlustbehaftete Kurzfassung derselben vier Achsen (Encapsulation, Invariant Expression, Usefulness, Enforcement); das Original trägt das quantitative Rating-Verfahren, die Ableitung nur die Achsennamen. Bei Bedarf Original vorziehen. |
+| `code-architect`, 2 KB | `code-architect`, 2 KB | Nahezu deckungsgleich, Description fast wortgleich; die Ableitung mit Prompt-Defense-Vorspann und engerem Tool-Set (`Read`/`Grep`/`Glob` statt u. a. `WebFetch`/`WebSearch`). Echter Gleichstand — hier entscheidet die Vertrauensstufe für das Original. |
+| `silent-failure-hunter`, 8 KB | `silent-failure-hunter`, 2 KB | Original deutlich reicher (Catch-Block-Spezifität, Fallback-Rechtfertigung, Fehlermeldungsqualität), aber projektkontaminiert: es fragt „Is there an error ID from constants/errorIds.ts for Sentry tracking?" — Strukturen eines Anthropic-internen Projekts, die es im Zielprojekt nicht gibt; die Prüfung erzeugte dort Falschbefunde. Die generische ecc-Destillation bleibt die Empfehlung. |
+| `code-simplifier`, 3 KB, opus, keine `tools`-Deklaration | `code-simplifier`, 2 KB, sonnet | Original projektkontaminiert: unter „Apply Project Standards … from CLAUDE.md" stehen feste TS/React-Regeln (ES modules, `function` statt Arrow-Functions, explizite Return-Types, React-Props-Patterns, „avoid try/catch when possible") — in einem Python- oder Go-Zielprojekt Fehlanweisungen. Zudem arbeitet es laut Prompt „autonomously and proactively … without requiring explicit requests" auf dem teuersten Modell. Die ecc-Ableitung ist die stack-neutrale Fassung. |
+| `code-explorer`, 2 KB | `code-explorer`, 3 KB | Ableitung mit engerem Tool-Set: das Original trägt u. a. `WebFetch`/`WebSearch` (Netzzugriff), die Ableitung ist auf `Read`/`Grep`/`Glob` beschränkt — genau die Eigenschaft, mit der Rezept 06 die Aufnahme begründet („Kann nichts kaputtmachen"). Tausch auf das Original am 2026-08-08 adversarial geprüft und abgelehnt. |
+| `code-reviewer`, 3 KB | `code-reviewer`, 9 KB, aus `.kiro/agents/` | **Kein Ableitungsfall**, sondern ein Namensvetter mit eigenständiger Checklisten-Fassung samt Code-Beispielen; beide filtern Befunde bei ~80 % Konfidenz. Vergleich je Einsatzzweck, nicht nach der Duplikat-Regel. |
+
+**Was das für die Auswahlregel heißt.** `sources.txt` legt fest: fachliche Passung schlägt Herkunft; die Vertrauensstufe entscheidet nur den Gleichstand. Duplikat-Familien präzisieren diese Regel in beide Richtungen:
+
+1. **Original gegen verlustbehaftete Kopie ist kein Gleichstand.** Wer bei `comment-analyzer` oder `type-design-analyzer` die 2-KB-Ableitung wählt, wählt weniger Prüftiefe zur selben Frage. Das Original ist vorzuziehen — außer die Kürzung ist für den Zweck belegt ausreichend, etwa wenn das engere Tool- oder Modellprofil der Ableitung der eigentliche Aufnahmegrund ist (so beim `code-explorer` in Rezept 06).
+2. **„Offiziell" schützt nicht vor Kontamination.** Zwei der sieben Originale (`silent-failure-hunter`, `code-simplifier`) tragen Regeln ihres Heimatprojekts als vermeintliche Standards mit. Der `show`-Vergleich beider Fassungen ist deshalb Pflicht, keine Formalie — die Vertrauensstufe ersetzt ihn nicht.
+
+Der Kurzvermerk dazu steht seit 2026-08-08 in der Vertrauenszeile von `affaan-m__ecc` in `sources.txt` und erscheint damit in jeder `show`-Ausgabe eines ecc-Bausteins.
+
+**Offene Tauschkandidaten für den nächsten Prüfzyklus.** Per Grep über `recipes/` (2026-08-08) stehen drei der betroffenen ecc-IDs in Rezepten. Kein Tausch in diesem Lauf — jeder braucht erst eine adversariale Einzelprüfung wie beim `legacy-analyst`-Tausch (LOG-Eintrag `[2026-08-08] revise | Rezept 06: Kern-Set-Tausch auf legacy-analyst …`):
+
+- `affaan-m__ecc/agent/silent-failure-hunter` — `recipes/02-backend-api.md`, Erweiterung. Stand der heutigen Prüfung: bleibt, weil das Original projektkontaminiert ist; ein Tausch bräuchte den Beleg, dass die `errorIds.ts`/Sentry-Annahmen im Zielprojekt unschädlich sind.
+- `affaan-m__ecc/agent/code-reviewer` — `recipes/06-legacy-onboarding.md`, Erweiterung. Kein Ableitungsfall; ob die knappere offizielle Fassung (3 KB Confidence-Scoring statt 9 KB Checkliste) für den Legacy-Fall genügt, ist ungeprüft.
+- `affaan-m__ecc/agent/code-explorer` — `recipes/06-legacy-onboarding.md`, Kern-Set. **Bereits entschieden**, kein offener Kandidat: der Tausch wurde am 2026-08-08 abgelehnt, weil das breitere Tool-Set des Originals die Rezept-Begründung bricht; das Original steht dort unter „Bewusst weggelassen". Hier nur zur Vollständigkeit gelistet.
 
 ---
 
