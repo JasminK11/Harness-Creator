@@ -434,6 +434,20 @@ geschlossenen Grammatikklasse — endlich, sprachstabil, ohne Domänenpflege. Di
 Ablehnung oben bleibt in Kraft; der M8-Sprachhinweis selbst blieb beim Suchfix
 unangetastet.
 
+**Nachtrag (2026-08-10): die referenzierte Symptomtabelle ist ersetzt.** Die
+beiden Verweise oben — „`harness-build/SKILL.md` Schritt 2, zwei Sätze über der
+bestehenden Symptomtabelle" und „alle sechs Queries der Tabelle liefern Treffer"
+— beschreiben den Stand vor M9. Die Tabelle „Schmerz → Suche" ist seit 2026-08-10
+durch den `intent`-Zugang ersetzt (`catalog/intents.yaml`, Subcommand
+`intent <id>`; Zeile „M9" in der Tabelle „Sollten wir tun" in
+`knowledge/04-governance.md`, dort als erledigt markiert; Verlauf in
+`knowledge/LOG.md`). Die Sechs-Treffer-Messung oben bleibt als Beleg der
+damaligen Prüfung stehen, weil sie den Ausgangszustand dieser Massnahme
+dokumentiert <!-- lint:historisch -->, beschreibt aber nicht mehr den heutigen
+Text von Schritt 2. Die Ablehnung der Synonymtabelle und der Sprachhinweis in
+`cmdSearch` selbst sind davon unberührt und bleiben in Kraft — nur der
+SKILL.md-Text, der hier zum Vergleich zitiert wurde, ist inzwischen ein anderer.
+
 ## M9 — Den Feuerpreis anzeigen statt der Verzeichnisgröße
 
 **Was zu tun ist.**

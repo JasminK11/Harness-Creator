@@ -68,6 +68,129 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] revise | `harness-build/SKILL.md` Schritt 2: hartkodierte Symptomtabelle durch `intent`-Zugang ersetzt (M9 Skill-Teil)
+
+**Anlass.** Der LOG-Eintrag direkt unter diesem („`04-governance.md` 2.4: … M9-Zeile
+mit Teilvermerk statt „erledigt"") hält fest: CLI-Teil von M9
+(`catalog/intents.yaml`, Subcommand `intent`) ist umgesetzt und adversarial geprüft;
+der Skill-Teil — die Tabelle „Schmerz → Suche" in `harness-build/SKILL.md` Schritt 2
+durch den neuen Zugang ersetzen — stand laut `knowledge/04-governance.md:462`
+(„Teilvermerk (2026-08-10)") noch aus. Dieser Eintrag schliesst ihn ab. Die
+Erledigt-Markierung der M9-Zeile selbst bleibt bewusst unangetastet — sie folgt
+erst nach der externen Prüfung dieses Ergebnisses.
+
+**Verifiziert am System vor dem Schreiben.**
+- `node tools/harness.mjs intent` ausgeführt: listet alle 12 Absichten (id + Frage),
+  Fusszeile „Detail: node tools/harness.mjs intent <id>".
+- `node tools/harness.mjs intent verstehen --limit 5` und
+  `node tools/harness.mjs intent pruefen --limit 5` ausgeführt: Kopfzeile
+  „Absicht <id>", Zeile „Domänen (informativ, kein Filter): …", Abschnitt
+  „Anker (3, immer vorn, unabhängig vom Score):", danach „N weitere Treffer
+  (zeige 5): …" und „… M weitere. Mit --limit N mehr anzeigen." — Wortlaut in
+  den neuen Skill-Text übernommen, nichts erfunden.
+- Dispatcher-Hilfe (`node tools/harness.mjs` ohne Argument) für `intent` gelesen:
+  bestätigt `intent --list`, `intent <id> [--limit N]`, „dieselbe Bewertung wie
+  search", Anker „immer vorn", unbekannte id → Fehlermeldung + gültige ids,
+  Exit-Code 1.
+- `catalog/intents.yaml` vollständig gelesen (130 Zeilen, `Read`-Tool erlaubt für
+  diese kleine Datei): 12 Einträge mit `id`, `frage`, `suche`, `domains`, `anker`;
+  Kopfkommentar nennt „Von Hand gepflegt" und „Erstellt: 2026-08-10".
+- `tools/harness.mjs`, Nullstellen-Zweig von `cmdSearch` (Zeilen ~1203–1241)
+  gelesen: die Termbilanz-Ausgabe und der englische Sprachhinweis („Die Bausteine
+  stammen aus englischsprachigen Repos …", Vorschlagszeile bei
+  `[äöüß]`/`DEUTSCHE_WOERTER`, Beispielliste `security, testing, review,
+  deployment, documentation`) existieren bereits am laufenden System — das ist
+  die M8-Massnahme aus `knowledge/06-massnahmen.md:399`, die dieselbe Textstelle
+  betrifft und laut ihrem eigenen Nachtrag unangetastet blieb.
+
+**Umsetzung.** In `.claude/skills/harness-build/SKILL.md`, Schritt 2 (Überschrift
+„### 2. Bedarf in Suchen übersetzen" unverändert gelassen, weil
+`knowledge/06-massnahmen.md:414` sie wörtlich zitiert):
+- Die sechs-zeilige Tabelle „Schmerz → Suche" entfernt. Fünf ihrer sechs Fälle
+  liegen jetzt in `catalog/intents.yaml`: Reviews → `pruefen`, Codebasis →
+  `verstehen`, Tests → `testen`, Sicherheit → `absichern`, Deployments →
+  `ausliefern`. Architektur ist nur **teilgedeckt** (korrigiert, siehe
+  Prüfauflage unten): `search "architecture decision"` liefert 2 Treffer
+  (`affaan-m__ecc/skill/architecture-decision-records`,
+  `affaan-m__ecc/agent/architect`); nur der ADR-Skill ist Anker — unter
+  `dokumentieren`, nicht unter `verstehen`/`bauen`. `agent/architect` ist über
+  keine der zwölf Absichten erreichbar und bleibt nur per `search` auffindbar.
+- Ersetzt durch: erst `intent` (Liste aller zwölf Absichten mit Frage), dann
+  `intent <id>` — alle zwölf ids namentlich genannt. Erklärt, dass die Anker die
+  **erste Prüfmenge** sind, kein fertiges Ergebnis (weiter durch Schritt 4 mit
+  `show` zu prüfen), und dass die Domänen-Angabe je Absicht informativ ist, kein
+  Filter — Wortlaut direkt aus der CLI-Ausgabe übernommen.
+- `search` bleibt als Weg benannt für alles, was keine Absicht abdeckt, oder für
+  die engere Suche innerhalb einer Absicht, wenn die Anker nicht reichen.
+- M8-Kontext erhalten, nichts gestrichen: der Satz zu „React" als Stichwort ohne
+  Problembezug, der `INDEX.md`-Domänenhinweis, der Satz, warum englisch gesucht
+  wird und dass 0 Treffer zuerst den falschen englischen Begriff vermuten lassen
+  (nicht einen leeren Katalog — jetzt mit den tatsächlichen Beispielwörtern aus
+  dem CLI-Hinweistext belegt statt behauptet), und der Termbilanz-Absatz — alle
+  sinngemäss an die neue Reihenfolge angepasst.
+- Übrige Fundstellen zu „Symptom"/„Schmerz" in derselben Datei per `Grep` geprüft:
+  alle beziehen sich auf die Schmerzpunkt-**Liste** aus Schritt 1d (nummerierte
+  User-Probleme, referenziert in Schritt 4/5), nicht auf die entfernte Tabelle —
+  unverändert gelassen. `harness-plan/SKILL.md` ebenfalls geprüft: seine
+  „Symptom"-Treffer sind eigenständige Fallen-Beispiele ohne Bezug zur Tabelle.
+
+**Prüfauflage (2026-08-10, externe Prüfung dieses Eintrags).** Die erste Fassung
+dieses Umbaus wurde abgelehnt, mit der Feststellung, dass nach den folgenden
+Korrekturen ohne erneute Vollprüfung committet werden darf. Dies ist ein
+Korrekturvermerk, kein stilles Umschreiben — der Eintrag war zu keinem Zeitpunkt
+committet, die Prüfung hat ihn dennoch beanstandet:
+
+- **Blockierend 1.** Der SKILL.md-Satz „…und drei Anker — Bausteine, die
+  `intent <id>` unabhängig vom Score immer zuerst zeigt" verallgemeinerte aus
+  zwei Stichproben (`verstehen`, `pruefen`, beide mit drei Ankern). Prüfbefund:
+  `intent testen` und `intent ausliefern` liefern nur je zwei Anker (Ausgabe
+  „Anker (2, immer vorn…)", selbst nachgemessen). Korrigiert zu „zwei bis drei
+  Anker" mit Beleg im selben Satz.
+- **Blockierend 2.** Der Umsetzung-Bullet oben behauptete „Architektur →
+  `verstehen`/`bauen`" ohne Systemprüfung. Prüfbefund: `search "architecture
+  decision"` liefert 2 Treffer; `intent verstehen --limit 999` und
+  `intent bauen --limit 999` (beide selbst nachgemessen) enthalten **keinen**
+  davon. Korrigiert: Architektur ist nur teilgedeckt, über `dokumentieren`
+  (ADR-Skill als Anker); `agent/architect` bleibt nur per `search` erreichbar.
+  Bullet oben entsprechend geändert.
+- **Auflage 3.** Der SKILL.md-Satz zum Sprachhinweis versprach die
+  Nullstellen-Übersetzung für jede Nullstelle. Prüfbefund: der Code
+  (`cmdSearch`, Nullstellen-Zweig) bedingt den Hinweis auf eine
+  Deutsch-Erkennung (`[äöüß]`/`DEUTSCHE_WOERTER`) — selbst nachgemessen mit
+  `search "sicherheit prüfen"` (Übersetzungsvorschlag erscheint) gegen
+  `search "xylophone zebra"` (kein Hinweis). SKILL.md-Satz entsprechend auf
+  „sieht die Anfrage deutsch aus, schlägt … vor" umformuliert.
+
+**Nacharbeiten (a–c), nach Freigabe der Prüfung ausgeführt.**
+- **(a)** `knowledge/04-governance.md`, Tabelle „Sollten wir tun": Zeile M9 auf
+  **erledigt** gesetzt (Durchstreichung wie bei den anderen erledigten Zeilen),
+  der „Teilvermerk (2026-08-10)" aus dem vorigen LOG-Eintrag zu einer
+  Erledigt-Notiz umformuliert, die CLI- **und** Skill-Teil sowie die
+  Korrekturauflagen aus diesem Vermerk nennt. Die „Empfohlene
+  Reihenfolge"-Zeile darunter von „Es bleibt M9 → M11" auf „Es bleibt M11"
+  aktualisiert.
+- **(b)** Dasselbe Dokument, Abschnitt 2.4: der Absatz „Der Ansatz existiert im
+  Keim bereits. `harness-build/SKILL.md` führt eine Symptomtabelle…" beschrieb
+  die inzwischen entfernte Tabelle im Präsens. Ins Präteritum gesetzt
+  („existierte", „führte", „war") und um einen Vermerk „**Umgesetzt
+  (2026-08-10):**" ergänzt, der auf `intent <id>` und die M9-Zeile verweist —
+  ohne Zeilennummern als Referenz.
+- **(c)** `knowledge/06-massnahmen.md`, M8-Eintrag „Sprachhinweis in der
+  Sackgasse statt Synonymtabelle": die Ortsangabe „zwei Sätze über der
+  bestehenden Symptomtabelle" und der Prüfsatz „alle sechs Queries der Tabelle
+  liefern Treffer" zeigten nach dem Umbau ins Leere. Nachtrag „(2026-08-10)"
+  ergänzt, im Stil der bestehenden Nachträge dort: verweist auf den
+  `intent`-Ersatz, markiert die alte Sechs-Treffer-Messung als Beleg des
+  damaligen Zustands mit `<!-- lint:historisch -->` samt Begründung im selben
+  Satz, stellt klar, dass die Ablehnung der Synonymtabelle und der
+  Sprachhinweis in `cmdSearch` selbst unberührt bleiben.
+
+**Verifikation.** `node tools/harness.mjs lint --all`: 16 Dateien, Nähte in 26,
+0 Befunde (0 hoch · 0 mittel · 0 niedrig) — unverändert gegenüber vor der
+Änderung, auch nach den Korrekturen und Nacharbeiten (a–c).
+`node tools/harness.mjs eval --no-save`: 12/12 Pflichtfälle grün. Kein Commit in
+diesem Lauf.
+
 ## [2026-08-10] revise | `04-governance.md` 2.4: Flag-Verhalten in `intents.yaml`-`suche`-Strings ergänzt (Prüfauflage zu M9), M9-Zeile mit Teilvermerk statt „erledigt"
 
 **Anlass.** Adversariale Prüfung der frisch umgesetzten Massnahme M9 ergab als

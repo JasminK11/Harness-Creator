@@ -139,25 +139,57 @@ ein späterer Agent den Zugriffsweg zur Bibliothek kennt.
 
 ### 2. Bedarf in Suchen übersetzen
 
-Aus den Schmerzpunkten werden 4 bis 8 konkrete Suchen. Nicht aus dem Stack allein —
-"React" als Suchbegriff liefert Treffer, die nichts lösen. Such nach dem Problem.
+Bevor du einzelne Suchbegriffe bastelst: sieh nach, ob ein Schmerzpunkt aus 1d in
+eine der zwölf Absichten aus `catalog/intents.yaml` passt.
 
-| Schmerz | Suche |
-|---|---|
-| Reviews übersehen dieselben Fehler | `search "code review" --type agent` |
-| Keiner traut sich an den Code | `search "codebase onboarding"` |
-| Tests fehlen oder brechen | `search "tdd testing" --domain testing` |
-| Sicherheitslücken nicht gefunden | `search "security audit" --domain security` |
-| Deployments schlagen fehl | `search "deployment ci" --domain devops` |
-| Unklare Architekturentscheidungen | `search "architecture decision"` |
+```bash
+node tools/harness.mjs intent                   # zwölf Absichten mit ihrer Frage
+node tools/harness.mjs intent <id> [--limit N]  # Anker + weitere Treffer dieser Absicht
+```
 
-Prüf vorher in `INDEX.md`, welche Domänen es überhaupt gibt.
+Die zwölf ids (von Hand gepflegt, stabil): `verstehen`, `bauen`, `pruefen`,
+`absichern`, `testen`, `ausliefern`, `diagnostizieren`, `umbauen`, `dokumentieren`,
+`harness-bauen`, `vermarkten`, `rechtliches`. Jede bündelt eine typische Frage
+(„Ich übernehme eine fremde Codebasis und weiss nicht, wo ich anfange" →
+`verstehen`; „Tests fehlen, brechen oder flackern" → `testen`), naheliegende
+Domänen und zwei bis drei **Anker** — Bausteine, die `intent <id>` unabhängig vom
+Score immer zuerst zeigt (die meisten Absichten tragen drei, `testen` und
+`ausliefern` nur zwei — geprüft mit `intent testen` und `intent ausliefern`).
 
-Wenn die Suche eine Termbilanz ausgibt — welche Wörter als Füllwörter übergangen
-wurden und welche im Bestand keinen Treffer haben —, ersetze die unerfüllbaren
-Terme durch Katalogvokabular und such erneut. Die Übersetzung von Nutzersprache
-in Katalogsprache ist deine Aufgabe als Modell; die Bilanz liefert dir dafür die
-Fakten.
+Die Anker sind deine **erste Prüfmenge, kein fertiges Ergebnis**: geh sie in
+Schritt 4 wie jeden anderen Kandidaten mit `show` durch. Danach zeigt `intent <id>`
+weitere Treffer nach Score — dieselbe Bewertung wie `search`. Die Domänen-Angabe
+je Absicht ist **informativ, kein Filter** (Wortlaut der CLI-Ausgabe): sie grenzt
+nichts automatisch ein, sie zeigt dir nur, wo du sonst suchen würdest.
+
+Deckt keine Absicht den Schmerzpunkt, oder brauchst du innerhalb einer Absicht
+eine engere Suche als die Anker liefern, bleibt `search` der Weg dafür:
+
+```bash
+node tools/harness.mjs search "<worte>" [--domain <domäne>]
+```
+
+Aus den Schmerzpunkten werden so 4 bis 8 Absichten und/oder Suchen. Nicht aus dem
+Stack allein — "React" als Suchbegriff liefert Treffer, die nichts lösen. Ordne
+dem Problem zu, nicht der Technologie.
+
+Prüf vorher in `INDEX.md`, welche Domänen es überhaupt gibt, wenn du `--domain`
+gezielt setzen willst.
+
+Der Katalog ist durchgängig englisch — deutsche Suchbegriffe wie „sicherheit
+prüfen" liefern häufig null Treffer, wo „security" reichlich liefert. Sieht die
+Anfrage deutsch aus (Umlaute oder typisch deutsche Endungen), schlägt die
+Nullstellen-Ausgabe von `search` von selbst eine Übersetzung vor oder nennt
+Beispiele (`security`, `testing`, `review`, `deployment`, `documentation`); bei
+einer erkennbar englischen Anfrage ohne Treffer fehlt dieser Zusatz, dort bleibt
+zuerst die Termbilanz. In beiden Fällen gilt: 0 Treffer heisst zuerst falscher
+Begriff, nicht ein leerer Katalog.
+
+Gibt `search` stattdessen eine Termbilanz aus — welche Wörter als Füllwörter
+übergangen wurden und welche im Bestand keinen Treffer haben —, ersetze die
+unerfüllbaren Terme durch Katalogvokabular und such erneut. Die Übersetzung von
+Nutzersprache in Katalogsprache ist deine Aufgabe als Modell; die Bilanz liefert
+dir dafür die Fakten.
 
 ### 3. Rezept prüfen
 
