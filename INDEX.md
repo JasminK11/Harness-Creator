@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-10 12:24 · 1091 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 8 in Quarantäne, siehe unten) aus 14 Repos
+> Stand: 2026-08-10 17:40 · 1091 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 8 in Quarantäne, siehe unten) aus 14 Repos
 
 ## Was das hier ist
 
@@ -46,6 +46,7 @@ Warnungen stehen im Aufruf ohne Argument.
 |---|---|---|
 | `search` | Katalog durchsuchen | der übliche Einstieg |
 | `show` | Detail zu einem Baustein | vor dem Installieren |
+| `intent` | Absicht statt Stichwort suchen | hinterlegte Suchen + Anker aus catalog/intents.yaml, M9 |
 | `install` | Baustein(e) ins Zielprojekt kopieren | meldet danach, was wirkt und was nicht |
 | `uninstall` | Bausteine wieder entfernen | genau die Dateien aus dem Manifest, nichts sonst |
 | `bootstrap` | nur die Zugriffsregel schreiben | in die CLAUDE.md eines Projekts, ohne Bausteine |

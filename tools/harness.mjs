@@ -651,7 +651,85 @@ function quarantaeneGrund(description) {
   return null;
 }
 
-function cmdExtract({ quiet = false } = {}) {
+/**
+ * M11 (knowledge/04-governance.md, Abschnitt 5.5 "Coherence"): vier
+ * Bestandshygiene-Kennzahlen, erhoben bei jedem `extract` (auch als
+ * Teilschritt von `update`) und als Zeitreihe ins CHANGELOG.md geschrieben.
+ *
+ * Nenner ist bewusst "ohne Bulk/Massen-Repos" und NICHT "ohne Quarantäne" wie
+ * in cmdStats(): Kennzahl 1 zählt genau die Quarantäne-Fälle (M2), und ein
+ * Nenner, der sie vorher schon herausfiltert, würde diese Kennzahl für immer
+ * auf 0 zwingen — sie soll aber zeigen, wenn ein neues Repo den Anteil nach
+ * oben treibt.
+ *
+ * Reine Berechnung ohne I/O — das Schreiben übernehmen die Aufrufer
+ * (cmdExtract, cmdUpdate), damit diese Funktion auch für eine Vorschau ohne
+ * Seiteneffekt nutzbar bleibt.
+ */
+function katalogHygiene(catalog) {
+  const nichtBulk = catalog.items.filter((i) => !i.bulk);
+  const nenner = nichtBulk.length;
+  const tausender = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+  // Kennzahl 1: dieselbe Funktion wie die M2-Quarantäne selbst — keine zweite,
+  // abweichende Definition von "brauchbar". `it.quarantaene` steht hier schon,
+  // cmdExtract ruft quarantaeneGrund() für jedes Item vor diesem Aufruf.
+  const ohneBeschreibung = nichtBulk.filter((i) => i.quarantaene).length;
+
+  // Kennzahl 2: classify() sammelt ALLE passenden DOMAIN_RULES in ein Array,
+  // nicht nur die erste — ein Baustein trägt also messbar mehr als eine
+  // Domäne, gemessen bis zu sechs gleichzeitig (2026-08-10). Die "?" in der
+  // ursprünglichen Spezifikation war Unwissen, keine strukturelle Grenze.
+  const mehrAls3Domaenen = nichtBulk.filter((i) => (i.domains || []).length > 3).length;
+
+  // Kennzahl 3: 'general' ist genau der Auffangfall aus classify() — keine
+  // DOMAIN_RULES-Regel hat gegriffen.
+  const general = nichtBulk.filter((i) => (i.domains || []).includes("general")).length;
+
+  // Kennzahl 4: IDs sind `repo/typ/slug`, deterministisch (knowledge/08). Eine
+  // Namensgruppe ist ein Slug, der mehr als einmal vorkommt; "repoübergreifend"
+  // heisst, die Träger stammen aus mehr als einem Repo. Slug + verschiedene
+  // Typen *desselben* Repos (z.B. Skill und Command "code-review") ist ein
+  // gewollter Typ-Satz — der zählt hier bewusst nicht mit, nur die Streuung
+  // über Repo-Grenzen wird berichtet.
+  const traegerJeSlug = new Map();
+  for (const i of nichtBulk) {
+    const teile = String(i.id).split("/");
+    const s = teile[teile.length - 1];
+    if (!traegerJeSlug.has(s)) traegerJeSlug.set(s, []);
+    traegerJeSlug.get(s).push(teile[0]);
+  }
+  let namensdublettenUeberRepos = 0;
+  for (const repos of traegerJeSlug.values()) {
+    if (repos.length < 2) continue; // Slug kommt nur einmal vor -> keine Gruppe
+    if (new Set(repos).size > 1) namensdublettenUeberRepos++;
+  }
+
+  const zeile = (label, n, zielProzent) => {
+    const p = nenner ? (n / nenner) * 100 : 0;
+    if (zielProzent == null) return `  ${label.padEnd(34)}${String(n).padStart(4)}  ← nur berichten`;
+    const proz = `(${p.toFixed(1).replace(".", ",")} %)`;
+    // Sichtbar machen statt sperren (M11-Vorgabe): kein Exit-Code hängt daran.
+    const ueber = p >= zielProzent ? "  !  über Ziel" : "";
+    return `  ${label.padEnd(34)}${String(n).padStart(4)}  ${proz.padEnd(9)}← Ziel: < ${zielProzent} %${ueber}`;
+  };
+
+  // B1 (externe Prüfung, 2026-08-10): "im Standardzugriff" hiess in cmdStats()
+  // und INDEX.md schon etwas anderes (!bulk && !quarantaene, 1.091) — zwei
+  // generierte Artefakte desselben Laufs, derselbe Begriff, zwei Zahlen. Die
+  // Nenner-Entscheidung (siehe Funktionskopf) war richtig, stand aber nur in
+  // einem Kommentar, nicht im Artefakt selbst. Die Formel im Etikett macht sie
+  // an Ort und Stelle nachprüfbar, ohne den Code lesen zu müssen.
+  return [
+    `Katalog-Hygiene ${String(catalog.generatedAt || "").slice(0, 10)} (Nenner: ${tausender(nenner)} = Standardzugriff + Quarantäne, ohne Massen-Repos):`,
+    zeile("ohne brauchbare Description", ohneBeschreibung, 5),
+    zeile("mit mehr als 3 Domänen", mehrAls3Domaenen, 10),
+    zeile("in Domäne 'general' (Auffang)", general, 15),
+    zeile("Namensdubletten über Repos", namensdublettenUeberRepos, null),
+  ];
+}
+
+function cmdExtract({ quiet = false, viaUpdate = false } = {}) {
   if (!fs.existsSync(CLONE_DIR)) die(`Keine Klone unter ${CLONE_DIR} — erst 'sync' laufen lassen.`);
   const sources = readSources();
   const all = [];
@@ -708,6 +786,24 @@ function cmdExtract({ quiet = false } = {}) {
   fs.writeFileSync(INDEX_JSON, JSON.stringify(catalog, null, 1));
   writeMarkdownIndexes(catalog);
   if (!quiet) console.log(`\n  ${all.length} Bausteine -> catalog/index.json`);
+
+  // M11: Hygiene läuft hier und nicht erst in cmdUpdate(), damit ein `extract`
+  // ohne vorausgehendes `update` denselben Befund liefert — sonst verstummt
+  // der Coherence-Check genau dann, wenn jemand nur den Katalog neu baut.
+  const hygieneZeilen = katalogHygiene(catalog);
+  if (!quiet) { console.log(); for (const z of hygieneZeilen) console.log(z); }
+  if (!viaUpdate) {
+    // cmdUpdate() schreibt sein eigenes, umfangreicheres Änderungsprotokoll
+    // (Repo-Diff, Eval-Bilanz) und übernimmt den Hygiene-Block dort hinein;
+    // dieser Zweig deckt nur den Fall ab, dass `extract` direkt läuft — sonst
+    // gäbe es für ihn nirgends einen Changelog-Eintrag.
+    const cl = path.join(ROOT, "CHANGELOG.md");
+    const head = "# Changelog der Harness-Bibliothek\n\nNeueste Einträge oben. Erzeugt von `/harness-update`.\n\n";
+    const old = fs.existsSync(cl) ? fs.readFileSync(cl, "utf8").replace(head, "") : "";
+    const stamp = catalog.generatedAt.slice(0, 16).replace("T", " ");
+    const block = [`## ${stamp} — extract (ohne update)`, "", ...hygieneZeilen, ""].join("\n");
+    fs.writeFileSync(cl, head + block + "\n---\n\n" + old);
+  }
   return catalog;
 }
 
@@ -3638,7 +3734,9 @@ function cmdUpdate() {
   console.log("1/4  Repos synchronisieren");
   const syncReport = cmdSync();
   console.log("\n2/4  Bausteine katalogisieren");
-  const after = cmdExtract({ quiet: false });
+  // viaUpdate: true — cmdExtract() soll seinen Hygiene-Block NICHT selbst als
+  // eigenen CHANGELOG-Eintrag schreiben; dieser Lauf hat schon einen (unten).
+  const after = cmdExtract({ quiet: false, viaUpdate: true });
   console.log("\n3/4  Changelog schreiben");
 
   const beforeIds = new Set(before ? before.items.map((i) => i.id) : []);
@@ -3687,6 +3785,10 @@ function cmdUpdate() {
   listing("Entfernt", removed);
 
   if (!added.length && !changed.length && !removed.length) lines.push("Keine Änderungen am Katalog.", "");
+
+  // M11: Hygiene-Block direkt neben der Eval-Bilanz — beides zusammen ist der
+  // "Audit" aus knowledge/04-governance.md 5.5, keine zwei getrennten Prüfungen.
+  lines.push(...katalogHygiene(after), "");
 
   // --- Schritt 4: Routing-Evals ------------------------------------------
   // Warum an `update` und nicht an `lint`: die beiden prüfen Verschiedenes. `lint`
@@ -3802,6 +3904,7 @@ harness.mjs — Harness-Bibliothek
   node tools/harness.mjs update                    Repos pullen + Katalog neu bauen + Changelog
   node tools/harness.mjs sync                      nur Repos pullen/klonen
   node tools/harness.mjs extract                   nur Katalog neu bauen
+                                                   (+ Hygiene-Block in CHANGELOG.md, M11)
   node tools/harness.mjs search <worte>            Katalog durchsuchen
        [--type skill|agent|command|hook|mcp|plugin] [--domain X] [--repo X] [--limit N]
        [--all]   auch Massen-Repos (!bulk in sources.txt) und Quarantäne-Einträge

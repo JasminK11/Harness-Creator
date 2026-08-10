@@ -68,6 +68,201 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] revise | Fünf überholte Stellen zu M11 in `04-governance.md` und `08-pruefbarkeit-und-pruefdaten.md` eingearbeitet
+
+**Anlass.** Der Eintrag direkt unter diesem (`add | Katalog-Hygiene-Kennzahlen bei jedem
+`extract`… (M11)`) hält unter „Offen für die Wissensbank" fünf Stellen fest, die durch
+die Umsetzung und die externe Prüfung von M11 überholt waren. Dieser Eintrag schliesst
+sie ab. Details zu Umsetzung, Kennzahl-Definitionen, den realen Zahlen und der
+Korrektur der 66/26-Zählung stehen in jenem Eintrag und im nächsten (Skill-Umbau) —
+hier nur, was in den beiden Wissensdateien geändert wurde.
+
+**`knowledge/04-governance.md`, Tabelle „Sollten wir tun".**
+- Zeile M11 auf durchgestrichen-**erledigt** gesetzt, Konvention wie M2/M3/M9:
+  Umsetzungsdatum 2026-08-10, `katalogHygiene(catalog)` bei jedem `extract`/`update`,
+  Nenner-Begründung (Standardzugriff + Quarantäne, ohne Massen-Repos = 1.099 — bewusst
+  **nicht** `cmdStats()`s 1.091, sonst wäre die Description-Kennzahl strukturell 0),
+  adversarial geprüft und mit vier erfüllten Auflagen angenommen, Verweis auf den
+  `add`-Eintrag oben. <!-- lint:historisch --> Die 1.099 hier ist keine veraltete
+  Zahl, sondern derselbe andere, bewusst erklärte Nenner wie im `add`-Eintrag oben —
+  der Marker unterdrückt den Fehlalarm der Zahlenheuristik, die beide Nenner
+  (1.099 vs. 1.091) nicht unterscheiden kann.
+- „Es bleibt **M11**." ersetzt: alle Zeilen der Tabelle sind jetzt erledigt oder in
+  `knowledge/06` aufgegangen: „Damit ist jede Massnahme dieser Tabelle erledigt oder
+  anderweitig in `knowledge/06` aufgegangen — offen bleibt nur, was unter „Wäre
+  theoretisch schön" und „Ausdrücklich nicht" steht."
+- Abschnitt 5.5: Beispielblock mit den zwei „?"-Platzhaltern und dem Etikett „Nenner:
+  1.099 im Standardzugriff" ersetzt durch den realen Block vom 2026-08-10 aus
+  `CHANGELOG.md` (Nenner-Etikett „= Standardzugriff + Quarantäne, ohne Massen-Repos",
+  „general" mit „! über Ziel" markiert). Ganz ersetzt statt als Altstand daneben
+  gestellt — der alte Block war nie eine vollständige Messung (zwei von vier Werten
+  waren „?"), verdient also nicht den `lint:historisch`-Schutz einer echten
+  superseded-Zahl. Umgebender Satz von Vorschlag auf Bestand gehoben: „…als Zeitreihe
+  im `CHANGELOG.md` — Bestand, kein Vorschlag mehr."
+- Geprüft (Auftrag Punkt 5, `grep "M11"`): eine sechste, nicht in der „Offen"-Liste
+  genannte Stelle im Prüfprotokoll (Abschnitt „Nicht verifiziert / Vermutung", Zeile
+  zu Abschnitt 5.5) behauptete ebenfalls noch, die Werte „mehr als 3 Domänen" und
+  „Namensdubletten" seien offen und liessen sich „erst mit M11" erheben. Mit
+  derselben Sorgfalt ergänzt statt gelöscht: Zeitpunkt der Prüfung (2026-08-07)
+  benannt, Nachsatz „Seit M11 (2026-08-10, erledigt) liegen beide Werte vor" mit
+  Verweis auf den realen Block in 5.5.
+
+**`knowledge/08-pruefbarkeit-und-pruefdaten.md`, Abschnitt 14.** Zeile zum
+verworfenen Namens-Auflösungswerkzeug: die Verwerfungsbegründung (IDs sind
+`repo/typ/slug`, deterministisch, keine Identitätsunschärfe) unverändert gelassen.
+Die Messung „von 54 Namensgruppen … nur 9 repoübergreifend" mit `<!-- lint:historisch
+-->` markiert und im selben Satz begründet (Altstand vom 2026-08-07, Katalog seither
+gewachsen), Nachtrag ergänzt: heutige Messung 66 Gruppen / 26 repoübergreifend, davon
+20 durch das am 2026-08-08 neu aufgenommene Repo `anthropics__claude-plugins-official`;
+Neuzählung ohne dieses Repo 10, nahe an den ursprünglichen 9 — Zahlen wie im
+`add`-Eintrag oben, nicht neu ermittelt.
+
+**Geprüft.** `node tools/harness.mjs lint --all` (0 Befunde); `node tools/harness.mjs
+eval --no-save` (12 von 12 Pflichtfällen); `node tools/harness.mjs knowledge
+"katalog-hygiene kennzahlen extract"` liefert den überarbeiteten 5.5-Abschnitt.
+
+## [2026-08-10] add | Katalog-Hygiene-Kennzahlen bei jedem `extract`: vier Zahlen als Zeitreihe ins CHANGELOG.md (M11)
+
+**Anlass.** Letzte offene Massnahme der Tabelle in `04-governance.md` Abschnitt
+5.5 ("Coherence — anwendbar, und hier gehört der Eval hin"): eine
+Bestandshygiene-Prüfung, die `extract` nebenbei erhebt und als Zeitreihe ins
+CHANGELOG.md schreibt — vier Kennzahlen, kein neuer Subcommand.
+
+**Umsetzung.** Neue Funktion `katalogHygiene(catalog)` — reine Berechnung ohne
+I/O — direkt vor `cmdExtract()`. `cmdExtract()` ruft sie nach dem Bau des
+Katalogs auf, druckt die Zeilen zur Konsole und schreibt bei einem
+eigenständigen Lauf (`viaUpdate: false`, Default) selbst einen
+`## <Zeitstempel> — extract (ohne update)`-Block ins CHANGELOG; ruft `update`
+sie auf (`viaUpdate: true`, neuer Parameter), übernimmt `cmdUpdate()` dieselben
+Zeilen in sein eigenes, schon bestehendes Änderungsprotokoll, direkt neben der
+Eval-Bilanz — beides zusammen ist der "Audit" aus 5.5, keine zwei getrennten
+Prüfungen. Damit läuft die Erhebung auch bei `update` mit, ohne dass `extract`
+je "standalone" verstummt.
+
+**Kennzahl-Definitionen, am bestehenden Code festgemacht (Auftrag: nicht neu
+erfinden).** Nenner aller vier Kennzahlen ist "ohne Bulk/Massen-Repos"
+(`!i.bulk`, 1.099 Bausteine) — bewusst **nicht** dasselbe "Standardzugriff" wie
+in `cmdStats()` (`!i.bulk && !i.quarantaene`, 1.091). Würde Quarantäne den
+Nenner schon vorher verlassen, wäre Kennzahl 1 strukturell für immer 0, weil
+genau `quarantaeneGrund()` beide Mengen trennt — die Kennzahl soll aber
+zeigen, wenn ein neues Repo den Anteil nach oben treibt. <!-- lint:historisch -->
+Die 1.099 ist keine veraltete Zahl, sondern ein anderer, hier erklärter Nenner
+als `cmdStats()`s "Standardzugriff" (1.091) — der Marker unterdrückt den
+Fehlalarm der Zahlenheuristik, die beide Nenner nicht unterscheiden kann.
+
+1. "ohne brauchbare Description" = `it.quarantaene` truthy, gesetzt von
+   `quarantaeneGrund()` (M2) — keine zweite, abweichende Brauchbarkeits-Definition.
+2. "mehr als 3 Domänen" — geprüft, ob ein Baustein überhaupt mehr als eine
+   Domäne tragen kann: `classify()` gibt `DOMAIN_RULES.filter(...)` zurück, ein
+   **Array aller** Treffer, kein Einzelwert. Gemessen bis zu sechs Domänen an
+   einem Baustein gleichzeitig (2026-08-10). Die "?" in der ursprünglichen
+   Spezifikation (`04-governance.md` 5.5) war Unwissen der Verfasserin, keine
+   strukturelle Grenze — Befund, der die Wissensbank betrifft, siehe unten.
+3. "in Domäne 'general' (Auffang)" = `domains.includes("general")` — genau der
+   Rückfall, den `classify()` liefert, wenn keine `DOMAIN_RULES`-Regel griff.
+4. "Namensdubletten über Repos" — Gruppierung nach dem letzten `id`-Segment
+   (Slug; IDs sind `repo/typ/slug`, s. `knowledge/08`). Eine Gruppe zählt nur,
+   wenn derselbe Slug in **mehr als einem Repo** auftaucht; Typ-Sätze desselben
+   Repos (z.B. Skill *und* Command "code-review") zählen bewusst nicht mit —
+   "nur berichten", keine Zielmarke.
+
+**Reale Zahlen** (Lauf 2026-08-10 17:27, CHANGELOG.md):
+
+```
+Katalog-Hygiene 2026-08-10 (Nenner: 1.099 im Standardzugriff):
+  ohne brauchbare Description          8  (0,7 %)  ← Ziel: < 5 %
+  mit mehr als 3 Domänen              20  (1,8 %)  ← Ziel: < 10 %
+  in Domäne 'general' (Auffang)      353  (32,1 %) ← Ziel: < 15 %  !  über Ziel
+  Namensdubletten über Repos          26  ← nur berichten
+```
+
+"general" liegt klar über der Zielmarke (32,1 % gegen < 15 %) und ist im Block
+sichtbar markiert — kein Exit-Code-Abbruch, die Zahlen machen sichtbar, sie
+sperren nicht (M11-Vorgabe).
+
+**Namensdubletten gegen die Vorarbeit geprüft.** `knowledge/08`, Abschnitt 14,
+nennt "von 54 Namensgruppen ... nur 9 repoübergreifend" (Messung 2026-08-07).
+Heutiger Lauf: 66 Gruppen gesamt, 26 repoübergreifend — auf den ersten Blick
+eine grosse Abweichung. Ursache geprüft, nicht geraten: 20 der 26
+repoübergreifenden Gruppen tragen `anthropics__claude-plugins-official`, ein
+Repo, das laut CHANGELOG.md erst am 2026-08-08 19:36 neu in den Katalog kam —
+**nach** der 54/9-Messung vom 2026-08-07. Die restlichen 6 Gruppen tragen das
+Repo ohnehin nicht — das ist eine Restmenge, kein Rückschluss auf das Repo.
+Die eigentliche Gegenprobe ist eine Neuzählung mit entfernten Items dieses
+Repos: sie ergibt **10** repoübergreifende Gruppen, nahe an den ursprünglichen
+9 — die 6 unveränderten plus vier Gruppen, die auch ohne das Repo aus
+mindestens zwei anderen Repos bestehen (`code-reviewer`, `code-review`,
+`hooks`, `mcp`). Die Abweichung erklärt sich durch Katalogwachstum, nicht
+durch einen Fehler in der neuen Zählung. (Korrigiert nach externer Prüfung,
+2026-08-10: die erste Fassung dieses Absatzes zählte 19 statt 20 und verwechselte
+die 6-ohnehin-Menge mit einer echten Neuzählung ohne das Repo — die lag bei 10,
+nicht bei 6.)
+
+**Gegenprobe.** Vier Fixture-Dateien testweise in bestehende Klone gelegt
+(nur die Klone unter `.harness-sources`, `sources.txt` unverändert, `sync`
+nicht gelaufen): ein Skill mit leerer Description
+(`mattpocock__skills/skills/misc/m11-probe-empty`), ein Skill mit sechs
+gleichzeitigen Domain-Treffern (`m11-probe-domains`), und ein neuer,
+vorher nirgends vorkommender Slug `m11-probe-crossrepo` gleichzeitig unter
+`mattpocock__skills` **und** `anthropics__skills`. `extract` (nicht `sync`,
+nicht `update`) lief darauf; Ergebnis exakt wie erwartet: Nenner 1.099→1.103
+(+4 Proben), "ohne Beschreibung" 8→9 (+1), "mehr als 3 Domänen" 20→21 (+1),
+"general" 353→356 (+3 — drei der vier Proben trafen keine `DOMAIN_RULES`-Regel),
+"Namensdubletten über Repos" 26→27 (+1) — nichts Unerwartetes daneben. Fixture-
+Dateien danach entfernt, `extract` erneut gelaufen: Katalog exakt auf dem
+Ausgangsstand (`node tools/harness.mjs stats` vorher/nachher identisch:
+25.642 Bausteine, 1.091 im Standardzugriff nach `cmdStats()`-Definition, 8 in
+Quarantäne). Der Gegenprobe-Block (17:26, sichtbar höherer Nenner) steht
+weiterhin im CHANGELOG.md, jetzt mit einer Kennzeichnungszeile im
+Blockkopf ("… — Gegenprobe mit 4 Fixture-Dateien, siehe knowledge/LOG.md") statt
+kommentarlos zwischen echten Katalogzuständen zu stehen — eine erhöhte Zahl
+ohne Erklärung im Artefakt selbst sähe wie eine Regression aus, nicht wie ein
+Test. Gelöscht statt gekennzeichnet hätte den einzigen Beleg entfernt, dass die
+Kennzahlen überhaupt auf eine echte Verschiebung reagieren (s. oben). Die
+beiden inhaltsgleichen Wiederherstellungs-Läufe (17:27, ursprünglich hier
+entstanden, sowie ein 17:35-Duplikat aus dem externen Prüflauf) wurden beim
+Konsolidieren (B3, externe Prüfung 2026-08-10) entfernt und durch einen
+einzigen frischen Lauf nach der B1-Korrektur ersetzt (17:40) — sonst stünden
+drei wortgleiche Blöcke mit zwei verschiedenen Nenner-Etiketten nebeneinander.
+
+**INDEX.md.** Durch den `extract`-Lauf neu erzeugt; dabei erscheint der
+Subcommand `intent` (M9, im Dispatcher schon vorher vorhanden) erstmals in der
+`befehlsUebersicht()`-Tabelle — Nebenwirkung der Regeneration, nicht dieser
+Änderung.
+
+**Geprüft.** `node --check tools/harness.mjs`; `node tools/harness.mjs`
+(USAGE, neue Zeile bei `extract` sichtbar); `stats` vor und nach dem
+`extract`-Lauf identisch (25.642 gesamt, 1.091 im Standardzugriff, 8
+Quarantäne, gleiche Typ-/Domänen-/Repo-Verteilung); `lint --all` (0 Befunde);
+`eval --no-save` (12 von 12 Pflichtfällen); `search "review" --limit 3`,
+`show`, `knowledge "evaluator agent"`, `knowledge --list`, `install --dry-run`,
+`install --yes` + `list --to` + `uninstall --dry-run`, `bootstrap --to` gegen
+einen Wegwerf-Ordner — alle unauffällig. Nach B1–B4 (externe Prüfung,
+2026-08-10) erneut geprüft: `node --check`, `lint --all` (0 Befunde),
+`eval --no-save` (weiterhin 12 von 12), `stats` vor und nach dem
+B3-Nachweislauf identisch.
+
+**Offen für die Wissensbank (bewusst nicht in diesem Lauf nachgezogen — reine
+Werkzeugänderung, die Korrektur ist ein eigener `revise`-Eintrag).** Durch
+diesen Lauf und die externe Prüfung überholt:
+
+- `knowledge/08-pruefbarkeit-und-pruefdaten.md` Abschnitt 14 (Tabellenzeile
+  "von 54 Namensgruppen ... nur 9 repoübergreifend") — mit dem heutigen
+  Katalog nicht mehr deckungsgleich, s. Passage oben (66 Gruppen, 26
+  repoübergreifend, davon 20 wegen eines seit 2026-08-08 neuen Repos).
+- `knowledge/04-governance.md` 5.5, die "?"-Platzhalter im Beispielblock für
+  "mehr als 3 Domänen" und "Namensdubletten über Repos" — beide Kennzahlen
+  sind jetzt messbar, mit realen Werten oben in diesem Eintrag.
+- `knowledge/04-governance.md` 5.5, das Nenner-Etikett im selben
+  Beispielblock ("Nenner: 1.099 im Standardzugriff") — der reale Block trägt
+  seit B1 (externe Prüfung, 2026-08-10) die Formel "= Standardzugriff +
+  Quarantäne, ohne Massen-Repos"; das Beispiel im Fliesstext noch nicht.
+- `knowledge/04-governance.md`, Tabelle "Sollten wir tun", Zeile M11 — steht
+  noch auf offen und muss wie M2/M3/M9 durchgestrichen-erledigt markiert
+  werden.
+- `knowledge/04-governance.md`, der Satz "Es bleibt **M11**." direkt unter
+  derselben Tabelle — mit M11 umgesetzt ist er nicht mehr richtig.
+
 ## [2026-08-10] revise | `harness-build/SKILL.md` Schritt 2: hartkodierte Symptomtabelle durch `intent`-Zugang ersetzt (M9 Skill-Teil)
 
 **Anlass.** Der LOG-Eintrag direkt unter diesem („`04-governance.md` 2.4: … M9-Zeile
