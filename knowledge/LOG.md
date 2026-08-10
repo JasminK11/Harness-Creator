@@ -68,6 +68,54 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] revise | Erster echter `/harness-build`-Lauf (Dropfolio): Eval-Fall „tests schreiben" gegen neu belegte Flexions-Lücke „werbeaussage pruefen" getauscht
+
+**Quelle.** Erster Praxis-Lauf von `/harness-build` gegen ein fremdes Projekt
+(„Dropfolio", Next.js/TypeScript-SaaS mit eigenem vollständigem Harness: 22
+Agenten, 9 Hooks, 6 Skills), adversarial geprüft durch einen
+`behauptungs-pruefer`-Lauf am 2026-08-10; alle Trefferzahlen und IDs beim
+Einpflegen erneut am laufenden System verifiziert (`search`, `show`, `eval`,
+`lint`). Ergebnis des Laufs: 8 Bausteine installiert (7 legal-de-Skills für
+DSGVO/AGB/UWG plus `affaan-m__ecc/skill/security-scan`), alle `[aktiv]`, die
+Lückenliste in `sources.txt` blieb leer — der Bestand hat gereicht.
+
+**Was vorher galt.** `evals/routing.jsonl` führte für die Rubrik
+„Deutsche Anfrage auf englischen Bestand" den Fall
+`{"frage":"tests schreiben",…}`. Der Prüfer belegte, dass er nur durch das
+englisch-deutsche Homonym „tests" grün war (123 Teiltreffer, „schreiben" nicht
+im Bestand) — er mass die Sprachgrenze nicht. „sicherheit prüfen" bleibt als
+echter Messfall der Rubrik stehen.
+
+**Was jetzt gilt.** An seiner Stelle steht `{"frage":"werbeaussage pruefen",
+"domaene":"legal-de","erwartet":["Klotzkette__claude-fuer-deutsches-recht/skill/werbeaussagen-pruefung"],…}`
+mit einer im Lauf neu belegten Schwäche: der **Flexions-Lücke**. Der
+wortgleiche Skill existiert, wird aber nicht gefunden, weil „pruefen" per
+Wortanfangs-Matching nicht „pruefung" matcht; die UND-Suche fällt auf 640
+ODER-Teiltreffer zurück (erwartete ID auf Rang 563), während „werbeaussage
+pruefung" genau 1 Treffer liefert. Vollzogen und verifiziert: `eval` 12/12,
+`lint` 0. Wichtig für die Prüfpflicht: Der **erste** Tausch-Vorschlag
+(erwartet=`uwg-irrefuehrung-verbraucherbezug`, Diagnose „Vokabular-Lücke")
+wurde vom `behauptungs-pruefer` abgelehnt und korrigiert — die Diagnose war
+falsch, und die ursprünglich vorgeschlagene ID teilt kein Wort mit der
+Anfrage, ist lexikalisch unerreichbar und hätte die Verbesserung dauerhaft
+verdeckt. Die Prüfpflicht trägt also auch bei Eval-Fällen.
+
+**Zwei Nebenbefunde, ohne Eval-Änderung.** (1) Zweiter Flut-Beleg für die
+bekannte ODER-Fallback-Schwäche, erstmals im Massen-Repo: `search "agb
+pruefung klauseln" --domain legal-de` → 1084 Treffer (der bestehende Fall z29
+„react typescript app…" misst dasselbe mit 844/251 Treffern im
+Standardbestand). Kein neuer Eval-Fall — gleiche Wurzel, wäre redundant. Als
+Praxis-Beleg für die wartende IDF-Massnahme festgehalten: Deren Auslöser
+verlangt laut Beschluss vom 2026-08-08 einen belegten **Pflichtfall**; dieser
+Beleg ist ein optionaler Praxisfall, der Auslöser ist damit **nicht** erfüllt,
+nur gestärkt. (2) Bei Duplikat-/Nachbar-Skills im legal-de-Repo entscheidet
+der Fachkontext des Plugin-Ordners mit: `datenschutz-betroffenenrechte-auskunft-loeschung-weg`
+stammt aus `weg-hausverwaltung/` und ist mietrechtskontaminiert;
+`werbeaussagen-pruefung` stammt aus `produktrecht/` und trägt GPSR/CE-Ballast
+— für das SaaS-Projekt wurde der fokussierte `uwg-irrefuehrung-verbraucherbezug`
+gewählt, obwohl `werbeaussagen-pruefung` der bessere Suchtreffer wäre.
+Auffindbarkeits-Sieger ≠ Inhalts-Sieger.
+
 ## [2026-08-08] revise | `04-governance.md` 3.5: Duplikat-Familien offiziell/ecc — sieben Paare per `show` verglichen, Auswahlregel präzisiert, Vertrauenszeile richtiggestellt
 
 **Quelle.** Adversarial geprüfte Urteile aus dem Workflow-Lauf (Task
