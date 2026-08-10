@@ -68,6 +68,49 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] revise | `recipes/README.md` Punkt 2: besetzte Rolle zählt wie fehlendes Symptom — eigener Fremd-Harness-Abschnitt geprüft und abgelehnt
+
+**Quelle.** `behauptungs-pruefer`-Lauf am 2026-08-10 gegen einen vorgeschlagenen
+neuen README-Abschnitt „Wenn das Zielprojekt schon ein Harness hat" — Reaktion
+auf den Dropfolio-Lauf (Eintrag direkt unten: fremdes Projekt mit eigenem
+vollständigem Harness, 22 Agenten, 9 Hooks, 6 Skills). Der Prüfer lehnte den
+vorgeschlagenen Abschnitt als Ganzes ab und benannte einen einzelnen Satz als
+einzig tragfähigen Kern.
+
+**Was vorher galt.** `recipes/README.md`, Abschnitt „Ein Rezept ist ein
+Startpunkt, kein Dogma", Punkt 2 verlangte Kürzung nach Symptom („Wenn du für
+einen Baustein das Symptom nicht benennen kannst, fliegt er raus"), nannte aber
+nicht, dass eine vom Zielprojekt bereits selbst besetzte Rolle ebenfalls zum
+Ausschluss führt — ein Kern-Set-Baustein, für den es zwar ein Symptom gibt, das
+Projekt aber schon eine eigene Antwort darauf hat (Dropfolio: eigener Agent,
+eigener Hook oder eigene Prozessregel statt des Katalog-Bausteins), blieb
+ungeregelt.
+
+**Was jetzt gilt.** Punkt 2 trägt jetzt einen Satz mehr: „Eine Rolle, die das
+Projekt schon selbst besetzt — eigener Agent, eigener Hook, eigene
+Prozessregel —, zählt dabei wie ein fehlendes Symptom: der Kern-Set-Baustein
+fliegt raus." mit Verweis auf den Dropfolio-Lauf 2026-08-10 als ersten Beleg.
+
+**Abgelehnt: eigener README-Abschnitt „Wenn das Zielprojekt schon ein
+Harness hat" mit vier Regeln (Bestandsaufnahme / keine Hooks / keine Agenten /
+Kern-Sets nicht anwenden).** Gründe, jeweils am laufenden System bzw. gegen
+bestehende Dateien geprüft: (a) Punkt 1 (Bestandsaufnahme) dopplt
+`harness-build/SKILL.md` Schritt 1, Punkt 4 (Kern-Sets nicht anwenden) dopplt
+den bereits bestehenden Punkt 2 dieser Datei; (b) die Pauschalverbote „keine
+Hooks" / „keine Agenten" ersetzen die am 2026-08-08 beschlossene
+**Einzelfallprüfung** der Schutz-Hooks (Eintrag „Kern-Set-Befund entschieden",
+weiter unten in dieser Datei) durch eine pauschale Projektkategorie — exakt die
+Ersetzung eines Pflicht-Allsatzes durch einen Verbots-Allsatz, die am
+2026-08-08 bereits verworfen wurde; (c) die im Vorschlag genannte Begründung
+„fremde Hooks können bestehende Gates lautlos aushebeln" ist am CLI widerlegt:
+Bausteine werden inaktiv installiert, `install` schreibt nie in
+`settings.json`, Namenskollisionen brechen den Lauf ab statt still zu
+überschreiben; (d) der Vorschlag verallgemeinerte aus einem einzigen Lauf
+(n=1, Dropfolio) auf eine ganze Projektkategorie „Zielprojekt hat schon ein
+Harness". Der eine tragfähige Kern — besetzte Rolle zählt wie fehlendes
+Symptom — ist in Punkt 2 eingearbeitet, nicht als eigener Abschnitt
+danebengesetzt.
+
 ## [2026-08-10] revise | Erster echter `/harness-build`-Lauf (Dropfolio): Eval-Fall „tests schreiben" gegen neu belegte Flexions-Lücke „werbeaussage pruefen" getauscht
 
 **Quelle.** Erster Praxis-Lauf von `/harness-build` gegen ein fremdes Projekt

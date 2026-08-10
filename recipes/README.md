@@ -53,7 +53,10 @@ Deshalb gilt beim Anwenden:
    nicht benennen kannst, fliegt er raus. Vier passende schlagen sieben plausible.
    Deshalb heisst der Abschnitt in jedem Rezept "Kern-Set (Startauswahl, zu
    kürzen)" und trägt diesen Satz noch einmal bei sich — er wird abschnittsweise
-   ausgeschnitten und muss allein stehen können.
+   ausgeschnitten und muss allein stehen können. Eine Rolle, die das Projekt schon
+   selbst besetzt — eigener Agent, eigener Hook, eigene Prozessregel —, zählt
+   dabei wie ein fehlendes Symptom: der Kern-Set-Baustein fliegt raus. Erster
+   Beleg: Dropfolio-Lauf 2026-08-10, `knowledge/LOG.md`.
 3. Erweiterung nur anfassen, wenn die dort genannte Bedingung erfüllt ist.
 4. "Bewusst weggelassen" lesen, bevor du selbst suchst — diese Kandidaten sind
    bereits geprüft und verworfen. Nicht erneut evaluieren.
