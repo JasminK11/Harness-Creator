@@ -68,6 +68,225 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] revise | `04-governance.md` 2.4: Flag-Verhalten in `intents.yaml`-`suche`-Strings ergänzt (Prüfauflage zu M9), M9-Zeile mit Teilvermerk statt „erledigt"
+
+**Anlass.** Adversariale Prüfung der frisch umgesetzten Massnahme M9 ergab als
+Auflage: Abschnitt 2.4 zeigt im YAML-Beispiel nur reine Suchbegriffe
+(`suche: ["codebase onboarding", …]`), deckt aber nicht, dass die reale, am
+selben Tag erstellte `catalog/intents.yaml` in mehreren `suche`-Strings
+eingebettete `--type`/`--domain`-Flags trägt und das neue Subcommand `intent`
+sie gesondert behandelt. Der ausführliche Befund samt Mechanik steht bereits
+im LOG-Eintrag „Subcommand `intent`" weiter unten in dieser Datei (Nachtrag zur
+echten `catalog/intents.yaml`); dieser Eintrag dupliziert ihn nicht, sondern
+hält nur die Ergänzung an der Wissensbank-Stelle fest, die als Suchtreffer für
+„intents.yaml"-Format dient.
+
+**Verifiziert am System vor dem Schreiben.**
+- `catalog/intents.yaml` gelesen: 130 Zeilen, Kopf „Erstellt: 2026-08-10",
+  Eintrag `pruefen` mit `suche: ["code review --type agent", "review quality
+  --domain testing", "independent review second opinion"]`.
+- `node tools/harness.mjs search "code review" --type agent --limit 3` → 32
+  Treffer — der Beleg-Messwert aus der Prüfauflage, bestätigt.
+- `node tools/harness.mjs intent pruefen --limit 3` läuft ohne Warnung, zeigt
+  die drei Anker vorn plus „141 weitere Treffer" (Summe über alle drei
+  `suche`-Einträge der Absicht, dedupliziert — nicht direkt mit den 32 der
+  einzelnen gefilterten Query zu verwechseln, die genau eine der drei Queries
+  betrifft).
+- `parseSucheQuery()` in `tools/harness.mjs` (Zeilen 1469–1484) gelesen:
+  trennt `--type`/`--domain` vom Suchtext, meldet ein unbekanntes `--`-Token
+  als Warnung und ignoriert es, statt es als Suchwort durchzureichen.
+
+**Umsetzung.**
+- `knowledge/04-governance.md`, Abschnitt 2.4, direkt nach dem YAML-Beispiel
+  (vor „Dazu ein Subcommand …") drei Sätze ergänzt: was in `suche`-Strings an
+  Flags erlaubt ist, wie `parseSucheQuery()` sie als Filter je Einzel-Query
+  anwendet (inklusive der Massen-Repo-Tür bei `--domain`, mit dem
+  32-Treffer-Beleg), und dass ein unbekanntes Flag als Datenfehler gemeldet
+  und ignoriert wird statt die UND-Suche zu verfälschen. Kein neuer
+  Abschnitt, keine Umstrukturierung — die Stelle bleibt die
+  Formatreferenz, auf die `catalog/intents.yaml` selbst in ihrem Kopf
+  verweist.
+- Tabelle „Sollten wir tun", Zeile M9: **nicht** auf erledigt gesetzt — der
+  Skill-Teil (Symptomtabelle in `harness-build/SKILL.md` durch `intent`
+  ersetzen) steht noch aus. Stattdessen einen klar gekennzeichneten
+  „**Teilvermerk (2026-08-10):**" in die Warum-Zelle ergänzt: CLI-Teil
+  (`intent`-Subcommand) und `catalog/intents.yaml` umgesetzt und adversarial
+  geprüft, mit Verweis auf den ausführlichen LOG-Eintrag; Skill-Teil offen.
+
+**Verifikation.** `node tools/harness.mjs lint --all` nach der Änderung ohne
+Befund hoher Schwere; `node tools/harness.mjs knowledge "intents.yaml Flags
+--type --domain"` liefert Abschnitt 2.4 mit der neuen Passage als Treffer.
+
+## [2026-08-10] add | Subcommand `intent`: Absichts-Suche aus `catalog/intents.yaml` (M9) — Anker vorn, `--type`/`--domain` je `suche`-String
+
+**Anlass.** M9 aus `knowledge/04-governance.md`, Abschnitt 2.4: eine
+Absichts-Ebene neben den Domänen, von Hand gepflegt in `catalog/intents.yaml`,
+die jedes `extract` überlebt. Der Subcommand fehlte bisher; `catalog/intents.yaml`
+entstand parallel in einem eigenen Auftrag und lag zu Beginn dieser Arbeit noch
+nicht vor.
+
+**Umsetzung.**
+- `druckeTreffer(i)` aus der Druckschleife von `cmdSearch()` herausgezogen —
+  `cmdIntent()` braucht dieselbe Zeilenform, eine zweite Kopie wäre dieselbe
+  Drift-Gefahr wie eine zweite Bewertungslogik.
+- `parseIntentsYaml()` (mit `stripYamlComment()`, `parseYamlScalar()`,
+  `parseYamlInlineList()`): minimaler Parser für genau das vereinbarte
+  YAML-Subset — Liste von Objekten (`- feld: wert`), Skalare (unquoted/doppelt
+  gequotet), Inline-Listen `[a, b]`, eingerückte Strich-Listen unter einem
+  leeren Feld, `#`-Kommentare (ganze Zeile und hinter Werten, ausserhalb von
+  Anführungszeichen). Keine YAML-Bibliothek: die Projektregel erlaubt nur die
+  Node-Standardbibliothek.
+- `ladeIntents()` lädt und validiert; fehlt `catalog/intents.yaml` oder trägt
+  ein Eintrag kein `id`-Feld, bricht sie mit Verweis auf M9 /
+  `04-governance.md` 2.4 ab statt zu crashen.
+- `intentTreffer()` führt jede `suche`-Query über `bewerteTreffer()` — dieselbe
+  Bewertung wie `cmdSearch`/`sucheIds()` — und vereinigt die Treffer
+  dedupliziert (bei Mehrfachtreffern gewinnt der höhere Score).
+- `cmdIntent()`: ohne Argument/`--list` listet id + Frage; `<id>` zeigt
+  Domänen nur informativ (kein Filter — eine Absicht deckt laut Spezifikation
+  mehrere Domänen ab), löst Anker über `findItem()` gegen den **vollen**
+  Katalog auf (auch Massen-Repo/Quarantäne, weil ein Anker eine bewusste
+  Einzelauswahl ist), meldet einen nicht auflösenden Anker als Warnung statt
+  ihn zu verschlucken (Repo-Update kann ihn entfernt/umbenannt haben), hängt
+  die übrigen Treffer nach Score an (`--limit`, Default 25) und dedupliziert
+  sie gegen die bereits gezeigten Anker.
+
+**Nachtrag, nachdem die echte `catalog/intents.yaml` während der Arbeit
+geliefert wurde.** Sie weicht in einem Punkt vom Formatbeispiel ab: einzelne
+`suche`-Strings tragen eingebettete Flags (`"code review --type agent"`,
+`"security audit --domain security"` u.a.). Ohne Behandlung lieferte
+`intent pruefen` 737 Treffer statt der belegten 32
+(`search "code review" --type agent`). Ergänzt: `parseSucheQuery()` trennt
+`--type`/`--domain` je Query heraus; der Filter wirkt nur für **diese eine**
+Suche, nicht für die ganze Absicht. Ein unbekanntes `--flag` in einem
+`suche`-String ist ein Datenfehler in `intents.yaml`, keine Suchabsicht —
+gemeldet („Warnung: unbekanntes Flag …") und aus dem Suchtext entfernt statt
+als Wort gewertet. `intentTreffer()` bekommt dazu nicht mehr vorab um
+Massen-Repos bereinigte Items, sondern nur um Quarantäne bereinigte: jede
+Query entscheidet über ihr eigenes `--domain`, ob sie Massen-Repos sieht —
+genau wie bei `cmdSearch`, wo `--domain` dieselbe Tür öffnet. Ohne das läge
+`rechtliches` (`"Vertragsrecht --domain legal-de"` u.a.) bei null Treffern,
+weil die Domäne `legal-de` fast vollständig aus dem Massen-Repo
+(Klotzkette__claude-fuer-deutsches-recht) besteht.
+
+**Dispatcher/USAGE/INDEX.** `case "intent": cmdIntent(rest); break;` im
+Dispatcher ergänzt — macht `intent` automatisch in `cliOberflaeche()` und
+damit in der aus dem Dispatcher erzeugten Befehlstabelle in `INDEX.md`
+sichtbar, sobald als Nächstes `extract`/`update` läuft (bewusst nicht selbst
+ausgeführt, `INDEX.md` wird nur vom Generator geschrieben). `zweck`-Zeile in
+`befehlsUebersicht()` ergänzt. USAGE-Block um `intent` samt Hinweis auf das
+eingebettete Flag-Verhalten ergänzt.
+
+**Gegenprobe, zwei Fälle.**
+1. Eintrag ohne `id`-Feld in einer Test-YAML (Scratchpad) → `ladeIntents()`
+   bricht mit „… enthält einen Eintrag ohne 'id' …" ab, Exit-Code 1. Danach
+   entfernt.
+2. `catalog/intents.yaml` kurzzeitig mit `--typo` statt `--type` in der
+   `pruefen`-Query überschrieben (vorher per `cp` gesichert) → `intent
+   pruefen` meldete „Warnung: unbekanntes Flag in intents.yaml-Suche \"code
+   review --typo agent\": --typo — ignoriert". Danach aus der Sicherung
+   zurückgespielt.
+   **Korrektur (Prüfauflage 2026-08-10):** Hier stand fälschlich, `git diff
+   --stat -- catalog/intents.yaml` habe „kein Unterschied zum Original"
+   bestätigt. Das ist falsch und wurde von einem Prüfer zurückgewiesen: die
+   Datei war zu diesem Zeitpunkt unversioniert (`git status`: `??
+   catalog/intents.yaml`), `git diff --stat` gegen eine untracked Datei gibt
+   IMMER nichts aus, unabhängig vom tatsächlichen Inhalt — der Befehl belegt
+   in diesem Zustand gar nichts. Ein nachträglicher Beweis über die
+   Sicherungskopie ist nicht mehr führbar: sie wurde im Aufräumschritt
+   direkt nach der Rückspielung bereits gelöscht (bestätigt: unter dem
+   Scratchpad-Pfad existiert keine Kopie mehr), ein Hash-Vergleich damit
+   scheidet aus. Tatsächlich belegbar ist nur die Mechanik der Rückspielung
+   selbst: Die Testmanipulation lief als gezielter `Edit`-Aufruf, der genau
+   einen exakten Substring (`--type` → `--typo` in einer einzigen Zeile)
+   ersetzte — nichts sonst wurde angefasst; die Sicherung war eine
+   Byte-Kopie (`cp`) unmittelbar vor dieser Änderung, die Rückspielung eine
+   Byte-Kopie (`cp`) dieser Sicherung zurück, ohne fremden Eingriff
+   dazwischen. Das macht eine exakte Wiederherstellung plausibel, ist aber
+   kein unabhängiger Nachweis. Als schwaches Indiz danach (2026-08-10,
+   Prüfauflagen-Fix): der jetzt strengere `parseIntentsYaml()`-Parser (Absatz
+   „Randnotiz-Fix" weiter unten in diesem Eintrag) meldet gegen die aktuelle
+   Datei **keine** Formatwarnung — 129 Zeilen, 12 Einträge, `code review --type agent`
+   (nicht `--typo`) unverändert vorhanden —, was für ein sauber
+   wiederhergestelltes Original spricht, es aber nicht kryptografisch
+   beweist. Aktueller Hash zur künftigen Kontrolle festgehalten:
+   `md5(catalog/intents.yaml) = e0ae67cfa8609c3fadbcc7250a20c779` (129
+   Zeilen, Stand dieses Prüf-Fixes). Falls die Datei durch die parallele
+   M9-Arbeit inzwischen ohnehin weiterbearbeitet wurde, ist dieser Hash der
+   neue Referenzpunkt, kein Beleg für Identität mit dem allerersten Stand.
+
+**Randnotiz-Fix (Prüfauflage 2026-08-10).** Zweiter Befund derselben
+adversarialen Prüfung: `parseIntentsYaml()` verschluckte kaputte Feldzeilen
+still. Ein Eintrag mit `suche []` (Doppelpunkt vergessen) parste ohne
+Warnung durch und hinterliess eine leere Suchliste — nicht unterscheidbar
+von einer bewusst leeren Liste; ein Tippfehler bei einem eingebetteten Flag
+(`--typo`, siehe Gegenprobe 2 oben) wurde dagegen gemeldet. Inkonsequent für
+ein von Hand gepflegtes Format. Behoben:
+- `INTENT_FELDER` (neue Konstante) — die fünf bekannten Feldnamen (`id`,
+  `frage`, `suche`, `domains`, `anker`). Jede „key: value"-Zeile mit einem
+  anderen Namen löst jetzt eine Warnung aus statt kommentarlos zu gelten.
+- `parseIntentsYaml()` zählt Zeilennummern mit (Umstellung von
+  `for (const roh of text.split(...))` auf eine indexierte Schleife) und
+  meldet jede Zeile innerhalb eines Eintrags, die weder als bekanntes Feld
+  noch als Listenelement eines offenen Feldes noch als Kommentar/Leerzeile
+  erkennbar ist — Format: „Warnung: catalog/intents.yaml:<Zeile> …". Deckt
+  drei Fälle ab: fehlender Doppelpunkt (`suche []`), unbekannter Feldname,
+  und ein hängendes `- element` ohne zuvor geöffnetes Listenfeld.
+- Jedes geparste Objekt trägt jetzt `_zeile` (die Zeile seines `- id: …`-
+  Starts) — kein Datenfeld der Absicht, sondern die Fundstelle für
+  Abbruchmeldungen. `ladeIntents()`s Abbruch bei fehlendem `id`-Feld nennt
+  jetzt diese Zeile: „catalog/intents.yaml:<Zeile> enthält einen Eintrag
+  ohne 'id' …" statt nur den Dateinamen.
+- Nebenbei behoben: beim Start eines neuen Objekts wird `listKey`/
+  `listIndent` jetzt unbedingt zurückgesetzt, bevor das erste Feld geparst
+  wird. Ohne das hätte ein Eintrag mit fehlerhafter erster Feldzeile (die
+  `feldSetzen()` nie erreicht) das `listKey` des VORHERGEHENDEN Eintrags
+  geerbt — ein `obj[listKey].push(...)` gegen ein auf dem neuen, noch
+  leeren Objekt nicht existierendes Feld hätte den Parser zum Absturz
+  gebracht. Durch die neue Warnpflicht erstmals erreichbar, vorher lief
+  jede erste Feldzeile über `id` und damit immer über `feldSetzen()`.
+
+**Gegenprobe zum Randnotiz-Fix (drei Fälle, gegen Scratchpad-Kopien, echte
+Datei unangetastet).**
+1. `suche []` anstelle von `suche: [...]` in `verstehen` (echte Zeile 27
+   überschrieben in einer Kopie) → „Warnung: catalog/intents.yaml:27 nicht
+   erkannt (weder Feld noch Listenelement) — ignoriert: \"suche []\"",
+   `intent verstehen` läuft weiter (leere Suchliste, Anker unberührt), kein
+   Absturz.
+2. Mini-Testdatei mit drei Fällen gleichzeitig (`cat -n` vorab geprüft):
+   Zeile 4 `unbekanntesfeld: bar` → „Warnung: … unbekanntes Feld
+   \"unbekanntesfeld\" — ignoriert"; Zeile 9 ein Eintrag ohne `id` → Abbruch
+   „catalog/intents.yaml:9 enthält einen Eintrag ohne 'id' …", Exit-Code 1;
+   Zeile 15 `- hängendes-element-ohne-feld` ohne vorausgehendes offenes
+   Listenfeld → „Warnung: … Listenelement ohne offenes Feld — ignoriert".
+   Alle drei Zeilennummern stimmten exakt mit `cat -n` überein.
+3. Gegen die echte, unveränderte `catalog/intents.yaml`: **keine** Warnung
+   — das bestehende Format ist vollständig konform zum jetzt strengeren
+   Parser.
+Beide Testdateien lagen ausschliesslich im Scratchpad und wurden danach
+gelöscht; `catalog/intents.yaml` wurde für diesen Fix nur per temporärem
+Pfad-Override von `INTENTS_YAML` gelesen, nie geschrieben.
+
+**Katalog.** `catalog/index.json` unverändert, kein `extract`/`update`
+gelaufen. `catalog/intents.yaml` stammt aus dem parallelen M9-Auftrag, hier
+weder angelegt noch inhaltlich verändert (nur für die Gegenprobe zu Fall 2
+oben kurz überschrieben und zurückgespielt, siehe die Korrektur davor).
+
+**Geprüft (nach Erstlieferung und erneut nach beiden Prüfauflagen-Fixes,
+jeweils identisches Ergebnis).** `node --check tools/harness.mjs`; `lint
+--all` (0 Befunde: 0 hoch, 0 mittel, 0 niedrig); `eval --no-save` (12 von 12
+Pflichtfällen bestanden); alle Subcommands ausser `sync`/`update`/`extract`
+(bewusst nicht ausgeführt) — `stats`, `search`, `show`, `install --dry-run`,
+`uninstall --dry-run`, `list --to`, `bootstrap --to`, `knowledge`,
+`knowledge --list`; `intent` (12 Einträge gelistet, keine Formatwarnung),
+`intent verstehen` (3 Anker lösen auf), `intent pruefen` (`--type agent` auf
+der ersten Query, 141 weitere + 3 Anker, isolierte Teilquery per `search
+"code review" --type agent` mit 32 Treffern gegengeprüft), `intent
+absichern` (`--domain security`), `intent rechtliches` (deutsche
+Umlaut-Queries + `--domain legal-de` öffnet das Massen-Repo, 154 weitere + 3
+Anker), `intent unbekannt-xyz` (Exit-Code 1, Liste der 12 gültigen ids); die
+drei Randnotiz-Gegenproben oben.
+
 ## [2026-08-10] add | `search --quarantine`: alle Quarantäne-Einträge mit Grund auflisten, ohne neuen Subcommand
 
 **Anlass.** Prüfer-Nebenbefund desselben Tages: kein Befehl listete alle

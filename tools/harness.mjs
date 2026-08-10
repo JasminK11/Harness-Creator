@@ -748,6 +748,7 @@ function befehlsUebersicht() {
   const zweck = {
     search:    ["Katalog durchsuchen", "der übliche Einstieg"],
     show:      ["Detail zu einem Baustein", "vor dem Installieren"],
+    intent:    ["Absicht statt Stichwort suchen", "hinterlegte Suchen + Anker aus catalog/intents.yaml, M9"],
     install:   ["Baustein(e) ins Zielprojekt kopieren", "meldet danach, was wirkt und was nicht"],
     uninstall: ["Bausteine wieder entfernen", "genau die Dateien aus dem Manifest, nichts sonst"],
     bootstrap: ["nur die Zugriffsregel schreiben", "in die CLAUDE.md eines Projekts, ohne Bausteine"],
@@ -1133,6 +1134,32 @@ function bewerteTreffer(items, frage) {
   return { scored, relaxed, terms, gefiltert, unerfuellbar };
 }
 
+/**
+ * Eine Trefferzeile im Format von `search` — ausgelagert, damit `cmdIntent`
+ * (Absichts-Suche, M9) dieselbe Zeilenform benutzt statt sie nachzubauen. Zwei
+ * Kopien derselben Druckausgabe wären dieselbe Drift-Gefahr wie zwei Kopien der
+ * Bewertungslogik: eine Änderung am Format (neue Zeile, andere Kürzung) müsste
+ * zweimal identisch nachgezogen werden, und das prüft niemand zuverlässig.
+ */
+function druckeTreffer(i) {
+  console.log(`${i.type.padEnd(7)} ${i.id}`);
+  console.log(`        ${short(i.description, 150) || "(keine Beschreibung)"}`);
+  const lade = ladeBytes(i);
+  // Bei einer einzelnen Datei sind beide Zahlen dieselbe — dann nicht zweimal
+  // dasselbe hinschreiben, sonst wird die Zeile länger und sagt weniger.
+  const groesse = lade === i.bytes
+    ? `${kb(i.bytes)} KB · ${i.files} Datei(en)`
+    : `${kb(lade)} KB lädt · ${kb(i.bytes)} KB gesamt in ${i.files} Datei(en)`;
+  // Vor der Auswahl sichtbar, nicht erst an der Installationsgrenze: wer zwischen
+  // zwei gleichwertigen Bausteinen wählt, soll wissen, dass einer davon Code
+  // mitbringt, den Claude Code später von selbst startet.
+  const codeHinweis = i.type === "hook" ? "Hook — startet von selbst"
+    : (i.exec > 0 ? `${i.exec} ausführbare Datei(en)` : "");
+  console.log(`        ${groesse} · ${i.domains.join(", ")}${codeHinweis ? " · " + codeHinweis : ""}`);
+  if (ladeBytesBelegt(i) && lade > ENTRY_GROSS) console.log(`        grosse ${path.basename(i.entry || "SKILL.md")} — steht ab dem Greifen dauerhaft im Kontext`);
+  console.log("");
+}
+
 function cmdSearch(argv) {
   const flags = parseFlags(argv);
   const query = flags._.join(" ").toLowerCase().trim();
@@ -1215,24 +1242,7 @@ function cmdSearch(argv) {
     return;
   }
   console.log(`${scored.length} Treffer für "${query}"${scored.length > limit ? ` (zeige ${limit})` : ""}:\n`);
-  for (const { i } of scored.slice(0, limit)) {
-    console.log(`${i.type.padEnd(7)} ${i.id}`);
-    console.log(`        ${short(i.description, 150) || "(keine Beschreibung)"}`);
-    const lade = ladeBytes(i);
-    // Bei einer einzelnen Datei sind beide Zahlen dieselbe — dann nicht zweimal
-    // dasselbe hinschreiben, sonst wird die Zeile länger und sagt weniger.
-    const groesse = lade === i.bytes
-      ? `${kb(i.bytes)} KB · ${i.files} Datei(en)`
-      : `${kb(lade)} KB lädt · ${kb(i.bytes)} KB gesamt in ${i.files} Datei(en)`;
-    // Vor der Auswahl sichtbar, nicht erst an der Installationsgrenze: wer zwischen
-    // zwei gleichwertigen Bausteinen wählt, soll wissen, dass einer davon Code
-    // mitbringt, den Claude Code später von selbst startet.
-    const codeHinweis = i.type === "hook" ? "Hook — startet von selbst"
-      : (i.exec > 0 ? `${i.exec} ausführbare Datei(en)` : "");
-    console.log(`        ${groesse} · ${i.domains.join(", ")}${codeHinweis ? " · " + codeHinweis : ""}`);
-    if (ladeBytesBelegt(i) && lade > ENTRY_GROSS) console.log(`        grosse ${path.basename(i.entry || "SKILL.md")} — steht ab dem Greifen dauerhaft im Kontext`);
-    console.log("");
-  }
+  for (const { i } of scored.slice(0, limit)) druckeTreffer(i);
   if (scored.length > limit) console.log(`... ${scored.length - limit} weitere. Mit --limit N mehr anzeigen.`);
 }
 
@@ -1295,6 +1305,283 @@ function cmdShow(argv) {
     console.log(files.slice(0, 40).join("\n"));
     if (files.length > 40) console.log(`... ${files.length - 40} weitere`);
   }
+}
+
+// ---------------------------------------------------------------- intent
+
+/** M9 (knowledge/04-governance.md, Abschnitt 2.4): eine Absichts-Ebene neben
+ *  den Domänen, von Hand gepflegt statt aus dem Katalog berechnet — sie
+ *  überlebt deshalb jedes `extract`, das `index.json` komplett neu schreibt. */
+const INTENTS_YAML = path.join(CATALOG_DIR, "intents.yaml");
+
+/** Entfernt einen `#`-Kommentar von einer YAML-Zeile, aber nur ausserhalb von
+ *  doppelten Anführungszeichen — sonst würde ein '#' innerhalb eines Frage- oder
+ *  Suchtexts (z.B. "Ticket #42") die Zeile an der falschen Stelle abschneiden. */
+function stripYamlComment(line) {
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') inQuotes = !inQuotes;
+    else if (c === "#" && !inQuotes) return line.slice(0, i);
+  }
+  return line;
+}
+
+const parseYamlScalar = (raw) => {
+  const v = raw.trim();
+  return /^".*"$/.test(v) ? v.slice(1, -1) : v;
+};
+
+/** `[a, "b c", d]` — Elemente sind im Subset frei von Kommas, ein simpler
+ *  Komma-Split reicht deshalb; jedes Element läuft danach durch denselben
+ *  Skalar-Parser wie ein einzelner Wert (quotet oder nicht). */
+function parseYamlInlineList(raw) {
+  const inner = raw.trim().replace(/^\[/, "").replace(/\]$/, "").trim();
+  return inner ? inner.split(",").map(parseYamlScalar) : [];
+}
+
+/** Bekannte Feldnamen in intents.yaml. Jede andere Zeile innerhalb eines
+ *  Eintrags — ob ein unbekannter Feldname, eine vergessene Doppelpunkt-Zeile
+ *  wie `suche []`, oder ein Listenelement ohne offenes Feld — ist ein
+ *  Format-Fehler in dieser von Hand gepflegten Datei, kein neuer Sonderfall,
+ *  und wird gemeldet statt still verschluckt. Ohne diese Meldung wäre eine
+ *  vergessene Doppelpunkt-Zeile nicht von einer bewusst leeren Liste zu
+ *  unterscheiden — beide sähen in `intent <id>` gleich aus: null Treffer über
+ *  dieses Feld, ohne jeden Hinweis warum. */
+const INTENT_FELDER = new Set(["id", "frage", "suche", "domains", "anker"]);
+
+/**
+ * Minimaler YAML-Parser für GENAU das Subset aus `catalog/intents.yaml`: eine
+ * Liste von Objekten (`- feld: wert`), Skalare (unquoted oder doppelt gequotet),
+ * Inline-Listen (`[a, b]`), eingerückte Strich-Listen unter einem leeren Feld
+ * (`anker:` gefolgt von `  - id`) und `#`-Kommentare (ganze Zeile und hinter
+ * einem Wert). Kein generisches YAML: die Projektregel verbietet Abhängigkeiten
+ * ausserhalb der Node-Standardbibliothek, und eine echte YAML-Bibliothek wäre
+ * damit die einzige Fremdabhängigkeit im gesamten Werkzeug — für ein Format, das
+ * hier nur eine flache Liste mit drei Feldtypen trägt.
+ *
+ * Jedes Objekt trägt zusätzlich `_zeile` (die Zeile seines `- id: ...`-Starts) —
+ * kein Datenfeld der Absicht, sondern die Fundstelle für Abbruchmeldungen in
+ * `ladeIntents()`, wenn genau diesem Eintrag ein Pflichtfeld fehlt.
+ */
+function parseIntentsYaml(text) {
+  const out = [];
+  const warnen = (nr, text) => console.log(`  Warnung: catalog/intents.yaml:${nr} ${text}`);
+  let obj = null;
+  let listKey = null;   // Feld, das gerade eine eingerückte Strich-Liste sammelt
+  let listIndent = -1;  // Einrückung der Feld-Zeile, die diese Liste eröffnet hat
+
+  const feldSetzen = (key, wert, indent) => {
+    const w = wert.trim();
+    if (!w) {
+      // Leerer Wert: das Feld ist eine eingerückte Strich-Liste, die erst in
+      // den Folgezeilen kommt (Beispiel: `anker:`).
+      obj[key] = [];
+      listKey = key; listIndent = indent;
+    } else if (/^\[.*\]$/.test(w)) {
+      obj[key] = parseYamlInlineList(w);
+      listKey = null; listIndent = -1;
+    } else {
+      obj[key] = parseYamlScalar(w);
+      listKey = null; listIndent = -1;
+    }
+  };
+
+  const zeilen = text.split(/\r?\n/);
+  for (let n = 0; n < zeilen.length; n++) {
+    const nr = n + 1;
+    const zeile = stripYamlComment(zeilen[n]);
+    if (!zeile.trim()) continue;
+    const indent = zeile.match(/^ */)[0].length;
+    const inhalt = zeile.trim();
+
+    if (indent === 0) {
+      if (!inhalt.startsWith("-")) continue; // Zeilen ausserhalb der Liste ignorieren
+      if (obj) out.push(obj);
+      obj = { _zeile: nr };
+      // Neues Objekt: eine Strich-Liste, die noch zum VORIGEN Eintrag gehörte,
+      // darf hier nicht weiterlaufen — sonst würde eine dangling Listen-Zeile
+      // unter diesem neuen (evtl. fehlerhaften) Eintrag auf ein Feld zeigen,
+      // das auf `obj` gar nicht existiert.
+      listKey = null; listIndent = -1;
+      const feld = inhalt.replace(/^-\s*/, "").match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
+      if (feld && INTENT_FELDER.has(feld[1])) feldSetzen(feld[1], feld[2], 2);
+      else if (feld) warnen(nr, `unbekanntes Feld "${feld[1]}" — ignoriert`);
+      else warnen(nr, `nicht als Feld erkannt (erwartet "- id: ...") — ignoriert: "${inhalt}"`);
+      continue;
+    }
+    if (!obj) continue; // Zeilen vor dem ersten "- " ignorieren
+
+    if (inhalt.startsWith("-")) {
+      // Element einer eingerückten Strich-Liste — gehört zum zuletzt geöffneten
+      // Feld, solange die Einrückung tiefer liegt als die der Feld-Zeile.
+      if (listKey && indent > listIndent) obj[listKey].push(parseYamlScalar(inhalt.replace(/^-\s*/, "")));
+      else warnen(nr, `Listenelement ohne offenes Feld — ignoriert: "${inhalt}"`);
+      continue;
+    }
+
+    const feld = inhalt.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
+    if (feld && INTENT_FELDER.has(feld[1])) feldSetzen(feld[1], feld[2], indent);
+    else if (feld) warnen(nr, `unbekanntes Feld "${feld[1]}" — ignoriert`);
+    else warnen(nr, `nicht erkannt (weder Feld noch Listenelement) — ignoriert: "${inhalt}"`);
+  }
+  if (obj) out.push(obj);
+  return out;
+}
+
+/** Lädt und validiert `catalog/intents.yaml`. Bricht mit klarer Meldung ab statt
+ *  zu crashen, wenn die Datei fehlt — sie entsteht in einem eigenen Auftrag (M9)
+ *  und kann zur Laufzeit dieses Subcommands noch nicht existieren. */
+function ladeIntents() {
+  if (!fs.existsSync(INTENTS_YAML)) {
+    die("catalog/intents.yaml fehlt. Die Absichts-Ebene aus M9 (knowledge/04-governance.md, " +
+      "Abschnitt 2.4) ist noch nicht angelegt oder liegt woanders — 'intent' braucht diese Datei.");
+  }
+  const eintraege = parseIntentsYaml(safeRead(INTENTS_YAML));
+  for (const e of eintraege) {
+    if (!e.id) die(`catalog/intents.yaml:${e._zeile} enthält einen Eintrag ohne 'id' — Datei-Format geprüft?`);
+    // Felder fehlen dürfen (z.B. ein Eintrag ohne Anker); nur der Typ muss stimmen,
+    // sonst bricht die Vereinigung weiter unten an einer falschen Annahme.
+    e.suche = Array.isArray(e.suche) ? e.suche : [];
+    e.domains = Array.isArray(e.domains) ? e.domains : [];
+    e.anker = Array.isArray(e.anker) ? e.anker : [];
+  }
+  return eintraege;
+}
+
+/** Flaggen, die ein einzelner `suche`-String in intents.yaml tragen darf —
+ *  dieselben zwei wie bei `search`, mit derselben Bedeutung, aber nur für GENAU
+ *  diese eine Query wirksam, nicht für die ganze Absicht. Warum überhaupt
+ *  nötig: "code review" allein liefert Hunderte Treffer über alle Typen hinweg;
+ *  der eingebettete Filter (`code review --type agent`) ist Wissen der
+ *  Redakteurin, das sonst verloren ginge, wenn `intent` den String nur als
+ *  Fliesstext an `bewerteTreffer()` weiterreichte. */
+const INTENT_QUERY_FLAGS = new Set(["type", "domain"]);
+
+/**
+ * Trennt `--type`/`--domain` aus einem `suche`-String heraus und gibt den
+ * bereinigten Suchtext plus die erkannten Filter zurück. Ein `--`-Token, das
+ * keins von beiden ist (Tippfehler in intents.yaml, z.B. `--typ`), ist ein
+ * Datenfehler in der Datei, kein Suchwort — würde es als Text durchgereicht,
+ * verfälschte es die UND-Suche in `bewerteTreffer()` mit einem Term, den kein
+ * Baustein je trägt, und die Query liefe fälschlich auf 0 Treffer.
+ */
+function parseSucheQuery(query) {
+  const tokens = String(query).split(/\s+/).filter(Boolean);
+  const rest = [];
+  const filter = {};
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    if (!t.startsWith("--")) { rest.push(t); continue; }
+    const name = t.slice(2);
+    if (INTENT_QUERY_FLAGS.has(name) && tokens[i + 1] && !tokens[i + 1].startsWith("--")) {
+      filter[name] = tokens[++i];
+    } else {
+      console.log(`  Warnung: unbekanntes Flag in intents.yaml-Suche "${query}": ${t} — ignoriert`);
+    }
+  }
+  return { text: rest.join(" "), type: filter.type, domain: filter.domain };
+}
+
+/**
+ * Führt jede hinterlegte Suche einer Absicht über `bewerteTreffer()` — dieselbe
+ * Bewertung, die auch `cmdSearch` und `sucheIds()` (eval) benutzen — und
+ * vereinigt die Treffer dedupliziert. Eine eigene Such- oder Score-Logik für
+ * `intent` wäre dieselbe Drift-Gefahr, die `sucheIds()` schon vermeidet: jede
+ * Änderung an Gewichten oder Filtern müsste an mehreren Stellen identisch
+ * nachgezogen werden, ungeprüft.
+ * Taucht dieselbe ID unter mehreren Suchen auf, gewinnt der höhere Score — das
+ * ist die Formulierung, die am besten zu diesem Baustein passt.
+ *
+ * `items` ist hier nur um Quarantäne bereinigt, NICHT um Massen-Repos: ob eine
+ * einzelne Query Massen-Repos sieht, entscheidet ihr eigenes `--domain` — exakt
+ * wie bei `cmdSearch`, wo `--domain` dieselbe Tür öffnet. Ohne das läge
+ * "rechtliches" (`Vertragsrecht --domain legal-de`) bei null Treffern, weil
+ * `legal-de` fast vollständig aus dem Massen-Repo besteht.
+ */
+function intentTreffer(items, suchen) {
+  const merged = new Map();
+  for (const roh of suchen) {
+    const { text, type, domain } = parseSucheQuery(roh);
+    let pool = items;
+    if (!domain) pool = pool.filter((i) => !i.bulk);
+    if (type) pool = pool.filter((i) => i.type === type);
+    if (domain) pool = pool.filter((i) => i.domains.includes(domain));
+    const { scored } = bewerteTreffer(pool, text);
+    for (const t of scored) {
+      const bisher = merged.get(t.i.id);
+      if (!bisher || t.score > bisher.score) merged.set(t.i.id, t);
+    }
+  }
+  return [...merged.values()].sort((a, b) => b.score - a.score || b.hits - a.hits || a.i.id.localeCompare(b.i.id));
+}
+
+function cmdIntent(argv) {
+  const flags = parseFlags(argv);
+  const arg = flags._[0];
+
+  if (!arg || flags.list) {
+    const eintraege = ladeIntents();
+    console.log(`${eintraege.length} Absichten in catalog/intents.yaml:\n`);
+    for (const e of eintraege) console.log(`  ${e.id.padEnd(18)} ${e.frage}`);
+    console.log("\nDetail: node tools/harness.mjs intent <id>");
+    return;
+  }
+
+  const eintraege = ladeIntents();
+  const eintrag = eintraege.find((e) => e.id === arg);
+  if (!eintrag) {
+    // Exit-Code ungleich 0, aber kein die() vor der Liste — wer die id vertippt
+    // hat, soll die gültigen sofort sehen, nicht erst nachschlagen müssen.
+    console.error(`FEHLER: Unbekannte Absicht "${arg}".`);
+    console.error(`Gültige ids: ${eintraege.map((e) => e.id).join(", ")}`);
+    process.exit(1);
+  }
+
+  console.log(`Absicht ${eintrag.id}`);
+  console.log(`  ${eintrag.frage}`);
+  // Domains sind hier bewusst NUR Anzeige, kein Filter: eine Absicht deckt laut
+  // Spezifikation mehrere Domänen ab (M9), ein harter Filter würde genau die
+  // Treffer wegschneiden, die die Absichts-Ebene erst zusammenführen soll.
+  if (eintrag.domains.length) console.log(`Domänen (informativ, kein Filter): ${eintrag.domains.join(", ")}`);
+  console.log("");
+
+  const cat = loadCatalog();
+  // Quarantäne bleibt immer aussen vor — `intent` kennt kein --all. Ob eine
+  // einzelne Query Massen-Repos sieht, entscheidet ihr eigenes eingebettetes
+  // --domain (siehe intentTreffer/parseSucheQuery), nicht dieser Filter hier.
+  const items = cat.items.filter((i) => !i.quarantaene);
+  const treffer = intentTreffer(items, eintrag.suche);
+  const restById = new Map(treffer.map((t) => [t.i.id, t]));
+
+  if (eintrag.anker.length) {
+    console.log(`Anker (${eintrag.anker.length}, immer vorn, unabhängig vom Score):\n`);
+    for (const ankerId of eintrag.anker) {
+      // `findItem` löst gegen den VOLLEN Katalog auf (auch bulk/Quarantäne):
+      // ein Anker ist eine bewusste Einzelauswahl, keine Trefferliste, die den
+      // Standardfiltern unterliegt.
+      const i = findItem(cat, ankerId);
+      if (!i) {
+        // Nach einem `update` kann ein Quell-Repo einen Baustein umbenannt oder
+        // entfernt haben — das gehört gemeldet, nicht still verschluckt: sonst
+        // hält jemand die verbliebenen Anker fälschlich für die volle Liste.
+        console.log(`  ACHTUNG: Anker löst nicht im Katalog auf (Repo entfernt/umbenannt?): ${ankerId}\n`);
+        continue;
+      }
+      druckeTreffer(i);
+      restById.delete(i.id); // steht schon oben — unten nicht doppelt zeigen
+    }
+  }
+
+  const rest = [...restById.values()];
+  const limit = Number(flags.limit || 25);
+  if (!rest.length) {
+    console.log("Keine weiteren Treffer über die hinterlegten Suchen.");
+    return;
+  }
+  console.log(`${rest.length} weitere Treffer${rest.length > limit ? ` (zeige ${limit})` : ""}:\n`);
+  for (const { i } of rest.slice(0, limit)) druckeTreffer(i);
+  if (rest.length > limit) console.log(`... ${rest.length - limit} weitere. Mit --limit N mehr anzeigen.`);
 }
 
 /** Zielverzeichnis nach Typ: so, wie Claude Code die Bausteine tatsächlich lädt. */
@@ -3524,6 +3811,17 @@ harness.mjs — Harness-Bibliothek
                  grenzen weiter ein. Für "stimmt der Bestand?" — stats nennt nur
                  die Zahl.
   node tools/harness.mjs show <id> [--head N]      Detail zu einem Baustein
+  node tools/harness.mjs intent                    Absichten aus catalog/intents.yaml
+  node tools/harness.mjs intent --list              auflisten (id + Frage) — M9,
+                                                   knowledge/04-governance.md 2.4
+  node tools/harness.mjs intent <id> [--limit N]   die hinterlegten Suchen dieser
+                 Absicht ausführen (dieselbe Bewertung wie search), Anker-Bausteine
+                 immer vorn, danach die übrigen Treffer nach Score. Unbekannte id:
+                 Fehlermeldung + Liste der gültigen ids, Exit-Code 1. Ein einzelner
+                 suche-String darf ein eingebettetes --type/--domain tragen (wirkt
+                 nur für diese eine Query, gleiche Bedeutung wie bei search); ein
+                 unbekanntes --flag darin ist ein Datenfehler in intents.yaml und
+                 wird gemeldet statt als Suchwort gewertet.
   node tools/harness.mjs install <id...> --to DIR  Baustein(e) ins Zielprojekt kopieren
        [--force] [--dry-run] [--no-claude-md]
        [--yes]   Rückfrage überspringen. Vor dem Kopieren wird gemeldet, was der
@@ -3592,6 +3890,7 @@ switch (cmd) {
   case "update": cmdUpdate(); break;
   case "search": cmdSearch(rest); break;
   case "show": cmdShow(rest); break;
+  case "intent": cmdIntent(rest); break;
   case "install": cmdInstall(rest); break;
   case "uninstall": cmdUninstall(rest); break;
   case "bootstrap": cmdBootstrap(rest); break;

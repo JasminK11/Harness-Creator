@@ -1,0 +1,129 @@
+# intents.yaml — Absichts-Ebene der Harness-Bibliothek (Massnahme M9)
+#
+# Zweck: Eine Ebene neben den Domänen. Domänen sortieren Bausteine nach Stack
+# (frontend, backend, security, ...); diese Datei sortiert nach dem, was
+# jemand vorhat, bevor er weiss, welche Domäne dafür zuständig ist — "ich
+# übernehme eine fremde Codebasis" statt "general/docs/meta". Jede Absicht
+# bündelt Formulierungen der Frage (frage), Katalogvokabular für die Suche
+# (suche), die naheliegenden Domänen (domains) und die Bausteine, die für
+# diese Absicht immer als Erstes geprüft werden sollten (anker).
+#
+# Pflege: Von Hand gepflegt. `node tools/harness.mjs extract` baut
+# catalog/index.json und catalog/by-domain/* aus den Quell-Repos neu auf und
+# überschreibt dabei alles, was aus den Repos selbst stammt — diese Datei
+# nicht, weil sie als eigenständige Datei ausserhalb dieses Laufs liegt. Wird
+# eine Anker-ID durch ein Repo-Update ungültig (Umbenennung, Entfernung),
+# meldet `node tools/harness.mjs lint` das nicht automatisch für diese Datei;
+# von Hand mit `node tools/harness.mjs show <id>` nachprüfen, insbesondere
+# nach jedem `update`.
+#
+# Formatreferenz: knowledge/04-governance.md, Abschnitt 2.4.
+# Erstellt: 2026-08-10, claude-fable-5. Jede Anker-ID und jede Trefferzahl in
+# diesem Lauf per `node tools/harness.mjs search|show` verifiziert — nichts
+# aus dem Gedächtnis ergänzt.
+
+- id: verstehen
+  frage: "Ich übernehme eine fremde Codebasis und weiss nicht, wo ich anfange."
+  suche: ["codebase onboarding", "architecture map", "code tour", "legacy codebase understanding"]
+  domains: [general, docs, meta]
+  anker:
+    - affaan-m__ecc/skill/codebase-onboarding
+    - anthropics__claude-plugins-official/agent/legacy-analyst
+    - affaan-m__ecc/skill/code-tour
+
+- id: bauen
+  frage: "Ich schreibe neuen Code in Stack X und will die Konventionen treffen."
+  suche: ["coding conventions patterns", "coding standards", "search-first", "python patterns"]
+  domains: [frontend, backend, data-ai]
+  anker:
+    - affaan-m__ecc/skill/coding-standards
+    - affaan-m__ecc/skill/search-first
+    - affaan-m__ecc/skill/python-patterns
+
+- id: pruefen
+  frage: "Ich brauche Review-Qualität, die nicht von meiner Tagesform abhängt."
+  suche: ["code review --type agent", "review quality --domain testing", "independent review second opinion"]
+  domains: [security, testing, general]
+  anker:
+    - affaan-m__ecc/agent/code-reviewer
+    - affaan-m__ecc/agent/pr-test-analyzer
+    - affaan-m__ecc/skill/santa-method
+
+- id: absichern
+  frage: "Ich will nicht, dass Secrets, Injections oder PII durchrutschen."
+  suche: ["security audit --domain security", "secrets credential leak", "pii redaction"]
+  domains: [security]
+  anker:
+    - anthropics__claude-plugins-official/agent/security-auditor
+    - msitarzewski__agency-agents/agent/secrets-credential-hygiene-engineer
+    - affaan-m__ecc/agent/opensource-sanitizer
+
+- id: testen
+  frage: "Tests fehlen, brechen oder flackern."
+  suche: ["tdd testing --domain testing", "flaky test quarantine", "e2e end to end testing"]
+  domains: [testing]
+  anker:
+    - affaan-m__ecc/agent/tdd-guide
+    - affaan-m__ecc/agent/e2e-runner
+
+- id: ausliefern
+  frage: "Mein Deployment bricht / ich muss auf Produktion."
+  suche: ["deployment ci --domain devops", "vercel deployment rollback", "docker patterns container --domain devops"]
+  domains: [devops]
+  anker:
+    - affaan-m__ecc/skill/deployment-patterns
+    - affaan-m__ecc/skill/docker-patterns
+
+- id: diagnostizieren
+  frage: "Etwas ist kaputt und ich weiss nicht warum."
+  suche: ["debug root cause", "build error resolver", "silent failure swallowed error"]
+  domains: [general, backend, devops]
+  anker:
+    - affaan-m__ecc/agent/build-error-resolver
+    - affaan-m__ecc/agent/silent-failure-hunter
+    - affaan-m__ecc/skill/terminal-ops
+
+- id: umbauen
+  frage: "Der Code muss umgezogen, entkernt oder migriert werden."
+  suche: ["refactor cleanup dead code", "database migration schema --domain backend", "modernize legacy migration"]
+  domains: [general, backend]
+  anker:
+    - affaan-m__ecc/agent/refactor-cleaner
+    - affaan-m__ecc/skill/database-migrations
+    - anthropics__claude-plugins-official/command/modernize-transform
+
+- id: dokumentieren
+  frage: "Das Wissen muss aus den Köpfen raus."
+  suche: ["documentation update codemap --domain docs", "architecture decision records", "handoff"]
+  domains: [docs, product]
+  anker:
+    - affaan-m__ecc/agent/doc-updater
+    - affaan-m__ecc/skill/architecture-decision-records
+    - mattpocock__skills/skill/handoff
+
+- id: harness-bauen
+  frage: "Ich richte Claude Code für dieses Projekt ein."
+  suche: ["claude code setup --domain meta", "hook development create hook", "create new agent subagent"]
+  domains: [meta]
+  anker:
+    - anthropics__claude-plugins-official/skill/claude-automation-recommender
+    - anthropics__claude-plugins-official/skill/hook-development
+    - anthropics__claude-plugins-official/skill/agent-development
+
+- id: vermarkten
+  frage: "Das Produkt muss gefunden und verstanden werden."
+  suche: ["seo audit --domain seo", "content marketing brand --domain product", "positioning launch campaign"]
+  domains: [seo, product, media]
+  anker:
+    - AgriciDaniel__claude-seo/skill/seo-audit
+    - AgriciDaniel__claude-seo/agent/seo-content
+    - affaan-m__ecc/skill/marketing-campaign
+
+- id: rechtliches
+  frage: "Deutsche Rechtsfragen."
+  suche: ["Vertragsrecht --domain legal-de", "DSGVO Datenschutz --domain legal-de", "Arbeitsrecht Kündigung --domain legal-de"]
+  domains: [legal-de]
+  anker:
+    - Klotzkette__claude-fuer-deutsches-recht/plugin/vertragsrecht
+    - Klotzkette__claude-fuer-deutsches-recht/plugin/arbeitsrecht
+    - Klotzkette__claude-fuer-deutsches-recht/plugin/datenschutzrecht
