@@ -1,6 +1,6 @@
 # Domäne: data-ai
 
-197 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+198 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (63)
 
@@ -97,20 +97,21 @@
 | `anthropics__claude-plugins-official/command/modernize-reimagine` | Multi-agent greenfield rebuild — extract specs from legacy, design AI-native, scaffold & validate with HITL | 7 |
 | `anthropics__claude-plugins-official/command/new-sdk-app` | Create and setup a new Claude Agent SDK application | 8 |
 
-## hook (10)
+## hook (11)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/config-protection` | ESLint (legacy + v9 flat config, JS/TS/MJS/CJS) | 5 |
-| `affaan-m__ecc/hook/cost-tracker` | Approximate per-1M-token billing rates (USD). | 8 |
-| `affaan-m__ecc/hook/ecc-context-monitor` | Context warnings (skip if no context data) | 9 |
-| `affaan-m__ecc/hook/ecc-statusline` | Write context % back to bridge for context-monitor | 5 |
-| `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
-| `affaan-m__ecc/hook/pre-compact` | (.*) not (.+): an explicit but empty header (`**Worktree:**` / `**Worktree:**\n`) | 7 |
-| `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | Shared state-dir resolver: SECURITY_WARNINGS_STATE_DIR → CLAUDE_CONFIG_DIR/security | 39 |
-| `anthropics__claude-plugins-official/hook/extensibility` | ── caps ───────────────────────────────────────────────────────────────────── | 12 |
-| `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
-| `anthropics__claude-plugins-official/hook/userpromptsubmit` | Add plugin root to Python path for imports | 1 |
+| `affaan-m__ecc/hook/config-protection` | Config Protection Hook | 5 |
+| `affaan-m__ecc/hook/cost-tracker` | Cost Tracker Hook (v2) | 8 |
+| `affaan-m__ecc/hook/ecc-context-monitor` | ECC Context Monitor — PostToolUse hook | 9 |
+| `affaan-m__ecc/hook/ecc-statusline` | ECC Statusline — statusLine command | 5 |
+| `affaan-m__ecc/hook/insaits-security-monitor` | InsAIts Security Monitor -- PreToolUse Hook for Claude Code | 8 |
+| `affaan-m__ecc/hook/plan-canvas-sessions` | Plan Canvas open-session surfacing (SessionStart) | 2 |
+| `affaan-m__ecc/hook/pre-compact` | PreCompact Hook - Save LLM-generated summary before context compaction | 7 |
+| `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | SessionStart bootstrap: ensure claude_agent_sdk is importable for the | 39 |
+| `anthropics__claude-plugins-official/hook/extensibility` | Project-specific extensibility for the security-guidance plugin. | 12 |
+| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 115 |
+| `anthropics__claude-plugins-official/hook/userpromptsubmit` | UserPromptSubmit hook executor for hookify plugin. | 1 |
 
 ## plugin (11)
 

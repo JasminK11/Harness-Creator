@@ -1,6 +1,6 @@
 # Domäne: frontend
 
-80 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+81 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (19)
 
@@ -41,11 +41,12 @@
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-plan` | Generate a concrete design system (tokens, style, type, UX) before building UI | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-review` | Run the 7-phase design review (WCAG AA, responsive, interaction) on a page or URL | 1 |
 
-## hook (1)
+## hook (2)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `anthropics__claude-plugins-official/hook/patterns` | Security patterns configuration | 18 |
+| `affaan-m__ecc/hook/design-quality-check` | PostToolUse hook: lightweight frontend design-quality reminder. | 4 |
+| `anthropics__claude-plugins-official/hook/patterns` | Regex-based security pattern definitions for the security-guidance plugin. | 18 |
 
 ## plugin (2)
 

@@ -242,7 +242,7 @@ Wer entscheidet was: **Der Agent entscheidet, aber nach einer Regel, die im Proj
 
 ## Teil D — Übernahme-Empfehlung für unsere Bibliothek
 
-Stand bei uns: `sources.txt` (14 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.642 Bausteine, davon 1.084 im Standardzugriff (nach der M2-Quarantäne von 15 beschreibungslosen Bausteinen am 2026-08-10).
+Stand bei uns: `sources.txt` (14 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.642 Bausteine, davon 1.091 im Standardzugriff (1.099 vor M2, 1.084 direkt nach der M2-Quarantäne am 2026-08-10; nach der Erweiterung der Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-Felder am selben Tag tragen 7 der 15 quarantänisierten Bausteine wieder ihre echte Beschreibung, Quarantäne jetzt 8 statt 15).
 
 Priorisiert, mit ehrlicher Einschätzung:
 

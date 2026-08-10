@@ -548,14 +548,75 @@ function isClaudeHook(full, base) {
 }
 
 function hookDescription(text) {
+  // Reihenfolge (nach Frontmatter, das im Aufrufer immer zuerst greift):
+  //   1. JSON-Top-Level-"description" — JSON kennt keine Kommentare, das Feld
+  //      ist der einzige Ort, an dem eine hooks.json sich beschreiben kann.
+  //   2. Blockkommentar/Docstring am Dateianfang (leadingBlockDescription) —
+  //      VOR der Zeilenkommentar-Suche, denn wer seine Datei per JSDoc oder
+  //      Docstring dokumentiert, hat den ersten #/-Zeilenkommentar tief im
+  //      Rumpf, und der ist dort ein Abschnittstrenner, kein Summary: am
+  //      Bestand belegt durch security_reminder_hook.py ("# Architecture"),
+  //      diffstate.py ("====="), review_api.py ("-----"). Ein Zeilenkommentar
+  //      VOR dem Block gewinnt weiterhin, weil der Block dann nicht mehr am
+  //      Dateianfang steht — bestehende gute Descriptions bleiben unberührt.
+  //   3. Erster #/-Zeilenkommentar wie bisher.
   // Die Shebang ist keine Beschreibung: 56 Hooks trugen "!/usr/bin/env ..." als
   // Description und waren damit fürs Routing wertlos (knowledge/04, 3.2).
-  // Deshalb #!-Zeilen überspringen und den ersten echten Kommentar nehmen
-  // (#- und //-Stil wie bisher); findet sich keiner, ist eine leere
-  // Description ehrlicher als die Shebang.
+  // Findet sich nichts, ist eine leere Description ehrlicher als die Shebang.
+  if (text.trimStart().startsWith("{")) {
+    try {
+      const j = JSON.parse(text);
+      if (typeof j.description === "string" && j.description.trim()) {
+        return j.description.trim().slice(0, 200);
+      }
+    } catch { /* kein valides JSON — dann greifen die Kommentar-Wege unten */ }
+  }
+
+  const block = leadingBlockDescription(text);
+  if (block) return block;
+
   for (const m of text.matchAll(/^\s*(?:#|\/\/)\s*(.+)$/gm)) {
     if (/^\s*#!/.test(m[0])) continue;
     return m[1].slice(0, 200);
+  }
+  return null;
+}
+
+/**
+ * Erste inhaltstragende Zeile eines Blockkommentars (JSDoc, C-Stil) oder
+ * Python-Docstrings, aber nur wenn der Block am Dateianfang steht — Shebang,
+ * BOM und PEP-263-Encoding-Zeile dürfen davor stehen, sonst nichts. Die
+ * Beschränkung auf den Dateianfang ist die Konservativitäts-Garantie: ein
+ * Block mitten in der Datei ist Implementierungs-Doku, kein Datei-Summary,
+ * und jede Datei, die heute über führende Zeilenkommentare beschrieben ist,
+ * behält ihre Description unverändert.
+ */
+function leadingBlockDescription(text) {
+  let rest = text.replace(/^\uFEFF/, "").replace(/^#![^\n]*\n/, "");
+  // PEP 263: "# -*- coding: utf-8 -*-" steht bei Python-Dateien zwischen
+  // Shebang und Docstring und wäre sonst faelschlich der "erste Kommentar".
+  rest = rest.replace(/^#[^\n]*coding[:=][^\n]*\n/, "").replace(/^\s+/, "");
+
+  let body = null;
+  let m = /^\/\*+([\s\S]*?)\*\//.exec(rest);
+  if (m) body = m[1];
+  else if ((m = /^("""|''')([\s\S]*?)\1/.exec(rest))) body = m[2];
+  if (body == null) return null;
+
+  for (const raw of body.split("\n")) {
+    const line = raw.replace(/^\s*\*+\s?/, "").trim();
+    if (!line) continue;
+    // @tags (JSDoc-Metadaten, @ts-nocheck) und Linter-Pragmas beschreiben das
+    // Werkzeug-Setup, nicht die Datei; Lizenzköpfe beschreiben das Recht an
+    // der Datei — beides wäre fürs Routing Rauschen mit Wortinhalt, das die
+    // Quarantäne-Prüfung nicht mehr abfangen könnte.
+    if (line.startsWith("@")) continue;
+    if (/^(eslint|jshint|jslint|prettier|biome|istanbul|globals?\b)/i.test(line)) continue;
+    if (/^(copyright|licen[cs]e|spdx-|all rights reserved)/i.test(line)) continue;
+    // Dieselbe Wortinhalt-Schwelle wie quarantaeneGrund(): reine Trennzeilen
+    // ("=====", "-----") sollen hier gar nicht erst Description werden.
+    if (!/\p{L}{3}/u.test(line)) continue;
+    return line.slice(0, 200);
   }
   return null;
 }

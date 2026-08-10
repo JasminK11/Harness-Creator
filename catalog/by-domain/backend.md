@@ -1,6 +1,6 @@
 # Domäne: backend
 
-136 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+137 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (35)
 
@@ -56,15 +56,16 @@
 | `anthropics__claude-plugins-official/command/asana-setup` | Set up the Asana V2 MCP server connection (one-time OAuth app + claude mcp add) | 2 |
 | `anthropics__claude-plugins-official/command/create-docker-mcp-tunnel` | Stand up an Anthropic MCP tunnel locally with Docker Compose so Claude can call a private MCP server (manual-credentials quicksta… | 16 |
 
-## hook (6)
+## hook (7)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/auto-tmux-dev` | Detect dev server commands: npm run dev, pnpm (run) dev, yarn (run) dev, | 5 |
-| `affaan-m__ecc/hook/gateguard-fact-force` | Session state — scoped per session to avoid cross-session races. | 40 |
+| `affaan-m__ecc/hook/auto-tmux-dev` | Auto-Tmux Dev Hook - Start dev servers in tmux/cmd automatically | 5 |
+| `affaan-m__ecc/hook/gateguard-fact-force` | PreToolUse Hook: GateGuard Fact-Forcing Gate | 40 |
 | `affaan-m__ecc/hook/mcp-health-check` | The preflight HTTP probe only checks reachability; it does not have access to | 23 |
 | `affaan-m__ecc/hook/pre-bash-dev-server-block` | Trailing (?![\w-]) rather than \b: \b treats a hyphen as a word boundary, so | 6 |
-| `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
+| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 115 |
+| `anthropics__claude-plugins-official/hook/review-api` | Public review API for the security-guidance agentic commit reviewer. | 25 |
 | `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 8 |
 
 ## plugin (11)

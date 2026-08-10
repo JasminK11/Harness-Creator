@@ -387,7 +387,7 @@ die Suche weiter Treffer liefert.
 | Wang | Erst vertikal tief, dann horizontal breit: „domain expertise is something that informs how high quality your data can be" und „lessons learned that going really vertical on a single domain like infrastructure do translate into other horizontal domains." |
 | Davis | „Task list has gone away. Good. Wasn't particularly useful anyway, especially at large scale." |
 
-**Was daraus folgt.** Die 1.084 im Standardzugriff (Stand nach der M2-Quarantäne vom 2026-08-10) sind das Produkt, nicht die 25.642 —
+**Was daraus folgt.** Die 1.091 im Standardzugriff (1.099 vor M2, 1.084 direkt nach der M2-Quarantäne vom 2026-08-10, dann 1.091 nach der Erweiterung der Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-Felder am selben Tag) sind das Produkt, nicht die 25.642 —
 und sie sollten eher schrumpfen als wachsen. Ein weiteres Repo erhöht erst einmal die
 Menge, nicht die Qualität; das 14. (`anthropics__claude-plugins-official`, offiziell,
 aufgenommen 2026-08-08 auf Zuruf des Besitzers, +143 Bausteine) kam deshalb über die
@@ -443,8 +443,11 @@ stillschweigend übersprungen. Für den Katalog auf der Platte hat Wang recht:
 25.642 Einträge schaden niemandem, solange sie hinter dem CLI liegen. Für alles,
 was im Kontextfenster landet, hat Branco recht: jeder zusätzlich sichtbare Baustein
 verschiebt das Routing aller anderen, weil Descriptions um dieselben Auslöser
-konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 1.084 (nach der
-M2-Quarantäne vom 2026-08-10, vorher 1.099) bekommen Aufnahmekriterien und einen
+konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 1.091 (1.099 vor
+M2, 1.084 direkt nach der M2-Quarantäne vom 2026-08-10; nach der Erweiterung der
+Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-
+Felder am selben Tag tragen 7 der 15 quarantänisierten Bausteine wieder ihre echte
+Beschreibung, Quarantäne jetzt 8) bekommen Aufnahmekriterien und einen
 Abgangsmechanismus, der Rest bleibt durchsuchbar, aber unempfohlen.
 
 ### 2.2 Deterministisch zusammenfassen oder Modellurteil fällen lassen

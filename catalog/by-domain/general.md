@@ -253,11 +253,11 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/before-shell-execution-block-no-verify` | Local hook accepts either the raw command string or a Claude-Code | 2 |
+| `affaan-m__ecc/hook/before-shell-execution-block-no-verify` | Cursor wrapper for block-no-verify. | 2 |
 | `affaan-m__ecc/hook/post-bash-command-log` | Logging must never block the calling hook. | 2 |
 | `affaan-m__ecc/hook/pre-bash-tmux-reminder` | ignore parse errors and pass through | 2 |
 | `affaan-m__ecc/hook/run-with-flags-shell` | Preserve stdin for passthrough or script execution | 1 |
-| `affaan-m__ecc/hook/suggest-compact` | Strict "older than" semantics per the docstring: a file whose mtime | 10 |
+| `affaan-m__ecc/hook/suggest-compact` | Strategic Compact Suggester | 10 |
 
 ## skill (108)
 

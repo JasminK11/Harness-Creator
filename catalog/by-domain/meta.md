@@ -1,6 +1,6 @@
 # Domäne: meta
 
-166 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+172 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (22)
 
@@ -45,54 +45,60 @@
 | `anthropics__claude-plugins-official/command/example-command` | An example slash command that demonstrates command frontmatter options (legacy format) | 1 |
 | `anthropics__claude-plugins-official/command/help` | Get help with the hookify plugin | 5 |
 
-## hook (44)
+## hook (50)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/auto-tmux-dev` | Detect dev server commands: npm run dev, pnpm (run) dev, yarn (run) dev, | 5 |
+| `affaan-m__ecc/hook/adapter` | Cursor-to-Claude Code Hook Adapter | 2 |
+| `affaan-m__ecc/hook/auto-tmux-dev` | Auto-Tmux Dev Hook - Start dev servers in tmux/cmd automatically | 5 |
 | `affaan-m__ecc/hook/bash-hook-dispatcher` | Track whether a sub-hook deliberately produced stdout (a string or | 6 |
-| `affaan-m__ecc/hook/block-no-verify` | Git config section and variable names are case-insensitive | 14 |
-| `affaan-m__ecc/hook/check-console-log` | Files where console.log is expected and should not trigger warnings | 2 |
-| `affaan-m__ecc/hook/config-protection` | ESLint (legacy + v9 flat config, JS/TS/MJS/CJS) | 5 |
-| `affaan-m__ecc/hook/cost-tracker` | Approximate per-1M-token billing rates (USD). | 8 |
-| `affaan-m__ecc/hook/desktop-notify` | continue | 9 |
-| `affaan-m__ecc/hook/doc-file-warning` | Known ad-hoc filenames that indicate impulse/scratch files (case-sensitive, uppercase only) | 3 |
-| `affaan-m__ecc/hook/ecc-context-monitor` | Context warnings (skip if no context data) | 9 |
-| `affaan-m__ecc/hook/ecc-metrics-bridge` | Fingerprint the actual change, not just the path. Hashing on file_path | 10 |
-| `affaan-m__ecc/hook/ecc-statusline` | Write context % back to bridge for context-monitor | 5 |
-| `affaan-m__ecc/hook/evaluate-session` | Read hook input from stdin (Claude Code provides transcript_path via stdin JSON) | 3 |
-| `affaan-m__ecc/hook/gateguard-fact-force` | Session state — scoped per session to avoid cross-session races. | 40 |
-| `affaan-m__ecc/hook/governance-capture` | Patterns that indicate potential hardcoded secrets | 9 |
-| `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
+| `affaan-m__ecc/hook/block-no-verify` | PreToolUse Hook: Block --no-verify flag | 14 |
+| `affaan-m__ecc/hook/check-console-log` | Stop Hook: Check for console.log statements in modified files | 2 |
+| `affaan-m__ecc/hook/codex-hooks` | ECC native Codex hook: verified SessionStart bootstrap. Claude hook profiles remain separate. | 2 |
+| `affaan-m__ecc/hook/config-protection` | Config Protection Hook | 5 |
+| `affaan-m__ecc/hook/cost-tracker` | Cost Tracker Hook (v2) | 8 |
+| `affaan-m__ecc/hook/design-quality-check` | PostToolUse hook: lightweight frontend design-quality reminder. | 4 |
+| `affaan-m__ecc/hook/desktop-notify` | Desktop Notification Hook (Stop) | 9 |
+| `affaan-m__ecc/hook/doc-file-warning` | Doc file warning hook (PreToolUse - Write) | 3 |
+| `affaan-m__ecc/hook/ecc-context-monitor` | ECC Context Monitor — PostToolUse hook | 9 |
+| `affaan-m__ecc/hook/ecc-metrics-bridge` | ECC Metrics Bridge — PostToolUse hook | 10 |
+| `affaan-m__ecc/hook/ecc-statusline` | ECC Statusline — statusLine command | 5 |
+| `affaan-m__ecc/hook/evaluate-session` | Continuous Learning - Session Evaluator | 3 |
+| `affaan-m__ecc/hook/gateguard-fact-force` | PreToolUse Hook: GateGuard Fact-Forcing Gate | 40 |
+| `affaan-m__ecc/hook/governance-capture` | Governance Event Capture Hook | 9 |
+| `affaan-m__ecc/hook/insaits-security-monitor` | InsAIts Security Monitor -- PreToolUse Hook for Claude Code | 8 |
 | `affaan-m__ecc/hook/mcp-health-check` | The preflight HTTP probe only checks reachability; it does not have access to | 23 |
 | `affaan-m__ecc/hook/observe` | Continuous Learning v2 - Observation Hook | 23 |
-| `affaan-m__ecc/hook/post-edit-accumulator` | Strip path separators and traversal sequences so the value is safe to embed | 2 |
-| `affaan-m__ecc/hook/post-edit-console-warn` | Invalid input — pass through | 2 |
-| `affaan-m__ecc/hook/post-edit-format` | Shell metacharacters that cmd.exe interprets as command separators/operators | 4 |
-| `affaan-m__ecc/hook/post-edit-typecheck` | Find nearest tsconfig.json by walking up (max 20 levels to prevent infinite loop) | 3 |
-| `affaan-m__ecc/hook/posttooluse-dispatcher` | main ran this phase unconditionally; sub-hooks gate themselves internally | 10 |
-| `affaan-m__ecc/hook/pre-bash-commit-quality` | Short explicit whitelist of placeholder + env-var NAME tokens (whole-value match only). | 16 |
-| `affaan-m__ecc/hook/pre-compact` | (.*) not (.+): an explicit but empty header (`**Worktree:**` / `**Worktree:**\n`) | 7 |
-| `affaan-m__ecc/hook/pre-write-doc-warn` | doc-file-warning.js guards its stdin entrypoint behind require.main; call main() explicitly. | 1 |
-| `affaan-m__ecc/hook/quality-gate` | Resolve to absolute path so projectRoot-relative comparisons work | 5 |
-| `affaan-m__ecc/hook/run-with-flags` | Safely extract target context from hook stdin JSON for dry-run preview. | 8 |
-| `affaan-m__ecc/hook/session-activity-tracker` | Keep hook non-blocking. | 16 |
-| `affaan-m__ecc/hook/session-end` | Collect user messages (first 200 chars each) | 12 |
+| `affaan-m__ecc/hook/post-edit-accumulator` | PostToolUse Hook: Accumulate edited JS/TS file paths for batch processing | 2 |
+| `affaan-m__ecc/hook/post-edit-console-warn` | PostToolUse Hook: Warn about console.log statements after edits | 2 |
+| `affaan-m__ecc/hook/post-edit-format` | PostToolUse Hook: Auto-format JS/TS files after edits | 4 |
+| `affaan-m__ecc/hook/post-edit-typecheck` | PostToolUse Hook: TypeScript check after editing .ts/.tsx files | 3 |
+| `affaan-m__ecc/hook/posttooluse-dispatcher` | Consolidates PostToolUse hooks into one synchronous and one asynchronous | 10 |
+| `affaan-m__ecc/hook/pre-bash-commit-quality` | PreToolUse Hook: Pre-commit Quality Check | 16 |
+| `affaan-m__ecc/hook/pre-compact` | PreCompact Hook - Save LLM-generated summary before context compaction | 7 |
+| `affaan-m__ecc/hook/pre-write-doc-warn` | Backward-compatible doc warning hook entrypoint. | 1 |
+| `affaan-m__ecc/hook/quality-gate` | Quality Gate Hook | 5 |
+| `affaan-m__ecc/hook/run-with-flags` | Executes a hook script only when enabled by ECC hook profile flags. | 8 |
+| `affaan-m__ecc/hook/session-activity-tracker` | Session Activity Tracker Hook | 16 |
+| `affaan-m__ecc/hook/session-end` | Stop Hook (Session End) - Persist learnings during active sessions | 12 |
 | `affaan-m__ecc/hook/session-end-marker` | Legacy CLI execution (when run directly) | 2 |
-| `affaan-m__ecc/hook/session-start` | Require a plain decimal (e.g. "0.7", "1", "0.95") so trailing junk | 27 |
+| `affaan-m__ecc/hook/session-start` | SessionStart Hook - Load previous context on new session | 27 |
 | `affaan-m__ecc/hook/session-start-bootstrap` | Read the raw JSON event from stdin | 3 |
-| `affaan-m__ecc/hook/stop-format-typecheck` | Total ms budget reserved for all batches (leaves headroom below the 300s Stop timeout) | 9 |
-| `AgriciDaniel__claude-seo/hook/validate-schema` | Check @context | 6 |
-| `anthropics__claude-plugins-official/hook/extensibility` | ── caps ───────────────────────────────────────────────────────────────────── | 12 |
-| `anthropics__claude-plugins-official/hook/gitutil` | core.quotePath=false: emit raw UTF-8 in path-emitting commands instead | 35 |
-| `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
-| `anthropics__claude-plugins-official/hook/patterns` | Security patterns configuration | 18 |
-| `anthropics__claude-plugins-official/hook/posttooluse` | Add plugin root to Python path for imports | 2 |
-| `anthropics__claude-plugins-official/hook/pretooluse` | Add plugin root to Python path for imports | 2 |
-| `anthropics__claude-plugins-official/hook/security-reminder-hook` | # Architecture | 111 |
+| `affaan-m__ecc/hook/stop-format-typecheck` | Stop Hook: Batch format and typecheck all JS/TS files edited this response | 9 |
+| `AgriciDaniel__claude-seo/hook/validate-schema` | Post-edit schema validation hook for Claude Code. | 6 |
+| `anthropics__claude-plugins-official/hook/diffstate` | Git-derived diff/review-state helpers for the security-guidance plugin. | 21 |
+| `anthropics__claude-plugins-official/hook/extensibility` | Project-specific extensibility for the security-guidance plugin. | 12 |
+| `anthropics__claude-plugins-official/hook/gitutil` | Leaf git/subprocess helpers and diff parsing for the security-guidance plugin. | 35 |
+| `anthropics__claude-plugins-official/hook/hooks` | Explanatory mode hook that adds educational insights instructions | 1 |
+| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 115 |
+| `anthropics__claude-plugins-official/hook/patterns` | Regex-based security pattern definitions for the security-guidance plugin. | 18 |
+| `anthropics__claude-plugins-official/hook/posttooluse` | PostToolUse hook executor for hookify plugin. | 2 |
+| `anthropics__claude-plugins-official/hook/pretooluse` | PreToolUse hook executor for hookify plugin. | 2 |
+| `anthropics__claude-plugins-official/hook/review-api` | Public review API for the security-guidance agentic commit reviewer. | 25 |
+| `anthropics__claude-plugins-official/hook/security-reminder-hook` | Security Guidance Plugin for Claude Code | 111 |
 | `anthropics__claude-plugins-official/hook/sg-python` | Find a working Python 3 interpreter and exec the hook with it. | 5 |
 | `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 8 |
-| `anthropics__claude-plugins-official/hook/userpromptsubmit` | Add plugin root to Python path for imports | 1 |
+| `anthropics__claude-plugins-official/hook/userpromptsubmit` | UserPromptSubmit hook executor for hookify plugin. | 1 |
 
 ## mcp (4)
 

@@ -43,7 +43,7 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
+| `affaan-m__ecc/hook/insaits-security-monitor` | InsAIts Security Monitor -- PreToolUse Hook for Claude Code | 8 |
 
 ## plugin (4)
 

@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-10 11:59 · 1084 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 15 in Quarantäne, siehe unten) aus 14 Repos
+> Stand: 2026-08-10 12:24 · 1091 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 8 in Quarantäne, siehe unten) aus 14 Repos
 
 ## Was das hier ist
 
@@ -65,7 +65,7 @@ Warnungen stehen im Aufruf ohne Argument.
 | skill | 431 | Ordner mit `SKILL.md` + Assets | Wiederkehrendes Verfahren, das Claude nachschlagen soll |
 | agent | 407 | Subagent mit eigenem Kontextfenster | Arbeit, die viel Kontext frisst oder unabhängig geprüft werden muss |
 | command | 141 | Slash-Command | Manuell ausgelöster Ablauf mit festem Namen |
-| hook | 55 | Skript an einem Lifecycle-Event | Regel, die *immer* greifen muss — nicht dem Modell überlassen |
+| hook | 62 | Skript an einem Lifecycle-Event | Regel, die *immer* greifen muss — nicht dem Modell überlassen |
 | plugin | 46 | Gebündeltes Paket | Mehrere zusammengehörige Bausteine auf einmal |
 | mcp | 4 | MCP-Server-Konfiguration | Zugriff auf externes System (DB, API, Browser) |
 
@@ -76,8 +76,8 @@ je Domäne unter `catalog/by-domain/<domäne>.md`. Die erste Zahl ist der
 Standardzugriff, die Zahl in Klammern kommt aus Massen-Repos hinzu — `--domain`
 liefert die Summe, der Detail-Index listet nur die erste Zahl:
 
-`general` 350 · `data-ai` 197 (+48) · `meta` 166 (+458) · `backend` 136 (+41) · `product` 107 (+101) ·
-`security` 99 (+41) · `frontend` 80 (+10) · `testing` 80 (+25) · `docs` 66 (+19) · `seo` 58 (+6) ·
+`general` 350 · `data-ai` 198 (+48) · `meta` 172 (+458) · `backend` 137 (+41) · `product` 107 (+101) ·
+`security` 101 (+41) · `frontend` 81 (+10) · `testing` 80 (+25) · `docs` 66 (+19) · `seo` 58 (+6) ·
 `devops` 57 (+37) · `media` 51 (+66)
 
 ## Massen-Repos (opt-in)
@@ -92,7 +92,7 @@ node tools/harness.mjs search "<stichwort>" --all   # alles, inklusive Massen-Re
 
 ## Quarantäne
 
-15 Bausteine mit leerer oder inhaltsfreier Beschreibung stehen nicht in der
+8 Bausteine mit leerer oder inhaltsfreier Beschreibung stehen nicht in der
 Standardsuche; `show <id>` nennt den Grund, `search --all` schliesst sie ein.
 
 ## Wohin für mehr

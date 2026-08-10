@@ -68,7 +68,120 @@ zwei Einträge.
 
 ## Einträge
 
-## [2026-08-10] revise | Quarantäne-Zahl in `04-governance.md` nach CRLF-Fix korrigiert: 16 → 15, „Von den ehemals 69" geglättet, Folgeaufgabe „Extractor um JSDoc/Docstring/JSON-description" festgehalten
+## [2026-08-10] revise | Bestandszahl-Nachzug nach Block-Format-Erweiterung: `1.084` → `1.091` an fünf gemeldeten Stellen entschieden (aktualisiert oder `lint:historisch`), Quarantäne `15` → `8`, Nachtrag in `04` 3.2 und „Offene Folgeaufgabe" als erledigt markiert
+
+**Quelle.** `lint --all` meldete nach dem Eintrag „`hookDescription()` liest
+jetzt JSDoc/Blockkommentare …" (weiter unten) erwartungsgemäß 5 Befunde hoher
+Schwere: `02-bausteine.md:226`, `03-vorbilder.md:245`, `04-governance.md:152`,
+`05-erkenntnisse-aus-vorlesungen.md:446`, `LOG.md:303` — überall die durch die
+Block-Format-Erweiterung überholte Zahl `1.084` gegen den jetzigen
+Katalogwert `1.091` (`node tools/harness.mjs stats`: 25.642 gesamt, 1.091 im
+Standardzugriff, 8 in Quarantäne). Auftrag: je Stelle im Kontext entscheiden,
+nicht mechanisch ersetzen.
+
+**Was geändert wurde, mit Begründung je Entscheidung.**
+
+- `02-bausteine.md` Randbefund „vier vom Typ `mcp`" (Abschnitt 2.5):
+  **aktualisiert** auf 1.091 mit Halbsatz zu 1.099 vor M2 / 1.084 direkt
+  danach / 7 der 15 Quarantäne-Fälle seither zurück (Quarantäne 8) —
+  Gegenwartsaussage, kein Datumsbezug. Gegengeprüft: `search "" --type mcp
+  --all` liefert weiterhin 4 Treffer, die Erweiterung betraf ausschliesslich
+  Hooks. Zusätzlich die von `lint` nicht gemeldete Nachbarstelle im Abschnitt
+  „Quellen" (Zeile 469, dort steht bereits `<!-- lint:historisch -->`): der
+  Verweis „siehe der Randbefund oben" zeigte sonst auf eine jetzt andere Zahl
+  — Halbsatz ergänzt, Marker und der historische 1.099-Wert unverändert.
+- `03-vorbilder.md` „Stand bei uns" (Teil D): **aktualisiert** auf 1.091 mit
+  derselben Kette 1.099 → 1.084 → 1.091 — die Übernahme-Empfehlungen sind
+  offene Arbeit, keine historische Momentaufnahme.
+- `04-governance.md`: vier Stellen unterschieden. Abschnitt 2.4, Bullet
+  „`general` (365 von 1.084 …)": **historisch markiert** — die 365 wurden
+  nicht neu gezählt, `<!-- lint:historisch -->` mit Begründungssatz ergänzt,
+  Zahl unverändert. Direkt darunter, Bullet „Ein Austausch bedeutet, …
+  Bausteine neu zu klassifizieren": **aktualisiert** auf 1.091 — reine
+  Gegenwartsaussage. Abschnitt 3.2, Nachtrag „Messung nach M2 und M3
+  wiederholt": Ereignis-Sätze (was M2 damals quarantänisierte — 15 Fälle,
+  13 leer + 2 Trennzeichen) unangetastet gelassen; neuer Satz „Weiterer
+  Nachtrag" direkt davor ergänzt, der die Block-Format-Erweiterung nennt und
+  die Präsens-Aussage auf 8 verbleibende Quarantäne-Fälle nachzieht;
+  Schlusssatz „Standardzugriff insgesamt" von 1.084 auf 1.091 mit voller
+  Kette aktualisiert. Absatz „Offene Folgeaufgabe" direkt danach: als
+  **umgesetzt** markiert (Stand: im Arbeitsbaum, ungecommittet, in
+  adversarialer Prüfung), weil genau die dort benannte Extractor-Erweiterung
+  inzwischen erfolgt ist — sonst widerspräche sich der Abschnitt selbst
+  („offen" direkt neben dem neuen „erledigt"-Satz eine Zeile darüber). Die
+  M9-Zeile und die Kosten-Abschätzung unter „Wäre theoretisch schön" (beide
+  Tabellenzeilen ohne Datumsbezug, von `lint` wegen Datei-weiter Dedup nicht
+  gemeldet, aber als Bausteinzahl ebenso veraltet): **aktualisiert** auf
+  1.091.
+- `05-erkenntnisse-aus-vorlesungen.md`: Fundstelle 446 („Platte darf wachsen
+  …") **aktualisiert** auf 1.091 mit der vollen Kette. Die von `lint` nicht
+  gemeldete Nachbarstelle 390 („Was daraus folgt …", Abschnitt 1.7) trägt
+  dieselbe Aussage ohne Datumsbezug — ebenfalls **aktualisiert**.
+- `LOG.md:303` (bestehender Eintrag „M2 umgesetzt"): **nicht umgeschrieben**
+  — Ereignisbeschreibungen werden nie verändert. Stattdessen
+  `<!-- lint:historisch -->` samt Begründungssatz an die Überschriftszeile
+  selbst angehängt (der einzige umschliessende Absatz einer einzeiligen
+  Überschrift), mit Verweis auf diesen Eintrag.
+
+**Prüfprotokoll.** `node tools/harness.mjs lint --all`: **0 Befunde** (0 hoch,
+0 mittel, 0 niedrig), Katalog 0 Tage alt. `node tools/harness.mjs knowledge
+"Standardzugriff nach Block-Format-Erweiterung aktueller Stand"` liefert
+`LOG.md:303` (den neu markierten Eintrag) sowie `LOG.md:220`, `LOG.md:71` und
+`LOG.md:683` als Treffer. Keine Datei unter `Learnings/` angefasst, keine
+Baustein-ID verändert oder erfunden, `tools/harness.mjs` nicht angefasst.
+Nicht committet.
+
+## [2026-08-10] revise | `hookDescription()` liest jetzt JSDoc/Blockkommentare, Python-Docstrings und JSON-Top-Level-`description` — 7 Fälle aus der Quarantäne (15 → 8), 48 Hook-Descriptions verbessert, Standardzugriff jetzt 1.091
+
+**Quelle.** Die im Eintrag direkt darunter festgehaltene Folgeaufgabe aus der
+Prüfauflage des `behauptungs-pruefer` (2026-08-10) und der Nachtrag „Offene
+Folgeaufgabe" zu Abschnitt 3.2 in `04-governance.md`.
+
+**Was geändert wurde.** In `tools/harness.mjs`: `hookDescription()` prüft vor
+der bestehenden Zeilenkommentar-Suche zwei neue Orte, dahinter eine neue
+Hilfsfunktion `leadingBlockDescription()`. Reihenfolge (Frontmatter greift im
+Aufrufer weiterhin immer zuerst): (1) JSON-Top-Level-`description`, wenn der
+Text mit `{` beginnt und parsebar ist — JSON kennt keine Kommentare, das Feld
+ist der einzige Beschreibungsort einer `hooks.json`; (2) Blockkommentar/JSDoc
+oder Python-Docstring, aber **nur am Dateianfang** (Shebang, BOM und
+PEP-263-Encoding-Zeile dürfen davor stehen): erste inhaltstragende Zeile ohne
+führende Sternchen, unter Auslassung von `@tags`, Linter-Pragmas, Lizenzköpfen
+und reinen Trennzeilen (dieselbe `\p{L}{3}`-Schwelle wie `quarantaeneGrund()`);
+(3) erster `#`/`//`-Zeilenkommentar wie bisher. Die Quarantäne-Kriterien in
+`quarantaeneGrund()` blieben unberührt — die Fälle verlassen die Quarantäne,
+weil sie jetzt eine Description haben.
+
+**Vorrangs-Entscheidung, am Bestand belegt.** Block vor Zeilenkommentar, weil
+Dateien, die per Docstring/JSDoc dokumentiert sind, ihren ersten
+Zeilenkommentar tief im Rumpf tragen, wo er Abschnittstrenner ist, kein
+Summary: `security_reminder_hook.py` trug „# Architecture", `diffstate.py`
+„=====", `review_api.py` „-----". Die Dateianfangs-Beschränkung ist die
+Konservativitäts-Garantie: vor einem Block am Dateianfang kann kein
+Zeilenkommentar stehen, also verliert kein heute per führendem Zeilenkommentar
+beschriebener Hook seine Description.
+
+**Prüfprotokoll.** <!-- lint:historisch --> (die 1.084 unten ist der bewusst
+zitierte Vorzustand dieser Änderung) `node --check` sauber; Katalog zweimal
+per `extract` neu gebaut (einmal mit, einmal ohne Gegenprobe-Datei). Ergebnis:
+25.642 Bausteine unverändert, Standardzugriff 1.084 → 1.091, Quarantäne
+15 → 8 (verbleibend:
+die beiden ecc-Dispatcher, `pretooluse-visible-output`,
+`post-tool-use-auto-update.mjs` und vier `hooks.json` ohne
+Top-Level-`description`). Alle 7 Zielfälle (`adapter`,
+`design-quality-check`, `plan-canvas-sessions`, `diffstate`, `review-api`,
+`codex-hooks`, offizielle `hook/hooks`) per `show` verifiziert: echte
+Description, Quarantäne-Zeile weg. Vorher/Nachher-Diff aller 70
+Hook-Descriptions: 48 geändert, jede einzelne vom Rumpf-Fragment zum
+Datei-Summary (z. B. `desktop-notify` „continue" → „Desktop Notification Hook
+(Stop)"), 22 unverändert, keine verschlechtert. Gegenprobe: eingeschleuste
+Datei mit Anfangsblock aus nur `@ts-nocheck`, `eslint-disable`, `=====` und
+Copyright-Zeile bekam korrekt den späteren Zeilenkommentar als Description —
+der Filter verwirft Schrott-Blöcke, statt sie durchzureichen; Datei danach
+entfernt, Klon sauber, finaler `extract` ohne sie. `eval --no-save`: alle
+Pflichtfälle bestanden, alle Ränge identisch zu `evals/last-run.json` (7/467/
+563/58) — plausibel, denn kein Eval-Fall zielt auf Hooks. `lint --all`: 5
+Hoch-Befunde, alle erwartet — fünf Dateien tragen noch „1.084" als
+Standardzugriffszahl; bewusst offen gelassen, Nachzug ist ein eigener Lauf.
 
 **Quelle.** Auflage aus der heutigen Wiederholungsprüfung durch
 `behauptungs-pruefer` (angenommen mit Auflage). Der Nachtrag zu Abschnitt 3.2
@@ -250,7 +363,7 @@ angefasst, keine Baustein-ID verändert oder neu erfunden.
 Abweichung, unter 100 und daher von `lint` nicht geprüft, nicht Teil dieses
 Auftrags und hier unverändert gelassen.
 
-## [2026-08-10] add | M2 umgesetzt: Quarantäne-Flag in `extract` — 16 Bausteine mit unbrauchbarer Description aus der Standardsuche genommen, Standardzugriff jetzt 1.084
+## [2026-08-10] add | M2 umgesetzt: Quarantäne-Flag in `extract` — 16 Bausteine mit unbrauchbarer Description aus der Standardsuche genommen, Standardzugriff jetzt 1.084 <!-- lint:historisch --> (Stand unmittelbar nach M2, am selben Tag; eine spätere Erweiterung der Beschreibungs-Extraktion um JSDoc-Blöcke, Python-Docstrings und JSON-`description`-Felder gab 7 der hier quarantänisierten Bausteine ihre echte Beschreibung zurück — Standardzugriff seither 1.091, Quarantäne 8 statt 15, siehe LOG-Eintrag „Bestandszahl-Nachzug nach Block-Format-Erweiterung" weiter oben)
 
 **Quelle.** Maßnahme M2 aus `04-governance.md` (Tabelle „Sollten wir tun"),
 Folge von M3 (Eintrag darunter): nach der Shebang-Reparatur blieben Hooks

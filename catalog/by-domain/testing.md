@@ -49,12 +49,12 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/check-console-log` | Files where console.log is expected and should not trigger warnings | 2 |
+| `affaan-m__ecc/hook/check-console-log` | Stop Hook: Check for console.log statements in modified files | 2 |
 | `affaan-m__ecc/hook/post-bash-build-complete` | ignore parse errors and pass through | 1 |
 | `affaan-m__ecc/hook/post-bash-pr-created` | ignore parse errors and pass through | 2 |
 | `affaan-m__ecc/hook/pre-bash-git-push-reminder` | ignore parse errors and pass through | 2 |
-| `anthropics__claude-plugins-official/hook/gitutil` | core.quotePath=false: emit raw UTF-8 in path-emitting commands instead | 35 |
-| `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
+| `anthropics__claude-plugins-official/hook/gitutil` | Leaf git/subprocess helpers and diff parsing for the security-guidance plugin. | 35 |
+| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 115 |
 
 ## plugin (4)
 
