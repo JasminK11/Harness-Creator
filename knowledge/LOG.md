@@ -68,6 +68,49 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] add | `search --quarantine`: alle Quarantäne-Einträge mit Grund auflisten, ohne neuen Subcommand
+
+**Anlass.** Prüfer-Nebenbefund desselben Tages: kein Befehl listete alle
+quarantänisierten Bausteine mit Grund — `cmdStats()` nannte nur die Zahl,
+`search --all` fand sie nur über Namenstreffer. Bei Misstrauen gegen die
+Quarantäne (ein False Positive war an diesem Tag bereits aufgetreten, siehe
+Nachtrag zu `04-governance.md` weiter unten in diesem Protokoll) blieb nur ein
+Wegwerf-Node-Skript direkt gegen `catalog/index.json`.
+
+**Design-Entscheidung.** Kein neuer Subcommand, sondern ein Filter-Flag
+`--quarantine` in `cmdSearch()` — dieselbe Form wie das schon vorhandene
+`--all`, das Quarantäne-Einträge bereits *einblendet*; `--quarantine` blendet
+stattdessen alles andere aus. Ein eigener Subcommand hätte die Suchfilter
+(`--type`/`--domain`/`--repo`) neu verdrahten müssen, die `cmdSearch()` schon
+kennt. Der neue Zweig steht vor dem Bulk-Filter und vor `bewerteTreffer()`:
+die Description eines Quarantäne-Eintrags ist laut `quarantaeneGrund()` per
+Definition unbrauchbar, ein Text-Score darauf wäre Zufall statt Auskunft —
+deshalb ist keine Suchanfrage nötig. `--type`/`--domain`/`--repo` bleiben als
+generische Eingrenzung nutzbar; `--all` und der Bulk-Filter werden
+übersprungen, damit ein künftig quarantänisierter Bulk-Eintrag nicht doppelt
+unsichtbar bliebe.
+
+**Ausgabe.** Je Zeile Typ, ID, Grund (der Text aus `quarantaeneGrund()`),
+sortiert nach ID. `node tools/harness.mjs search --quarantine` listete 8
+Einträge — deckt sich mit der `cmdStats()`-Zeile „dazu 8 in Quarantäne".
+USAGE-Block bei `search` ergänzt.
+
+**Gegenprobe.** Ein bestehender Standard-Eintrag
+(`affaan-m__ecc/agent/a11y-architect`) wurde testweise mit
+`quarantaene = "TESTFALL-GEGENPROBE"` versehen (direkte Manipulation einer
+Kopie von `catalog/index.json`, danach aus dem vorher gezogenen Backup
+zurückkopiert; `git status --short catalog/index.json` bestätigt anschliessend:
+keine Änderung). `search --quarantine` meldete ihn sofort (9 statt 8, korrekt
+alphabetisch einsortiert), `cmdStats()` zog im selben Moment auf 9 mit — beide
+Wege bestätigt konsistent, dann entfernt.
+
+**Katalog.** Unverändert, kein `extract` nötig — die Änderung liest nur
+`i.quarantaene`, ein seit M2 vorhandenes Katalogfeld.
+
+**Geprüft.** `node --check tools/harness.mjs`; alle Subcommands ausser
+`sync`/`update`/`extract`; `eval --no-save` (12 von 12 Pflichtfällen
+bestanden); `lint --all` (0 Befunde).
+
 ## [2026-08-10] revise | Bestandszahl-Nachzug nach Block-Format-Erweiterung: `1.084` → `1.091` an fünf gemeldeten Stellen entschieden (aktualisiert oder `lint:historisch`), Quarantäne `15` → `8`, Nachtrag in `04` 3.2 und „Offene Folgeaufgabe" als erledigt markiert
 
 **Quelle.** `lint --all` meldete nach dem Eintrag „`hookDescription()` liest

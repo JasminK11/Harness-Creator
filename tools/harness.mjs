@@ -1139,6 +1139,25 @@ function cmdSearch(argv) {
   const cat = loadCatalog();
 
   let items = cat.items;
+  // Quarantäne-Übersicht: eigener Zweig vor jedem anderen Filter, kein Suchmodus.
+  // Die Description ist per Definition unbrauchbar (quarantaeneGrund) — ein
+  // Text-Score darauf wäre Zufall, keine Auskunft. `stats` nennt nur die Zahl;
+  // hier steht, WELCHE Einträge das sind und WARUM, sonst bleibt ein falsch
+  // einsortierter Eintrag (False Positive) unauffindbar, ausser man kennt seine
+  // ID schon. --type/--domain/--repo bleiben nutzbar, weil sie generische
+  // Eingrenzungen sind; --all/Bulk-Filter und Scoring werden übersprungen, weil
+  // sie für diese Frage nichts beitragen — auch ein quarantänisierter Eintrag
+  // aus einem Massen-Repo gehört in diese Liste, sonst verschwindet er doppelt.
+  if (flags.quarantine) {
+    let q = items.filter((i) => i.quarantaene);
+    if (flags.type) q = q.filter((i) => i.type === flags.type);
+    if (flags.domain) q = q.filter((i) => i.domains.includes(flags.domain));
+    if (flags.repo) q = q.filter((i) => i.repo.toLowerCase().includes(String(flags.repo).toLowerCase()));
+    q.sort((a, b) => a.id.localeCompare(b.id));
+    console.log(`${q.length} Bausteine in Quarantäne:\n`);
+    for (const i of q) console.log(`${i.type.padEnd(7)} ${i.id}  —  ${i.quarantaene}`);
+    return;
+  }
   // Massen-Repos nur, wenn ausdrücklich verlangt: sonst verdrängen 24.500 Rechts-Skills
   // jeden anderen Treffer.
   const wantsBulk = flags.all || flags.repo || flags.domain;
@@ -3500,6 +3519,10 @@ harness.mjs — Harness-Bibliothek
        [--type skill|agent|command|hook|mcp|plugin] [--domain X] [--repo X] [--limit N]
        [--all]   auch Massen-Repos (!bulk in sources.txt) und Quarantäne-Einträge
                  (Description leer oder ohne Wortinhalt) einbeziehen
+       [--quarantine]   NUR die Quarantäne auflisten, je Zeile ID + Grund, kein
+                 Suchwort nötig (Worte werden ignoriert); --type/--domain/--repo
+                 grenzen weiter ein. Für "stimmt der Bestand?" — stats nennt nur
+                 die Zahl.
   node tools/harness.mjs show <id> [--head N]      Detail zu einem Baustein
   node tools/harness.mjs install <id...> --to DIR  Baustein(e) ins Zielprojekt kopieren
        [--force] [--dry-run] [--no-claude-md]
