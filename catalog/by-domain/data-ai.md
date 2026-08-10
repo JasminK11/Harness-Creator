@@ -1,6 +1,6 @@
 # Domäne: data-ai
 
-192 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+197 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (63)
 
@@ -97,7 +97,7 @@
 | `anthropics__claude-plugins-official/command/modernize-reimagine` | Multi-agent greenfield rebuild — extract specs from legacy, design AI-native, scaffold & validate with HITL | 7 |
 | `anthropics__claude-plugins-official/command/new-sdk-app` | Create and setup a new Claude Agent SDK application | 8 |
 
-## hook (11)
+## hook (10)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -106,7 +106,6 @@
 | `affaan-m__ecc/hook/ecc-context-monitor` | Context warnings (skip if no context data) | 9 |
 | `affaan-m__ecc/hook/ecc-statusline` | Write context % back to bridge for context-monitor | 5 |
 | `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
-| `affaan-m__ecc/hook/plan-canvas-sessions` | — | 2 |
 | `affaan-m__ecc/hook/pre-compact` | (.*) not (.+): an explicit but empty header (`**Worktree:**` / `**Worktree:**\n`) | 7 |
 | `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | Shared state-dir resolver: SECURITY_WARNINGS_STATE_DIR → CLAUDE_CONFIG_DIR/security | 39 |
 | `anthropics__claude-plugins-official/hook/extensibility` | ── caps ───────────────────────────────────────────────────────────────────── | 12 |
@@ -129,7 +128,7 @@
 | `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-… | 650 |
 | `mvanhorn__last30days-skill/plugin/last30days` | Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent s… | 30710 |
 
-## skill (85)
+## skill (91)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -202,6 +201,7 @@
 | `anthropics__claude-plugins-official/skill/build-mcp-server` | This skill should be used when the user asks to "build an MCP server", "create an MCP", "make an MCP integration", "wrap an API f… | 50 |
 | `anthropics__claude-plugins-official/skill/hook-development` | This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "… | 66 |
 | `anthropics__claude-plugins-official/skill/mcp-integration` | This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "s… | 48 |
+| `anthropics__claude-plugins-official/skill/playground` | Creates interactive HTML playgrounds — self-contained single-file explorers that let users configure something visually through c… | 30 |
 | `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 901 |
 | `anthropics__skills/skill/mcp-builder` | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through … | 122 |
 | `Egonex-AI__Understand-Anything/skill/understand` | Analyze a codebase to produce an interactive knowledge graph for understanding architecture, components, and relationships | 386 |
@@ -210,10 +210,15 @@
 | `Egonex-AI__Understand-Anything/skill/understand-domain` | Extract business domain knowledge from a codebase and generate an interactive domain flow graph. Works standalone (lightweight sc… | 26 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
 | `Egonex-AI__Understand-Anything/skill/understand-knowledge` | Analyze a Karpathy-pattern LLM wiki knowledge base and generate an interactive knowledge graph with entity extraction, implicit r… | 44 |
+| `Graphify-Labs__graphify/skill/graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ e… | 3838 |
 | `mattpocock__skills/skill/claude-handoff` | Hand the current conversation off to a fresh background agent that picks up the work immediately. | 1 |
+| `mattpocock__skills/skill/domain-modeling` | Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, reco… | 9 |
 | `mattpocock__skills/skill/handoff` | Compact the current conversation into a handoff document for another agent to pick up. | 1 |
+| `mattpocock__skills/skill/prototype` | Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic f… | 16 |
+| `mattpocock__skills/skill/research` | Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the u… | 1 |
 | `mattpocock__skills/skill/triage` | Move issues and external PRs through a state machine of triage roles — categorise, verify, grill if needed, and write agent-ready… | 19 |
 | `mattpocock__skills/skill/wayfinder` | Plan a huge chunk of work — more than one agent session can hold — as a shared map of decision tickets on your issue tracker, and… | 12 |
+| `mattpocock__skills/skill/wizard` | Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure,… | 13 |
 | `multica-ai__multica/skill/multica-creating-agents` | Use when creating, inspecting, or debugging a Multica agent definition via the `multica agent` CLI or POST /api/agents. Not for a… | 33 |
 | `multica-ai__multica/skill/multica-mentioning` | Use when an issue comment needs to @mention someone — link to a person, trigger another agent, hand work to a squad, or broadcast… | 28 |
 | `multica-ai__multica/skill/multica-runtimes-and-repos` | Use when a Multica runtime or daemon misbehaves: agent not running, task not claimed, runtime offline, workdir or session reuse, … | 8 |

@@ -1,6 +1,6 @@
 # Domäne: backend
 
-133 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+136 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (35)
 
@@ -56,7 +56,7 @@
 | `anthropics__claude-plugins-official/command/asana-setup` | Set up the Asana V2 MCP server connection (one-time OAuth app + claude mcp add) | 2 |
 | `anthropics__claude-plugins-official/command/create-docker-mcp-tunnel` | Stand up an Anthropic MCP tunnel locally with Docker Compose so Claude can call a private MCP server (manual-credentials quicksta… | 16 |
 
-## hook (7)
+## hook (6)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -65,7 +65,6 @@
 | `affaan-m__ecc/hook/mcp-health-check` | The preflight HTTP probe only checks reachability; it does not have access to | 23 |
 | `affaan-m__ecc/hook/pre-bash-dev-server-block` | Trailing (?![\w-]) rather than \b: \b treats a hyphen as a word boundary, so | 6 |
 | `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
-| `anthropics__claude-plugins-official/hook/review-api` | --------------------------------------------------------------------------- | 25 |
 | `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 8 |
 
 ## plugin (11)
@@ -84,7 +83,7 @@
 | `anthropics__claude-plugins-official/plugin/terraform` | The Terraform MCP Server provides seamless integration with Terraform ecosystem, enabling advanced automation and interaction cap… | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
 
-## skill (71)
+## skill (75)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -147,15 +146,19 @@
 | `anthropics__claude-plugins-official/skill/build-mcpb` | This skill should be used when the user wants to "package an MCP server", "bundle an MCP", "make an MCPB", "ship a local MCP serv… | 19 |
 | `anthropics__claude-plugins-official/skill/hook-development` | This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "… | 66 |
 | `anthropics__claude-plugins-official/skill/mcp-integration` | This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "s… | 48 |
+| `anthropics__claude-plugins-official/skill/receipts` | Generate a personal Claude Code usage & impact report ("receipts") from this machine's local session transcripts — for justifying… | 82 |
 | `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 901 |
 | `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1100 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
+| `mattpocock__skills/skill/research` | Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the u… | 1 |
+| `mattpocock__skills/skill/wizard` | Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure,… | 13 |
 | `multica-ai__multica/skill/multica-autopilots` | Use when creating, updating, inspecting, triggering, or debugging a Multica autopilot (scheduled, webhook, or manual). | 7 |
 | `multica-ai__multica/skill/multica-creating-agents` | Use when creating, inspecting, or debugging a Multica agent definition via the `multica agent` CLI or POST /api/agents. Not for a… | 33 |
 | `multica-ai__multica/skill/multica-projects-and-resources` | Use when creating, inspecting, updating, or debugging Multica projects and their resources (github_repo, local_directory). | 9 |
 | `multica-ai__multica/skill/multica-skill-importing` | Use when asked to import or install a specific skill into this Multica workspace from a URL or slug. Not for choosing which skill… | 21 |
 | `multica-ai__multica/skill/multica-squads` | Use when creating, inspecting, updating, assigning to, or debugging a Multica squad, including how leader routing picks who runs. | 23 |
 | `multica-ai__multica/skill/multica-working-on-issues` | Use when acting on a Multica issue beyond what the brief covers: PR linking vs close intent, reading a linked PR's real state, me… | 26 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-ux-pro-max` | UI/UX design intelligence for web and mobile. Searchable local database with 84 styles, 192 color palettes, 74 font pairings, 192… | 1729 |
 | `usestrix__strix/skill/ci-security-scanning-with-strix` | Add security scanning to CI/CD with Strix — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped… | 8 |
 | `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
 | `usestrix__strix/skill/penetration-testing-with-strix` | Pentest a web app, API, codebase, repository, URL, domain, or IP with Strix — autonomous AI penetration testing that exploits and… | 8 |

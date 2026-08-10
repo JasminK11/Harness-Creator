@@ -1,6 +1,6 @@
 # Domäne: security
 
-101 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+99 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (42)
 
@@ -65,20 +65,18 @@
 | `affaan-m__ecc/command/vue-review` | Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibili… | 6 |
 | `anthropics__claude-plugins-official/command/modernize-harden` | Security vulnerability scan with a reviewable remediation patch — OWASP, CWE, CVE, secrets, injection | 7 |
 
-## hook (11)
+## hook (9)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/governance-capture` | Patterns that indicate potential hardcoded secrets | 9 |
 | `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
 | `affaan-m__ecc/hook/insaits-security-wrapper` | Prefer real Windows executables before .cmd shims so shell execution is | 4 |
-| `anthropics__claude-plugins-official/hook/diffstate` | ===================================================================== | 21 |
 | `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | Shared state-dir resolver: SECURITY_WARNINGS_STATE_DIR → CLAUDE_CONFIG_DIR/security | 39 |
 | `anthropics__claude-plugins-official/hook/extensibility` | ── caps ───────────────────────────────────────────────────────────────────── | 12 |
 | `anthropics__claude-plugins-official/hook/gitutil` | core.quotePath=false: emit raw UTF-8 in path-emitting commands instead | 35 |
 | `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
 | `anthropics__claude-plugins-official/hook/patterns` | Security patterns configuration | 18 |
-| `anthropics__claude-plugins-official/hook/review-api` | --------------------------------------------------------------------------- | 25 |
 | `anthropics__claude-plugins-official/hook/security-reminder-hook` | # Architecture | 111 |
 
 ## plugin (4)

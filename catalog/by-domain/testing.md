@@ -1,6 +1,6 @@
 # Domäne: testing
 
-76 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+80 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (20)
 
@@ -65,7 +65,7 @@
 | `anthropics__claude-plugins-official/plugin/skill-creator` | Create new skills, improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, up… | 237 |
 | `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-… | 650 |
 
-## skill (33)
+## skill (37)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -100,6 +100,10 @@
 | `affaan-m__ecc/skill/windows-desktop-e2e` | E2E testing for Windows native desktop apps (WPF, WinForms, Win32/MFC, Qt) using pywinauto and Windows UI Automation. | 30 |
 | `AgriciDaniel__claude-seo/skill/seo-drift` | > SEO drift monitoring: capture baselines of SEO-critical elements, detect changes, and track regressions over time. Git for SEO:… | 13 |
 | `AgriciDaniel__claude-seo/skill/seo-profound` | Profound LLM citation tracker (extension). Time-series brand citation rates across ChatGPT, Perplexity, and other LLMs. Pairs wit… | 2 |
+| `anthropics__claude-plugins-official/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 225 |
+| `anthropics__skills/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 225 |
 | `anthropics__skills/skill/webapp-testing` | Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debu… | 22 |
-| `mattpocock__skills/skill/tdd` | TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, w… | 7 |
+| `mattpocock__skills/skill/grilling` | Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any '… | 2 |
+| `mattpocock__skills/skill/migrate-to-shoehorn` | Migrate test files from `as` type assertions to @total-typescript/shoehorn. Use when user mentions shoehorn, wants to replace `as… | 3 |
+| `mattpocock__skills/skill/tdd` | Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or want… | 7 |
 

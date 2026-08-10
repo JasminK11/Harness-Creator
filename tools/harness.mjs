@@ -114,7 +114,14 @@ function frontmatter(text) {
   if (end === -1) return {};
   const out = {};
   let key = null;
-  for (const line of text.slice(3, end).split(/\r?\n/)) {
+  // CRLF-Dateien aus Windows-Checkouts: der Block-Schnitt über indexOf("\n---")
+  // trifft auch bei "\r\n---" (das "\n" gehört zum "\r\n"), endet aber VOR dem
+  // "\n" — die letzte Zeile des Blocks behält dadurch ihr "\r". Ohne den Strip
+  // verfehlt der Zeilen-Regex sie ("." matcht kein "\r", kein m-Flag), und das
+  // letzte Feld — in den Quell-Repos fast immer die description — geht still
+  // verloren; der Baustein landet dann fälschlich in der Quarantäne oder mit
+  // Prosa-Fallback im Katalog.
+  for (const line of text.slice(3, end).split("\n").map((l) => l.replace(/\r$/, ""))) {
     const m = line.match(/^([A-Za-z_][\w-]*):\s*(.*)$/);
     if (m) {
       key = m[1];
@@ -553,6 +560,36 @@ function hookDescription(text) {
   return null;
 }
 
+/**
+ * Quarantäne (M2, knowledge/04): liefert den Grund, warum ein Baustein aus der
+ * Standardsuche fällt, oder null. Ein Eintrag ohne verwertbare Description ist
+ * fürs Routing wertlos — er belegt einen Trefferplatz als "(keine
+ * Beschreibung)", den niemand begründet wählen kann. Er bleibt aber
+ * katalogisiert: `show` löst ihn auf und nennt den Grund, `--all` zeigt ihn.
+ *
+ * Bewusst nur harte, inhaltsfreie Kriterien — eine Fehlklassifikation in die
+ * Quarantäne wiegt schwerer als ein sichtbarer Rausch-Eintrag, denn den Rausch
+ * sieht man, die Lücke nicht:
+ *   1. leere Description (nach der Shebang-Reparatur in hookDescription() der
+ *      ehrliche Zustand kommentarloser Skripte),
+ *   2. kein Buchstaben-Lauf ab drei Zeichen — fängt ####, =====, -----;
+ *      \p{L} statt [a-z], damit CJK-Beschreibungen NICHT hineinfallen. Diese
+ *      Sicherheit gilt nur für Zeichen-Läufe ab drei OHNE Leerzeichen: eine
+ *      CJK-Description, die ausschliesslich aus Zweizeichen-Wörtern mit
+ *      Leerzeichen dazwischen besteht, fiele in die Quarantäne — wer die
+ *      Heuristik verschärft, muss diesen Fall zuerst absichern.
+ * Fragmente wie "continue" oder "gitutil" bleiben sichtbar: dafür gäbe es nur
+ * eine Geschmacks-Heuristik, kein hartes Kriterium. Übersetzungs-Platzhalter
+ * (isPlaceholder) erreichten den Katalog am Messtag 2026-08-10 in null Fällen —
+ * deshalb prüft hier niemand zum zweiten Mal auf sie.
+ */
+function quarantaeneGrund(description) {
+  const d = String(description || "").trim();
+  if (!d) return "leere Description — kein Suchwort kann diesen Eintrag treffen";
+  if (!/\p{L}{3}/u.test(d)) return "Description ohne Wortinhalt (nur Trenn-/Sonderzeichen)";
+  return null;
+}
+
 function cmdExtract({ quiet = false } = {}) {
   if (!fs.existsSync(CLONE_DIR)) die(`Keine Klone unter ${CLONE_DIR} — erst 'sync' laufen lassen.`);
   const sources = readSources();
@@ -574,6 +611,15 @@ function cmdExtract({ quiet = false } = {}) {
     const isBulk = s.bulk !== null ? s.bulk : items.length >= BULK_THRESHOLD;
     if (isBulk) for (const it of items) it.bulk = true;
 
+    // M2: Der Grund wandert als Feld in den Katalog, nicht nur ein Flag —
+    // `show` soll sagen können, *warum* ein Eintrag nicht in der Suche ist,
+    // sonst sieht Quarantäne wie ein Katalogfehler aus.
+    let quarantaeneN = 0;
+    for (const it of items) {
+      const grund = quarantaeneGrund(it.description);
+      if (grund) { it.quarantaene = grund; quarantaeneN++; }
+    }
+
     let head = null, date = null;
     try {
       head = git(["rev-parse", "--short", "HEAD"], dir);
@@ -586,7 +632,7 @@ function cmdExtract({ quiet = false } = {}) {
       domains: topDomains(items),
     });
     all.push(...items);
-    if (!quiet) console.log(`  . ${s.dir}: ${items.length} Bausteine${isBulk ? "  [bulk — nur per --repo/--domain sichtbar]" : ""}`);
+    if (!quiet) console.log(`  . ${s.dir}: ${items.length} Bausteine${isBulk ? "  [bulk — nur per --repo/--domain sichtbar]" : ""}${quarantaeneN ? `  [${quarantaeneN} in Quarantäne — Description unbrauchbar]` : ""}`);
   }
 
   const catalog = {
@@ -675,8 +721,14 @@ function befehlsUebersicht() {
 function writeMarkdownIndexes(catalog) {
   // Bulk-Bausteine bleiben aus den Markdown-Indizes draussen — sonst besteht
   // by-domain/legal-de.md aus 24.500 Tabellenzeilen und ist unlesbar.
-  const normal = catalog.items.filter((i) => !i.bulk);
+  // Quarantäne-Einträge ebenso: eine Tabellenzeile ohne Beschreibung trägt
+  // nichts, und die Indizes sollen zeigen, was die Standardsuche liefert.
+  const normal = catalog.items.filter((i) => !i.bulk && !i.quarantaene);
   const bulkRepos = catalog.repos.filter((r) => r.bulk);
+  const bulkN = catalog.items.filter((i) => i.bulk).length;
+  // Wie in cmdStats: ausserhalb der Massen-Repos gezählt, damit Standard +
+  // Massen-Repos + Quarantäne die Gesamtzahl ergeben.
+  const quarantaeneN = catalog.totals.items - normal.length - bulkN;
   const byDomain = {};
   for (const it of normal) {
     for (const d of it.domains) (byDomain[d] ||= []).push(it);
@@ -691,7 +743,7 @@ function writeMarkdownIndexes(catalog) {
   l1.push("");
   l1.push("> Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**");
   l1.push(`> Stand: ${catalog.generatedAt.slice(0, 16).replace("T", " ")} · ${normal.length} Bausteine im Standardzugriff` +
-    (bulkRepos.length ? ` (+ ${catalog.totals.items - normal.length} in Massen-Repos, siehe unten)` : "") +
+    (bulkRepos.length ? ` (+ ${bulkN} in Massen-Repos` + (quarantaeneN ? `, ${quarantaeneN} in Quarantäne` : "") + `, siehe unten)` : "") +
     ` aus ${catalog.repos.length} Repos`);
   l1.push("");
   l1.push("## Was das hier ist");
@@ -791,6 +843,15 @@ function writeMarkdownIndexes(catalog) {
     }
     l1.push('node tools/harness.mjs search "<stichwort>" --all   # alles, inklusive Massen-Repos');
     l1.push("```");
+    l1.push("");
+  }
+  // Zwei Zeilen, kein Absatz mehr: INDEX.md hat ein Zeilenbudget, und mehr als
+  // "warum fehlen die, wie komme ich trotzdem ran" muss hier nicht stehen.
+  if (quarantaeneN) {
+    l1.push("## Quarantäne");
+    l1.push("");
+    l1.push(`${quarantaeneN} Bausteine mit leerer oder inhaltsfreier Beschreibung stehen nicht in der`);
+    l1.push("Standardsuche; `show <id>` nennt den Grund, `search --all` schliesst sie ein.");
     l1.push("");
   }
   l1.push("## Wohin für mehr");
@@ -1021,6 +1082,11 @@ function cmdSearch(argv) {
   // jeden anderen Treffer.
   const wantsBulk = flags.all || flags.repo || flags.domain;
   if (!wantsBulk) items = items.filter((i) => !i.bulk);
+  // Quarantäne (M2): Einträge ohne verwertbare Description sind in jeder
+  // Trefferliste nur Rauschen. Anders als bulk öffnen --repo/--domain sie
+  // NICHT mit: wer ein Repo eingrenzt, sucht dessen brauchbare Bausteine,
+  // nicht dessen leere. Nur --all zeigt alles; `show <id>` löst sie immer auf.
+  if (!flags.all) items = items.filter((i) => !i.quarantaene);
   if (flags.type) items = items.filter((i) => i.type === flags.type);
   if (flags.domain) items = items.filter((i) => i.domains.includes(flags.domain));
   if (flags.repo) items = items.filter((i) => i.repo.toLowerCase().includes(String(flags.repo).toLowerCase()));
@@ -1112,6 +1178,10 @@ function cmdShow(argv) {
   const stufe = vertrauensstufen().get(it.repo);
   console.log(`Repo        ${it.repo}${stufe ? `   (Vertrauen: ${stufe})` : ""}`);
   console.log(`Domänen     ${it.domains.join(", ")}`);
+  // Der Grund steht im Katalog (quarantaeneGrund in extract) — ohne diese Zeile
+  // sähe ein per ID aufgelöster Quarantäne-Eintrag wie ein normaler Treffer aus,
+  // und sein Fehlen in der Suche wie ein Katalogfehler.
+  if (it.quarantaene) console.log(`Quarantäne  ${it.quarantaene} — aus der Standardsuche genommen, sichtbar nur mit --all; install funktioniert weiter`);
   const lade = ladeBytes(it);
   console.log(`Grösse      ${kb(it.bytes)} KB in ${it.files} Datei(en)`);
   if (lade !== it.bytes) {
@@ -2509,6 +2579,10 @@ function sucheIds(cat, { frage, typ, domaene, repo }) {
   // Eval-Fall den Gesamtbestand samt Massen-Repos abfragt.
   const wantsBulk = repo || domaene;
   if (!wantsBulk) items = items.filter((i) => !i.bulk);
+  // Quarantäne wie in cmdSearch, ohne Ausnahme: Eval-Fälle messen, was ein
+  // Nutzer ohne --all bekommt — ein quarantänisierter Treffer wäre einer,
+  // den es für ihn nicht gibt.
+  items = items.filter((i) => !i.quarantaene);
   if (typ) items = items.filter((i) => i.type === typ);
   if (domaene) items = items.filter((i) => i.domains.includes(domaene));
   if (repo) items = items.filter((i) => i.repo.toLowerCase().includes(String(repo).toLowerCase()));
@@ -2907,7 +2981,10 @@ function cmdLint(argv) {
   if (cat) {
     const kennzahlen = [
       { wert: cat.totals.items, was: "Bausteine gesamt" },
-      { wert: cat.items.filter((i) => !i.bulk).length, was: "Bausteine im Standardzugriff" },
+      // Standardzugriff heisst: was `search` ohne Flaggen durchsucht — seit M2
+      // also ohne Quarantäne. Dieselbe Definition wie in cmdStats, sonst meldet
+      // lint eine Zahl als falsch, die stats selbst ausgibt.
+      { wert: cat.items.filter((i) => !i.bulk && !i.quarantaene).length, was: "Bausteine im Standardzugriff" },
       { wert: cat.items.filter((i) => i.bulk).length, was: "Bausteine in Massen-Repos" },
     ];
     // Jede Zahl, die der Katalog selbst hergibt, ist eine richtige Zahl — auch
@@ -3311,10 +3388,16 @@ function cmdUpdate() {
  */
 function cmdStats() {
   const cat = loadCatalog();
-  const standard = cat.items.filter((i) => !i.bulk).length;
+  const standard = cat.items.filter((i) => !i.bulk && !i.quarantaene).length;
+  const bulkN = cat.items.filter((i) => i.bulk).length;
+  // Quarantäne ausserhalb der Massen-Repos gezählt, damit die drei Angaben sich
+  // zur Gesamtzahl addieren — ein quarantänisierter Bulk-Eintrag ist durch sein
+  // Repo ohnehin schon unsichtbar und würde sonst doppelt erscheinen.
+  const quarantaene = cat.totals.items - standard - bulkN;
   console.log(`Katalog vom ${cat.generatedAt.slice(0, 16).replace("T", " ")}`);
   console.log(`${cat.totals.items} Bausteine aus ${cat.repos.length} Repos`);
-  console.log(`  davon ${standard} im Standardzugriff, ${cat.totals.items - standard} in Massen-Repos (nur mit --repo/--domain/--all)`);
+  console.log(`  davon ${standard} im Standardzugriff, ${bulkN} in Massen-Repos (nur mit --repo/--domain/--all)`);
+  if (quarantaene) console.log(`  dazu ${quarantaene} in Quarantäne: Description leer oder ohne Wortinhalt, kein Suchwort kann sie treffen — katalogisiert bleiben sie, show und --all erreichen sie`);
   console.log("");
   console.log("Was diese Zahl nicht sagt: ob ein Baustein gut ist oder je benutzt wurde.");
   console.log("Sie wächst mit jedem aufgenommenen Repo — Bestand ist keine Leistung.\n");
@@ -3354,7 +3437,8 @@ harness.mjs — Harness-Bibliothek
   node tools/harness.mjs extract                   nur Katalog neu bauen
   node tools/harness.mjs search <worte>            Katalog durchsuchen
        [--type skill|agent|command|hook|mcp|plugin] [--domain X] [--repo X] [--limit N]
-       [--all]   auch Massen-Repos (!bulk in sources.txt) einbeziehen
+       [--all]   auch Massen-Repos (!bulk in sources.txt) und Quarantäne-Einträge
+                 (Description leer oder ohne Wortinhalt) einbeziehen
   node tools/harness.mjs show <id> [--head N]      Detail zu einem Baustein
   node tools/harness.mjs install <id...> --to DIR  Baustein(e) ins Zielprojekt kopieren
        [--force] [--dry-run] [--no-claude-md]

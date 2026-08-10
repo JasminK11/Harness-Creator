@@ -1,6 +1,6 @@
 # Domäne: product
 
-106 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+107 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (57)
 
@@ -73,7 +73,7 @@
 | `affaan-m__ecc/command/plan-prd` | Generate a lean, problem-first PRD and hand off to /plan for implementation planning. | 5 |
 | `affaan-m__ecc/command/prp-prd` | Interactive PRD generator - problem-first, hypothesis-driven product spec with back-and-forth questioning | 14 |
 
-## skill (45)
+## skill (46)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -122,4 +122,5 @@
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/brand` | Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of vo… | 90 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 241 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variab… | 180 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-ux-pro-max` | UI/UX design intelligence for web and mobile. Searchable local database with 84 styles, 192 color palettes, 74 font pairings, 192… | 1729 |
 

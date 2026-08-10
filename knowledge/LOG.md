@@ -68,6 +68,251 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] revise | Quarantäne-Zahl in `04-governance.md` nach CRLF-Fix korrigiert: 16 → 15, „Von den ehemals 69" geglättet, Folgeaufgabe „Extractor um JSDoc/Docstring/JSON-description" festgehalten
+
+**Quelle.** Auflage aus der heutigen Wiederholungsprüfung durch
+`behauptungs-pruefer` (angenommen mit Auflage). Der Nachtrag zu Abschnitt 3.2
+in `04-governance.md` (verfasst *vor* dem CRLF-Fix desselben Tages) behauptete
+weiterhin 16 quarantänisierte Fälle (14 leer + 2 Trennzeichen, davon 15
+nicht-bulk); nach dem Fix in `frontmatter()` (siehe Eintrag „CRLF-Bug in
+`frontmatter()` behoben" weiter unten) ist einer davon —
+`Klotzkette__claude-fuer-deutsches-recht/skill/rechtsmittelbelehrung-zivil` —
+kein echter Leerfall mehr, sondern war ein CRLF-Artefakt und steht seither
+regulär im Katalog. Der Nachtrag war seit dem Fix falsch, ohne dass ihn
+jemand nachgezogen hatte.
+
+**Was geändert wurde.** Drei Stellen in `04-governance.md`:
+
+- Nachtrag zu Abschnitt 3.2 (bei „Nachtrag (2026-08-10): Messung nach M2 und
+  M3 wiederholt"): „14 leeren und die 2 reinen Trennzeichen-Fälle (16
+  insgesamt, davon 15 nicht-bulk)" korrigiert zu „13 leeren und die 2 reinen
+  Trennzeichen-Fälle (15 insgesamt, alle nicht-bulk)"; „Von den ehemals 69"
+  zu „Von den ursprünglich unroutbaren Descriptions" geglättet, weil die
+  16-Fall-Zahl aus derselben Messung stammte und mit dem Fix nicht mehr zur
+  69er-Ausgangszahl passt. Direkt im Anschluss ein neuer Satz, der den
+  16. Fall benennt und auf den CRLF-Fix samt LOG-Eintrag verweist.
+- Direkt darunter ein neuer Absatz „Offene Folgeaufgabe": ein Teil der
+  verbliebenen 15 Quarantäne-Fälle trägt eine echte Beschreibung an Orten,
+  die `hookDescription()` nicht liest — JSDoc-Blöcke (`adapter.js`,
+  `design-quality-check.js`, `plan-canvas-sessions.js`), Python-Docstrings
+  (`diffstate.py`, `review_api.py`), JSON-`description`-Felder
+  (`codex-hooks.json`, mehrere `hooks.json`). Eine Extractor-Erweiterung um
+  diese Orte würde die Quarantäne um genau diese Fälle leeren; bis dahin
+  bewusst quarantänisiert statt mit abgeschnittenen Fragmenten sichtbar.
+  Bisher undokumentiert — kommt aus derselben Prüfauflage.
+- M2-Tabellenzeile in Abschnitt 6 („Massnahmen, priorisiert"): Ereignis
+  darf weiterhin „16 Bausteine (14 leer, 2 nur Trennzeichen)" nennen — das
+  war der Stand zum Umsetzungszeitpunkt —, bekommt aber einen Halbsatz, dass
+  einer der 14 vermeintlich leeren Fälle ein CRLF-Artefakt war und seit dem
+  Fix desselben Tages auf 15 Fälle (13 leer + 2 Trennzeichen) korrigiert ist,
+  mit Verweis auf den Nachtrag zu 3.2.
+
+Keine Bestandszahl sonst berührt: `stats` liefert weiterhin 1.084 im
+Standardzugriff (der CRLF-Fix betraf ausschliesslich den Bulk-Fall) und
+**15** in Quarantäne — das ist der Wert, gegen den diese Korrektur geprüft
+wurde, nicht geschätzt.
+
+**Prüfprotokoll.** `node tools/harness.mjs lint --all`: **0 Befunde** (vorher
+und nachher — die Korrektur behebt einen inhaltlichen Fehler, den `lint`
+prinzipbedingt nicht erkennt, siehe Warnung am Ende jeder `lint`-Ausgabe).
+`node tools/harness.mjs stats`: 25.642 gesamt, 1.084 Standardzugriff, 15
+Quarantäne — deckt sich mit den neuen Zahlen im Text. `node tools/harness.mjs
+knowledge "quarantäne 16 fälle crlf"` liefert den korrigierten Nachtrag als
+Treffer. Nicht committet.
+
+## [2026-08-10] revise | CRLF-Bug in `frontmatter()` behoben: letztes Frontmatter-Feld ging bei Windows-Zeilenenden verloren — 24.327 Descriptions repariert, 1 Fehl-Quarantäne aufgehoben
+
+**Quelle.** Adversarial belegt bei der M2-Prüfung am 2026-08-10: `frontmatter()`
+schnitt den Block per `indexOf("\n---")`; bei CRLF-Dateien endete der Schnitt vor
+dem `\n` des schliessenden Trenners, die letzte Zeile behielt ihr `\r`, und der
+Zeilen-Regex (`.` matcht kein `\r`, kein m-Flag) verfehlte sie. Da `description`
+in den Quell-Repos fast immer das letzte Feld ist, ging genau sie verloren — der
+Baustein fiel in die Quarantäne (leer) oder bekam den `firstProse()`-Fallback.
+
+**Was geändert wurde.** In `frontmatter()` wird jede Zeile vor dem Match von
+ihrem trailing `\r` befreit (`split("\n")` + `replace(/\r$/, "")`); der
+Block-Schnitt selbst war korrekt, weil das `\n` in `\r\n---` gefunden wird — das
+steht jetzt als Warum-Kommentar an der Schleife. Im selben Lauf, vom Prüfer als
+Teil der korrigierten Fassung verlangt: der Kommentar an `quarantaeneGrund()`
+präzisiert, dass die CJK-Sicherheit von `\p{L}{3}` nur für Zeichen-Läufe ab drei
+ohne Leerzeichen gilt — CJK aus Zweizeichen-Wörtern mit Leerzeichen fiele in die
+Quarantäne. Katalog per `extract` neu gebaut.
+
+**Gegenprobe.** Die `frontmatter()`-Funktion wurde aus der Datei geschnitten und
+direkt getestet: die HEAD-Fassung verlor bei CRLF-Eingabe die description
+(`{"name":"x"}`), ebenso bei gequoteten Werten; die neue Fassung liefert beide
+Felder, LF-Eingaben und leeres Frontmatter unverändert. Der Testfall musste
+melden und hat gemeldet; das Testscript lag im Scratchpad und ist entsorgt.
+
+**Messwerte (Katalog-Diff vorher/nachher, programmatisch).** 24.327 Descriptions
+geändert, davon 31 im Standardzugriff (deckt sich mit der Prüfmeldung „~31"),
+Rest im Bulk-Repo Klotzkette. 1 Baustein verliess die Quarantäne
+(`Klotzkette__claude-fuer-deutsches-recht/skill/rechtsmittelbelehrung-zivil`,
+hat jetzt seine Frontmatter-Description und ist per `--repo`-Suche Treffer 1),
+0 kamen hinzu. Belegte Beispiele: `anthropics__claude-plugins-official/command/commit`
+„- Current git status: !git status" → „Create a git commit";
+`anthropics__claude-plugins-official/skill/skill-creator` und
+`anthropics__skills/skill/doc-coauthoring` zeigen statt der ersten Prosa-Zeile
+die vollen Frontmatter-Descriptions mit „Use when …"-Triggerbedingungen;
+`mattpocock__skills/skill/tdd` ebenso.
+
+**Prüfprotokoll.** `node --check` ok; `stats`: 25.642 gesamt (unverändert),
+1.084 im Standardzugriff (unverändert — der reparierte Quarantäne-Fall lag im
+Bulk), 15 in Quarantäne (vorher 16, alle 15 nicht-bulk); `eval --no-save`:
+12/12 Pflichtfälle bestanden, eine Rangverschiebung gegenüber dem Lauf von
+11:45 (`affaan-m__ecc/skill/react-patterns` Rang 59 → 58 bei „react typescript
+app with tests and deployment" — Folge der besseren Descriptions, kein
+Pflichtfall betroffen); `lint --all`: 0 Befunde, die am selben Tag auf 1.084
+nachgezogene Wissensbank bleibt konsistent. Jeder Subcommand einmal gelaufen
+(ausser `sync`/`update`), `install`/`uninstall` nur `--dry-run` in einem
+Wegwerf-Ordner. Nicht committet, `knowledge/` ausser diesem Eintrag unberührt.
+
+## [2026-08-10] revise | Bestandszahl-Nachzug nach M2/M3: `1.099` → `1.084` an vier gemeldeten Stellen entschieden (aktualisiert oder `lint:historisch`), Nachtrag in `04` 3.2, M2/M3 als erledigt markiert
+
+**Quelle.** `lint --all` meldete nach der M2-Quarantäne (Eintrag „M2 umgesetzt"
+oben) vier Befunde hoher Schwere: `02-bausteine.md:226`, `03-vorbilder.md:245`,
+`04-governance.md:43`, `05-erkenntnisse-aus-vorlesungen.md:446` — überall die
+veraltete Zahl `1.099` (Standardzugriff vor M2) gegen den jetzigen Katalogwert
+1.084. Auftrag: je Stelle im Kontext entscheiden, nicht mechanisch ersetzen.
+
+**Was geändert wurde, mit Begründung je Entscheidung.**
+
+- `02-bausteine.md` Randbefund „vier vom Typ `mcp`" (Abschnitt 2.5): **aktualisiert**
+  auf 1.084 — Gegenwartsaussage über den laufenden Katalog, kein Datumsbezug.
+  Gegengeprüft: `search "" --type mcp` und `--all` liefern beide unverändert 4
+  Treffer, die Quarantäne betraf ausschliesslich Hooks. Die benachbarte Quellenzeile
+  im selben Abschnitt „Geprüfte Bausteine" nennt explizit „Katalogstand
+  2026-08-08 19:36" — **historisch markiert**, mit Verweis auf den aktualisierten
+  Randbefund als aktuellen Stand.
+- `03-vorbilder.md` „Stand bei uns" (Teil D, Einleitung der Übernahme-Empfehlung):
+  **aktualisiert** auf 1.084 mit Halbsatz „nach der M2-Quarantäne … am
+  2026-08-10" — die Übernahme-Empfehlungen Punkt 1–8 sind offene Arbeit, keine
+  historische Momentaufnahme, der Satz beschreibt den laufenden Zustand.
+- `04-governance.md`: **historisch markiert**, nicht aktualisiert — der
+  Abstract selbst behauptet „69 der 70 Hooks tragen … ihre Shebang-Zeile", was
+  nach M3 (`search "usr/bin/env"` → 0) nachweislich nicht mehr zutrifft; die
+  gesamte Datei rechnet mit dem am 2026-08-08 19:36 eingefrorenen Katalogstand
+  (Zeile 50 sagt das selbst). Abstract um einen Blockquote-Satz „Stand" ergänzt,
+  der auf M2/M3 und den Nachtrag verweist, mit `<!-- lint:historisch -->`.
+  Dieselbe Entscheidung für die „Nachgezählt …"-Messung in 3.2 (69/1.099) und
+  die datierte `stats`-Zeile im Quellen-Abschnitt. Wo die Datei dagegen
+  ungedatierte, weiterhin gültige Aussagen über den laufenden Bestand trifft
+  (Abschnitt 2.4 „365 von …", „… Bausteine neu zu klassifizieren"; M9-Zeile;
+  die Kosten-Abschätzung unter „Wäre theoretisch schön"), **aktualisiert** auf
+  1.084 — diese Sätze hängen nicht an einem Messdatum.
+- `05-erkenntnisse-aus-vorlesungen.md`: die Fundstelle 446 („Platte darf
+  wachsen, Standardzugriff nicht — die 1.099 …") und die benachbarte, von
+  `lint` nicht gemeldete Stelle 390 („Die 1.099 im Standardzugriff sind das
+  Produkt …") sind beide **aktualisiert** — Positionsaussagen ohne Datumsbezug.
+  Die dritte Stelle (264, „431+407+141+70+46+4 = 1.099") stand bereits vor
+  dieser Änderung in einem mit `<!-- lint:historisch -->` markierten Absatz und
+  blieb unverändert.
+
+**Nachtrag in `04-governance.md` Abschnitt 3.2** („Das Ergebnis in Zahlen"):
+die Messreihe (56 Shebang-Descriptions, 69 von 70 Hooks ohne routbare
+Description, Katalogstand 2026-08-08 19:36) als Vor-M3-Zustand markiert
+(`<!-- lint:historisch -->`, Begründung im selben Satz) und unverändert stehen
+gelassen; direkt darunter ein neuer Absatz „Nachtrag (2026-08-10)": Messung
+wiederholt — `search "usr/bin/env"` → 0 statt 56; die 14 leeren und 2
+Trennzeichen-Fälle sind über M2 quarantänisiert (16 gesamt, 15 nicht-bulk —
+gegen die in 3.2 selbst geäusserte Erwartung „~12" kein Widerspruch, siehe
+Begründung im „M2 umgesetzt"-Eintrag oben); die verbliebenen
+Fragment-Descriptions (`gitutil`, `llm`, `diffstate`, `review-api`,
+`extensibility`, „# Architecture" u. ä.) bleiben bewusst sichtbar, ohne weiche
+Heuristik. Standardzugriff insgesamt 1.084 statt 1.099. Nichts aus dem
+Originaltext gelöscht.
+
+**M2 und M3 als erledigt markiert.** In `04-governance.md`, Tabelle „Sollten
+wir tun": beide Zeilen durchgestrichen, `**erledigt**`, mit Ein-Satz-Beleg
+(Umsetzungsdatum, Messwert vorher/nachher, Verweis auf `knowledge/LOG.md`) im
+Stil von M1/M6/M7/M10 in derselben Tabelle; die „Empfohlene Reihenfolge"
+darunter auf „M9 → M11" verkürzt. Für `knowledge/06-massnahmen.md` galt der
+Buchführungshinweis aus `04` — die IDs sind dort nicht identisch: geprüft per
+Grep (`Quarantäne`, `Shebang`, `hookDescription`, `usr/bin/env`), keiner der
+beiden Begriffe kommt in `06-massnahmen.md` unter einer eigenen Maßnahme vor.
+`04`s M2/M3 sind dort schlicht nie dupliziert worden. Statt eine nicht
+existierende Zeile zu erfinden, trägt `06-massnahmen.md` jetzt einen
+Nachtrag im Buchführungsabsatz: M2/M3 aus `04` sind erledigt, ausschliesslich
+dort gebucht, unter keiner `06`-ID zu finden.
+
+**Prüfprotokoll.** `node tools/harness.mjs lint --all`: vorher 4 Befunde hoch,
+nach den Textänderungen ein neuer Befund bei `04-governance.md`, Zeile der
+M2-Tabellenzeile (das dort stehen gelassene „1.099 → 1.084" im selben Zug wie
+der Beleg) — mit `<!-- lint:historisch -->` samt Begründungssatz versehen.
+Danach: **0 Befunde** (0 hoch, 0 mittel, 0 niedrig), Katalog 0 Tage alt.
+`node tools/harness.mjs knowledge "Standardzugriff nach M2 M3 aktueller
+Stand"` liefert unter anderem `04-governance.md:227` „3.2 Das Ergebnis in
+Zahlen" mit dem neuen Nachtrag im Treffer. Keine Datei unter `Learnings/`
+angefasst, keine Baustein-ID verändert oder neu erfunden.
+
+**Offen.** `06-massnahmen.md` Zeile 45 nennt weiterhin „IDs M1–M10" für
+`04-governance.md`, obwohl die Tabelle dort inzwischen M1–M11 führt — vorbestehende
+Abweichung, unter 100 und daher von `lint` nicht geprüft, nicht Teil dieses
+Auftrags und hier unverändert gelassen.
+
+## [2026-08-10] add | M2 umgesetzt: Quarantäne-Flag in `extract` — 16 Bausteine mit unbrauchbarer Description aus der Standardsuche genommen, Standardzugriff jetzt 1.084
+
+**Quelle.** Maßnahme M2 aus `04-governance.md` (Tabelle „Sollten wir tun"),
+Folge von M3 (Eintrag darunter): nach der Shebang-Reparatur blieben Hooks
+zurück, deren Description leer ist oder nur aus Trennzeichen besteht — als
+Suchtreffer „(keine Beschreibung)" belegen sie Plätze, die niemand begründet
+wählen kann.
+
+**Was geändert wurde.** Neue Funktion `quarantaeneGrund()` in
+`tools/harness.mjs`, angewendet in `cmdExtract()` analog zum bulk-Mechanismus:
+der Grund wandert als Feld `quarantaene` in den Katalog. Nur zwei harte,
+inhaltsfreie Kriterien — leere Description und kein Buchstaben-Lauf ab drei
+Zeichen (`\p{L}{3}`, fängt `####`/`=====`/`-----`, lässt CJK durch). Fragmente
+wie „continue", „gitutil", „# Architecture" bleiben bewusst sichtbar: dafür
+gäbe es nur eine Geschmacks-Heuristik, und eine Fehlklassifikation in die
+Quarantäne wiegt schwerer als ein sichtbarer Rausch-Eintrag.
+Übersetzungs-Platzhalter (`isPlaceholder()`) erreichen den Katalog am Messtag
+in null Fällen und werden deshalb nicht doppelt geprüft. `cmdSearch()` blendet
+Quarantäne aus, nur `--all` zeigt sie — anders als bulk öffnen `--repo`/
+`--domain` sie nicht mit; `sucheIds()` (eval) filtert genauso. `cmdShow()`
+nennt den Grund und dass `install` weiter funktioniert. `cmdStats()` und die
+`Stand:`-Zeile von INDEX.md zählen disjunkt (Standard + Massen-Repos +
+Quarantäne = gesamt); `cmdLint()` definiert „Bausteine im Standardzugriff"
+jetzt identisch zu `stats`. Katalog per `extract` neu gebaut, kein Pull.
+
+**Die 16 IDs.** Leer (14): `affaan-m__ecc/hook/` adapter, codex-hooks,
+design-quality-check, hooks, plan-canvas-sessions, post-bash-dispatcher,
+pre-bash-dispatcher, pretooluse-visible-output;
+`AgriciDaniel__claude-seo/hook/hooks`;
+`anthropics__claude-plugins-official/hook/hooks`;
+`Egonex-AI__Understand-Anything/hook/` hooks, post-tool-use-auto-update;
+`mvanhorn__last30days-skill/hook/hooks`;
+`Klotzkette__claude-fuer-deutsches-recht/skill/rechtsmittelbelehrung-zivil`
+(einziger Bulk-Fall, war schon per Repo unsichtbar). Nur Trennzeichen (2):
+`anthropics__claude-plugins-official/hook/` diffstate, review-api. 15 davon
+nicht-bulk — gegen die Erwartung „~12" aus `04-governance.md` kein
+Warnsignal: die dortige Messung stammt von vor M3, das die Leeren erst
+sichtbar machte, und die 5 „Fragmente" von dort bleiben hier bewusst drin.
+
+**Prüfprotokoll.** <!-- lint:historisch --> `node --check` ok. `stats`:
+25.642 gesamt unverändert, Standardzugriff 1.099 → 1.084 (die 1.099 ist der
+absichtlich zitierte Vorher-Stand), neue Zeile „dazu 15 in Quarantäne" mit
+Erklärsatz. `search "" --type hook`: 55 Treffer ohne Quarantänefälle, mit
+`--all` 70 inklusive; `--repo affaan-m__ecc` zeigt adapter weiterhin nicht.
+`show` löst diffstate und adapter auf und nennt den Grund; `install --dry-run`
+auf diffstate funktioniert. `eval --no-save`: 12 von 12 Pflichtfällen
+bestanden, null Rangverschiebungen gegen `last-run.json` („2 von 7 Schwächen
+behoben" stand schon im Vergleichsstand von M3, nicht Folge dieser Änderung).
+Gegenprobe: temporärer Direkttest mit zwölf Fällen (7× MUSS: leer,
+Whitespace, `####`, `=====`, `------------`, `- - -`, „ab 12"; 5× DARF NICHT:
+„continue", „gitutil", „# Architecture", CJK-Satz, „=== Review API ==="),
+alle korrekt, Testblock wieder entfernt. Alle Subcommands einmal gelaufen
+außer `sync`/`update` (pullen — vom Auftrag ausgeschlossen).
+
+**Offen.** `lint` meldet jetzt erwartungsgemäß vier Stellen mit `1.099`
+(`02-bausteine.md`, `03-vorbilder.md`, `04-governance.md`,
+`05-erkenntnisse-aus-vorlesungen.md`) als veraltet gegen 1.084 — der Nachzug
+der Wissensbank-Zahlen ist die angekündigte Folgeaufgabe, hier bewusst nichts
+an `knowledge/` geändert. INDEX.md lag schon vor dieser Änderung mit 101
+Zeilen über dem „unter hundert"-Budget aus `writeMarkdownIndexes()`; der
+Quarantäne-Abschnitt ist auf zwei Textzeilen gekürzt (jetzt 106) — das Budget
+selbst braucht eine eigene Entscheidung.
+
 ## [2026-08-10] revise | M3 umgesetzt: `hookDescription()` überspringt Shebang-Zeilen — 56 „usr/bin/env"-Descriptions auf 0, Katalog per `extract` neu gebaut
 
 **Quelle.** Maßnahme M3 aus `04-governance.md` (Tabelle „Sollten wir tun"),

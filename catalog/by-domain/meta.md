@@ -1,6 +1,6 @@
 # Domäne: meta
 
-174 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+166 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (22)
 
@@ -45,19 +45,16 @@
 | `anthropics__claude-plugins-official/command/example-command` | An example slash command that demonstrates command frontmatter options (legacy format) | 1 |
 | `anthropics__claude-plugins-official/command/help` | Get help with the hookify plugin | 5 |
 
-## hook (55)
+## hook (44)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/adapter` | — | 2 |
 | `affaan-m__ecc/hook/auto-tmux-dev` | Detect dev server commands: npm run dev, pnpm (run) dev, yarn (run) dev, | 5 |
 | `affaan-m__ecc/hook/bash-hook-dispatcher` | Track whether a sub-hook deliberately produced stdout (a string or | 6 |
 | `affaan-m__ecc/hook/block-no-verify` | Git config section and variable names are case-insensitive | 14 |
 | `affaan-m__ecc/hook/check-console-log` | Files where console.log is expected and should not trigger warnings | 2 |
-| `affaan-m__ecc/hook/codex-hooks` | — | 2 |
 | `affaan-m__ecc/hook/config-protection` | ESLint (legacy + v9 flat config, JS/TS/MJS/CJS) | 5 |
 | `affaan-m__ecc/hook/cost-tracker` | Approximate per-1M-token billing rates (USD). | 8 |
-| `affaan-m__ecc/hook/design-quality-check` | — | 4 |
 | `affaan-m__ecc/hook/desktop-notify` | continue | 9 |
 | `affaan-m__ecc/hook/doc-file-warning` | Known ad-hoc filenames that indicate impulse/scratch files (case-sensitive, uppercase only) | 3 |
 | `affaan-m__ecc/hook/ecc-context-monitor` | Context warnings (skip if no context data) | 9 |
@@ -69,14 +66,12 @@
 | `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
 | `affaan-m__ecc/hook/mcp-health-check` | The preflight HTTP probe only checks reachability; it does not have access to | 23 |
 | `affaan-m__ecc/hook/observe` | Continuous Learning v2 - Observation Hook | 23 |
-| `affaan-m__ecc/hook/post-bash-dispatcher` | — | 1 |
 | `affaan-m__ecc/hook/post-edit-accumulator` | Strip path separators and traversal sequences so the value is safe to embed | 2 |
 | `affaan-m__ecc/hook/post-edit-console-warn` | Invalid input — pass through | 2 |
 | `affaan-m__ecc/hook/post-edit-format` | Shell metacharacters that cmd.exe interprets as command separators/operators | 4 |
 | `affaan-m__ecc/hook/post-edit-typecheck` | Find nearest tsconfig.json by walking up (max 20 levels to prevent infinite loop) | 3 |
 | `affaan-m__ecc/hook/posttooluse-dispatcher` | main ran this phase unconditionally; sub-hooks gate themselves internally | 10 |
 | `affaan-m__ecc/hook/pre-bash-commit-quality` | Short explicit whitelist of placeholder + env-var NAME tokens (whole-value match only). | 16 |
-| `affaan-m__ecc/hook/pre-bash-dispatcher` | — | 1 |
 | `affaan-m__ecc/hook/pre-compact` | (.*) not (.+): an explicit but empty header (`**Worktree:**` / `**Worktree:**\n`) | 7 |
 | `affaan-m__ecc/hook/pre-write-doc-warn` | doc-file-warning.js guards its stdin entrypoint behind require.main; call main() explicitly. | 1 |
 | `affaan-m__ecc/hook/quality-gate` | Resolve to absolute path so projectRoot-relative comparisons work | 5 |
@@ -87,23 +82,17 @@
 | `affaan-m__ecc/hook/session-start` | Require a plain decimal (e.g. "0.7", "1", "0.95") so trailing junk | 27 |
 | `affaan-m__ecc/hook/session-start-bootstrap` | Read the raw JSON event from stdin | 3 |
 | `affaan-m__ecc/hook/stop-format-typecheck` | Total ms budget reserved for all batches (leaves headroom below the 300s Stop timeout) | 9 |
-| `AgriciDaniel__claude-seo/hook/hooks` | — | 1 |
 | `AgriciDaniel__claude-seo/hook/validate-schema` | Check @context | 6 |
-| `anthropics__claude-plugins-official/hook/diffstate` | ===================================================================== | 21 |
 | `anthropics__claude-plugins-official/hook/extensibility` | ── caps ───────────────────────────────────────────────────────────────────── | 12 |
 | `anthropics__claude-plugins-official/hook/gitutil` | core.quotePath=false: emit raw UTF-8 in path-emitting commands instead | 35 |
-| `anthropics__claude-plugins-official/hook/hooks` | — | 1 |
 | `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
 | `anthropics__claude-plugins-official/hook/patterns` | Security patterns configuration | 18 |
 | `anthropics__claude-plugins-official/hook/posttooluse` | Add plugin root to Python path for imports | 2 |
 | `anthropics__claude-plugins-official/hook/pretooluse` | Add plugin root to Python path for imports | 2 |
-| `anthropics__claude-plugins-official/hook/review-api` | --------------------------------------------------------------------------- | 25 |
 | `anthropics__claude-plugins-official/hook/security-reminder-hook` | # Architecture | 111 |
 | `anthropics__claude-plugins-official/hook/sg-python` | Find a working Python 3 interpreter and exec the hook with it. | 5 |
 | `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 8 |
 | `anthropics__claude-plugins-official/hook/userpromptsubmit` | Add plugin root to Python path for imports | 1 |
-| `Egonex-AI__Understand-Anything/hook/hooks` | — | 1 |
-| `Egonex-AI__Understand-Anything/hook/post-tool-use-auto-update` | — | 2 |
 
 ## mcp (4)
 
@@ -154,7 +143,7 @@
 | `anthropics__claude-plugins-official/plugin/terraform` | The Terraform MCP Server provides seamless integration with Terraform ecosystem, enabling advanced automation and interaction cap… | 1 |
 | `Egonex-AI__Understand-Anything/plugin/understand-anything` | AI-powered codebase understanding — analyze, visualize, and explain any project | 32102 |
 
-## skill (47)
+## skill (50)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -198,11 +187,14 @@
 | `anthropics__claude-plugins-official/skill/plugin-settings` | This skill should be used when the user asks about "plugin settings", "store plugin configuration", "user-configurable plugin", "… | 45 |
 | `anthropics__claude-plugins-official/skill/plugin-structure` | This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize … | 76 |
 | `anthropics__claude-plugins-official/skill/project-artifact` | Generate and publish a project status artifact — an opinionated, tabbed status page for a project too big for one update (overvie… | 46 |
-| `anthropics__claude-plugins-official/skill/skill-creator` | A skill for creating new skills and iteratively improving them. | 225 |
+| `anthropics__claude-plugins-official/skill/receipts` | Generate a personal Claude Code usage & impact report ("receipts") from this machine's local session transcripts — for justifying… | 82 |
+| `anthropics__claude-plugins-official/skill/session-report` | Generate an explorable HTML report of Claude Code session usage (tokens, cache, subagents, skills, expensive prompts) from ~/.cla… | 58 |
+| `anthropics__claude-plugins-official/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 225 |
 | `anthropics__claude-plugins-official/skill/skill-development` | This skill should be used when the user wants to "create a skill", "add a skill to plugin", "write a new skill", "improve skill d… | 34 |
 | `anthropics__claude-plugins-official/skill/writing-hookify-rules` | This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify… | 9 |
-| `anthropics__skills/skill/skill-creator` | A skill for creating new skills and iteratively improving them. | 225 |
-| `Egonex-AI__Understand-Anything/skill/understand-diff` | Analyze the current code changes against the knowledge graph in the project's data directory (.ua/knowledge-graph.json, or the le… | 6 |
+| `anthropics__skills/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 225 |
+| `Egonex-AI__Understand-Anything/skill/understand-diff` | Use when you need to analyze git diffs or pull requests to understand what changed, affected components, and risks | 6 |
 | `Egonex-AI__Understand-Anything/skill/understand-explain` | Use when you need a deep-dive explanation of a specific file, function, or module in the codebase | 5 |
-| `Egonex-AI__Understand-Anything/skill/understand-onboard` | Generate a comprehensive onboarding guide from the project's knowledge graph. | 5 |
+| `Egonex-AI__Understand-Anything/skill/understand-onboard` | Use when you need to generate an onboarding guide for new team members joining a project | 5 |
+| `mattpocock__skills/skill/git-guardrails-claude-code` | Set up Claude Code hooks to block dangerous git commands (push, reset --hard, clean, branch -D, etc.) before they execute. Use wh… | 3 |
 

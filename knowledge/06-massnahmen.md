@@ -46,6 +46,14 @@ mit den IDs M1–M10 in `knowledge/04-governance.md`. Kollisionen sind unten je 
 vermerkt. Und: Mehrere Maßnahmen sind nach der Prüfung deutlich kleiner geworden — die
 Aufwandsspalte trägt den korrigierten Wert, nicht den ursprünglich geschätzten.
 
+**Nachtrag (2026-08-10).** M2 (Quarantäne-Flag in `extract`) und M3
+(`hookDescription()`-Shebang-Fix) aus der Tabelle „Sollten wir tun" in
+`knowledge/04-governance.md` sind umgesetzt und dort als erledigt markiert
+(Beleg: `knowledge/LOG.md`, Einträge „M2 umgesetzt" und „M3 umgesetzt"). Geprüft
+per Grep: keine der beiden Maßnahmen taucht unter einer eigenen ID in dieser
+Datei auf — sie sind ausschliesslich in `04` gebucht, nicht hierher dupliziert.
+Wer sie sucht, findet sie also nur in `04`, nicht unter einer M-Nummer hier.
+
 ## Übersicht
 
 Die Spalte **Stand** ist am 2026-08-07 gegen den laufenden Code und die Textdateien

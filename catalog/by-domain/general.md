@@ -1,6 +1,6 @@
 # Domäne: general
 
-365 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+350 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (155)
 
@@ -229,10 +229,10 @@
 | `affaan-m__ecc/command/update-codemaps` | Update codemaps for codebase navigation | 1 |
 | `affaan-m__ecc/command/verify` | Run verification loop to validate implementation | 1 |
 | `anthropics__claude-plugins-official/command/cancel-ralph` | Cancel active Ralph Loop | 1 |
-| `anthropics__claude-plugins-official/command/clean-gone` | You need to execute the following bash commands to clean up stale local branches that have been deleted from the remote repositor… | 2 |
+| `anthropics__claude-plugins-official/command/clean-gone` | Cleans up all git branches marked as [gone] (branches that have been deleted on the remote but still exist locally), including re… | 2 |
 | `anthropics__claude-plugins-official/command/code-review` | Code review a pull request | 7 |
-| `anthropics__claude-plugins-official/command/commit` | - Current git status: !git status | 1 |
-| `anthropics__claude-plugins-official/command/commit-push-pr` | - Current git status: !git status | 1 |
+| `anthropics__claude-plugins-official/command/commit` | Create a git commit | 1 |
+| `anthropics__claude-plugins-official/command/commit-push-pr` | Commit, push, and open a PR | 1 |
 | `anthropics__claude-plugins-official/command/configure` | Enable or disable hookify rules interactively | 3 |
 | `anthropics__claude-plugins-official/command/feature-dev` | Guided feature development with codebase understanding and architecture focus | 5 |
 | `anthropics__claude-plugins-official/command/hookify` | Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions | 8 |
@@ -249,20 +249,17 @@
 | `anthropics__claude-plugins-official/command/review-pr` | Comprehensive PR review using specialized agents | 5 |
 | `anthropics__claude-plugins-official/command/revise-claude-md` | Update CLAUDE.md with learnings from this session | 1 |
 
-## hook (8)
+## hook (5)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/before-shell-execution-block-no-verify` | Local hook accepts either the raw command string or a Claude-Code | 2 |
-| `affaan-m__ecc/hook/hooks` | — | 36 |
 | `affaan-m__ecc/hook/post-bash-command-log` | Logging must never block the calling hook. | 2 |
 | `affaan-m__ecc/hook/pre-bash-tmux-reminder` | ignore parse errors and pass through | 2 |
-| `affaan-m__ecc/hook/pretooluse-visible-output` | — | 1 |
 | `affaan-m__ecc/hook/run-with-flags-shell` | Preserve stdin for passthrough or script execution | 1 |
 | `affaan-m__ecc/hook/suggest-compact` | Strict "older than" semantics per the docstring: a file whose mtime | 10 |
-| `mvanhorn__last30days-skill/hook/hooks` | — | 1 |
 
-## skill (120)
+## skill (108)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -348,42 +345,30 @@
 | `affaan-m__ecc/skill/unified-notifications-ops` | Operate notifications as one ECC-native workflow across GitHub, Linear, desktop alerts, hooks, and connected communication surfac… | 5 |
 | `affaan-m__ecc/skill/vite-patterns` | Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, … | 17 |
 | `anthropics__claude-plugins-official/skill/access` | Manage Discord channel access — approve pairings, edit allowlists, set DM/group policy. Use when the user asks to pair, approve s… | 4 |
-| `anthropics__claude-plugins-official/skill/cardputer-buddy` | The buddy/ directory in the local build-with-claude clone is the MicroPython payload that m5-onboard installs onto /flash/. Work … | 2 |
+| `anthropics__claude-plugins-official/skill/cardputer-buddy` | Iterate on the Cardputer-Adv MicroPython app bundle (Claude Buddy, Snake, Hello) after the device is already provisioned via m5-o… | 2 |
 | `anthropics__claude-plugins-official/skill/claude-md-improver` | Audit and improve CLAUDE.md files in repositories. Use when user asks to check, audit, update, improve, or fix CLAUDE.md files. S… | 16 |
 | `anthropics__claude-plugins-official/skill/configure` | Set up the Discord channel — save the bot token and review access policy. Use when the user pastes a Discord bot token, asks to c… | 4 |
-| `anthropics__claude-plugins-official/skill/m5-onboard` | This skill automates the full cold-start workflow for an M5Stack ESP32 device: detect on USB, identify model, flash UIFlow 2.0, a… | 24 |
-| `anthropics__claude-plugins-official/skill/playground` | A playground is a self-contained HTML file with interactive controls on one side, a live preview on the other, and a prompt outpu… | 30 |
-| `anthropics__claude-plugins-official/skill/receipts` | Generates a markdown report of one developer's own Claude Code activity, | 82 |
-| `anthropics__claude-plugins-official/skill/session-report` | Produce a self-contained HTML report of Claude Code usage and save it to the current working directory. | 58 |
+| `anthropics__claude-plugins-official/skill/m5-onboard` | End-to-end onboarding for a freshly-plugged-in M5Stack ESP32 device (Cardputer, Cardputer-Adv, Core, CoreS3, Stick) — detect on U… | 24 |
 | `anthropics__skills/skill/algorithmic-art` | Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request cr… | 60 |
-| `anthropics__skills/skill/doc-coauthoring` | This skill provides a structured workflow for guiding users through collaborative document creation. Act as an active guide, walk… | 16 |
 | `anthropics__skills/skill/internal-comms` | A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude … | 22 |
-| `anthropics__skills/skill/template-skill` | Insert instructions below | 1 |
-| `Graphify-Labs__graphify/skill/graphify` | Turn any folder of files into a navigable knowledge graph with community detection, an honest audit trail, and three outputs: int… | 3838 |
+| `anthropics__skills/skill/template-skill` | Replace with description of the skill and when Claude should use it. | 1 |
 | `mattpocock__skills/skill/ask-matt` | Ask which skill or flow fits your situation. A router over the skills in this repo. | 16 |
-| `mattpocock__skills/skill/code-review` | Two-axis review of the diff between HEAD and a fixed point the user supplies: | 7 |
-| `mattpocock__skills/skill/codebase-design` | Design deep modules: a lot of behaviour behind a small interface, placed at a clean seam, testable through that interface. Use th… | 12 |
-| `mattpocock__skills/skill/diagnosing-bugs` | A discipline for hard bugs. Skip phases only when explicitly justified. | 10 |
-| `mattpocock__skills/skill/domain-modeling` | Actively build and sharpen the project's domain model as you design. This is the active discipline — challenging terms, inventing… | 9 |
-| `mattpocock__skills/skill/git-guardrails-claude-code` | Sets up a PreToolUse hook that intercepts and blocks dangerous git commands before Claude executes them. | 3 |
+| `mattpocock__skills/skill/code-review` | Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes — Standards (does the code follow this… | 7 |
+| `mattpocock__skills/skill/codebase-design` | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening o… | 12 |
+| `mattpocock__skills/skill/diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something br… | 10 |
 | `mattpocock__skills/skill/grill-me` | A relentless interview to sharpen a plan or design. | 1 |
-| `mattpocock__skills/skill/grilling` | Interview the user relentlessly until you reach a shared understanding. Map this as a design tree: every decision branches into t… | 2 |
 | `mattpocock__skills/skill/implement` | Implement a piece of work based on a spec or set of tickets. | 1 |
 | `mattpocock__skills/skill/improve-codebase-architecture` | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | 13 |
 | `mattpocock__skills/skill/loop-me` | Grill me about specs for the workflows I want to build, within this workspace. | 3 |
-| `mattpocock__skills/skill/migrate-to-shoehorn` | shoehorn lets you pass partial data in tests while keeping TypeScript happy. It replaces as assertions with type-safe alternative… | 3 |
-| `mattpocock__skills/skill/prototype` | A prototype is throwaway code that answers a question. The question decides the shape. | 16 |
-| `mattpocock__skills/skill/research` | Spin up a background agent to do the research, so you keep working while it reads. | 1 |
-| `mattpocock__skills/skill/resolving-merge-conflicts` | 1. See the current state of the merge/rebase. Check git history, and the conflicting files. | 1 |
-| `mattpocock__skills/skill/scaffold-exercises` | Create exercise directory structures that pass pnpm ai-hero-cli internal lint, then commit with git commit. | 4 |
+| `mattpocock__skills/skill/resolving-merge-conflicts` | Use when you need to resolve an in-progress git merge/rebase conflict. | 1 |
+| `mattpocock__skills/skill/scaffold-exercises` | Create exercise directory structures with sections, problems, solutions, and explainers that pass linting. Use when user wants to… | 4 |
 | `mattpocock__skills/skill/setup-matt-pocock-skills` | Configure this repo for the engineering skills — set up its issue tracker, triage label vocabulary, and domain doc layout. Run on… | 19 |
-| `mattpocock__skills/skill/setup-pre-commit` | - Husky pre-commit hook | 2 |
+| `mattpocock__skills/skill/setup-pre-commit` | Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo. Use when user wants to a… | 2 |
 | `mattpocock__skills/skill/setup-ts-deep-modules` | Wire dependency-cruiser into a TypeScript repo so each package is a deep module — implementation hidden in subfolders, reachable … | 11 |
 | `mattpocock__skills/skill/teach` | Teach the user a new skill or concept, within this workspace. | 18 |
 | `mattpocock__skills/skill/to-questionnaire` | Turn a decision you can't fully answer into a questionnaire for someone else to fill in. | 3 |
 | `mattpocock__skills/skill/to-spec` | Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you'… | 3 |
 | `mattpocock__skills/skill/to-tickets` | Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published… | 6 |
 | `mattpocock__skills/skill/wait-what` | Stop. That last message did not land — re-pitch it. | 1 |
-| `mattpocock__skills/skill/wizard` | A wizard is a bash script that walks a human, step by step, through a manual procedure that's tedious to do by hand and tedious t… | 13 |
 | `mvanhorn__last30days-skill/skill/last30days` | Research what people actually say about any topic in the last 30 days. Pulls posts and engagement from Reddit, X, YouTube, TikTok… | 16261 |
 

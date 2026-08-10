@@ -1,6 +1,6 @@
 # Domäne: docs
 
-63 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+66 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (21)
 
@@ -50,7 +50,7 @@
 | `anthropics__claude-plugins-official/plugin/claude-security` | Deep vulnerability scanning of your own code, run entirely inside your Claude Code session at a chosen effort tier, with every fi… | 244 |
 | `anthropics__claude-plugins-official/plugin/context7` | Upstash Context7 MCP server for up-to-date documentation lookup. Connects to Context7's hosted remote MCP server (https://mcp.con… | 3 |
 
-## skill (35)
+## skill (38)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -82,11 +82,14 @@
 | `AgriciDaniel__claude-seo/skill/seo-image-gen` | AI image generation for SEO assets: OG/social preview images, blog hero images, schema images, product photography, infographics.… | 9 |
 | `anthropics__claude-plugins-official/skill/project-artifact` | Generate and publish a project status artifact — an opinionated, tabbed status page for a project too big for one update (overvie… | 46 |
 | `anthropics__claude-plugins-official/skill/writing-hookify-rules` | This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify… | 9 |
+| `anthropics__skills/skill/doc-coauthoring` | Guide users through a structured workflow for co-authoring documentation. Use when user wants to write documentation, proposals, … | 16 |
 | `anthropics__skills/skill/docx` | Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx… | 1125 |
 | `anthropics__skills/skill/theme-factory` | Toolkit for styling artifacts with a theme. These artifacts can be slides, docs, reportings, HTML landing pages, etc. There are 1… | 141 |
+| `Graphify-Labs__graphify/skill/graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ e… | 3838 |
 | `mattpocock__skills/skill/grill-with-docs` | A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go. | 1 |
+| `mattpocock__skills/skill/research` | Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the u… | 1 |
 | `mattpocock__skills/skill/writing-beats` | Writing, exploit — assemble raw material into a journey of beats, grounding each term before a beat leans on it. | 5 |
-| `mattpocock__skills/skill/writing-for-agents` | Reference for writing any document an agent consumes — a skill, an AGENTS.md / CLAUDE.md, a doc reached by a pointer. The packagi… | 14 |
+| `mattpocock__skills/skill/writing-for-agents` | Writing documents for agents. Use when creating or editing skills, or modifying AGENTS.md or CLAUDE.md. | 14 |
 | `mattpocock__skills/skill/writing-fragments` | Writing, explore — mine raw fragments, no structure yet. | 4 |
 | `mattpocock__skills/skill/writing-shape` | Writing, exploit — shape raw material into an article, paragraph by paragraph. | 6 |
 

@@ -242,7 +242,7 @@ Wer entscheidet was: **Der Agent entscheidet, aber nach einer Regel, die im Proj
 
 ## Teil D — Übernahme-Empfehlung für unsere Bibliothek
 
-Stand bei uns: `sources.txt` (14 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.642 Bausteine, davon 1.099 im Standardzugriff.
+Stand bei uns: `sources.txt` (14 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.642 Bausteine, davon 1.084 im Standardzugriff (nach der M2-Quarantäne von 15 beschreibungslosen Bausteinen am 2026-08-10).
 
 Priorisiert, mit ehrlicher Einschätzung:
 
