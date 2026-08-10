@@ -60,13 +60,13 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/auto-tmux-dev` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/gateguard-fact-force` | !/usr/bin/env node | 40 |
-| `affaan-m__ecc/hook/mcp-health-check` | !/usr/bin/env node | 23 |
-| `affaan-m__ecc/hook/pre-bash-dev-server-block` | !/usr/bin/env node | 6 |
+| `affaan-m__ecc/hook/auto-tmux-dev` | Detect dev server commands: npm run dev, pnpm (run) dev, yarn (run) dev, | 5 |
+| `affaan-m__ecc/hook/gateguard-fact-force` | Session state — scoped per session to avoid cross-session races. | 40 |
+| `affaan-m__ecc/hook/mcp-health-check` | The preflight HTTP probe only checks reachability; it does not have access to | 23 |
+| `affaan-m__ecc/hook/pre-bash-dev-server-block` | Trailing (?![\w-]) rather than \b: \b treats a hyphen as a word boundary, so | 6 |
 | `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
 | `anthropics__claude-plugins-official/hook/review-api` | --------------------------------------------------------------------------- | 25 |
-| `anthropics__claude-plugins-official/hook/stop-hook` | !/bin/bash | 8 |
+| `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 8 |
 
 ## plugin (11)
 

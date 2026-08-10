@@ -253,13 +253,13 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/before-shell-execution-block-no-verify` | !/usr/bin/env node | 2 |
+| `affaan-m__ecc/hook/before-shell-execution-block-no-verify` | Local hook accepts either the raw command string or a Claude-Code | 2 |
 | `affaan-m__ecc/hook/hooks` | — | 36 |
-| `affaan-m__ecc/hook/post-bash-command-log` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/pre-bash-tmux-reminder` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/pretooluse-visible-output` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/run-with-flags-shell` | !/usr/bin/env bash | 1 |
-| `affaan-m__ecc/hook/suggest-compact` | !/usr/bin/env node | 10 |
+| `affaan-m__ecc/hook/post-bash-command-log` | Logging must never block the calling hook. | 2 |
+| `affaan-m__ecc/hook/pre-bash-tmux-reminder` | ignore parse errors and pass through | 2 |
+| `affaan-m__ecc/hook/pretooluse-visible-output` | — | 1 |
+| `affaan-m__ecc/hook/run-with-flags-shell` | Preserve stdin for passthrough or script execution | 1 |
+| `affaan-m__ecc/hook/suggest-compact` | Strict "older than" semantics per the docstring: a file whose mtime | 10 |
 | `mvanhorn__last30days-skill/hook/hooks` | — | 1 |
 
 ## skill (120)

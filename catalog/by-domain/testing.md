@@ -49,10 +49,10 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/check-console-log` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/post-bash-build-complete` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/post-bash-pr-created` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/pre-bash-git-push-reminder` | !/usr/bin/env node | 2 |
+| `affaan-m__ecc/hook/check-console-log` | Files where console.log is expected and should not trigger warnings | 2 |
+| `affaan-m__ecc/hook/post-bash-build-complete` | ignore parse errors and pass through | 1 |
+| `affaan-m__ecc/hook/post-bash-pr-created` | ignore parse errors and pass through | 2 |
+| `affaan-m__ecc/hook/pre-bash-git-push-reminder` | ignore parse errors and pass through | 2 |
 | `anthropics__claude-plugins-official/hook/gitutil` | core.quotePath=false: emit raw UTF-8 in path-emitting commands instead | 35 |
 | `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
 

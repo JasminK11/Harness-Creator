@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-08 19:36 · 1099 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 14 Repos
+> Stand: 2026-08-10 11:14 · 1099 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, siehe unten) aus 14 Repos
 
 ## Was das hier ist
 

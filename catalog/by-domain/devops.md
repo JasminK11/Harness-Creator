@@ -43,7 +43,7 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/insaits-security-monitor` | !/usr/bin/env python3 | 8 |
+| `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
 
 ## plugin (4)
 

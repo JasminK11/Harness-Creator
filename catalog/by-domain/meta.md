@@ -49,59 +49,59 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/adapter` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/auto-tmux-dev` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/bash-hook-dispatcher` | !/usr/bin/env node | 6 |
-| `affaan-m__ecc/hook/block-no-verify` | !/usr/bin/env node | 14 |
-| `affaan-m__ecc/hook/check-console-log` | !/usr/bin/env node | 2 |
+| `affaan-m__ecc/hook/adapter` | — | 2 |
+| `affaan-m__ecc/hook/auto-tmux-dev` | Detect dev server commands: npm run dev, pnpm (run) dev, yarn (run) dev, | 5 |
+| `affaan-m__ecc/hook/bash-hook-dispatcher` | Track whether a sub-hook deliberately produced stdout (a string or | 6 |
+| `affaan-m__ecc/hook/block-no-verify` | Git config section and variable names are case-insensitive | 14 |
+| `affaan-m__ecc/hook/check-console-log` | Files where console.log is expected and should not trigger warnings | 2 |
 | `affaan-m__ecc/hook/codex-hooks` | — | 2 |
-| `affaan-m__ecc/hook/config-protection` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/cost-tracker` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/design-quality-check` | !/usr/bin/env node | 4 |
-| `affaan-m__ecc/hook/desktop-notify` | !/usr/bin/env node | 9 |
-| `affaan-m__ecc/hook/doc-file-warning` | !/usr/bin/env node | 3 |
-| `affaan-m__ecc/hook/ecc-context-monitor` | !/usr/bin/env node | 9 |
-| `affaan-m__ecc/hook/ecc-metrics-bridge` | !/usr/bin/env node | 10 |
-| `affaan-m__ecc/hook/ecc-statusline` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/evaluate-session` | !/usr/bin/env node | 3 |
-| `affaan-m__ecc/hook/gateguard-fact-force` | !/usr/bin/env node | 40 |
-| `affaan-m__ecc/hook/governance-capture` | !/usr/bin/env node | 9 |
-| `affaan-m__ecc/hook/insaits-security-monitor` | !/usr/bin/env python3 | 8 |
-| `affaan-m__ecc/hook/mcp-health-check` | !/usr/bin/env node | 23 |
-| `affaan-m__ecc/hook/observe` | !/usr/bin/env bash | 23 |
-| `affaan-m__ecc/hook/post-bash-dispatcher` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/post-edit-accumulator` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/post-edit-console-warn` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/post-edit-format` | !/usr/bin/env node | 4 |
-| `affaan-m__ecc/hook/post-edit-typecheck` | !/usr/bin/env node | 3 |
-| `affaan-m__ecc/hook/posttooluse-dispatcher` | !/usr/bin/env node | 10 |
-| `affaan-m__ecc/hook/pre-bash-commit-quality` | !/usr/bin/env node | 16 |
-| `affaan-m__ecc/hook/pre-bash-dispatcher` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/pre-compact` | !/usr/bin/env node | 7 |
-| `affaan-m__ecc/hook/pre-write-doc-warn` | !/usr/bin/env node | 1 |
-| `affaan-m__ecc/hook/quality-gate` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/run-with-flags` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/session-activity-tracker` | !/usr/bin/env node | 16 |
-| `affaan-m__ecc/hook/session-end` | !/usr/bin/env node | 12 |
-| `affaan-m__ecc/hook/session-end-marker` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/session-start` | !/usr/bin/env node | 27 |
-| `affaan-m__ecc/hook/session-start-bootstrap` | !/usr/bin/env node | 3 |
-| `affaan-m__ecc/hook/stop-format-typecheck` | !/usr/bin/env node | 9 |
+| `affaan-m__ecc/hook/config-protection` | ESLint (legacy + v9 flat config, JS/TS/MJS/CJS) | 5 |
+| `affaan-m__ecc/hook/cost-tracker` | Approximate per-1M-token billing rates (USD). | 8 |
+| `affaan-m__ecc/hook/design-quality-check` | — | 4 |
+| `affaan-m__ecc/hook/desktop-notify` | continue | 9 |
+| `affaan-m__ecc/hook/doc-file-warning` | Known ad-hoc filenames that indicate impulse/scratch files (case-sensitive, uppercase only) | 3 |
+| `affaan-m__ecc/hook/ecc-context-monitor` | Context warnings (skip if no context data) | 9 |
+| `affaan-m__ecc/hook/ecc-metrics-bridge` | Fingerprint the actual change, not just the path. Hashing on file_path | 10 |
+| `affaan-m__ecc/hook/ecc-statusline` | Write context % back to bridge for context-monitor | 5 |
+| `affaan-m__ecc/hook/evaluate-session` | Read hook input from stdin (Claude Code provides transcript_path via stdin JSON) | 3 |
+| `affaan-m__ecc/hook/gateguard-fact-force` | Session state — scoped per session to avoid cross-session races. | 40 |
+| `affaan-m__ecc/hook/governance-capture` | Patterns that indicate potential hardcoded secrets | 9 |
+| `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
+| `affaan-m__ecc/hook/mcp-health-check` | The preflight HTTP probe only checks reachability; it does not have access to | 23 |
+| `affaan-m__ecc/hook/observe` | Continuous Learning v2 - Observation Hook | 23 |
+| `affaan-m__ecc/hook/post-bash-dispatcher` | — | 1 |
+| `affaan-m__ecc/hook/post-edit-accumulator` | Strip path separators and traversal sequences so the value is safe to embed | 2 |
+| `affaan-m__ecc/hook/post-edit-console-warn` | Invalid input — pass through | 2 |
+| `affaan-m__ecc/hook/post-edit-format` | Shell metacharacters that cmd.exe interprets as command separators/operators | 4 |
+| `affaan-m__ecc/hook/post-edit-typecheck` | Find nearest tsconfig.json by walking up (max 20 levels to prevent infinite loop) | 3 |
+| `affaan-m__ecc/hook/posttooluse-dispatcher` | main ran this phase unconditionally; sub-hooks gate themselves internally | 10 |
+| `affaan-m__ecc/hook/pre-bash-commit-quality` | Short explicit whitelist of placeholder + env-var NAME tokens (whole-value match only). | 16 |
+| `affaan-m__ecc/hook/pre-bash-dispatcher` | — | 1 |
+| `affaan-m__ecc/hook/pre-compact` | (.*) not (.+): an explicit but empty header (`**Worktree:**` / `**Worktree:**\n`) | 7 |
+| `affaan-m__ecc/hook/pre-write-doc-warn` | doc-file-warning.js guards its stdin entrypoint behind require.main; call main() explicitly. | 1 |
+| `affaan-m__ecc/hook/quality-gate` | Resolve to absolute path so projectRoot-relative comparisons work | 5 |
+| `affaan-m__ecc/hook/run-with-flags` | Safely extract target context from hook stdin JSON for dry-run preview. | 8 |
+| `affaan-m__ecc/hook/session-activity-tracker` | Keep hook non-blocking. | 16 |
+| `affaan-m__ecc/hook/session-end` | Collect user messages (first 200 chars each) | 12 |
+| `affaan-m__ecc/hook/session-end-marker` | Legacy CLI execution (when run directly) | 2 |
+| `affaan-m__ecc/hook/session-start` | Require a plain decimal (e.g. "0.7", "1", "0.95") so trailing junk | 27 |
+| `affaan-m__ecc/hook/session-start-bootstrap` | Read the raw JSON event from stdin | 3 |
+| `affaan-m__ecc/hook/stop-format-typecheck` | Total ms budget reserved for all batches (leaves headroom below the 300s Stop timeout) | 9 |
 | `AgriciDaniel__claude-seo/hook/hooks` | — | 1 |
-| `AgriciDaniel__claude-seo/hook/validate-schema` | !/usr/bin/env python3 | 6 |
+| `AgriciDaniel__claude-seo/hook/validate-schema` | Check @context | 6 |
 | `anthropics__claude-plugins-official/hook/diffstate` | ===================================================================== | 21 |
 | `anthropics__claude-plugins-official/hook/extensibility` | ── caps ───────────────────────────────────────────────────────────────────── | 12 |
 | `anthropics__claude-plugins-official/hook/gitutil` | core.quotePath=false: emit raw UTF-8 in path-emitting commands instead | 35 |
 | `anthropics__claude-plugins-official/hook/hooks` | — | 1 |
 | `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
 | `anthropics__claude-plugins-official/hook/patterns` | Security patterns configuration | 18 |
-| `anthropics__claude-plugins-official/hook/posttooluse` | !/usr/bin/env python3 | 2 |
-| `anthropics__claude-plugins-official/hook/pretooluse` | !/usr/bin/env python3 | 2 |
+| `anthropics__claude-plugins-official/hook/posttooluse` | Add plugin root to Python path for imports | 2 |
+| `anthropics__claude-plugins-official/hook/pretooluse` | Add plugin root to Python path for imports | 2 |
 | `anthropics__claude-plugins-official/hook/review-api` | --------------------------------------------------------------------------- | 25 |
-| `anthropics__claude-plugins-official/hook/security-reminder-hook` | !/usr/bin/env python3 | 111 |
-| `anthropics__claude-plugins-official/hook/sg-python` | !/usr/bin/env bash | 5 |
-| `anthropics__claude-plugins-official/hook/stop-hook` | !/bin/bash | 8 |
-| `anthropics__claude-plugins-official/hook/userpromptsubmit` | !/usr/bin/env python3 | 1 |
+| `anthropics__claude-plugins-official/hook/security-reminder-hook` | # Architecture | 111 |
+| `anthropics__claude-plugins-official/hook/sg-python` | Find a working Python 3 interpreter and exec the hook with it. | 5 |
+| `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 8 |
+| `anthropics__claude-plugins-official/hook/userpromptsubmit` | Add plugin root to Python path for imports | 1 |
 | `Egonex-AI__Understand-Anything/hook/hooks` | — | 1 |
 | `Egonex-AI__Understand-Anything/hook/post-tool-use-auto-update` | — | 2 |
 

@@ -40,8 +40,8 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/doc-file-warning` | !/usr/bin/env node | 3 |
-| `anthropics__claude-plugins-official/hook/security-reminder-hook` | !/usr/bin/env python3 | 111 |
+| `affaan-m__ecc/hook/doc-file-warning` | Known ad-hoc filenames that indicate impulse/scratch files (case-sensitive, uppercase only) | 3 |
+| `anthropics__claude-plugins-official/hook/security-reminder-hook` | # Architecture | 111 |
 
 ## plugin (2)
 

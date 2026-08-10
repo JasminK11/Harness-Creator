@@ -45,7 +45,7 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/design-quality-check` | !/usr/bin/env node | 4 |
+| `affaan-m__ecc/hook/design-quality-check` | — | 4 |
 | `anthropics__claude-plugins-official/hook/patterns` | Security patterns configuration | 18 |
 
 ## plugin (2)

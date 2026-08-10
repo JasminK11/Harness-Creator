@@ -541,8 +541,16 @@ function isClaudeHook(full, base) {
 }
 
 function hookDescription(text) {
-  const c = text.match(/^\s*(?:#|\/\/)\s*(.+)$/m);
-  return c ? c[1].slice(0, 200) : null;
+  // Die Shebang ist keine Beschreibung: 56 Hooks trugen "!/usr/bin/env ..." als
+  // Description und waren damit fürs Routing wertlos (knowledge/04, 3.2).
+  // Deshalb #!-Zeilen überspringen und den ersten echten Kommentar nehmen
+  // (#- und //-Stil wie bisher); findet sich keiner, ist eine leere
+  // Description ehrlicher als die Shebang.
+  for (const m of text.matchAll(/^\s*(?:#|\/\/)\s*(.+)$/gm)) {
+    if (/^\s*#!/.test(m[0])) continue;
+    return m[1].slice(0, 200);
+  }
+  return null;
 }
 
 function cmdExtract({ quiet = false } = {}) {

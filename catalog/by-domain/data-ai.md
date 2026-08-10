@@ -101,17 +101,17 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/hook/config-protection` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/cost-tracker` | !/usr/bin/env node | 8 |
-| `affaan-m__ecc/hook/ecc-context-monitor` | !/usr/bin/env node | 9 |
-| `affaan-m__ecc/hook/ecc-statusline` | !/usr/bin/env node | 5 |
-| `affaan-m__ecc/hook/insaits-security-monitor` | !/usr/bin/env python3 | 8 |
-| `affaan-m__ecc/hook/plan-canvas-sessions` | !/usr/bin/env node | 2 |
-| `affaan-m__ecc/hook/pre-compact` | !/usr/bin/env node | 7 |
-| `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | !/usr/bin/env python3 | 39 |
+| `affaan-m__ecc/hook/config-protection` | ESLint (legacy + v9 flat config, JS/TS/MJS/CJS) | 5 |
+| `affaan-m__ecc/hook/cost-tracker` | Approximate per-1M-token billing rates (USD). | 8 |
+| `affaan-m__ecc/hook/ecc-context-monitor` | Context warnings (skip if no context data) | 9 |
+| `affaan-m__ecc/hook/ecc-statusline` | Write context % back to bridge for context-monitor | 5 |
+| `affaan-m__ecc/hook/insaits-security-monitor` | Configure logging to stderr so it does not interfere with stdout protocol | 8 |
+| `affaan-m__ecc/hook/plan-canvas-sessions` | — | 2 |
+| `affaan-m__ecc/hook/pre-compact` | (.*) not (.+): an explicit but empty header (`**Worktree:**` / `**Worktree:**\n`) | 7 |
+| `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | Shared state-dir resolver: SECURITY_WARNINGS_STATE_DIR → CLAUDE_CONFIG_DIR/security | 39 |
 | `anthropics__claude-plugins-official/hook/extensibility` | ── caps ───────────────────────────────────────────────────────────────────── | 12 |
 | `anthropics__claude-plugins-official/hook/llm` | `pip install --target` fallback (ensure_agent_sdk BUILT_TARGET, used | 115 |
-| `anthropics__claude-plugins-official/hook/userpromptsubmit` | !/usr/bin/env python3 | 1 |
+| `anthropics__claude-plugins-official/hook/userpromptsubmit` | Add plugin root to Python path for imports | 1 |
 
 ## plugin (11)
 

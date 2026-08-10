@@ -68,6 +68,45 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-10] revise | M3 umgesetzt: `hookDescription()` überspringt Shebang-Zeilen — 56 „usr/bin/env"-Descriptions auf 0, Katalog per `extract` neu gebaut
+
+**Quelle.** Maßnahme M3 aus `04-governance.md` (Tabelle „Sollten wir tun"),
+Befund dort in Abschnitt 3.2, gemessen am Katalogstand 2026-08-08 19:36:
+`hookDescription()` nahm den ersten Kommentar der Datei als Description — bei
+Skripten die Shebang. 56 Hooks führten `!/usr/bin/env …` als Beschreibung,
+einer `!/bin/bash`, keine davon routbar.
+
+**Was geändert wurde.** `hookDescription()` in `tools/harness.mjs` iteriert
+jetzt über alle Kommentarzeilen (`#`- und `//`-Stil wie bisher), überspringt
+`#!`-Zeilen und liefert den ersten echten Kommentar; findet sich keiner, `null`
+statt der Shebang — eine leere Description ist ehrlicher und wird von M2
+(Quarantäne) behandelt, nicht hier. `# !kein-Shebang` (mit Leerzeichen) bleibt
+absichtlich gültig: nur die Shebang-Syntax `#!` wird ausgeschlossen. Danach
+Katalog aus den **vorhandenen** Klonen per `extract` neu gebaut — bewusst kein
+`sync`/`update`, ein Pull hätte den Mess-Katalog verschoben.
+
+**Prüfprotokoll.** `node --check` ok. `search "usr/bin/env"`: vorher 56
+Treffer, nachher 0. Stichprobe per `show`:
+`anthropics__claude-plugins-official/hook/stop-hook` „!/bin/bash" → „Ralph
+Loop Stop Hook" (und über `search "ralph loop stop"` jetzt Treffer 1);
+`affaan-m__ecc/hook/adapter` „!/usr/bin/env node" → leer (Header ist
+`/** */`-Block, den die Funktion nie konnte — M2-Fall);
+`anthropics__claude-plugins-official/hook/security-reminder-hook`
+„!/usr/bin/env python3" → „# Architecture" (Fragment aus dem Python-Docstring —
+M2-Fall). `stats` unverändert 25.642 gesamt / 1.099 Standardzugriff / 70 Hooks.
+`eval`: alle Pflichtfälle bestanden, `last-run.json`-Drift nur Zeitstempel,
+null Rangverschiebungen. `lint`: 0 Befunde. Gegenprobe: temporärer
+Direkttest mit fünf Fällen eingeschleust (Shebang+Kommentar, Shebang ohne
+Kommentar, Kommentar ohne Shebang, nur Shebang, `# !`-mit-Abstand), alle wie
+erwartet gemeldet, Testblock wieder entfernt. Alle Subcommands einmal
+gelaufen außer `sync`/`update` (pullen — vom Auftrag ausgeschlossen).
+
+**Offen.** Die Description-Messung in `04-governance.md` 3.2 (56/69) beschreibt
+jetzt den Zustand **vor** M3 und wird von einer späteren Aufgabe nachgezogen —
+`lint` schlägt darauf nicht an, weil er Bestandszahlen prüft, nicht diese
+Messreihe. M2 (Quarantäne unbrauchbarer Descriptions: leere, Fragmente wie
+„# Architecture", `gitutil`, `llm`, `diffstate`) bleibt eigene Maßnahme.
+
 ## [2026-08-10] revise | `recipes/README.md` Punkt 2: besetzte Rolle zählt wie fehlendes Symptom — eigener Fremd-Harness-Abschnitt geprüft und abgelehnt
 
 **Quelle.** `behauptungs-pruefer`-Lauf am 2026-08-10 gegen einen vorgeschlagenen
