@@ -68,6 +68,64 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-20] revise | Drei Fallen-Punkte in `claudeMdBlock()` nach adversarialer Prüfung neu gefasst
+
+**Was geändert wurde.** `tools/harness.mjs`, Funktion `claudeMdBlock()`, Abschnitt
+`### Wenn die Suche nichts Passendes findet` (zu diesem Zeitpunkt nicht committeter
+Stand): ausschliesslich die drei Aufzählungspunkte ersetzt. Einleitungssatz,
+Schlussabsatz („kein Baustein ist besser als ein unpassender") und der Code-Kommentar
+über dem Abschnitt sind unverändert.
+- Punkt 1 (UND/ODER): nennt jetzt die tatsächliche Rückfall-Meldung „Kein Baustein
+  enthält alle Suchwörter", die gemessene Grösse (sieben Wörter → über 250 Teiltreffer)
+  statt „Hunderte", und die Regel „zwei gezielte Wörter statt das ganze Profil".
+- Punkt 2: „Flexionsformen greifen nicht ineinander" ersetzt durch das tatsächliche
+  Verhalten von `termRegex()` — Matching am Wortanfang, der Stamm findet alle längeren
+  Formen, zwei Endungen am selben Stamm finden einander nicht — und die Regel, die
+  daraus folgt: den Stamm eingeben (`pruef` findet `pruefen` und `pruefung`).
+- Punkt 3: „überwiegend englisch" präzisiert: der Standardbestand ist englisch
+  beschrieben, die deutschen Bausteine liegen im Massen-Repo `legal-de` und sind nur
+  mit `--domain legal-de` oder `--all` erreichbar.
+
+**Warum.** Die erste Fassung war am laufenden System in Teilen widerlegt: sie nannte
+die Rückfall-Meldung nicht, gab für Flexionsformen nur „die andere Form probieren"
+statt der Regel, die aus dem Präfix-Matching folgt, und verschwieg, dass deutsche
+Bausteine ohne `--domain`/`--all` gar nicht im Suchraum liegen. Der Code-Kommentar über
+dem Abschnitt benennt den Zweck: „Ohne sie wiederholt der Agent dieselbe Anfrage,
+statt ihre Form zu ändern" — dafür muss jede Falle die richtige Gegenmassnahme tragen.
+
+**Prüfprotokoll (2026-08-20).**
+- `node --check tools/harness.mjs`: ok. Jede `L.push`-Zeile ≤ 82 Zeichen Nutztext.
+- `lint` und `lint --all`: 16 Dateien, Nähte in 26, 0 Befunde.
+- `eval --no-save`: „Alle Pflichtfälle bestanden"; die bekannten weichen Fälle aus
+  `evals/routing.jsonl` („werbeaussage pruefen", Profilanfrage mit 257 Treffern)
+  unverändert. `--no-save`, damit der Probelauf `evals/last-run.json` nicht fortschreibt.
+- Rendering: `install affaan-m__ecc/command/tdd --to <Wegwerfordner> --yes` — der
+  Abschnitt erscheint wortgleich in der erzeugten CLAUDE.md, keine der alten
+  Formulierungen mehr enthalten; danach `uninstall`, Manifest 0 Bausteine. Ausserdem
+  einmal aufgerufen: USAGE, `stats`, `search`, `show`, `knowledge`, `knowledge --list`,
+  `list`, `bootstrap`, `install --dry-run`, `uninstall --dry-run`.
+- Messungen, die die Texte tragen: `search "react typescript app with tests and
+  deployment"` → 257 Treffer mit der Meldung „Kein Baustein enthält alle Suchwörter —
+  zeige Teiltreffer"; `search review` 136, `reviews` 136, `reviewer` 41, `reviewing`
+  12; `search "werbeaussage pruef" --domain legal-de` → 1 Treffer.
+- Gegenprobe: „über 250" testweise durch „25.100 Bausteine" ersetzt → `lint` weiterhin
+  0 Befunde. <!-- lint:historisch --> Die 25.100 ist die absichtlich eingeschleuste
+  Falschzahl, kein Bestand. Die Zahlenheuristik in `cmdLint()` liest nur
+  `knowledgeFiles()` aus `KNOWLEDGE_DIRS`, nicht die Strings in `claudeMdBlock()`. Das
+  Schweigen von `lint` ist für diesen Block also kein Beleg — der Beleg ist das
+  Rendering plus die Messungen. Zurückgebaut, Datei per `cmp` byteidentisch zum Stand
+  davor. Dass dieselbe Falschzahl in **diesem** LOG-Eintrag sofort als `[hoch]`
+  gemeldet wurde, zeigt: die Heuristik lebt, sie sieht nur `harness.mjs` nicht.
+
+**Nachtrag, gleicher Tag.** `reviews` liefert exakt die 136 Treffer von `review`, darunter
+`code-reviewer`, der das Wort `reviews` nicht enthält: `termRegex()` streicht ein
+Plural-s vor dem Matching (Kommentar dort: „aus releases wird release"). Der Halbsatz
+in Punkt 2 „die längere Form findet die kürzere nicht" ist damit für genau das im
+selben Satz genannte Beispiel `reviews` falsch; er stimmt für `reviewer` (41) und
+`reviewing` (12). Vom Umsetzer gemeldet statt still angepasst; daraufhin korrigiert:
+Punkt 2 sagt jetzt „ein Plural-s wird abgeschnitten, jede andere längere Form findet
+die kürzere nicht“. Rendering danach erneut geprüft.
+
 ## [2026-08-10] revise | Fünf überholte Stellen zu M11 in `04-governance.md` und `08-pruefbarkeit-und-pruefdaten.md` eingearbeitet
 
 **Anlass.** Der Eintrag direkt unter diesem (`add | Katalog-Hygiene-Kennzahlen bei jedem

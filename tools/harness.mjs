@@ -2213,12 +2213,41 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
   L.push("```bash");
   L.push(`cd "${ROOT}"`);
   L.push('node tools/harness.mjs search "<stichwort>" [--type X] [--domain X] [--limit N]');
+  L.push("node tools/harness.mjs intent --list      # kein Stichwort, nur ein Symptom?");
+  L.push("node tools/harness.mjs intent <id>        # die hinterlegten Suchen dieser Absicht");
   L.push("node tools/harness.mjs show <id>");
+  L.push(`node tools/harness.mjs list --to "${"<dieses Projekt>"}"     # was liegt hier schon?`);
   L.push(`node tools/harness.mjs install <id> --to "${"<dieses Projekt>"}"`);
   L.push("```");
   L.push("");
-  L.push("Reihenfolge bei einer Frage nach passenden Bausteinen: erst `search`, dann");
-  L.push("`show` für die engere Auswahl, dann `install`.");
+  L.push("Reihenfolge bei einer Frage nach passenden Bausteinen: erst `search` — oder");
+  L.push("`intent`, wenn nur ein Symptom vorliegt und kein Suchwort —, dann `show` für die");
+  L.push("engere Auswahl, dann `install`. Davor `list`: was schon liegt, wird nicht ersetzt.");
+  L.push("");
+  // Diese drei Fallen sind der Grund, warum eine Suche leer ausgeht — alle drei am
+  // laufenden Katalog gemessen und als Fall in evals/routing.jsonl festgehalten.
+  // Ohne sie wiederholt der Agent dieselbe Anfrage, statt ihre Form zu ändern.
+  L.push("### Wenn die Suche nichts Passendes findet");
+  L.push("");
+  L.push("Nicht dieselbe Anfrage wiederholen. Das Suchverhalten hat drei belegte Fallen:");
+  L.push("");
+  L.push("- **Mehrere Wörter gelten als UND.** Trägt kein Baustein alle, fällt die Suche");
+  L.push("  auf ODER zurück und sagt das („Kein Baustein enthält alle Suchwörter\"). Je");
+  L.push("  gängiger die Einzelwörter, desto mehr Teiltreffer — ein Projektprofil mit sieben");
+  L.push("  Wörtern liefert über 250. Zwei gezielte Wörter sind besser als das ganze Profil.");
+  L.push("- **Die Suche matcht am Wortanfang.** Der Stamm findet alle längeren Formen");
+  L.push("  (`review` findet `reviews`, `reviewer`, `reviewing`); ein Plural-s wird");
+  L.push("  abgeschnitten, jede andere längere Form findet die kürzere nicht, und zwei");
+  L.push("  Endungen am selben Stamm finden einander nicht (`pruefen` findet `pruefung`");
+  L.push("  nicht). Deshalb den Wortstamm eingeben: `pruef` findet beides.");
+  L.push("- **Der Standardbestand ist englisch beschrieben.** Deutsche Anfragen laufen");
+  L.push("  dort ins Leere; den englischen Fachbegriff einsetzen. Die deutschen Bausteine");
+  L.push("  liegen im Massen-Repo `legal-de` und sind nur mit `--domain legal-de` oder");
+  L.push("  `--all` erreichbar.");
+  L.push("");
+  L.push("Bleibt es dabei, ist auch das ein Ergebnis: **kein Baustein ist besser als ein");
+  L.push("unpassender.** Dann nichts installieren, sondern die Lücke unter „Lücken\" in");
+  L.push("`" + path.join(ROOT, "sources.txt") + "` vermerken — das Format steht dort.");
   L.push("");
   // Absoluter Pfad, kein blosses "INDEX.md": in einem fremden Projekt zeigt der
   // relative Name auf die falsche Datei oder ins Leere — und dann rät der Agent.
