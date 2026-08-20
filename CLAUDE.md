@@ -120,14 +120,40 @@ Kontextfenster voll, bevor er die erste Zeile Projektcode sieht. Deshalb:
 ```bash
 cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
 node tools/harness.mjs search "<stichwort>" [--type X] [--domain X] [--limit N]
+node tools/harness.mjs intent --list      # kein Stichwort, nur ein Symptom?
+node tools/harness.mjs intent <id>        # die hinterlegten Suchen dieser Absicht
 node tools/harness.mjs show <id>
+node tools/harness.mjs list --to "<dieses Projekt>"     # was liegt hier schon?
 node tools/harness.mjs install <id> --to "<dieses Projekt>"
 ```
 
-Reihenfolge bei einer Frage nach passenden Bausteinen: erst `search`, dann
-`show` für die engere Auswahl, dann `install`.
+Reihenfolge bei einer Frage nach passenden Bausteinen: erst `search` — oder
+`intent`, wenn nur ein Symptom vorliegt und kein Suchwort —, dann `show` für die
+engere Auswahl, dann `install`. Davor `list`: was schon liegt, wird nicht ersetzt.
 
-Wer mehr braucht — alle 13 Befehle, Bestand nach Typ und Domäne, die vollen
+### Wenn die Suche nichts Passendes findet
+
+Nicht dieselbe Anfrage wiederholen. Das Suchverhalten hat drei belegte Fallen:
+
+- **Mehrere Wörter gelten als UND.** Trägt kein Baustein alle, fällt die Suche
+  auf ODER zurück und sagt das („Kein Baustein enthält alle Suchwörter"). Je
+  gängiger die Einzelwörter, desto mehr Teiltreffer — ein Projektprofil mit sieben
+  Wörtern liefert über 250. Zwei gezielte Wörter sind besser als das ganze Profil.
+- **Die Suche matcht am Wortanfang.** Der Stamm findet alle längeren Formen
+  (`review` findet `reviews`, `reviewer`, `reviewing`); ein Plural-s wird
+  abgeschnitten, jede andere längere Form findet die kürzere nicht, und zwei
+  Endungen am selben Stamm finden einander nicht (`pruefen` findet `pruefung`
+  nicht). Deshalb den Wortstamm eingeben: `pruef` findet beides.
+- **Der Standardbestand ist englisch beschrieben.** Deutsche Anfragen laufen
+  dort ins Leere; den englischen Fachbegriff einsetzen. Die deutschen Bausteine
+  liegen im Massen-Repo `legal-de` und sind nur mit `--domain legal-de` oder
+  `--all` erreichbar.
+
+Bleibt es dabei, ist auch das ein Ergebnis: **kein Baustein ist besser als ein
+unpassender.** Dann nichts installieren, sondern die Lücke unter „Lücken" in
+`C:\Users\info\OneDrive\Desktop\Harnes Creator\sources.txt` vermerken — das Format steht dort.
+
+Wer mehr braucht — alle 14 Befehle, Bestand nach Typ und Domäne, die vollen
 Verbote —, liest `C:\Users\info\OneDrive\Desktop\Harnes Creator\INDEX.md` **komplett**. Sie ist unter
 hundert Zeilen lang und genau dafür da. Kein Ersatz dafür, im Verzeichnis der
 Bibliothek herumzusuchen.

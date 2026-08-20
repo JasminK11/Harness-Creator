@@ -126,6 +126,13 @@ selben Satz genannte Beispiel `reviews` falsch; er stimmt für `reviewer` (41) u
 Punkt 2 sagt jetzt „ein Plural-s wird abgeschnitten, jede andere längere Form findet
 die kürzere nicht“. Rendering danach erneut geprüft.
 
+**Zweiter Nachtrag, gleicher Tag.** Der Regelblock in der eigenen `CLAUDE.md` der
+Bibliothek stammte noch aus der Zeit vor `intent` und nannte „alle 13 Befehle“;
+INDEX.md und der Dispatcher führen 14. Per `bootstrap --to <Bibliothek>` neu erzeugt —
+der vorgesehene Weg der Selbstanwendung; `git diff` zeigte ausschliesslich den Block
+zwischen den Markern als geändert. Damit trägt die Bibliothek selbst denselben
+Abschnitt „Wenn die Suche nichts Passendes findet“, den sie Zielprojekten mitgibt.
+
 ## [2026-08-10] revise | Fünf überholte Stellen zu M11 in `04-governance.md` und `08-pruefbarkeit-und-pruefdaten.md` eingearbeitet
 
 **Anlass.** Der Eintrag direkt unter diesem (`add | Katalog-Hygiene-Kennzahlen bei jedem
