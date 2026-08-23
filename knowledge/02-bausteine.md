@@ -102,6 +102,8 @@ Zwei Fallen im Format: Bei persönlichen und Projekt-Skills bestimmt **der Verze
 
 **Kontext-Kosten.** Dauerhaft: `description` plus `when_to_use`, im Skill-Listing bei 1.536 Zeichen gekappt. Ab Aktivierung: der gerenderte Body als eine Nachricht, die für den Rest der Session stehen bleibt — Claude Code liest die Datei später nicht neu. Bei Auto-Compaction werden die zuletzt aufgerufenen Skills mit je bis zu 5.000 Token und einem gemeinsamen Budget von 25.000 Token wieder angehängt; ältere fallen dabei raus.
 
+**Tote Relative-Links an der Installationsgrenze.** Ein fremder Skill kann relativ auf Nachbar-Dateien seines Quell-Repos verlinken (`../../rules/…`) oder auf Geschwister-Skills (`../accessibility/SKILL.md`); `install` kopiert nur die Baustein-Dateien, solche Links bleiben im Zielprojekt tot. Kein Werkzeugdefekt — Bauart-Grenze beim Katalogisieren fremder Repos (`knowledge/04`, Abschnitt 5): an der Quelle kann die Bibliothek nichts reparieren. Beleg: E2E-Lauf 2026-08-23, `affaan-m__ecc/skill/react-patterns` verlinkt `../../rules/react/hooks.md` und `../../rules/react/` — per Testinstallation bestätigt, beide Ziele fehlen im Zielprojekt.
+
 ### 2.2 Subagent
 
 **Wofür gebaut.** Eine Nebenaufgabe, die den Hauptverlauf mit Material fluten würde, oder eine Bewertung, die die Begründungskette des Hauptlaufs *nicht* sehen darf.

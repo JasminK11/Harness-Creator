@@ -1,4 +1,10 @@
 {
+  "permissions": {
+    "ask": [
+      "Bash(node *harness.mjs install*)",
+      "Bash(node *harness.mjs uninstall*)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

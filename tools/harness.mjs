@@ -2398,7 +2398,7 @@ function writeClaudeMd(target, installed, catalogGeneratedAt) {
  *
  * Lieber ein Abbruch mit klarer Ansage als eine Aktion am falschen Ort.
  */
-function requireTarget(flags, befehl, { erlaubeSelbst = false, positional = false, grund = "weil es in einem fremden Projekt schreibt" } = {}) {
+function requireTarget(flags, befehl, { erlaubeSelbst = false, positional = false, anlegenHinweis = true, grund = "weil es in einem fremden Projekt schreibt" } = {}) {
   // `positional` nur dort, wo die freien Argumente nicht schon belegt sind:
   // bei install und uninstall sind das die Baustein-IDs, nicht das Ziel.
   const roh = flags.to || (positional ? flags._[0] : null);
@@ -2409,7 +2409,15 @@ function requireTarget(flags, befehl, { erlaubeSelbst = false, positional = fals
         `  Für das aktuelle Verzeichnis ausdrücklich: --to .`);
   }
   const target = path.resolve(String(roh));
-  if (!fs.existsSync(target)) die(`Zielverzeichnis existiert nicht: ${target}`);
+  // Alle vier Befehle (install, uninstall, list, bootstrap) bekommen den
+  // Anlegen-Hinweis, weil sie dieselbe Abbruchstelle teilen: Ein Tippfehler im
+  // Pfad sieht für den Nutzer genauso aus wie ein fehlender Ordner. Der Hinweis
+  // kostet nichts und legt das Werkzeug nicht fest — angelegt wird von Hand,
+  // automatisch passiert weiterhin nichts.
+  if (!fs.existsSync(target)) {
+    die(`Zielverzeichnis existiert nicht: ${target}` +
+        (anlegenHinweis ? ` — erst anlegen, z.B.: mkdir -p "${target}"` : ""));
+  }
   if (!erlaubeSelbst && path.resolve(target) === path.resolve(ROOT)) {
     die(`Ziel ist die Bibliothek selbst: ${target}\n` +
         `  ${befehl} ist für Zielprojekte gedacht. Für die Bibliothek selbst gibt es\n` +
@@ -4029,6 +4037,7 @@ harness.mjs — Harness-Bibliothek
        Legt ausserdem die Bedien-Skills harness-plan und harness-build unter
        .claude/skills/ des Zielprojekts ab — ein frisches Projekt kennt sie sonst
        nicht. --no-skills unterdrückt das. Nur bootstrap tut das; install nicht.
+       Das Zielverzeichnis muss bereits existieren — bootstrap legt nichts an.
   node tools/harness.mjs knowledge "<frage>"       Wissensbank durchsuchen —
        [--limit N] [--lines N]                     liefert Abschnitte, nicht Dateien
   node tools/harness.mjs knowledge --list          Inhaltsverzeichnis der Wissensbank

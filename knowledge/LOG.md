@@ -68,6 +68,53 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-23] revise | `02-bausteine.md` 2.1: tote Relative-Links an der Installationsgrenze als bekannte Grenze dokumentiert (Befund A1, E2E-Lauf 2026-08-23)
+
+Anlass: E2E-Abnahmelauf vom 2026-08-23. Der Installations-Test von
+`affaan-m__ecc/skill/react-patterns` zeigte relative Links auf Dateien des
+Quell-Repos, die nicht mitinstalliert werden. Am laufenden System bestätigt:
+Testinstallation per CLI in einen Wegwerf-Ordner (`install … --yes --to /tmp/opencode/…`,
+danach entfernt) — die installierte `SKILL.md` enthält vier Relative-Links
+(`../../rules/react/hooks.md`, `../../rules/react/`, zwei Geschwister-Skill-Links
+`../…`); `.claude/rules/` existiert im Ziel nicht, die Geschwister-Skills wurden
+nicht mitinstalliert. Eingearbeitet in den bestehenden Abschnitt 2.1 (Typ Skill)
+statt eines neuen Abschnitts — derselbe Feldumfang wie die dortige
+Kontext-Kosten-Beschreibung: Eigenschaften des Typs an der Werkzeuggrenze.
+Eingrenzungsquelle: `knowledge/04`, Abschnitt 5 — wir besitzen die Quell-Repos
+nicht und können dort nichts reparieren; kontrollierbar sind nur Aufnahme und
+Installationsweg.
+
+## [2026-08-23] revise | install/uninstall/list: gleicher Anlegen-Hinweis wie bootstrap (requireTarget)
+
+Bezug: Folge zu „[2026-08-23] revise | bootstrap: Anlegen-Hinweis bei fehlendem
+Zielverzeichnis (requireTarget)" direkt unten. PM-Entscheid: derselbe Hinweis für
+alle vier Befehle, konsistent. `anlegenHinweis` ist nicht mehr Optionsschalter mit
+Default `false`, sondern Default `true` in `requireTarget()`; die explizite Übergabe
+in `cmdBootstrap` ist entfallen. Warum Default statt vier Übergaben: Alle Aufrufer
+wollen den Hinweis — ein Parameter, den niemand auf `false` setzt, ist tote
+Schnittfläche. Kein automatisches Anlegen: der Hinweis sagt nur, wie es von Hand
+geht. Der alte Warum-Kommentar in `requireTarget()` („Nur bootstrap bekommt den
+Anlegen-Hinweis …") beschrieb das Gegenteil des neuen Verhaltens und ist ersetzt.
+Prüfung: node --check ok; alle vier Befehle gegen nicht existierenden Ordner geben
+denselben Satz „… — erst anlegen, z.B.: mkdir -p \"<pfad>\"" aus; Happy Paths
+bootstrap/install --yes/list/uninstall --yes gegen Wegwerf-Ordner unverändert;
+lint --all 0 Befunde; eval --no-save 12/12; grep-Gegenprobe: „erst anlegen" kommt
+genau einmal vor, in `requireTarget()`.
+
+## [2026-08-23] revise | bootstrap: Anlegen-Hinweis bei fehlendem Zielverzeichnis (requireTarget)
+
+Bezug: PM, Befund B1 aus dem E2E-Abnahmelauf. `bootstrap --to <fehlender Ordner>`
+brach ab mit nur „FEHLER: Zielverzeichnis existiert nicht" — der Erstnutzer erfuhr
+nicht, dass er den Ordner selbst anlegen muss. In `requireTarget()` kommt ein
+Optionsschalter `anlegenHinweis` dazu; nur `cmdBootstrap` übergibt ihn, die Meldung
+lautet jetzt „… — erst anlegen, z.B.: mkdir -p \"<pfad>\"". Kein automatisches
+Anlegen: das Werkzeug soll explizit bleiben. install/uninstall/list behalten die
+harte Meldung (sie setzen ein bestehendes Projekt voraus — verifiziert, alle drei
+geben weiterhin den Kurzsatz ohne Hinweis aus). USAGE-Absatz zu bootstrap um den
+Halbsatz „Das Zielverzeichnis muss bereits existieren — bootstrap legt nichts an."
+ergänzt. Prüfung: node --check ok, lint --all 0 Befunde, eval --no-save 12/12,
+Happy Path gegen Wegwerf-Ordner unverändert.
+
 ## [2026-08-23] revise | harness-build: feste Absichtsanzahl „zwölf" entfernt (Naht zu `nachweis`)
 
 Bezug: Auftrag vom PM, Nachzug zur Absicht `nachweis` (Eintrag unten). Die drei
