@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-23 12:22 · 1104 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 8 in Quarantäne, siehe unten) aus 14 Repos
+> Stand: 2026-08-23 20:02 · 1104 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 8 in Quarantäne, siehe unten) aus 14 Repos
 
 ## Was das hier ist
 
@@ -54,6 +54,7 @@ Warnungen stehen im Aufruf ohne Argument.
 | `lint` | Wissensbank und Nähte prüfen | tote Verweise, abgelaufene Metadaten, falsche IDs |
 | `eval` | Routing-Evals fahren | findet die Suche noch, was sie finden soll — läuft als Schritt 4 von `update` mit |
 | `list` | zeigt, was in einem Zielprojekt liegt | aus dessen Manifest, mit heutigem Wirksamkeitszustand |
+| `check` | Manifest gegen den Katalog halten | entfernt / geändert / lokal angepasst — Exit 1 bei Brüchen, CI-tauglich |
 | `stats` | Bestandszahlen | die Quelle für jede Zahl, die man über den Katalog sagt |
 | `update` | Repos pullen + Katalog neu bauen | dauert Minuten, schreibt den Katalog neu |
 | `sync` | nur Repos pullen/klonen | Teilschritt von `update` |

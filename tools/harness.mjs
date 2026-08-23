@@ -852,6 +852,7 @@ function befehlsUebersicht() {
     lint:      ["Wissensbank und Nähte prüfen", "tote Verweise, abgelaufene Metadaten, falsche IDs"],
     eval:      ["Routing-Evals fahren", "findet die Suche noch, was sie finden soll — läuft als Schritt 4 von `update` mit"],
     list:      ["zeigt, was in einem Zielprojekt liegt", "aus dessen Manifest, mit heutigem Wirksamkeitszustand"],
+    check:     ["Manifest gegen den Katalog halten", "entfernt / geändert / lokal angepasst — Exit 1 bei Brüchen, CI-tauglich"],
     stats:     ["Bestandszahlen", "die Quelle für jede Zahl, die man über den Katalog sagt"],
     update:    ["Repos pullen + Katalog neu bauen", "dauert Minuten, schreibt den Katalog neu"],
     sync:      ["nur Repos pullen/klonen", "Teilschritt von `update`"],
@@ -2867,6 +2868,128 @@ function cmdList(argv) {
 }
 
 /**
+ * `check --to DIR` — hält das Manifest eines Zielprojekts gegen den heutigen
+ * Katalogstand.
+ *
+ * Warum ein eigener Befehl neben `list`: `list` bestimmt nur den *lokalen*
+ * Zustand (Dateien da? Hook registriert?) und schweigt zu der Frage, die nach
+ * jedem `update` die eigentliche ist — ist das Installierte noch das, was die
+ * Bibliothek heute anbietet? knowledge/04-governance.md 5.4 nennt genau diesen
+ * Abgleich den einzigen möglichen Lifecycle-Ersatz für fremde Bausteine ("wir
+ * erkennen Änderungen, statt sie anzukündigen") — geplant, bislang nie gebaut.
+ * Der Besitzer eines Zielprojekts bringt es auf den Punkt: "es kommen immer neue
+ * Bausteine, wer checkt ob mein Harness noch aktuell ist?"
+ *
+ * Exit-Code 1 nur bei echten Brüchen (ID upstream verschwunden, Dateien
+ * fortgefallen), nicht bei bloßer Änderung oder lokaler Anpassung — sonst wäre
+ * der Befehl als Schranke in Skripten und CI unbrauchbar, weil jede normale
+ * Weiterentwicklung des Katalogs den Lauf rot färbte.
+ */
+function cmdCheck(argv) {
+  const flags = parseFlags(argv);
+  const target = requireTarget(flags, "check", {
+    erlaubeSelbst: true, positional: true,
+    grund: "weil sonst offenbliebe, welches Projekt gegen den Katalog gehalten wird",
+  });
+  const mf = path.join(target, ".claude", "harness-manifest.json");
+  if (!fs.existsSync(mf)) {
+    console.log(`Kein Manifest in ${target}`);
+    console.log("  Dieses Projekt hat keine nachweisbaren Bausteine aus der Bibliothek —");
+    console.log("  nichts zu prüfen.");
+    return;
+  }
+  let doc;
+  try { doc = JSON.parse(fs.readFileSync(mf, "utf8")); } catch (e) { die(`Manifest nicht lesbar: ${e.message}`); }
+  const items = Array.isArray(doc.items) ? doc.items : [];
+  const cat = loadCatalog();
+
+  console.log(`${items.length} Baustein(e) laut Manifest in ${target}`);
+  if (doc.catalogGeneratedAt) console.log(`Katalogstand bei der Installation: ${String(doc.catalogGeneratedAt).slice(0, 16).replace("T", " ")}`);
+  console.log(`Katalogstand heute:              ${String(cat.generatedAt).slice(0, 16).replace("T", " ")}\n`);
+
+  // Der Katalog trägt keinen Commit pro Baustein, sondern je Repo einen Head —
+  // denselben, den auch `cmdInstall` ins Manifest schreibt. "Ungleich" heisst
+  // deshalb nur: das Repo hat sich seit der Installation bewegt. Ob gerade
+  // DIESER Baustein dabei war, kann nur `show` beantworten — die Meldung darf
+  // keine Neuheit behaupten, die der Katalog gar nicht belegen kann.
+  const headVon = (repo) => cat.repos.find((r) => r.dir === repo)?.head || null;
+
+  let aktuell = 0, geaendert = 0, entfernt = 0, drift = 0;
+  // Vierter Zähler neben den Zuständen: fehlende Dateien verstellen nicht die
+  // Zustandsklasse (der Eintrag kann zugleich aktuell oder geändert sein), aber
+  // unsichtbar in "aktuell" mitgezählt würde die Bilanz lügen — wie "lokal
+  // angepasst" steht der Bruch deshalb als eigener Posten daneben.
+  let brueche = 0;
+  let bruch = false;
+  for (const e of items) {
+    const it = findItem(cat, e.id);
+    const fehlt = [];
+    const angepasst = [];
+    for (const f of e.files || []) {
+      const abs = path.resolve(target, f.path);
+      if (!fs.existsSync(abs)) { fehlt.push(f.path); continue; }
+      const jetzt = fileHash(abs);
+      // Dieselbe Schwelle wie in `cmdUninstall`: ohne beiderseitige md5 keine
+      // Behauptung, sonst würde jedes ältere Manifest als Drift erscheinen.
+      if (f.md5 && jetzt && jetzt !== f.md5) angepasst.push(f.path);
+    }
+    if (fehlt.length) { bruch = true; brueche++; }
+
+    const head = it ? headVon(it.repo) : null;
+    // Ohne Commit auf einer der beiden Seiten gibt es keinen Vergleich — als
+    // "geändert" zu melden wäre eine Behauptung ohne Beleg.
+    const commitGeaendert = !!(it && e.commit && head && e.commit !== head);
+
+    if (!it) {
+      entfernt++; bruch = true;
+      console.log(`[entfernt] ${e.id}`);
+      console.log(`           im Katalog nicht mehr vorhanden — upstream gelöscht oder umbenannt.`);
+      console.log(`           Kopie funktioniert weiter, wird aber nie wieder aktualisiert.`);
+      console.log(`           empfohlen: uninstall ${e.id} --to "${target}"`);
+    } else if (commitGeaendert) {
+      geaendert++;
+      console.log(`[geändert] ${e.id}`);
+      console.log(`           installiert @ ${e.commit}, Katalog-Head steht @ ${head} — das Repo hat sich`);
+      console.log(`           seit der Installation bewegt; ob gerade DIESER Baustein sich geändert hat,`);
+      console.log(`           sagt \`show ${e.id}\`.`);
+      console.log(`           empfohlen: install ${e.id} --to "${target}" --force${angepasst.length ? "   (Achtung: lokale Anpassungen unten)" : ""}`);
+    } else {
+      aktuell++;
+      console.log(`[aktuell]  ${e.id}`);
+    }
+    if (fehlt.length) {
+      console.log(`           ${fehlt.length} Datei(en) nicht mehr vorhanden:`);
+      for (const p of fehlt) console.log(`             - ${p}`);
+    }
+    if (angepasst.length) {
+      drift++;
+      console.log(`           lokal angepasst (weicht vom Manifest ab):`);
+      for (const p of angepasst) console.log(`             ~ ${p}`);
+      console.log(`           Reinstall überschreibt das nur mit Bewusstsein (--force) — dasselbe Verhalten wie uninstall ohne --force.`);
+    }
+    // Bewusste Grenze sichtbar machen: Ohne Prüfsumme im Manifest würde Drift
+    // still unentdeckt bleiben — Schweigen hier wäre nicht "unverändert",
+    // sondern "ungeprüft", und das muss der Leser unterscheiden können.
+    if ((e.files || []).length && (e.files || []).some((f) => !f.md5)) {
+      console.log(`           Manifest ohne Prüfsummen — lokale Drift nicht prüfbar (ältere Installation).`);
+    }
+    console.log("");
+  }
+
+  console.log(`Bilanz: ${aktuell} aktuell, ${geaendert} geändert, ${entfernt} entfernt${brueche ? `, ${brueche} mit Brüchen` : ""}${drift ? `, ${drift} lokal angepasst` : ""}.`);
+  if (bruch) {
+    console.log("Brüche klären, bevor nichts mehr geht: entfernte Bausteine per uninstall");
+    console.log("räumen (oder bewusst behalten), fehlende Dateien deuten auf Eingriffe von Hand.");
+    process.exitCode = 1;
+  } else if (geaendert) {
+    console.log("Nichts kaputt — aber Nachziehen ist eine Entscheidung: erst `show`, dann");
+    console.log("`install <id> --to DIR --force` für das, was aktualisiert werden soll.");
+  } else {
+    console.log("Alles im Katalogstand — nichts zu tun.");
+  }
+}
+
+/**
  * Legt im Zielprojekt die Skills ab, mit denen es die Bibliothek bedient.
  *
  * Warum das zum Bootstrap gehört: Die Skills liegen bewusst im Projekt der
@@ -4086,8 +4209,15 @@ harness.mjs — Harness-Bibliothek
   node tools/harness.mjs list --to DIR             was liegt in diesem Projekt?
        Liest das Manifest des Zielprojekts und bestimmt den Zustand jedes Eintrags
        neu — [aktiv] / [inaktiv] wie nach install, aber mit dem Stand von heute.
-       Meldet ausserdem Manifest-Einträge, deren Dateien nicht mehr da sind.
-  node tools/harness.mjs bootstrap --to DIR        nur den Regelblock in die
+        Meldet ausserdem Manifest-Einträge, deren Dateien nicht mehr da sind.
+   node tools/harness.mjs check --to DIR             Manifest gegen den heutigen
+        Katalogstand halten — je Eintrag [aktuell] / [geändert] (Katalog-Head
+        des Repos weicht vom Manifest ab; ob gerade dieser Baustein sich
+        geändert hat, sagt \`show\` — Nachzug per install --force) / [entfernt]
+        (upstream weg, Aufräumen per uninstall), dazu lokal angepasste Dateien
+        (Reinstall nur mit Bewusstsein). Exit-Code 1 bei echten Brüchen, damit
+        als Schranke in Skripte/CI benutzbar. knowledge/04-governance.md 5.4.
+   node tools/harness.mjs bootstrap --to DIR        nur den Regelblock in die
        [--no-skills]                               CLAUDE.md des Projekts schreiben
        Legt ausserdem die Bedien-Skills harness-plan und harness-build unter
        .claude/skills/ des Zielprojekts ab — ein frisches Projekt kennt sie sonst
@@ -4140,6 +4270,7 @@ switch (cmd) {
   case "uninstall": cmdUninstall(rest); break;
   case "bootstrap": cmdBootstrap(rest); break;
   case "list": cmdList(rest); break;
+  case "check": cmdCheck(rest); break;
   case "knowledge": case "know": case "why": cmdKnowledge(rest); break;
   case "lint": cmdLint(rest); break;
   case "eval": cmdEval(rest); break;

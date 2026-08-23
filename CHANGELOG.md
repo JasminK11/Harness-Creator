@@ -2,6 +2,16 @@
 
 Neueste Einträge oben. Erzeugt von `/harness-update`.
 
+## 2026-08-23 20:02 — extract (ohne update)
+
+Katalog-Hygiene 2026-08-23 (Nenner: 1.112 = Standardzugriff + Quarantäne, ohne Massen-Repos):
+  ohne brauchbare Description          8  (0,7 %)  ← Ziel: < 5 %
+  mit mehr als 3 Domänen              22  (2,0 %)  ← Ziel: < 10 %
+  in Domäne 'general' (Auffang)      345  (31,0 %) ← Ziel: < 15 %  !  über Ziel
+  Namensdubletten über Repos          26  ← nur berichten
+
+---
+
 ## 2026-08-23 12:22
 
 Bestand: **25655** Bausteine aus 14 Repos

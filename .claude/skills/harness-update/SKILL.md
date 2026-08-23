@@ -154,10 +154,20 @@ angepasst haben; ein stilles Update würde diese Arbeit zerstören.
 
 Richtiges Vorgehen, wenn der User das prüfen will:
 
-1. `catalogGeneratedAt` aus dem Manifest gegen den aktuellen Katalog halten
-2. Für die betroffenen IDs im `CHANGELOG.md` nachsehen, ob sie unter "Geändert" stehen
-3. Dem User die Liste vorlegen und ihn entscheiden lassen
-4. Nur mit ausdrücklicher Zustimmung: `install <id> --to <projekt> --force`
+```bash
+node tools/harness.mjs check --to <projekt>
+```
+
+Der Befehl meldet je Eintrag einen von drei Zuständen: `[aktuell]`,
+`[geändert]` oder `[entfernt]`; er endet mit Exit-Code 1 nur bei echten
+Brüchen (entfernte IDs, fehlende Dateien) und ist damit als Schranke in
+Skripte benutzbar. Lokale Anpassungen an installierten Dateien werden
+zusätzlich als „lokal angepasst" gemeldet. Die Liste dem User vorlegen und
+ihn entscheiden lassen; nur mit ausdrücklicher Zustimmung
+`install <id> --to <projekt> --force`. Als Rückfallebene, etwa wenn `check`
+nicht verfügbar ist: `catalogGeneratedAt` aus dem Manifest gegen den
+aktuellen Katalog halten und im `CHANGELOG.md` nachsehen, ob die IDs unter
+"Geändert" stehen.
 
 ## Wann updaten
 

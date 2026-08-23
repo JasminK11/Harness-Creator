@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harness-Creator — Wie das Projekt funktioniert</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --panel: #1a1d27;
+    --accent: #5eead4;
+    --accent2: #a78bfa;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #2a2e3d;
+    --red: #f87171;
+    --yellow: #fbbf24;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+  }
+  .slide {
+    display: none;
+    height: 100vh;
+    padding: 6vh 8vw;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .slide.active { display: flex; }
+  h1 { font-size: 3.2em; margin-bottom: 0.3em; color: var(--accent); }
+  h2 { font-size: 2.2em; margin-bottom: 1em; border-left: 5px solid var(--accent); padding-left: 0.5em; }
+  h3 { font-size: 1.25em; margin: 0.8em 0 0.4em; color: var(--accent2); }
+  p, li { font-size: 1.25em; line-height: 1.55; color: var(--text); }
+  ul { margin-left: 1.4em; margin-top: 0.5em; }
+  li { margin-bottom: 0.45em; }
+  code {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 0.12em 0.45em;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 0.88em;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1em 1.4em;
+    margin: 0.9em 0;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 1.02em;
+    line-height: 1.65;
+    overflow-x: auto;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5em; align-items: start; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.3em 1.6em;
+    margin-bottom: 1em;
+  }
+  .card b { color: var(--accent); }
+  table { border-collapse: collapse; width: 100%; margin-top: 0.8em; font-size: 1.08em; }
+  th, td { text-align: left; padding: 0.55em 0.9em; border-bottom: 1px solid var(--border); }
+  th { color: var(--accent); font-weight: 600; }
+  td code { font-size: 0.85em; }
+  .kicker {
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    font-size: 0.95em;
+    color: var(--muted);
+    margin-bottom: 1.2em;
+  }
+  .big-num { font-size: 2.6em; font-weight: 700; color: var(--accent); }
+  .stat-row { display: flex; gap: 3em; margin: 1.6em 0; flex-wrap: wrap; }
+  .stat .label { color: var(--muted); font-size: 1.05em; margin-top: 0.2em; }
+  .footer-nav {
+    position: fixed; bottom: 18px; right: 26px;
+    color: var(--muted); font-size: 0.95em; z-index: 10;
+  }
+  .flow { display: flex; gap: 0.6em; align-items: stretch; margin: 1.2em 0; flex-wrap: wrap; }
+  .flow .step {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 10px; padding: 0.9em 1.1em; flex: 1; min-width: 130px;
+    font-size: 1.05em; text-align: center;
+  }
+  .flow .arrow { align-self: center; color: var(--accent); font-size: 1.5em; }
+  .warn { color: var(--red); font-weight: 600; }
+  .ok { color: var(--accent); font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Titel -->
+<section class="slide active">
+  <div class="kicker">Projektpräsentation · Stand 2026-08-23</div>
+  <h1>Harness-Creator</h1>
+  <p style="font-size:1.5em; max-width: 42em;">
+    Eine Bibliothek von Claude-Bausteinen aus fremden Repos — und eine
+    Wissensbank, die belegt, <i>wann welcher Baustein richtig ist</i>.
+  </p>
+  <div class="stat-row">
+    <div class="stat"><div class="big-num">25.655</div><div class="label">Bausteine im Katalog</div></div>
+    <div class="stat"><div class="big-num">14</div><div class="label">Quell-Repos</div></div>
+    <div class="stat"><div class="big-num">1.104</div><div class="label">im Standardzugriff</div></div>
+    <div class="stat"><div class="big-num">13/13</div><div class="label">Routing-Evals grün</div></div>
+  </div>
+  <p style="color:var(--muted)">Navigation: ← → Pfeiltasten oder Klick</p>
+</section>
+
+<!-- 2 · Das Problem -->
+<section class="slide">
+  <h2>Das Problem, das das Projekt löst</h2>
+  <div class="cols">
+    <div>
+      <h3>Ohne Bibliothek</h3>
+      <ul>
+        <li>Agenten-Setups werden immer wieder neu erfunden</li>
+        <li>Gutes Material verstreut in hunderten fremden Repos</li>
+        <li>Niemand weiß, wann ein Skill, Hook oder Subagent richtig ist</li>
+      </ul>
+    </div>
+    <div>
+      <h3>Die Falle beim Sammeln</h3>
+      <ul>
+        <li>Der volle Katalog umfasst <span class="warn">rund 20 MB JSON</span></li>
+        <li>Wer ihn einliest, hat sein Kontextfenster voll,
+            bevor er die erste Zeile Projektcode sieht</li>
+        <li>Deshalb: Zugriff <b>nur</b> über ein eigenes CLI</li>
+      </ul>
+    </div>
+  </div>
+  <pre><code># Die bindende Zugriffsregel
+node tools/harness.mjs search "&lt;stichwort&gt;"   # finden
+node tools/harness.mjs show &lt;id&gt;              # prüfen
+node tools/harness.mjs install &lt;id&gt; --to .    # einbauen</code></pre>
+</section>
+
+<!-- 3 · Architektur -->
+<section class="slide">
+  <h2>Architektur: vier Schichten</h2>
+  <div class="card"><b>1 · Quellen</b> — <code>sources.txt</code>: 14 Repos mit Vertrauenszeile
+  (<code>offiziell / gepflegt / unbekannt</code>). Klone liegen außerhalb des Projekts.</div>
+  <div class="card"><b>2 · Katalog</b> — <code>catalog/index.json</code> (~20 MB) plus dreistufiger Index:
+  <code>INDEX.md</code> (immer lesbar) → <code>by-domain/*.md</code> → Vollindex (nie lesen).</div>
+  <div class="card"><b>3 · Werkzeug</b> — <code>tools/harness.mjs</code>: ~15 Subcommands,
+  nur Node-Standardbibliothek, keine Abhängigkeiten. Einziger Zugriffsweg.</div>
+  <div class="card"><b>4 · Wissen</b> — <code>knowledge/</code> (8 Dateien, begründetes Wissen),
+  <code>recipes/</code> (6 Baupläne je Projekttyp), <code>Learnings/</code> (Rohquellen, nur lesen).</div>
+</section>
+
+<!-- 4 · Der Kreislauf -->
+<section class="slide">
+  <h2>Der Arbeitskreislauf</h2>
+  <div class="flow">
+    <div class="step">Neues Material<br><small>Vorträge, Artikel, Repos → Learnings/ bzw. sources.txt</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Auswerten<br><small>ein Agent pro Quelle, Pflichtfeld „Beleg"</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Gegen Ist-Stand halten<br><small>schon umgesetzt? bei fremden Repos überhaupt möglich?</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Adversarial prüfen<br><small>separater Prüfer, Standardhaltung: ablehnen</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Umsetzen<br><small>in Werkzeug UND Wissensbank — nicht nur dokumentieren</small></div>
+  </div>
+  <p style="margin-top:1.4em">Abgelehntes wird <b>mit Grund</b> festgehalten — sonst wird es in
+  sechs Monaten erneut vorgeschlagen.</p>
+</section>
+
+<!-- 5 · Wissensbank -->
+<section class="slide">
+  <h2>Die Wissensbank: Abschnitte statt Dateien</h2>
+  <table>
+    <tr><th>Datei</th><th>Inhalt</th></tr>
+    <tr><td><code>01-harness-doktrin</code></td><td>Was ein Harness ist, Modellschwächen, Planner/Generator/Evaluator</td></tr>
+    <tr><td><code>02-bausteine</code></td><td>Die 6 Typen, Entscheidungsbaum, typische Fehler</td></tr>
+    <tr><td><code>03-vorbilder</code></td><td>Fremde Systeme zeilenweise ausgewertet</td></tr>
+    <tr><td><code>04-governance</code></td><td>Skalierung, Description-Qualität, Eval-Lücke, Aufnahme-Gate</td></tr>
+    <tr><td><code>05–08</code></td><td>Vortrags-Erkenntnisse, Maßnahmen M1–M18, Phasenmodell, Prüfbarkeit</td></tr>
+    <tr><td><code>LOG.md</code></td><td>Append-only Protokoll jeder Änderung mit Begründung</td></tr>
+  </table>
+  <p style="margin-top:1em">Jede Aussage trägt ihren Beleg. Nichts kommt aus dem Modellgedächtnis.
+  <code>lint</code> prüft Zahlen, IDs und die Nähte zwischen Text und Maschine.</p>
+</section>
+
+<!-- 6 · Qualitätssicherung -->
+<section class="slide">
+  <h2>Qualitätssicherung: drei Schranken</h2>
+  <div class="card"><span class="ok">lint</span> — hält Text gegen Text und Text gegen Maschine:
+  veraltete Bestandszahlen, tote Baustein-IDs, CLI-Aufrufe gegen den Dispatcher,
+  Nahtprüfung über alle Markdown-Dateien inklusive <code>.claude/</code>.
+  Aktuell: <span class="ok">0 Befunde</span>.</div>
+  <div class="card"><span class="ok">eval</span> — misst die Suche gegen 13 Pflichtfälle in
+  <code>evals/routing.jsonl</code>; meldet Rangverschiebungen, bevor ein Fall durchfällt.
+  Läuft als Schritt 4 jedes <code>update</code>.</div>
+  <div class="card"><span class="ok">Adversarialer Prüfer</span> — separater Subagent mit der
+  Standardhaltung „ablehnen". Er sieht das Ergebnis, nicht die Begründung.
+  Grund: Ein Agent, der seine eigene Arbeit bewertet, findet sie gut — messbar.</div>
+</section>
+
+<!-- 7 · Das eigene Harness -->
+<section class="slide">
+  <h2>Das eigene Setup: Spezialisten statt Alleskönner</h2>
+  <table>
+    <tr><th>Rolle</th><th>Zuständig</th><th>Kernregel</th></tr>
+    <tr><td><code>pm-orchestrator</code></td><td>plant, entscheidet, delegiert, nimmt ab</td><td>schreibt nichts Fachliches selbst</td></tr>
+    <tr><td><code>learning-auswerter</code></td><td>je eine Rohquelle</td><td>jede Erkenntnis mit wörtlichem Beleg</td></tr>
+    <tr><td><code>behauptungs-pruefer</code></td><td>adversarial Prüfung</td><td>widerlegen statt wohlwollend prüfen, ändert nichts</td></tr>
+    <tr><td><code>wissensbank-autor</code></td><td>knowledge/, recipes/, LOG.md, Bedien-Skills</td><td>erst suchen dann schreiben</td></tr>
+    <tr><td><code>werkzeug-aenderer</code></td><td>tools/harness.mjs</td><td>eine Änderung pro Lauf + voller Nachweis + Gegenprobe</td></tr>
+  </table>
+  <p style="margin-top:0.9em">Zwei Hooks sichern das ab: <code>zugriffsschutz.mjs</code>
+  (PreToolUse: Katalog/Klone unlesbar) und <code>pruefpflicht.mjs</code> (Stop: lint muss grün sein,
+  bevor eine Änderung als fertig gilt).</p>
+</section>
+
+<!-- 8 · Nutzung -->
+<section class="slide">
+  <h2>Nutzung in einem Zielprojekt</h2>
+  <pre><code>cd /pfad/zum/zielprojekt
+
+# Was brauche ich? Erst list, dann search/intent, dann show, dann install
+node &lt;bibliothek&gt;/tools/harness.mjs list --to .
+node &lt;bibliothek&gt;/tools/harness.mjs intent --list        # Symptom statt Suchwort?
+node &lt;bibliothek&gt;/tools/harness.mjs search "react testing" --limit 5
+node &lt;bibliothek&gt;/tools/harness.mjs show affaan-m__ecc/skill/react-testing
+node &lt;bibliothek&gt;/tools/harness.mjs install &lt;id...&gt; --to . --yes</code></pre>
+  <ul>
+    <li><code>install</code> meldet danach, was <b>[aktiv]</b> wirkt und was
+        <b>[inaktiv]</b> bleibt (Hooks brauchen settings.json, MCP braucht Zugangsdaten)</li>
+    <li>Kollisionen brechen den Lauf ab — kein stilles Mischen zweier Autoren</li>
+    <li>Jedes Zielprojekt bekommt ein Manifest (<code>.claude/harness-manifest.json</code>)
+        als Herkunftsnachweis</li>
+  </ul>
+</section>
+
+<!-- 11 · Katalog-Bau -->
+<section class="slide">
+  <h2>Tiefbau 1: Wie der Katalog entsteht</h2>
+  <div class="flow">
+    <div class="step">sync<br><small>git clone / pull je Zeile in sources.txt → ~/.harness-sources</small></div>
+    <div class="arrow">→</div>
+    <div class="step">extract<br><small>läuft über jeden Klon: SKILL.md, agents/, commands/, hooks/, .claude/</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Katalog<br><small>index.json + by-domain/*.md + INDEX.md + Hygiene-Zahlen ins CHANGELOG</small></div>
+    <div class="arrow">→</div>
+    <div class="step">eval<br><small>13 Pflichtfälle müssen die Suche noch finden, was sie finden soll</small></div>
+  </div>
+  <h3>Hygiene-Kennzahlen bei jedem extract</h3>
+  <ul>
+    <li>Bausteine ohne brauchbare Description → <b>Quarantäne</b> (nur mit --quarantine sichtbar)</li>
+    <li>Bausteine in mehr als 3 Domänen, Anteil in der Auffang-Domäne <code>general</code></li>
+    <li>Namensdubletten über Repos — nur berichten</li>
+  </ul>
+  <p style="color:var(--muted); margin-top:0.6em">Alles deterministisch, kein LLM im Bau — der Katalog ist nachvollziehbar reproduzierbar.</p>
+</section>
+
+<!-- 12 · Suche -->
+<section class="slide">
+  <h2>Tiefbau 2: Wie die Suche funktioniert</h2>
+  <ul>
+    <li><b>Wortanfangs-Matching mit Flexions-Streifung:</b> <code>pruefen</code> und <code>pruefung</code>
+        laufen beide auf den Stamm <code>pruef</code> (Endungen ung/ungen/en ab Rest ≥ 4, e ab Rest ≥ 5,
+        kuratierte Ausnahmen wie <code>rechnung</code>)</li>
+    <li><b>DE-EN-Glossar:</b> 39 kuratierte Fachbegriffspaare — <code>sicherheit prüfen</code> bewertet zusätzlich <code>security review</code></li>
+    <li><b>UND-Suche mit ODER-Fallback:</b> trägt kein Baustein alle Wörter, fällt die Suche auf Teiltreffer zurück — und sagt das</li>
+    <li><b>Absichts-Ebene (intent):</b> 13 kuratierte Absichten mit Anker-Bausteinen für Symptom-Fragen ohne Suchwort</li>
+    <li><b>Kleinheitsbonus:</b> was beim Greifen wenig Kontext lädt, gewinnt bei Gleichstand</li>
+    <li><b>Evals als Netz:</b> 13 Pflichtfälle fangen jede Score-Änderung ab, bevor sie still schlechter macht</li>
+  </ul>
+  <p style="margin-top:0.8em; color:var(--muted)">Kein Embedding, keine Vektordatenbank, kein LLM — absichtlich: deterministisch, debuggbar, kostenlos.</p>
+</section>
+
+<!-- 13 · Install -->
+<section class="slide">
+  <h2>Tiefbau 3: Was install wirklich tut</h2>
+  <pre><code>node tools/harness.mjs install &lt;id...&gt; --to &lt;projekt&gt;</code></pre>
+  <ul>
+    <li><b>Vor dem Kopieren:</b> Sicherheits-Sichtung — welche Dateien sind ausführbar,
+        wo stehen Prozess-/Netzwerk-Aufrufe (Fundstelle mit Zeilennummer)</li>
+    <li><b>Kollisionen brechen ab:</b> zwei Bausteine auf denselben Pfad = ganzer Lauf bricht ab,
+        auch mit --force — kein Mischbestand zweier Autoren</li>
+    <li><b>Manifest:</b> .claude/harness-manifest.json — je Eintrag Typ, Quelle, Repo-Head,
+        Dateipfade + md5-Prüfsummen, Installationsdatum</li>
+    <li><b>Zustandsbericht danach:</b> [aktiv] wirkt sofort · [inaktiv] braucht einen Schritt von Hand
+        (Hook-Registrierung, MCP-Zugangsdaten) — kopiert heißt nicht wirksam</li>
+    <li><b>uninstall entfernt nur Manifest-Dateien:</b> lokal angepasste Kopien bleiben ohne --force stehen</li>
+  </ul>
+</section>
+
+<!-- 14 · Lifecycle / check -->
+<section class="slide">
+  <h2>Lifecycle: Wer hält meinen Harness aktuell?</h2>
+  <p>Die Frage: Neue Bausteine kommen täglich, Repos ändern sich — <b>wer sagt mir,
+  dass mein installiertes Setup veraltet ist?</b> Antwort: der Subcommand <code>check</code>.</p>
+  <pre><code>node tools/harness.mjs check --to &lt;projekt&gt;
+
+[aktuell]  affaan-m__ecc/skill/react-testing
+[geändert] affaan-m__ecc/agent/code-reviewer
+           installiert @ a1b2c3d, Katalog-Head @ d8409a4 — das Repo hat sich
+           bewegt; ob DIESER Baustein es tat, sagt `show`
+[entfernt] alt__repo/skill/weg
+Bilanz: 1 aktuell, 1 geändert, 1 entfernt, 0 mit Brüchen.</code></pre>
+  <table>
+    <tr><th>Zustand</th><th>Bedeutung</th><th>Exit-Code</th></tr>
+    <tr><td><code>[aktuell]</code></td><td>Repo-Head unverändert, Dateien intakt</td><td rowspan="3">1 nur bei echten Brüchen (entfernte IDs, fehlende Dateien) — CI-tauglich</td></tr>
+    <tr><td><code>[geändert]</code></td><td>Repo-Head wanderte; <code>show</code> klärt ob gerade dieser Baustein</td></tr>
+    <tr><td><code>[entfernt]</code></td><td>ID aus dem Katalog verschwunden (upstream gelöscht/umbenannt)</td></tr>
+  </table>
+  <p style="margin-top:0.7em"><b>Der Workflow:</b> nach jedem Bibliotheks-<code>update</code> einmal
+  <code>check --to &lt;projekt&gt;</code> — oder als CI-Schranke per Exit-Code.</p>
+</section>
+
+<!-- 15 · Wissensbank-Interna -->
+<section class="slide">
+  <h2>Tiefbau 4: Wissensbank-Interna</h2>
+  <ul>
+    <li><b>OKF-Frontmatter je Datei:</b> sources, status, stale_after, generated —
+        <code>verified</code> nur nach menschlicher Lesung</li>
+    <li><b>Abschnitt = Liefereinheit:</b> Überschriften sind Suchtreffer;
+        <code>knowledge "&lt;frage&gt;"</code> schneidet den passenden Abschnitt heraus (325 Abschnitte / 16 Dateien)</li>
+    <li><b>LOG.md ist append-only:</b> Datum · Aktionsart (add/revise/ingest/werkzeug/lint) ·
+        Titel · Begründung · Prüfprotokoll — nie löschen</li>
+    <li><b>lint-Nähte:</b> jeder CLI-Aufruf in einem Codeblock wird gegen den Dispatcher geprüft,
+        jede Baustein-ID gegen den Katalog, jede Zahl gegen stats — Text kann so nicht still verrotten</li>
+    <li><b>Zweitbelege statt Dopplungen:</b> findet neues Material nur Bestätigung, wird es als
+        Quellenzeile eingehängt — nicht als neuer Abschnitt (der Fehler M1–M12 darf nie wieder passieren)</li>
+  </ul>
+</section>
+
+<!-- 16 · Glossar -->
+<section class="slide">
+  <h2>Glossar für das Gespräch mit Entwicklern</h2>
+  <table>
+    <tr><th>Begriff</th><th>In einem Satz</th></tr>
+    <tr><td><b>Harness</b></td><td>Das Gerüst um einen Agenten: Regeln, Werkzeuge, Prüfschleifen — nicht das Modell selbst</td></tr>
+    <tr><td><b>Baustein</b></td><td>Skill, Subagent, Command, Hook, MCP-Konfig oder Plugin aus einem fremden Repo</td></tr>
+    <tr><td><b>Manifest</b></td><td>Herkunftsnachweis aller installierten Bausteine eines Projekts (Quelle, Commit, Prüfsummen)</td></tr>
+    <tr><td><b>Drift</b></td><td>Zustand, wenn Installationsstand und Katalog-/Upstream-Stand auseinanderlaufen</td></tr>
+    <tr><td><b>Naht</b></td><td>Stelle, wo Text etwas über Maschine behauptet (z.B. ein CLI-Beispiel) — bricht still</td></tr>
+    <tr><td><b>Rückkanal</b></td><td>Jeder Nutzungs-Lauf schreibt erfolglose Suchen als Eval-Fälle zurück in die Bibliothek</td></tr>
+    <tr><td><b>Quarantäne</b></td><td>Katalog-Einträge ohne brauchbare Description — raus aus der Standardsuche statt gelöscht</td></tr>
+    <tr><td><b>Evals</b></td><td>Feste Frage→Erwartung-Fälle, die messen, dass die Suche noch findet, was sie soll</td></tr>
+  </table>
+</section>
+
+<!-- 9 · Selbstverbesserung -->
+<section class="slide">
+  <h2>Der Selbstverbesserungs-Kreislauf</h2>
+  <div class="flow">
+    <div class="step">Werkzeug verbessern<br><small>Suche, lint, install …</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Eigenes Setup verbessern<br><small>Agenten, Hooks, Skills — mit dem Werkzeug</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Wissen vertiefen<br><small>Rohquellen → Auswerter-Schwarm → Prüfer → Autor</small></div>
+    <div class="arrow">→</div>
+    <div class="step">Nutzung<br><small>/harness-build in echten Projekten</small></div>
+    <div class="arrow">↺</div>
+  </div>
+  <h3 style="margin-top:1.2em">Belege aus dieser Session (2026-08-23)</h3>
+  <ul>
+    <li>Flexions-Matching: <code>pruefen</code> findet jetzt <code>pruefung</code> — Eval-Fall von Rang 563 auf 1</li>
+    <li>DE-EN-Glossar: <code>sicherheit prüfen</code> von 0 auf 49 Treffer, neuer Pflichtfall</li>
+    <li>E2E-Abnahme der Installationskette: produktionsreif erklärt nach Prüfung</li>
+    <li>16 neue Vorträge vom Auswerter-Schwarm verarbeitet, geprüft, eingearbeitet</li>
+  </ul>
+</section>
+
+<!-- 10 · Regeln -->
+<section class="slide">
+  <h2>Die fünf Regeln, an denen alles hängt</h2>
+  <ul style="font-size:1.35em">
+    <li><b>Nichts aus dem Gedächtnis ergänzen</b> — jede Zahl per CLI ermitteln</li>
+    <li><b>Nie index.json oder Klone direkt lesen</b> — nur das CLI</li>
+    <li><b>Prüfen heißt: von jemand anderem prüfen lassen</b> — mit Ablehnungs-Haltung</li>
+    <li><b>Einfachste Lösung zuerst</b> — Komplexität nur, wenn ein Problem sie erzwingt</li>
+    <li><b>Kein Baustein ist besser als ein unpassender</b> — Lücken werden benannt, nicht gestopft</li>
+  </ul>
+  <p style="margin-top:1.6em; color:var(--muted)">
+    Ein Werkzeug, das seine eigenen Regeln nicht befolgt, ist der beste Beweis,
+    dass die Regeln nichts taugen. Deshalb frisst dieses Projekt seine eigene Dog Food.
+  </p>
+</section>
+
+<div class="footer-nav" id="nav"></div>
+
+<script>
+  const slides = document.querySelectorAll(".slide");
+  let i = 0;
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle("active", k === i));
+    document.getElementById("nav").textContent = (i + 1) + " / " + slides.length;
+  }
+  document.addEventListener("keydown", e => {
+    if (e.key === "ArrowRight" || e.key === " ") show(i + 1);
+    if (e.key === "ArrowLeft") show(i - 1);
+    if (e.key === "Home") show(0);
+    if (e.key === "End") show(slides.length - 1);
+  });
+  document.body.addEventListener("click", e => {
+    if (e.clientX > window.innerWidth * 0.7) show(i + 1);
+    else if (e.clientX < window.innerWidth * 0.3) show(i - 1);
+  });
+  show(0);
+</script>
+</body>
+</html>

@@ -406,17 +406,17 @@ Konkret umsetzbar:
 
 Semantische Versionierung, Deprecation-Warnungen, Changelog pro Skill — nichts davon können wir für fremde Bausteine leisten. Ein Repo kann jederzeit umbenennen, löschen oder umbauen, ohne uns zu informieren. Was wir haben, ist die Gegenrichtung: **wir erkennen Änderungen, statt sie anzukündigen.** `cmdUpdate()` vergleicht bereits den Katalog vor und nach dem Sync und schreibt `Neu` / `Geändert` / `Entfernt` in `CHANGELOG.md`. Das ist ein Lifecycle-Ersatz auf Bibliotheksebene.
 
-Was fehlt, ist der Bezug zu den **Projekten**, in denen die Bausteine gelandet sind. Ein Baustein, der upstream verschwindet, steht weiter in fünf Projekten und niemand erfährt es. Der fehlende Mechanismus: `harness.mjs drift --to <projekt>` — liest `.claude/harness-manifest.json`, gleicht gegen den aktuellen Katalog ab und meldet drei Zustände:
+Was auf Bibliotheksebene fehlte, ist der Bezug zu den **Projekten**, in denen die Bausteine gelandet sind. Ein Baustein, der upstream verschwindet, steht weiter in fünf Projekten und niemand erfährt es. Der Entwurf dafür — liest `.claude/harness-manifest.json`, gleicht gegen den aktuellen Katalogstand ab und unterscheidet drei Zustände:
 
 | Zustand | Bedeutung |
 |---|---|
 | `entfernt` | Der Baustein existiert upstream nicht mehr. Die Kopie im Projekt ist verwaist — funktioniert weiter, wird aber nie wieder aktualisiert |
-| `geändert` | Upstream hat sich `bytes` oder `description` geändert. Vielleicht ein Bugfix, vielleicht eine Bedeutungsverschiebung. Erfordert einen Menschen |
+| `geändert` | Das Repo hat sich seit der Installation bewegt. Vielleicht ein Bugfix, vielleicht eine Bedeutungsverschiebung. Erfordert einen Menschen |
 | `abgewichen` | Die Kopie im Projekt wurde lokal bearbeitet. Dann ist sie ein Fork und darf nicht blind überschrieben werden |
 
 Das ist die ehrliche Version von Lifecycle bei fremdem Code: keine Deprecation-Policy, sondern ein Divergenz-Melder.
 
-**Stand: die Hälfte davon existiert, unter anderem Namen.** `list --to DIR` liest das Manifest eines Zielprojekts, gibt je Eintrag den Quell-Commit und das Installationsdatum aus, bestimmt den Wirksamkeitszustand über `activationOf()` neu und meldet Einträge, deren Dateien nicht mehr da sind. `uninstall` erkennt über die md5-Liste, ob eine Kopie lokal bearbeitet wurde, und weigert sich dann ohne `--force` — das ist der Zustand `abgewichen`, an der Stelle, an der er zählt. **Nicht gebaut ist der Abgleich gegen den heutigen Katalog**: `list` vergleicht `entry.commit` nicht mit `repos[].head` und meldet damit weder `entfernt` noch `geändert`. Wer das heute braucht, hält den obersten `CHANGELOG.md`-Abschnitt gegen die IDs aus `list` — von Hand, wie in `harness-update/SKILL.md` beschrieben.
+**Stand seit dem 2026-08-23: gebaut — als Subcommand `check`.** `node tools/harness.mjs check --to DIR` liest das Manifest eines Zielprojekts und vergleicht jeden Eintrag gegen den heutigen Katalogstand. **Entfernte IDs und fehlende Dateien** sind Brüche und setzen Exit 1 — der Lauf ist damit CI-tauglich. Ein **abweichender Repo-Head** erscheint als `[geändert]`; die Grenze nennt die Ausgabe selbst mit: Der Katalog führt keinen Commit je Baustein, ein Head-Wechsel kann also auch Bausteine melden, die sich upstream nicht änderten — ob gerade dieser betroffen ist, entscheidet `show`. **Lokale Drift** erkennt `check` über die md5-Prüfsummen im Manifest; ehrliche Grenze: ältere Manifeste ohne Prüfsummen erscheinen ausdrücklich ohne Drift-Prüfung — Schweigen dort heisst ungeprüft, nicht unverändert. Der Zustand `abgewichen` bleibt daneben dort verankert, wo er zählt: `uninstall` weigert sich ohne `--force`, eine lokal bearbeitete Kopie zu löschen. Workflow für Projektbetreiber: nach jedem `update` der Bibliothek einmal `check --to <projekt>` laufen lassen.
 
 **Und für unsere eigenen Texte: `verified` plus Repo-HEAD als Anker.** Rezepte und Wissensdateien altern nicht am Kalender, sondern am Bestand — eine Baustein-Beschreibung, die sich upstream ändert, macht die Zeile im Rezept still falsch. Das OKF-Frontmatter führt dafür bereits zwei getrennte Felder, und der Unterschied ist der ganze Punkt:
 

@@ -68,6 +68,175 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-23] revise | harness-update-SKILL: Drift-Abschnitt empfiehlt jetzt `check --to DIR`, manuelles CHANGELOG-Verfahren nur noch als Rückfallebene
+
+**Was vorher galt.** `harness-update/SKILL.md`, Abschnitt „Drift:
+installierte Bausteine gegen aktuellen Katalog", empfahl für die Frage „sind
+installierte Bausteine noch aktuell?" ausschliesslich das manuelle Verfahren:
+`catalogGeneratedAt` aus dem Manifest gegen den Katalog halten, betroffene
+IDs im `CHANGELOG.md` unter „Geändert" nachsehen. Genau diese offene Stelle
+war im revise-Eintrag desselben Tages zu knowledge/04 5.4 ausdrücklich
+gemeldet worden („hier nicht beauftragt, offen gemeldet").
+
+**Was jetzt gilt.** Der Abschnitt empfiehlt `node tools/harness.mjs check
+--to <projekt>` (gebaut laut `add`-Eintrag vom 2026-08-23, beschrieben in
+knowledge/04 5.4): drei Zustände je Eintrag — `[aktuell]`, `[geändert]`,
+`[entfernt]` plus lokale Drift-Meldung — und Exit-Code 1 nur bei echten
+Brüchen (entfernte IDs, fehlende Dateien), damit CI-tauglich wie
+`lint --strict`. Das manuelle Verfahren bleibt als Rückfallebene benannt.
+Gegenprobe auf die Naht per Grep über `harness-build/SKILL.md` und
+`harness-plan/SKILL.md`: kein Treffer zum Drift-Verfahren (einziger
+„aktuell"-Treffer in `build` betrifft den Absichten-Bestand von
+`intent --list`) — nichts zu korrigieren. `CLAUDE.md` sagt nichts zum
+Verfahren; `INDEX.md` nennt `check` noch nicht, widerspricht aber nicht
+(erzeugt beim nächsten extract neu).
+
+## [2026-08-23] revise | knowledge/04, 5.4: Divergenz-Erkennung als gebaut beschrieben (`check`) — Alt-Aussage „Nicht gebaut ist der Abgleich" korrigiert
+
+**Was vorher galt.** Abschnitt 5.4 („Lifecycle — nicht anwendbar. Ersatz:
+Divergenz-Erkennung.") nannte den Abgleich des Projekt-Manifests gegen den
+Katalog noch **nicht gebaut** und vertröstete auf den manuellen Vergleich des
+obersten `CHANGELOG.md`-Abschnitts gegen `list --to DIR`. Der Entwurf lief
+dort zudem unter einem Namen, den es nie gab (`harness.mjs drift`), und die
+Tabellenzeile „geändert" unterstellte eine `bytes`/`description`-Semantik.
+
+**Was jetzt gilt.** Eingearbeitet ist der Stand aus dem heutigen
+`add`-Eintrag („Werkzeug: neuer Subcommand `check` — Manifest eines
+Zielprojekts gegen den heutigen Katalogstand"): `node tools/harness.mjs check
+--to DIR` meldet entfernte IDs und fehlende Dateien mit Exit 1 (CI-tauglich),
+Repo-Head-Wechsel als `[geändert]` — mit der ehrlichen Grenze, dass der
+Katalog keinen Commit je Baustein führt, ein Head-Wechsel also auch Bausteine
+melden kann, die sich upstream nicht änderten (`show` entscheidet) — und
+lokale Drift über Manifest-Prüfsummen; ältere Manifeste ohne md5 erscheinen
+ausdrücklich ohne Drift-Prüfung. Neu ist auch der Betreiber-Workflow: nach
+jedem `update` der Bibliothek einmal `check --to <projekt>`. Der Phantom-Name
+`drift` ist heraus; die Tabellenzeile „geändert" trägt die gebaute
+Head-Semantik.
+
+**Woran bemerkt.** Auftragsfolge zum `add`-Eintrag desselben Tages. Die
+Alt-Aussage fand sich per Grep nach „Divergenz|Lifecycle|veraltet|aktuell
+halten" über `knowledge/` und `recipes/`; weitere Fundstellen geprüft:
+`recipes/README.md` („Wenn eine Baustein-ID nicht mehr auflöst") behandelt
+tote Rezept-IDs, nicht Projekt-Manifeste — kein Widerspruch.
+`harness-update/SKILL.md` beschreibt für dieselbe Frage weiterhin das
+manuelle Verfahren (Manifest gegen `CHANGELOG.md` halten) — Bedien-Skill,
+hier nicht beauftragt, offen gemeldet.
+
+## [2026-08-23] revise | `check`: Head-Semantik ehrlich formuliert, Brüche in der Bilanz gezählt, md5-Lücke sichtbar gemacht
+
+**Was.** Drei Befunde aus dem adversarial Prüfbericht zum `check`-Subcommand
+(vom Vortag gebaut, siehe den `add`-Eintrag unten) in `cmdCheck()` behoben:
+
+1. **[geändert]-Meldung:** Vorher „installiert @ X, Katalog steht @ Y —
+   neuere Version verfügbar". Das ist eine Behauptung, die der Katalog nicht
+   belegen kann: Er führt nur je Repo einen Head (den auch `cmdInstall` ins
+   Manifest schreibt), keinen Commit je Baustein. Wandert der Head und dieser
+   Baustein blieb unberührt, klang die Meldung trotzdem nach Neuheit. Jetzt:
+   „installiert @ X, Katalog-Head steht @ Y — das Repo hat sich seit der
+   Installation bewegt; ob gerade DIESER Baustein sich geändert hat, sagt
+   `show <id>`." Dieselbe Einschränkung steht jetzt in der USAGE-Beschreibung
+   von `check`; der Kommentar über `headVon()` trägt sie ebenfalls (er
+   behauptete vorher das Gegenteil — „bedeutet wirklich neuere Version").
+2. **Bilanz-Zählung:** Ein Eintrag mit fehlenden Dateien wurde weiter unter
+   „aktuell" gezählt, obwohl ein Bruch gemeldet war. Neuer vierter Zähler
+   `brueche` neben den Zustandsklassen — bewusst *neben*, nicht statt: Der
+   Eintrag kann zugleich aktuell und gebrochen sein, deshalb wird er (wie
+   schon „lokal angepasst") als eigener Posten ausgewiesen: „…, N mit
+   Brüchen". Die Bilanz summiert damit nicht mehr scheinbar bruchfrei.
+3. **md5-Lücke:** Manifest-Einträge ohne `files[].md5` (ältere Installationen)
+   liessen lokale Drift still unentdeckt — Schweigen war dort nicht
+   „unverändert", sondern „ungeprüft", ohne dass der Leser das unterscheiden
+   konnte. Jetzt je betroffenem Eintrag: „Manifest ohne Prüfsummen — lokale
+   Drift nicht prüfbar (ältere Installation)." Kein neuer Zähler, keine
+   USAGE-Zeile nötig — die Ausgabe je Eintrag bietet den Platz her.
+
+**Warum revise und nicht add:** Der Befehl stand schon; korrigiert wurden
+Formulierungen und Zählung, die etwas Behaupteten, wo der Katalog nur raten
+kann. Bemerkt durch die adversarial Prüfphase gegen den frisch gebauten
+Subcommand — derselbe Mechanismus, der bereits bei `search`-ODER und
+`classify()`-Pfadfalschung griff.
+
+**Prüfprotokoll.** `node --check` ok. Gegenproben gegen Wegwerf-Manifest
+(`/tmp/opencode/check-probe`, Baustein `mattpocock__skills/skill/setup-pre-commit`,
+danach geräumt): (a) frische Installation → alles `[aktuell]`, Bilanz „1
+aktuell, 0 geändert, 0 entfernt", **Exit 0** — Happy Path unverändert;
+(b) Manifest-Commit auf Null-Hash → neue [geändert]-Formulierung erscheint,
+Exit 0; (c) installierte Datei gelöscht → „1 aktuell …, **1 mit Brüchen**",
+**Exit 1** (Bruch zählt weiterhin als Bruch, Exit-Code unverändert); (d)
+Prüfsummen aus dem Manifest entfernt und Datei angefasst → keine Drift-Meldung,
+aber die Lücken-Zeile erscheint, Exit 0. `lint --all`: 0 hoch (1 mittel,
+Bestandsbefund Learnings/, unverändert). `eval --no-save`: 13 von 13.
+Bewusst nicht geändert: kein Commit-Je-Baustein-Tracking eingeführt — das wäre
+eine Katalogschema-Änderung (`extract`) und eine andere Entscheidung; die
+Meldung gibt jetzt zu, was der Katalog nicht weiss, statt mehr zu versprechen.
+## [2026-08-23] add | Werkzeug: neuer Subcommand `check` — Manifest eines Zielprojekts gegen den heutigen Katalogstand
+
+**Was.** `node tools/harness.mjs check --to DIR` liest `.claude/
+harness-manifest.json` des Zielprojekts und meldet je Eintrag einen von drei
+Zuständen gegen den **jetzigen** Katalog: `[aktuell]` (Katalog-Head des Repos
+gleich dem Manifest-Commit), `[geändert]` (Katalog-Head weicht ab — neuere
+Version verfügbar, empfohlen: erst `show`, dann `install <id> --to DIR
+--force`), `[entfernt]` (ID im Katalog nicht mehr auffindbar — upstream
+gelöscht/umbenannt, empfohlen: `uninstall <id> --to DIR`). Zusätzlich lokale
+Drift: md5 einer installierten Datei weicht vom Manifest ab → „lokal
+angepasst", Reinstall nur mit Bewusstsein (dieselbe md5-Schwelle wie in
+`cmdUninstall` ohne `--force`). Zusammenfassung am Ende; **Exit-Code 1 nur bei
+echten Brüchen** (entfernte IDs, fehlende Dateien) — damit als Schranke in
+Skripte/CI benutzbar, wie `lint --strict`. Neue Funktion `cmdCheck()`;
+Dispatcher-Fall `check`; USAGE-Block nach `list`; Zweckzeile in
+`befehlsUebersicht()`.
+
+**Warum.** knowledge/04-governance.md 5.4 nennt genau diesen Abgleich den
+einzigen möglichen Lifecycle-Ersatz für fremde Bausteine („wir erkennen
+Änderungen, statt sie anzukündigen") — geplant, bis dahin nie gebaut; der
+Abschnitt vermerkte selbst: „Nicht gebaut ist der Abgleich gegen den heutigen
+Katalog". Der Besitzer eines Zielprojekts bringt es auf den Punkt: „es kommen
+immer neue Bausteine, wer checkt ob mein Harness noch aktuell ist?" `list`
+konnte die Frage nicht beantworten — es bestimmt nur den lokalen Zustand und
+vergleicht weder ID noch Commit gegen den Katalog.
+
+**Prüfprotokoll.** `node --check` ok. Gegenprobe-Kette in einem Wegwerf-Ordner:
+(a) frische Installation → alles `[aktuell]`, Exit 0; (b) Manifest-Commit auf
+Null-Hash gesetzt → `[geändert]`, Exit 0; (c) ID im Manifest mit Suffix
+manipuliert → `[entfernt]`, **Exit 1**; (d) installierte Datei angefasst →
+„lokal angepasst" erscheint, danach restored (Neuinstallation mit `--force`,
+danach wieder `[aktuell]`, Exit 0); Aufräumen erledigt. Voller Subcommand-Lauf
+(usage, stats, search, show, knowledge, knowledge --list, install/uninstall
+--dry-run, list, bootstrap) unauffällig. `lint --all`: 0 hoch (1 mittel,
+Bestandsbefund Learnings/, unverändert) — die Nahtprüfung meldete **keine**
+neuen Befunde für die neuen USAGE-Zeilen. `eval --no-save`: 13 von 13.
+Bewusst nicht geändert: `list` bleibt unverändert (lokaler Zustand ist eine
+eigene, gültige Frage); kein zweites Lesen von `index.json` — `cmdCheck`
+nutzt `loadCatalog()`/`findItem()` wie `show`.
+
+## [2026-08-23] revise | knowledge/07: fünf geprüfte Befunde aus der 16-Quellen-Auswertung eingearbeitet
+
+Fünf adversarial geprüfte Befunde in bestehende Abschnitte von
+`07-projekt-mit-ai-aufsetzen.md` **eingearbeitet** (nicht ergänzt), jeweils
+mit wörtlichem Beleg und Zeitstempel aus der Rohquelle in `Learnings/`:
+
+1. **D6 Abbruchkriterium:** mittlere Eskalationsstufe vor der weichen
+   Landung — Steuerungs-Injektion bei unterschrittenem Restbudget-Anteil
+   oder über Sollwert-Rate (Beleg: Chawla/Koul 18:17); Vendor-Benchmarkzahlen
+   bewusst nicht übernommen.
+2. **F4 Laufprotokoll:** Pflichtfeld „ausgelöst durch" je Eintrag, kausale
+   Verkettung (Beleg: Louf 10:51 „causally linked").
+3. **C3 Modellaufruf-Protokoll:** Session-Transkripte als untere Grenze —
+   Compaction und nicht geteilte Reasoning-Traces (Beleg: Louf 11:48).
+4. **B7 Guard an der Aktionsfläche:** zwei Klassifikationsfragen —
+   Sichtbarkeit (stille Fehler genehmigungspflichtig) und Rückrollbarkeit
+   mit Zweitschlüssel plus Audit (Beleg: Malhotra 15:30, gehedgt — eine
+   Regel, eine Firma, keine Messreihe).
+5. **E4 Kriterienkatalog testen:** Grenzung — Gold/No-op/Varianz härten nur
+   formulierte Kriterien, grüner Lauf beweist keine Abdeckung (Belege:
+   Fox 9:46, 7:18/7:23/7:28); Rubric-Begriffshinweis als Halbsatz
+   (Brown 16:30 „we killed rubric" — anderes Konzept).
+
+**Prüfprotokoll:** `lint --all` 0 Befunde; Gegenproben über `knowledge`
+fanden alle neuen Sätze („steuerung injection budget", „ausgelöst durch
+laufprotokoll", „transkripte untere grenze", „sichtbarkeit stille fehler",
+„gold no op abdeckung").
+
 ## [2026-08-23] revise | claudeMdBlock-Vorlage: Suchfallen-Fall 3 („Der Standardbestand ist englisch beschrieben") an das DE-EN-Glossar angeglichen
 
 **Was vorher galt / was jetzt gilt.** Die Falle behauptete pauschal,
