@@ -13,7 +13,7 @@
 {"frage":"arbeitsvertrag","maxTreffer":0,"warum":"Rechts-Repo ist bulk und darf die Standardsuche nicht fluten"}
 {"frage":"arbeitsvertrag","domaene":"legal-de","mindestens":1,"warum":"Mit --domain muss dasselbe Repo erreichbar sein"}
 {"_kommentar":"Sprachgrenze: die Quellen sind englisch, die Nutzer denken deutsch. Diese Fälle dürfen fehlschlagen — sie messen eine bekannte Schwäche, damit eine Verbesserung sichtbar wird."}
-{"frage":"sicherheit prüfen","mindestens":1,"optional":true,"warum":"Deutsche Anfrage auf englischen Bestand — bekannte Lücke"}
+{"frage":"sicherheit prüfen","mindestens":1,"warum":"Deutsche Anfrage auf englischen Bestand — die Lücke wurde durch das DE-EN-Glossar (GLOSSAR_DE_EN in bewerteTreffer) am 2026-08-23 geschlossen, seither deterministisch grün; PM-Beschluss stuft den Fall auf Pflicht hoch, er bleibt als Regressionsfall für das Glossar stehen"}
 {"_kommentar":"Nutzerabsicht statt Katalogvokabular. Die Fälle oben prüfen Begriffe, die im Katalog stehen — damit misst man, ob die Suche ihr eigenes Vokabular wiederfindet, nicht ob sie einem Menschen hilft. Diese Fälle nehmen die Formulierung, mit der jemand tatsächlich ankommt. Sie sind optional, weil sie eine bekannte Lücke messen, keinen Regressionsschutz."}
 {"_kommentar":"Quelle des Musters: Rajpal/Gupta, SimulationMaxxing (Learnings/). Der Befund lautete, dass in dieser Datei die Absicht bereits im Feld warum danebenstand, ungenutzt."}
 {"_kommentar":"Gemessen wird die erwartete ID, nicht die Trefferzahl. `mindestens 1` bestand in allen vier Fällen und verdeckte, dass drei davon nur Unbrauchbares lieferten — eine Trefferquote ohne bekannte Obergrenze ist keine Aussage (Anand, Persona Engineering)."}

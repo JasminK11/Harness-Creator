@@ -68,6 +68,105 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-23] revise | claudeMdBlock-Vorlage: Suchfallen-Fall 3 („Der Standardbestand ist englisch beschrieben") an das DE-EN-Glossar angeglichen
+
+**Was vorher galt / was jetzt gilt.** Die Falle behauptete pauschal,
+deutsche Anfragen liefen ins Leere und man solle den englischen
+Fachbegriff einsetzen — seit `GLOSSAR_DE_EN` (Eintrag direkt unten) ist das
+überholt. Der Punkt sagt jetzt: gängige deutsche Fachbegriffe werden
+zusätzlich in ihrer Übersetzung gefunden (`sicherheit` findet `security`,
+`datenbank` findet `database`); alles andere läuft weiter ins Leere, bis
+das Wort im Glossar steht; der englische Fachbegriff bleibt der sicherste
+Weg. Bemerkbar wurde die Diskrepanz am LOG-Eintrag des Glossars selbst, der
+die Stelle ausdrücklich als „Bewusst nicht geändert" mit PM-Vorbehalt
+vermerkt hatte.
+
+**Prüfprotokoll:** `node --check` sauber; `lint --all` 0 Befunde;
+`eval --no-save` vor und nach der Textänderung je 12 von 12 Pflichtfällen,
+identisches Bild (gleiche 3 optionalen Schwächen, gleiche eine erklärte
+Rangänderung) — der Textblock wird nur generiert, nicht gemessen, ein
+Eval-Effekt war nicht zu erwarten und trat nicht ein.
+
+## [2026-08-23] revise | Eval-Fall „sicherheit prüfen": von `optional` auf Pflicht hochgestuft
+
+**Was vorher galt / was jetzt gilt.** Der Fall trug `"optional":true` und
+ein `warum`, das die DE-EN-Lücke als bekannte Schwäche beschrieb. Nur zwei
+Felder geändert: die Markierung entfallen (Format wie die übrigen
+Pflichtfälle), `warum` vermerkt den PM-Beschluss — die Lücke wurde durch
+`GLOSSAR_DE_EN` am 2026-08-23 geschlossen, der Fall bleibt als
+Regressionsfall für das Glossar stehen. Gehört zum selben PM-Lauf wie der
+claudeMdBlock-Eintrag direkt oben; getrennt protokolliert wegen „eine
+Aktion pro Eintrag".
+
+**Prüfprotokoll:** `eval --no-save` davor 12 von 12 Pflichtfällen (der Fall
+darunter als optionale Schwäche, grün), danach **13 von 13 bestanden,
+alle Pflichtfälle grün**, bekannte Schwächen 4 von 7 → 3 von 6 — der Fall
+läuft als Pflichtfall und ist deterministisch grün; kein Zurückstufen
+nötig.
+
+## [2026-08-23] werkzeug | Suche bewertet deutsche Fachbegriffe zusätzlich in ihrer englischen Übersetzung (`GLOSSAR_DE_EN` in `bewerteTreffer`) — Eval-Fall „sicherheit prüfen" erstmals grün
+
+**Was geändert wurde.** Neue Konstante `GLOSSAR_DE_EN` (39 Paare, nur
+Fachbegriffe, Mehrdeutigkeiten bewusst weggelassen) neben dem bestehenden
+`UEBERSETZUNG`; `bewerteTreffer()` baut je Suchterm zusätzlich die Regexe der
+Übersetzung und zählt einen Treffer jeder Variante für denselben Term —
+UND-Filter, Termbilanz, Sortierung und alle Pfade ohne Glossarwort verhalten
+sich bitidentisch wie zuvor. Der Sackgassen-Hinweis in `cmdSearch()` bleibt
+stehen und fängt jetzt nur noch das, was das Glossar absichtlich nicht
+abdeckt; sein Kommentar wurde entsprechend nachgezogen.
+
+**Warum.** Der Bestand ist englisch beschrieben, die Nutzer denken deutsch.
+Der Eval-Fall „sicherheit prüfen" (routing.jsonl) lieferte 0 Treffer,
+während „security review" 49 liefert — eine dokumentierte Falle im
+claudeMdBlock, gemessen statt vermutet. Die Übersetzung wirkt direkt im Score
+statt nur als Textvorschlag, weil ein Vorschlag, den das Modell erst selbst
+ausführen muss, in Autonomie-Läufen nicht ankommt. Schlüssel sind
+ausschliesslich deutsche Wörter, damit englische Anfragen strukturell nicht
+berührt werden können; keine ASCII-Umschreibungen als Schlüssel ('pruefen'
+fehlt absichtlich), damit der grüne legal-de-Regressionsfall „werbeaussage
+pruefen" nicht unnötig umbauen.
+
+**Zeitversuch mit Ablehnungs-Erlaubnis (PM-Auftrag).** Entscheidungskriterien
+vorab festgelegt: Heilfall grün UND keine Gegenprobe leidet. Ergebnis:
+übernommen.
+
+**Prüfprotokoll** (alles am laufenden System gemessen, `--no-save`):
+
+1. Heilfall: `search "sicherheit prüfen"` — vorher 0 Treffer, nachher 49;
+   Top-6 identisch mit `search "security review"` (security-reviewer,
+   security-review, code-reviewer, csharp-reviewer, database-reviewer,
+   django-reviewer) — inhaltlich plausibel. Zusatzprobe „datenbank migration"
+   findet database-migration/database-migrations vor database-reviewer.
+2. Falsch-Positive: fünf deutsche Anfragen ohne Glossarwort gegen legal-de
+   vor/nachher zeilenidentisch (Ausgabezeilen 17/17/10/15/19, gleiche Köpfe):
+   mietvertrag kündigungsfrist, kaufvertrag gewährleistung, testament
+   erbfolge, urheberrecht lizenz, arbeitsvertrag probemonat.
+3. Englische Suchen: `eval --no-save` 12 von 12 Pflichtfällen bestanden
+   (vorher ebenso); „security review" unverändert 49 Treffer, gleiche
+   Top-Reihenfolge. Einzige gemeldete Rangänderung ist die bereits im
+   Baseline-Lauf vorhandene, erklärte Verschiebung
+   werbeaussagen-pruefung 563→1 aus der Flexions-Streifung — keine neue,
+   unerklärte Änderung. Bekannte Schwächen: 4 von 7 behoben statt 3 von 7
+   (der Heilfall ist der Zuwachs).
+4. Performance: search 118 ms bzw. 115 ms vorher, eval 328 ms bzw. 306 ms
+   vorher — unter der 2-s-Grenze, innerhalb der Laufzeit-Streuung.
+5. Gegenprobe der Werkzeugrolle: eingeschleuster Muss-Fehl-Eval-Fall
+   („glossar gegenprobe xyzzy", erwartet security-review) wurde vom Lauf als
+   „!" mit Befund gemeldet und danach vollständig entfernt
+   (`git diff` leer für routing.jsonl); anschliessend wieder 12/12.
+6. Vollständiger Nachweisblock der Rolle gefahren: `node --check`,
+   USAGE, `stats` (25.655 Bausteine, unverändert), `show`,
+   `knowledge`, `knowledge --list`, `lint --all` (0 Befunde),
+   install/uninstall/list/bootstrap `--dry-run` gegen Wegwerf-Ziel.
+
+**Bewusst nicht geändert.** Die claudeMdBlock-Falle „Deutsche Anfragen laufen
+ins Leere" beschreibt jetzt nicht mehr den vollen Sachverhalt — sie müsste
+sagen, dass kuratierte Fachbegriffe inzwischen übersetzt werden und nur der
+Rest in die Sackgasse läuft. Das ist PM-Material, nicht Selbstbedienung:
+der Text steht im Regelblock, der jedem Zielprojekt mitgegeben wird.
+routing.jsonl bleibt unangetastet; ob der Fall von `optional` auf
+Pflicht umgestuft wird, entscheidet der PM.
+
 ## [2026-08-23] revise | `02-bausteine.md` 2.1: tote Relative-Links an der Installationsgrenze als bekannte Grenze dokumentiert (Befund A1, E2E-Lauf 2026-08-23)
 
 Anlass: E2E-Abnahmelauf vom 2026-08-23. Der Installations-Test von

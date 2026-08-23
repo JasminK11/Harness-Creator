@@ -147,8 +147,11 @@ Nicht dieselbe Anfrage wiederholen. Das Suchverhalten hat drei belegte Fallen:
   nicht rückwärts verbunden: `pruef` findet weiterhin alles, die Biegung eines
   hypothetischen Dreizeichen-Stamms nicht. Den Wortstamm einzugeben ist damit
   kein Muss mehr, bleibt aber der sicherste Weg.
-- **Der Standardbestand ist englisch beschrieben.** Deutsche Anfragen laufen
-  dort ins Leere; den englischen Fachbegriff einsetzen. Die deutschen Bausteine
+- **Der Standardbestand ist englisch beschrieben.** Gängige deutsche
+  Fachbegriffe werden trotzdem gefunden: die Suche bewertet sie zusätzlich in
+  ihrer Übersetzung (`sicherheit` findet `security`, `datenbank` findet
+  `database`). Alles andere läuft ins Leere, bis das Wort im Glossar steht —
+  der englische Fachbegriff bleibt so der sicherste Weg. Die deutschen Bausteine
   liegen im Massen-Repo `legal-de` und sind nur mit `--domain legal-de` oder
   `--all` erreichbar.
 

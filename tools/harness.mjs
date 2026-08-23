@@ -1133,6 +1133,43 @@ const UEBERSETZUNG = {
   aufräumen: "refactor", umbau: "refactor", bauen: "build", erstellen: "create",
 };
 
+/** Kuratiertes Mini-Glossar Deutsch→Englisch, das WIRKT: `bewerteTreffer`
+ *  bewertet jeden Term zusätzlich in seiner Übersetzung. Abzugrenzen von
+ *  `UEBERSETZUNG` darüber, das nur den Sackgassen-Hinweis textiert — hier
+ *  verschieben die Paare echte Trefferlisten, darum ist die Auswahl strenger:
+ *  nur Fachbegriffe, deren deutsche Form im Bestand garantiert nichts findet,
+ *  und bewusst KEINE mehrdeutigen Wörter (Leistung, Übersicht, Protokoll,
+ *  Prüfung im Sinne von Prüfvorrichtung) — eine falsche Übersetzung setzt
+ *  plausible Falsch-Treffer vor die echten, das ist schlimmer als keine.
+ *  Schlüssel sind ausschliesslich deutsche Wörter; englische Anfragen dürfen
+ *  von dieser Tabelle nie berührt werden. Beleg der Lücke: Eval-Fall
+ *  "sicherheit prüfen" (routing.jsonl) lieferte 0 Treffer, während "security
+ *  review" 49 liefert. Keine ASCII-Umschreibungen als Schlüssel ('pruefen'
+ *  fehlt absichtlich): der Flexions-Streifer findet darüber ohnehin
+ *  deutsche Katalogwörter, und eine Zusatz-Übersetzung würde den grünen
+ *  legal-de-Fall "werbeaussage pruefen" unnötig umbauen. */
+const GLOSSAR_DE_EN = {
+  sicherheit: "security", schwachstelle: "vulnerability",
+  qualität: "quality", qualitaet: "quality",
+  fehler: "bug", fehlersuche: "debugging",
+  dokumentation: "documentation", doku: "documentation",
+  bereitstellung: "deployment", ausrollen: "deployment",
+  veröffentlichen: "release", veroeffentlichen: "release",
+  datenbank: "database", schnittstelle: "api",
+  oberfläche: "ui", oberflaeche: "ui",
+  geschwindigkeit: "performance", architektur: "architecture",
+  aufräumen: "refactor", aufraeumen: "refactor",
+  testen: "testing", prüfen: "review", prüfung: "review", überprüfen: "review",
+  wartung: "maintenance",
+  verschlüsselung: "encryption", verschluesselung: "encryption",
+  authentifizierung: "authentication", autorisierung: "authorization",
+  protokollierung: "logging",
+  abhängigkeiten: "dependencies", abhaengigkeiten: "dependencies",
+  versionierung: "versioning",
+  berechtigungen: "permissions", zugriffsrechte: "permissions",
+  löschen: "delete", loeschen: "delete", umbenennen: "rename",
+};
+
 /** Englische Funktionswörter, die vor der Bewertung aus der Anfrage fallen.
  *  Warum: Füllwörter kippten den UND-Filter auf ODER — "how do I know the agent
  *  did it right" fand keinen Baustein mit allen acht Wörtern, fiel auf Teiltreffer
@@ -1239,7 +1276,18 @@ function bewerteTreffer(items, frage) {
   if (!terms.length && roh.length) terms = roh;
   // Einmal pro Suchlauf kompilieren, nicht einmal pro Baustein: der Katalog hat
   // fünfstellig viele Items, und Regex-Kompilierung dominiert sonst die Suche.
-  const regexe = terms.map(termRegex);
+  // Deutsche Fachbegriffe bekommen ihre Übersetzung aus GLOSSAR_DE_EN als
+  // Zusatzvariante — der Bestand ist englisch beschrieben, ohne Expansion
+  // liefert "sicherheit prüfen" null Treffer, obwohl "security review" 49
+   // liefert. Beide Varianten zählen für denselben Term, darum bleiben UND-Filter
+   // und Termbilanz semantisch unverändert; Anfragen ohne Glossarwort bauen
+   // exakt dieselben Regexe wie zuvor.
+  const regexe = terms.map((t) => {
+    const varianten = [t];
+    const uebersetzt = GLOSSAR_DE_EN[t];
+    if (uebersetzt && uebersetzt !== t) varianten.push(uebersetzt);
+    return varianten.map(termRegex);
+  });
   const treffbar = new Array(terms.length).fill(false);
 
   const rated = items.map((i) => {
@@ -1247,9 +1295,9 @@ function bewerteTreffer(items, frage) {
     const hayAll = (hayName + " " + i.description + " " + i.path + " " + i.domains.join(" ")).toLowerCase();
     let score = 0, hits = 0;
     for (let k = 0; k < regexe.length; k++) {
-      const inAll = regexe[k].test(hayAll);
+      const inAll = regexe[k].some((re) => re.test(hayAll));
       if (inAll) { hits++; treffbar[k] = true; }
-      if (regexe[k].test(hayName)) score += 10;
+      if (regexe[k].some((re) => re.test(hayName))) score += 10;
       if (inAll) score += 3;
     }
     // Kleine Bausteine bevorzugen: billiger einzubauen, leichter zu prüfen.
@@ -1364,8 +1412,10 @@ function cmdSearch(argv) {
     console.log(`Keine Treffer für "${query}".`);
     termbilanz();
     // Der Bestand stammt aus englischsprachigen Repos, die Nutzer denken deutsch.
-    // Ein Eval-Fall belegt es: "sicherheit prüfen" liefert null Treffer, "security"
-    // liefert reichlich. Statt einer Synonymtabelle, die gepflegt werden müsste und
+    // GLOSSAR_DE_EN übersetzt im Score bereits die kuratierten Fachbegriffe —
+    // dieser Hinweis fängt den Rest: Alltagsdeutsch und Wörter, die absichtlich
+    // nicht im Glossar stehen, weil ihre Übersetzung mehrdeutig wäre. Statt
+    // einer vollständigen Synonymtabelle, die gepflegt werden müsste und
     // trotzdem lückenhaft bliebe, steht der Hinweis dort, wo er gebraucht wird —
     // in der Sackgasse.
     if (/[äöüß]/i.test(query) || DEUTSCHE_WOERTER.test(query)) {
@@ -2287,8 +2337,13 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
   L.push("  nicht rückwärts verbunden: `pruef` findet weiterhin alles, die Biegung eines");
   L.push("  hypothetischen Dreizeichen-Stamms nicht. Den Wortstamm einzugeben ist damit");
   L.push("  kein Muss mehr, bleibt aber der sicherste Weg.");
-  L.push("- **Der Standardbestand ist englisch beschrieben.** Deutsche Anfragen laufen");
-  L.push("  dort ins Leere; den englischen Fachbegriff einsetzen. Die deutschen Bausteine");
+  // Falle 3 hält mit GLOSSAR_DE_EN Schritt: pauschal „läuft ins Leere" wäre
+  // überholt und würde den Agenten anfragen lassen, die das Glossar längst findet.
+  L.push("- **Der Standardbestand ist englisch beschrieben.** Gängige deutsche");
+  L.push("  Fachbegriffe werden trotzdem gefunden: die Suche bewertet sie zusätzlich in");
+  L.push("  ihrer Übersetzung (`sicherheit` findet `security`, `datenbank` findet");
+  L.push("  `database`). Alles andere läuft ins Leere, bis das Wort im Glossar steht —");
+  L.push("  der englische Fachbegriff bleibt so der sicherste Weg. Die deutschen Bausteine");
   L.push("  liegen im Massen-Repo `legal-de` und sind nur mit `--domain legal-de` oder");
   L.push("  `--all` erreichbar.");
   L.push("");
