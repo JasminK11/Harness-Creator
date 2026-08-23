@@ -122,6 +122,16 @@ Das pullt alle Repos, baut den Katalog neu und schreibt nach `CHANGELOG.md`, was
 neu, geändert oder verschwunden ist. Die Datei entsteht bei diesem Lauf — vor dem
 ersten `update` gibt es sie nicht.
 
+Ob die in einem Zielprojekt installierten Bausteine noch zum neuen Katalogstand
+passen, sagt danach:
+
+```bash
+node tools/harness.mjs check --to /pfad/zum/projekt
+```
+
+Je Manifest-Eintrag meldet es `aktuell`, `geändert` oder `entfernt`; zusätzlich
+fallen lokal angepasste Dateien auf, und bei echten Brüchen ist der Exit-Code 1.
+
 ### Repo aufnehmen
 
 Zeile in `sources.txt` eintragen, dann `update`:
@@ -137,8 +147,10 @@ und wird als verwaist gemeldet — das CLI löscht nie von selbst.
 
 ## CLI
 
-Vierzehn Subcommands. Die vollständige Übersicht mit allen Flaggen, Warnungen und
-Sonderfällen gibt das Werkzeug selbst aus:
+Der Befehlssatz wächst mit der Bibliothek — eine feste Zahl an dieser Stelle
+war bereits dreimal veraltet, deshalb steht hier keine mehr. Die vollständige
+Übersicht mit allen Flaggen, Warnungen und Sonderfällen gibt das Werkzeug
+selbst aus:
 
 ```bash
 node tools/harness.mjs
@@ -206,6 +218,11 @@ gepflegt werden nur `sources.txt`, `knowledge/`, `recipes/` und `tools/`.
 - **`07-projekt-mit-ai-aufsetzen.md`** — Der umfangreichste Teil und für ein neues
   Projekt der nützlichste: Leitsätze, Praktiken entlang der Projektphasen, Fallen
   nach Symptom. Beantwortet die Frage „wie setze ich das hier richtig auf".
+- **`08-pruefbarkeit-und-pruefdaten.md`** — Prüfbarkeit als Grenze: Was sich nicht
+  maschinell prüfen lässt, wird nicht automatisiert — und woher Prüffälle kommen,
+  wenn keine echten Daten vorliegen, entscheidet über ihren Wert. Agent-Readiness,
+  Eval-Herkunft und der Rückkanal vom Einsatz zurück in die Bibliothek. Ausgewertet
+  aus fünf Forward-Deployed-Engineering-Vorträgen.
 
 Nicht am Stück lesen — `node tools/harness.mjs knowledge "<frage>"` schneidet den
 passenden Abschnitt heraus. `knowledge --list` zeigt das Inhaltsverzeichnis.

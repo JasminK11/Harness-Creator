@@ -68,6 +68,48 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-23] revise | README: drei Drift-Stellen — Befehlszahl zahlenlos, knowledge/08 ergänzt, `check` nach `update` dokumentiert
+
+**Was vorher galt.** Die README kannte den neuen `check`-Subcommand nicht und
+trug drei Drift-Stellen: (1) „Vierzehn Subcommands" im CLI-Abschnitt — die
+dritte Drift dieser Zahl, nachdem der Dispatcher heute auf fünfzehn
+(`check`) gewachsen ist; (2) der Hintergrund-Abschnitt listete knowledge/01–07,
+`08-pruefbarkeit-und-pruefdaten.md` fehlte; (3) der Abschnitt „Bibliothek
+aktuell halten" erklärte `update`, aber nicht, wie ein Zielprojekt-Betreiber
+danach prüft, ob seine installierten Bausteine noch aktuell sind.
+
+**Was jetzt gilt.** (1) Die Stelle ist zahlenlos formuliert („Der Befehlssatz
+wächst mit der Bibliothek …"), dieselbe Strategie wie beim claudeMdBlock am
+selben Tag — eine Zahl, die nicht dasteht, kann nicht veralten. (2) Eintrag zu
+knowledge/08 im Stil der Nachbarzeilen ergänzt; Charakter der Datei vorher per
+Read des Frontmatter verifiziert: Prüfbarkeit als Grenze, Prüffall-Herkunft,
+fünf Forward-Deployed-Engineering-Vorträge. (3) Nach dem `update`-Abschnitt
+steht jetzt `check --to <projekt>` mit einem Satz zu den gemeldeten Zuständen
+(`aktuell` / `geändert` / `entfernt`, dazu lokal angepasste Dateien) — Wortlaut
+aus dem USAGE des Werkzeugs übernommen, nicht paraphrasiert. Nachweis:
+`lint --all` Exit 0 (kein Befund hoher Schwere), Grep-Gegenprobe ohne restliche
+feste Befehlszahl in der README.
+
+## [2026-08-23] revise | claudeMdBlock: Befehlszahl im INDEX-Verweis zahlenlos formuliert, statt sie weiter zu pflegen
+
+**Was vorher galt.** Der Satz „Wer mehr braucht — alle N Befehle …" in
+`claudeMdBlock()` las die Zahl zwar bereits aus dem Dispatcher
+(`cliOberflaeche().subcommands`, Aliase abgezogen), gab sie aber als Zahl aus.
+Nach dem neuen `check`-Subcommand stand dadurch in generierten `CLAUDE.md`
+noch „alle 14", während der Dispatcher 15 führt — der dritte Drift dieses Typs.
+
+**Was jetzt gilt.** Die Stelle ist zahlenlos: „die vollständige
+Befehlsliste, Bestand nach Typ und Domäne, die vollen Verbote". Eine Zahl,
+die nicht mehr dasteht, kann nicht veralten; die vollständige Liste steht in
+`INDEX.md`, das sie ohnehin beim `extract` neu erzeugt. Grep-Gegenprobe:
+vorher ein Treffer mit fester/berechneter Befehlszahl im Template, nachher
+nur noch der Code-Kommentar „Alle vier Befehle (install, uninstall, list,
+bootstrap)" bei der `--to`-Behandlung — der zählt vier explizit genannte
+Befehle auf und liegt ausserhalb des Templates, deshalb bewusst nicht
+geändert. Nachweis: `node --check` ok, `lint --all` Exit 0 (kein Befund
+hoher Schwere), `eval --no-save` 13/13, Bootstrap in Wegwerf-Ziel liefert
+den neuen Wortlaut. CLAUDE.md selbst regeneriert der PM per bootstrap.
+
 ## [2026-08-23] revise | harness-update-SKILL: Drift-Abschnitt empfiehlt jetzt `check --to DIR`, manuelles CHANGELOG-Verfahren nur noch als Rückfallebene
 
 **Was vorher galt.** `harness-update/SKILL.md`, Abschnitt „Drift:

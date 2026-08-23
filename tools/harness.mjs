@@ -2354,11 +2354,12 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
   L.push("");
   // Absoluter Pfad, kein blosses "INDEX.md": in einem fremden Projekt zeigt der
   // relative Name auf die falsche Datei oder ins Leere — und dann rät der Agent.
-  // Die Zahl aus dem Dispatcher lesen, nicht ausschreiben: "alle elf Befehle" stand
-  // hier, während der Dispatcher zwölf führte — und der Block wird in jedes
-  // Zielprojekt geschrieben, die falsche Zahl also vervielfältigt.
-  const befehlsZahl = [...cliOberflaeche().subcommands].filter((s) => !["know", "why"].includes(s)).length;
-  L.push(`Wer mehr braucht — alle ${befehlsZahl} Befehle, Bestand nach Typ und Domäne, die vollen`);
+  // Zahlenlos formuliert: Auch die korrekt aus dem Dispatcher gelesene Zahl
+  // veraltet beim nächsten Subcommand — "alle elf" stand hier, als der Dispatcher
+  // längst zwölf führte, und der Block wird in jedes Zielprojekt geschrieben,
+  // die falsche Zahl also vervielfältigt. "die vollständige Befehlsliste" kann
+  // nicht veralten.
+  L.push("Wer mehr braucht — die vollständige Befehlsliste, Bestand nach Typ und Domäne, die vollen");
   L.push(`Verbote —, liest \`${path.join(ROOT, "INDEX.md")}\` **komplett**. Sie ist unter`);
   L.push("hundert Zeilen lang und genau dafür da. Kein Ersatz dafür, im Verzeichnis der");
   L.push("Bibliothek herumzusuchen.");

@@ -159,7 +159,7 @@ Bleibt es dabei, ist auch das ein Ergebnis: **kein Baustein ist besser als ein
 unpassender.** Dann nichts installieren, sondern die Lücke unter „Lücken" in
 `/home/anoncrypt/Harness-Creator/sources.txt` vermerken — das Format steht dort.
 
-Wer mehr braucht — alle 14 Befehle, Bestand nach Typ und Domäne, die vollen
+Wer mehr braucht — die vollständige Befehlsliste, Bestand nach Typ und Domäne, die vollen
 Verbote —, liest `/home/anoncrypt/Harness-Creator/INDEX.md` **komplett**. Sie ist unter
 hundert Zeilen lang und genau dafür da. Kein Ersatz dafür, im Verzeichnis der
 Bibliothek herumzusuchen.
