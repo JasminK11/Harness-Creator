@@ -68,6 +68,46 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-23] revise | harness-build: feste Absichtsanzahl „zwölf" entfernt (Naht zu `nachweis`)
+
+Bezug: Auftrag vom PM, Nachzug zur Absicht `nachweis` (Eintrag unten). Die drei
+„zwölf"-Stellen in `.claude/skills/harness-build/SKILL.md` (Zeilen ~143, ~146 und
+die ID-Liste ~150) hängen jetzt nicht mehr an einer Zahl: Schritt 2 verweist auf
+den Bestand via `intent --list` („derzeit dreizehn"), der `intent`-Kommentar
+sagt „alle Absichten", die ID-Liste führt `nachweis` ergänzend auf — verifiziert
+gegen `intent --list` am laufenden System. Historische Angaben in knowledge/04
+(Vorschlag 2.3, M9) und in diesem Protokoll bleiben unverändert.
+
+## [2026-08-23] add | Absicht `nachweis` ergänzt (catalog/intents.yaml, M9)
+
+Bezug: Auftrag vom PM, Eval-Fall in `evals/routing.jsonl` („how do I know the
+agent did it right", `optional:true`): ohne Suchwort findet die Stichwortsuche
+den einschlägigen Skill `affaan-m__ecc/skill/eval-harness` erst auf Rang ~468.
+Genau für dieses Symptom-ohne-Suchwort liegt die Intent-Ebene (M9) da — von den
+bis dahin 12 Absichten deckte keine Verifikation/Nachweis von Agentenarbeit ab.
+
+Neue Absicht `nachweis` mit Frage „Ich will wissen, ob der Agent seine Aufgabe
+wirklich und nachprüfbar erledigt hat.", drei Suchen (`eval harness`,
+`verification loop`, `agent evaluator rubric`) und drei Ankern. Jede Suche wurde
+vor der Aufnahme per `node tools/harness.mjs search` darauf geprüft, dass sie
+den Ziel-Baustein vorn liefert; jeder Anker per `show` inhaltlich verifiziert:
+
+- `affaan-m__ecc/skill/eval-harness` (Anker 1): formales Eval-Framework für
+  Claude-Code-Sessions, eval-driven development — der im Eval-Fall erwartete Baustein.
+- `affaan-m__ecc/skill/verification-loop` (Anker 2): Verifikationsphasen
+  (Build, Typcheck, Lint, Tests), „before claiming it is complete".
+- `affaan-m__ecc/agent/agent-evaluator` (Anker 3): bewertet Agenten-Ausgabe
+  gegen eine 5-Achsen-Rubrik mit Belegpflicht.
+
+Verifikation am laufenden System nach dem Eintrag: `intent --list` zeigt
+13 Absichten; `intent nachweis` liefern alle drei Anker auf Rang 1–3. Naht
+geprüft: `CLAUDE.md` und `INDEX.md` nennen keine Absichtsanzahl und bleiben
+korrekt; **`.claude/skills/harness-build/SKILL.md` sagt zweimal „zwölf
+Absichten" (Zeilen ~143 und ~146) und ist damit durch diesen Eintrag falsch
+geworden** — Korrektur ist eigener Auftrag, hier nur gemeldet. Historische
+„12"-Angaben in diesem Protokoll (Einträge vom 2026-08-07/10) bleiben als
+Zeitstrahl unverändert.
+
 ## [2026-08-23] revise | Windows-Pfad-Reste aus Bedien-Texten entfernt (Umzug nach Linux)
 
 Bezug: Auftrag vom PM. Das Projekt ist von einem Windows-OneDrive-Pfad nach

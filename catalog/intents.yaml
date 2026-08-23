@@ -127,3 +127,12 @@
     - Klotzkette__claude-fuer-deutsches-recht/plugin/vertragsrecht
     - Klotzkette__claude-fuer-deutsches-recht/plugin/arbeitsrecht
     - Klotzkette__claude-fuer-deutsches-recht/plugin/datenschutzrecht
+
+- id: nachweis
+  frage: "Ich will wissen, ob der Agent seine Aufgabe wirklich und nachprüfbar erledigt hat."
+  suche: ["eval harness", "verification loop", "agent evaluator rubric"]
+  domains: [meta, data-ai]
+  anker:
+    - affaan-m__ecc/skill/eval-harness
+    - affaan-m__ecc/skill/verification-loop
+    - affaan-m__ecc/agent/agent-evaluator

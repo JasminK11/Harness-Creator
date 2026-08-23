@@ -140,16 +140,17 @@ ein späterer Agent den Zugriffsweg zur Bibliothek kennt.
 ### 2. Bedarf in Suchen übersetzen
 
 Bevor du einzelne Suchbegriffe bastelst: sieh nach, ob ein Schmerzpunkt aus 1d in
-eine der zwölf Absichten aus `catalog/intents.yaml` passt.
+eine der Absichten aus `catalog/intents.yaml` passt (`intent --list` zeigt den
+aktuellen Bestand, derzeit dreizehn).
 
 ```bash
-node tools/harness.mjs intent                   # zwölf Absichten mit ihrer Frage
+node tools/harness.mjs intent --list            # alle Absichten mit ihrer Frage
 node tools/harness.mjs intent <id> [--limit N]  # Anker + weitere Treffer dieser Absicht
 ```
 
-Die zwölf ids (von Hand gepflegt, stabil): `verstehen`, `bauen`, `pruefen`,
+Die ids (von Hand gepflegt, stabil): `verstehen`, `bauen`, `pruefen`,
 `absichern`, `testen`, `ausliefern`, `diagnostizieren`, `umbauen`, `dokumentieren`,
-`harness-bauen`, `vermarkten`, `rechtliches`. Jede bündelt eine typische Frage
+`harness-bauen`, `vermarkten`, `rechtliches`, `nachweis`. Jede bündelt eine typische Frage
 („Ich übernehme eine fremde Codebasis und weiss nicht, wo ich anfange" →
 `verstehen`; „Tests fehlen, brechen oder flackern" → `testen`), naheliegende
 Domänen und zwei bis drei **Anker** — Bausteine, die `intent <id>` unabhängig vom
