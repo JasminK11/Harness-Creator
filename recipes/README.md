@@ -208,7 +208,7 @@ Zeilen mit `!` am Anfang.
 ## Werkzeug
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs show <id>                     # vor dem Einbau ansehen
 node tools/harness.mjs install <id...> --to <projekt> # mehrere IDs auf einmal
 node tools/harness.mjs install <id> --to <projekt> --dry-run

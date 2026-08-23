@@ -6,19 +6,19 @@ status: stable
 sources:
   - id: understand-anything
     resource: https://github.com/Egonex-AI/Understand-Anything
-    title: Understand-Anything — Claude-Code-Plugin für Codebasis-Wissensgraphen (lokaler Abzug unter C:\Users\info\.harness-sources\Egonex-AI__Understand-Anything)
+    title: Understand-Anything — Claude-Code-Plugin für Codebasis-Wissensgraphen (lokaler Abzug im Klon-Verzeichnis der Bibliothek, `~/.harness-sources`, überschreibbar mit HARNESS_SOURCES)
     author: Egonex-AI
   - id: ua-token-reduction-design
-    resource: C:\Users\info\.harness-sources\Egonex-AI__Understand-Anything\docs\superpowers\specs\2026-03-27-token-reduction-design.md
+    resource: docs/superpowers/specs/2026-03-27-token-reduction-design.md — lokaler Abzug im Klon-Verzeichnis der Bibliothek (`~/.harness-sources`, überschreibbar mit HARNESS_SOURCES)
     title: Token Reduction Design — Massnahmen C1 bis C5, Schätzung für ein 500-Datei-Projekt
     author: Egonex-AI
     last_modified: 2026-03-27
   - id: graphify
     resource: https://github.com/Graphify-Labs/graphify
-    title: graphify — beliebiger Ordner zu persistentem Wissensgraph (lokaler Abzug unter C:\Users\info\.harness-sources\Graphify-Labs__graphify)
+    title: graphify — beliebiger Ordner zu persistentem Wissensgraph (lokaler Abzug im Klon-Verzeichnis der Bibliothek, `~/.harness-sources`, überschreibbar mit HARNESS_SOURCES)
     author: Graphify-Labs
   - id: harness-bibliothek
-    resource: C:\Users\info\OneDrive\Desktop\Harnes Creator
+    resource: <projektverzeichnis> — die Harness-Bibliothek selbst, je Maschine am jeweiligen Ort geklont
     title: Eigene Harness-Bibliothek — INDEX.md, sources.txt, tools/harness.mjs, catalog/by-domain
     author: Harness-Bibliothek (lokal)
     last_modified: 2026-08-07
@@ -242,7 +242,7 @@ Wer entscheidet was: **Der Agent entscheidet, aber nach einer Regel, die im Proj
 
 ## Teil D — Übernahme-Empfehlung für unsere Bibliothek
 
-Stand bei uns: `sources.txt` (14 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.642 Bausteine, davon 1.091 im Standardzugriff (1.099 vor M2, 1.084 direkt nach der M2-Quarantäne am 2026-08-10; nach der Erweiterung der Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-Felder am selben Tag tragen 7 der 15 quarantänisierten Bausteine wieder ihre echte Beschreibung, Quarantäne jetzt 8 statt 15).
+Stand bei uns: `sources.txt` (14 Repos), `tools/harness.mjs` mit den Unterbefehlen `sync`/`extract`/`search`/`show`/`install`/`update`/`knowledge`/`lint`/`stats`, dreistufiger Index (`INDEX.md` 4,6 KB → `catalog/by-domain/*.md` → `catalog/index.json` **rund 19 MB**), 25.655 Bausteine, davon 1.104 im Standardzugriff (1.099 vor M2, 1.084 direkt nach der M2-Quarantäne am 2026-08-10; nach der Erweiterung der Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-Felder am selben Tag tragen 7 der 15 quarantänisierten Bausteine wieder ihre echte Beschreibung, Quarantäne jetzt 8 statt 15).
 
 Priorisiert, mit ehrlicher Einschätzung:
 
@@ -252,7 +252,7 @@ Priorisiert, mit ehrlicher Einschätzung:
 
 **3. Katalog-Schema als Tabelle in das lesende Skill (Vorbild: UA-Query-Skills).** Was fehlt: Ein Agent, der `index.json` benutzen *muss*, weiss nicht, welche Felder es gibt, und liest sich das an. Nutzen: gezieltes Greifen statt Explorieren. Aufwand: klein — eine Tabelle mit den Feldern aus `cmdExtract`. **Machen.**
 
-**4. Vorfilter und Domänen-Profil beim Install.** Was fehlt: Das Massen-Repo `Klotzkette__claude-fuer-deutsches-recht` stellt 24.543 von 25.642 Bausteinen (95,7 %) — das erdrückt jede Statistik und jede Suche. Nutzen: grösser als jede Kontext-Optimierung. Umsetzung: `.harnessignore`-Äquivalent für `extract`, plus ein Profil beim `install` (z. B. "nur `seo`, `frontend`, `meta`"). Aufwand: klein bis mittel. **Machen — das ist unser eigentliches "zu viel".**
+**4. Vorfilter und Domänen-Profil beim Install.** Was fehlt: Das Massen-Repo `Klotzkette__claude-fuer-deutsches-recht` stellt 24.543 von 25.655 Bausteinen (95,7 %) — das erdrückt jede Statistik und jede Suche. Nutzen: grösser als jede Kontext-Optimierung. Umsetzung: `.harnessignore`-Äquivalent für `extract`, plus ein Profil beim `install` (z. B. "nur `seo`, `frontend`, `meta`"). Aufwand: klein bis mittel. **Machen — das ist unser eigentliches "zu viel".**
 
 **5. Konfidenz-/Provenienz-Feld pro Baustein.** Was fehlt: `DOMAIN_RULES` in `tools/harness.mjs` ist eine Regex-Heuristik; im Katalog steht das Ergebnis aber so verbindlich wie ein Fakt. Nutzen: Der Agent weiss, wann er nachsehen muss. Umsetzung: Feld `domainConfidence: "EXTRACTED"` (aus Frontmatter) vs. `"INFERRED"` (aus Regex). Aufwand: klein. **Machen.**
 
@@ -278,7 +278,7 @@ Die Frage lautet immer *"Welchen Baustein baue ich in Projekt X ein?"*. Das ist 
 
 Drei konkrete Gegenargumente:
 
-1. **Uns fehlen die Kanten.** graphifys Wert entsteht aus `god nodes`, `surprising connections` und `community detection` — alles setzt einen *zusammenhängenden* Korpus voraus. Unsere 25.642 Bausteine stammen aus 14 fremden Repos, die nichts miteinander zu tun haben. Ein SEO-Skill und ein Rust-Review-Agent haben keine Beziehung, und ein Graph, der das behauptet, wäre schlechter als kein Graph. `GRAPH_REPORT.md` würde vor allem Rauschen ausweisen.
+1. **Uns fehlen die Kanten.** graphifys Wert entsteht aus `god nodes`, `surprising connections` und `community detection` — alles setzt einen *zusammenhängenden* Korpus voraus. Unsere 25.655 Bausteine stammen aus 14 fremden Repos, die nichts miteinander zu tun haben. Ein SEO-Skill und ein Rust-Review-Agent haben keine Beziehung, und ein Graph, der das behauptet, wäre schlechter als kein Graph. `GRAPH_REPORT.md` würde vor allem Rauschen ausweisen.
 
 2. **Der Lauf wäre teuer und graphify selbst würde bremsen.** Unsere Bausteine sind Markdown, nicht Code — damit greift nicht die kostenlose AST-Route, sondern die semantische Extraktion per LLM (`skill.md` Step 3, Part B). Ausserdem warnt `detect` ab 500 Dateien bzw. 2 Mio. Wörtern und verlangt Eingrenzung; wir liegen um Grössenordnungen darüber.
 
@@ -292,7 +292,7 @@ Drei konkrete Gegenargumente:
 
 ## Geprüfte Dateien
 
-**Understand-Anything** (`C:\Users\info\.harness-sources\Egonex-AI__Understand-Anything`):
+**Understand-Anything** (lokaler Abzug im Klon-Verzeichnis der Bibliothek, Repo `Egonex-AI__Understand-Anything`):
 
 - `CLAUDE.md`
 - `understand-anything-plugin/skills/understand/SKILL.md`
@@ -309,7 +309,7 @@ Drei konkrete Gegenargumente:
 - `docs/superpowers/specs/2026-03-27-token-reduction-design.md`
 - Verzeichnislisten von `skills/`, `agents/`, `packages/core/src/`
 
-**graphify** (`C:\Users\info\.harness-sources\Graphify-Labs__graphify`):
+**graphify** (lokaler Abzug im Klon-Verzeichnis der Bibliothek, Repo `Graphify-Labs__graphify`):
 
 - `ARCHITECTURE.md`
 - `README.md` (Abschnitte `graphify-out/`-Layout, Team-Workflow, `.claudeignore`, MCP)
@@ -324,7 +324,7 @@ Drei konkrete Gegenargumente:
 - `tools/skillgen/gen.py`, `tools/skillgen/platforms.toml`, `tools/skillgen/fragments/query-stub/default.md`
 - `worked/httpx/GRAPH_REPORT.md` (Beispielausgabe)
 
-**Eigene Bibliothek** (`C:\Users\info\OneDrive\Desktop\Harnes Creator`):
+**Eigene Bibliothek** (`<projektverzeichnis>`):
 
 - `INDEX.md`
 - `sources.txt`, `Git wichtig.txt`

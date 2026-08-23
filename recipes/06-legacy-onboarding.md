@@ -79,7 +79,7 @@ Baustein verbraucht davon.
 | `affaan-m__ecc/agent/planner` | agent | Ab dem ersten Umbau, der mehr als eine Datei berührt. Verhindert Scope-Unterschätzung (Doktrin 3.4). | 7 |
 | `mattpocock__skills/skill/wayfinder` | skill | Nur wenn die Übernahme in mehrere Sessions zerfällt und ein Issue-Tracker vorhanden ist. Verteilt Entscheidungen auf Tickets statt auf Kontext. | 12 |
 | `Egonex-AI__Understand-Anything/skill/understand` (386 KB, 50 Dateien) plus `understand-explain` (5 KB) | skill | Nur bei sehr grosser Codebasis, in der wiederholte Exploration teurer ist als ein persistenter Wissensgraph. Der Preis ist erheblich — vorher rechnen. | 391 |
-| `Graphify-Labs__graphify/agent/graphify` | agent | Alternative zum Vorigen, wenn auch Nicht-Code-Material (Dokumente, Papers, Bilder) in denselben Graph soll. Nur eines von beiden nehmen. | 62 |
+| `Graphify-Labs__graphify/agent/graphify` | agent | Alternative zum Vorigen, wenn auch Nicht-Code-Material (Dokumente, Papers, Bilder) in denselben Graph soll. Nur eines von beiden nehmen. | 61 |
 
 > **Kein Widerspruch zu `knowledge/03-vorbilder.md`, Teil E.** Dort wird ein
 > `/graphify`-Lauf **abgelehnt** — das gilt ausschliesslich für die
@@ -89,6 +89,7 @@ Baustein verbraucht davon.
 > Fall, für den ein Graph gebaut ist. Die Empfehlung hier und die Absage dort
 > beziehen sich auf verschiedene Korpora, nicht auf verschiedene Urteile über
 > das Werkzeug.
+
 | `anthropics__claude-plugins-official/agent/test-engineer` | agent | Sobald die erste Änderung ansteht und der Verifikationspfad noch leer ist — nach `spec-miner`, vor dem ersten Diff. Er liefert die Tests, die `refactor-cleaner` voraussetzt: Characterization-Tests nach dem Prinzip „the legacy code is the oracle", konkrete Literalwerte, jeder Branch mindestens ein Fall, lauffähig ab Tag eins. Ehrliche Reichweite: Der Prompt ist für den Rewrite-Fall geschrieben — beim Einsatz ohne Rewrite muss der Aufrufer (a) ein Zielverzeichnis explizit benennen (der Write-Scope nennt wörtlich `modernized/`), (b) den Dual-Run-Teil („Tests must run against BOTH") auf Nur-Legacy-Oracle einschränken, (c) wissen, dass die Disabled-Marker das RULE-NNN-Schema des Herkunfts-Plugins referenzieren, nicht `spec-miner`s OpenSpec-IDs — die Anker sind manuell zu verknüpfen. | 3 |
 | `affaan-m__ecc/agent/refactor-cleaner` | agent | **Erst** wenn Specs oder Tests existieren. Toten Code ohne Sicherheitsnetz zu entfernen, ist der klassische Legacy-Unfall. | 3 |
 | `affaan-m__ecc/skill/search-first` | skill | Nur wenn eigene Implementierungen dazukommen: erst nach vorhandenen Lösungen suchen, dann bauen. | 8 |
@@ -116,7 +117,7 @@ Zwang kommt danach (Entscheid vom 2026-08-08, `recipes/README.md`).
 ## Installationsbefehl
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs install \
   anthropics__claude-plugins-official/agent/legacy-analyst \
   affaan-m__ecc/agent/code-explorer \

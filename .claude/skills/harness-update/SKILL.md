@@ -8,14 +8,15 @@ description: Wirkt auf die BIBLIOTHEK selbst, nie auf ein Zielprojekt. Zieht all
 Die Quell-Repos wachsen laufend, und es kommen neue dazu. Diese Skill hält den
 Katalog auf Stand und sagt dem User, was sich fachlich geändert hat.
 
-Bibliothek: `C:\Users\info\OneDrive\Desktop\Harnes Creator`
-Repo-Klone: `C:\Users\info\.harness-sources\` (bewusst ausserhalb von OneDrive —
-sonst synchronisiert OneDrive hunderte Megabyte an `.git`-Objekten)
+Bibliothek: `<projektverzeichnis>`
+Repo-Klone: das Klon-Verzeichnis (`~/.harness-sources`, überschreibbar mit
+HARNESS_SOURCES — bewusst ausserhalb von Cloud-Sync-Ordnern, sonst synchronisieren
+diese hunderte Megabyte an `.git`-Objekten)
 
 ## Der Befehl
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs update
 ```
 
@@ -115,9 +116,12 @@ Zeile aus `sources.txt` löschen oder mit `#` auskommentieren, dann `update`.
 Das CLI meldet den Klon danach als `?` — er bleibt auf der Platte liegen. **Das ist
 Absicht: das CLI löscht nie von selbst.** Wenn der User den Platz zurückwill:
 
-```powershell
-Remove-Item "C:\Users\info\.harness-sources\owner__repo" -Recurse -Force
+```bash
+rm -rf "$HARNESS_SOURCES/owner__repo"
 ```
+
+`$HARNESS_SOURCES` ist dieselbe Variable, die auch das CLI auswertet; ist sie nicht
+gesetzt, gilt der Standard `~/.harness-sources`.
 
 Weis den User darauf hin, wenn ein Projekt Bausteine aus diesem Repo installiert hat
 — die bleiben dort funktionsfähig, bekommen aber keine Updates mehr.

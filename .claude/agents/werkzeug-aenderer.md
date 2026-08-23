@@ -42,7 +42,7 @@ Fehlschlag nicht weisst, welche schuld war.
 Ohne diesen Block ist deine Arbeit nicht fertig, auch wenn der Code richtig aussieht.
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node --check tools/harness.mjs
 node tools/harness.mjs                      # USAGE
 node tools/harness.mjs stats
@@ -104,7 +104,7 @@ ergänzt.
 ## Zugriffsregeln
 
 Niemals `catalog/index.json` lesen — 20 MB. Niemals die Repo-Klone unter
-`C:\Users\info\.harness-sources\` mit Glob oder Grep durchsuchen. `Learnings/` ist
+das Klon-Verzeichnis (`~/.harness-sources`, überschreibbar mit HARNESS_SOURCES) mit Glob oder Grep durchsuchen. `Learnings/` ist
 die Rohschicht: nur lesen, nie ändern.
 
 ## Sprache

@@ -1,8 +1,8 @@
 # Domäne: data-ai
 
-198 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+205 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (63)
+## agent (64)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -19,6 +19,7 @@
 | `affaan-m__ecc/agent/mle-reviewer` | Production machine-learning engineering reviewer for data contracts, feature pipelines, training reproducibility, offline/online … | 5 |
 | `affaan-m__ecc/agent/observer` | Background agent that analyzes session observations to detect patterns and create instincts. Uses Haiku for cost-efficiency. v2.1… | 7 |
 | `affaan-m__ecc/agent/pytorch-build-resolver` | PyTorch runtime, CUDA, and training error resolution specialist. Fixes tensor shape mismatches, device errors, gradient issues, D… | 5 |
+| `affaan-m__ecc/agent/rag-pipeline-reviewer` | Reviews RAG (Retrieval-Augmented Generation) pipelines for retrieval quality, chunking strategy, embedding choices, and evaluatio… | 6 |
 | `AgriciDaniel__claude-seo/agent/seo-drift` | > SEO drift analysis agent. Captures baselines of SEO-critical page elements and compares against stored snapshots to detect regr… | 3 |
 | `AgriciDaniel__claude-seo/agent/seo-flow` | FLOW framework prompt analyst. Reads the target URL, selects relevant FLOW stage prompts, applies them, and returns structured ou… | 2 |
 | `anthropics__claude-plugins-official/agent/agent-creator` | / Use this agent when the user asks to "create an agent", "generate an agent", "build a new agent", "make me an agent that...", o… | 7 |
@@ -26,9 +27,9 @@
 | `anthropics__claude-plugins-official/agent/agent-sdk-verifier-ts` | Use this agent to verify that a TypeScript Agent SDK application is properly configured, follows SDK best practices and documenta… | 5 |
 | `anthropics__claude-plugins-official/agent/claude-security` | The dedicated Claude Security orchestrator. Hand it an unattended job — "fully scan this repository and patch what you find; I un… | 4 |
 | `anthropics__claude-plugins-official/agent/comment-analyzer` | Use this agent when you need to analyze code comments for accuracy, completeness, and long-term maintainability. This includes (1… | 5 |
-| `anthropics__claude-plugins-official/agent/conversation-analyzer` | Use this agent when analyzing conversation transcripts to find behaviors worth preventing with hooks. Typical triggers include th… | 6 |
+| `anthropics__claude-plugins-official/agent/conversation-analyzer` | Use this agent when analyzing conversation transcripts to find behaviors worth preventing with hooks. Typical triggers include th… | 5 |
 | `anthropics__claude-plugins-official/agent/plugin-validator` | / Use this agent when the user asks to "validate my plugin", "check plugin structure", "verify plugin is correct", "validate plug… | 7 |
-| `anthropics__claude-plugins-official/agent/pr-test-analyzer` | Use this agent when you need to review a pull request for test coverage quality and completeness. This agent should be invoked af… | 5 |
+| `anthropics__claude-plugins-official/agent/pr-test-analyzer` | Use this agent when you need to review a pull request for test coverage quality and completeness. This agent should be invoked af… | 4 |
 | `anthropics__claude-plugins-official/agent/scaffolder` | Scaffolds one service of a reimagined system from the approved architecture and spec — project skeleton, domain model, API stubs,… | 2 |
 | `anthropics__claude-plugins-official/agent/silent-failure-hunter` | Use this agent when reviewing code changes in a pull request to identify silent failures, inadequate error handling, and inapprop… | 8 |
 | `anthropics__claude-plugins-official/agent/skill-reviewer` | / Use this agent when the user has created or modified a skill and needs quality review, asks to "review my skill", "check skill … | 6 |
@@ -36,7 +37,7 @@
 | `Egonex-AI__Understand-Anything/agent/article-analyzer` | / Analyzes markdown files using pre-parsed structural data and LLM inference to extract knowledge graph nodes and edges (entities… | 4 |
 | `Egonex-AI__Understand-Anything/agent/file-analyzer` | / Analyzes batches of source files to produce knowledge graph nodes and edges. Extracts file structure, functions, classes, and r… | 33 |
 | `Egonex-AI__Understand-Anything/agent/knowledge-graph-guide` | / Use this agent when users need help understanding, querying, or working with an Understand-Anything knowledge graph. Guides use… | 5 |
-| `Graphify-Labs__graphify/agent/graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ e… | 62 |
+| `Graphify-Labs__graphify/agent/graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ e… | 61 |
 | `msitarzewski__agency-agents/agent/accounts-payable-agent` | Autonomous payment processing specialist that executes vendor payments, contractor invoices, and recurring bills across any payme… | 7 |
 | `msitarzewski__agency-agents/agent/aeo-foundations-architect` | Expert in AI Engine Optimization infrastructure — implements llms.txt, AI-aware robots.txt, token-budgeted content, structured Ma… | 15 |
 | `msitarzewski__agency-agents/agent/agentic-identity-trust-architect` | Designs identity, authentication, and trust verification systems for autonomous AI agents operating in multi-agent environments. … | 18 |
@@ -97,52 +98,53 @@
 | `anthropics__claude-plugins-official/command/modernize-reimagine` | Multi-agent greenfield rebuild — extract specs from legacy, design AI-native, scaffold & validate with HITL | 7 |
 | `anthropics__claude-plugins-official/command/new-sdk-app` | Create and setup a new Claude Agent SDK application | 8 |
 
-## hook (11)
+## hook (12)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/hook/config-protection` | Config Protection Hook | 5 |
 | `affaan-m__ecc/hook/cost-tracker` | Cost Tracker Hook (v2) | 8 |
-| `affaan-m__ecc/hook/ecc-context-monitor` | ECC Context Monitor — PostToolUse hook | 9 |
+| `affaan-m__ecc/hook/ecc-context-monitor` | ECC Context Monitor — PostToolUse hook | 10 |
 | `affaan-m__ecc/hook/ecc-statusline` | ECC Statusline — statusLine command | 5 |
 | `affaan-m__ecc/hook/insaits-security-monitor` | InsAIts Security Monitor -- PreToolUse Hook for Claude Code | 8 |
+| `affaan-m__ecc/hook/plan-canvas-pending` | Plan Canvas undelivered-feedback guard (Stop) | 8 |
 | `affaan-m__ecc/hook/plan-canvas-sessions` | Plan Canvas open-session surfacing (SessionStart) | 2 |
 | `affaan-m__ecc/hook/pre-compact` | PreCompact Hook - Save LLM-generated summary before context compaction | 7 |
-| `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | SessionStart bootstrap: ensure claude_agent_sdk is importable for the | 39 |
+| `anthropics__claude-plugins-official/hook/ensure-agent-sdk` | SessionStart bootstrap: ensure claude_agent_sdk is importable for the | 41 |
 | `anthropics__claude-plugins-official/hook/extensibility` | Project-specific extensibility for the security-guidance plugin. | 12 |
-| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 115 |
+| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 113 |
 | `anthropics__claude-plugins-official/hook/userpromptsubmit` | UserPromptSubmit hook executor for hookify plugin. | 1 |
 
 ## plugin (11)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/plugin/ecc` | Harness-native ECC plugin for engineering teams - 67 agents, 284 skills, 94 legacy command shims, reusable hooks, rules, MCP conv… | 49708 |
+| `affaan-m__ecc/plugin/ecc` | Harness-native ECC plugin for engineering teams - 68 agents, 286 skills, 94 legacy command shims, reusable hooks, rules, MCP conv… | 50333 |
 | `anthropics__claude-plugins-official/plugin/agent-sdk-dev` | Claude Agent SDK Development Plugin | 36 |
-| `anthropics__claude-plugins-official/plugin/claude-security` | Deep vulnerability scanning of your own code, run entirely inside your Claude Code session at a chosen effort tier, with every fi… | 244 |
-| `anthropics__claude-plugins-official/plugin/code-simplifier` | Agent that simplifies and refines code for clarity, consistency, and maintainability while preserving functionality | 15 |
-| `anthropics__claude-plugins-official/plugin/context7` | Upstash Context7 MCP server for up-to-date documentation lookup. Connects to Context7's hosted remote MCP server (https://mcp.con… | 3 |
+| `anthropics__claude-plugins-official/plugin/claude-security` | Deep vulnerability scanning of your own code, run entirely inside your Claude Code session at a chosen effort tier, with every fi… | 324 |
+| `anthropics__claude-plugins-official/plugin/code-simplifier` | Agent that simplifies and refines code for clarity, consistency, and maintainability while preserving functionality | 14 |
+| `anthropics__claude-plugins-official/plugin/context7` | Upstash Context7 MCP server for up-to-date documentation lookup. Connects to Context7's hosted remote MCP server (https://mcp.con… | 2 |
 | `anthropics__claude-plugins-official/plugin/greptile` | AI code review agent for GitHub and GitLab. View and resolve Greptile's PR review comments directly from Claude Code. | 2 |
-| `anthropics__claude-plugins-official/plugin/playground` | Creates interactive HTML playgrounds — self-contained single-file explorers with visual controls, live preview, and prompt output… | 43 |
-| `anthropics__claude-plugins-official/plugin/ralph-loop` | Continuous self-referential AI loops for interactive iterative development, implementing the Ralph Wiggum technique. Run Claude i… | 38 |
-| `anthropics__claude-plugins-official/plugin/security-guidance` | Security review for Claude-generated code. Pattern-based warnings on edits, LLM-powered diff review on Stop, and an agentic commi… | 421 |
-| `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering — grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-… | 650 |
-| `mvanhorn__last30days-skill/plugin/last30days` | Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent s… | 30710 |
+| `anthropics__claude-plugins-official/plugin/playground` | Creates interactive HTML playgrounds — self-contained single-file explorers with visual controls, live preview, and prompt output… | 42 |
+| `anthropics__claude-plugins-official/plugin/ralph-loop` | Continuous self-referential AI loops for interactive iterative development, implementing the Ralph Wiggum technique. Run Claude i… | 37 |
+| `anthropics__claude-plugins-official/plugin/security-guidance` | Security review for Claude-generated code. Pattern-based warnings on edits, LLM-powered diff review on Stop, and an agentic commi… | 415 |
+| `mattpocock__skills/plugin/mattpocock-skills` | Matt Pocock's agent skills for real engineering: grilling, spec/ticket flows, TDD, code review, domain modelling and more. Plug-a… | 646 |
+| `mvanhorn__last30days-skill/plugin/last30days` | Research any topic across Reddit, X, YouTube, TikTok, Instagram, Hacker News, Polymarket, GitHub, and 5+ more sources. AI agent s… | 31147 |
 
-## skill (91)
+## skill (96)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/skill/agent-architecture-audit` | Full-stack diagnostic for agent and LLM applications. Audits the 12-layer agent stack for wrapper regression, memory pollution, t… | 10 |
-| `affaan-m__ecc/skill/agent-eval` | Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consis… | 4 |
-| `affaan-m__ecc/skill/agent-harness-construction` | Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. | 2 |
-| `affaan-m__ecc/skill/agent-introspection-debugging` | Structured self-debugging workflow for AI agent failures using capture, diagnosis, contained recovery, and introspection reports. | 6 |
+| `affaan-m__ecc/skill/agent-eval` | Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consis… | 5 |
+| `affaan-m__ecc/skill/agent-harness-construction` | Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. Use when de… | 2 |
+| `affaan-m__ecc/skill/agent-introspection-debugging` | Structured self-debugging workflow for AI agent failures using capture, diagnosis, contained recovery, and introspection reports.… | 6 |
 | `affaan-m__ecc/skill/agent-payment-x402` | Add x402 payment execution to AI agents with per-task budgets, spending controls, and non-custodial wallets. Supports Base throug… | 10 |
 | `affaan-m__ecc/skill/agent-self-evaluation` | Use after completing any non-trivial task. The agent self-rates its output on 5 axes — accuracy, completeness, clarity, actionabi… | 41 |
 | `affaan-m__ecc/skill/agent-sort` | Build an evidence-backed ECC install plan for a specific repo by sorting skills, commands, rules, hooks, and extras into DAILY vs… | 6 |
 | `affaan-m__ecc/skill/agentic-engineering` | > Operate as an agentic engineer using eval-first execution, decomposition, and cost-aware model routing. Use when AI agents perf… | 4 |
 | `affaan-m__ecc/skill/agentic-os` | Build persistent multi-agent operating systems on Claude Code. Covers kernel architecture, specialist agents, slash commands, fil… | 12 |
-| `affaan-m__ecc/skill/ai-first-engineering` | Engineering operating model for teams where AI agents generate a large share of implementation output. | 1 |
+| `affaan-m__ecc/skill/ai-first-engineering` | Engineering operating model for teams where AI agents generate a large share of implementation output. Use when setting team proc… | 1 |
 | `affaan-m__ecc/skill/ai-regression-testing` | Regression testing strategies for AI-assisted development. Sandbox-mode API testing without database dependencies, automated bug-… | 11 |
 | `affaan-m__ecc/skill/autonomous-agent-harness` | Transform Claude Code into a fully autonomous agent system with persistent memory, scheduled operations, computer use, and task q… | 11 |
 | `affaan-m__ecc/skill/autonomous-loops` | Patterns and architectures for autonomous Claude Code loops — from simple sequential pipelines to RFC-driven multi-agent DAG syst… | 24 |
@@ -150,78 +152,83 @@
 | `affaan-m__ecc/skill/blueprint` | >- Turn a one-line objective into a step-by-step construction plan for multi-session, multi-agent engineering projects. Each step… | 5 |
 | `affaan-m__ecc/skill/ck` | Persistent per-project memory for Claude Code. Auto-loads project context on session start, tracks sessions with git activity, an… | 53 |
 | `affaan-m__ecc/skill/claude-devfleet` | Orchestrate multi-agent coding tasks via Claude DevFleet — plan projects, dispatch parallel agents in isolated worktrees, monitor… | 6 |
-| `affaan-m__ecc/skill/continuous-agent-loop` | Patterns for continuous autonomous agent loops with quality gates, evals, and recovery controls. | 1 |
-| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching. | 6 |
+| `affaan-m__ecc/skill/continuous-agent-loop` | Patterns for continuous autonomous agent loops with quality gates, evals, and recovery controls. Use when running an agent loop t… | 1 |
+| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching… | 6 |
 | `affaan-m__ecc/skill/cost-tracking` | Track and report Claude Code token usage, spending, and budgets from the local ECC cost-tracker metrics log. Use when the user as… | 4 |
+| `affaan-m__ecc/skill/council-multi-model` | Add one optional external Codex critique after the existing council has produced a decision draft. Use when an ambiguous, high-co… | 15 |
 | `affaan-m__ecc/skill/data-scraper-agent` | Build a fully automated AI-powered data collection agent for any public source — job boards, prices, news, GitHub, sports, anythi… | 24 |
 | `affaan-m__ecc/skill/dmux-workflows` | Multi-agent orchestration using dmux (tmux pane manager for AI agents). Patterns for parallel agent workflows across Claude Code,… | 5 |
 | `affaan-m__ecc/skill/dynamic-workflow-mode` | Design task-local harnesses, eval gates, and reusable skill extraction for Claude dynamic workflow mode and other adaptive agent … | 5 |
 | `affaan-m__ecc/skill/e2e-testing` | Playwright E2E testing patterns, Page Object Model, configuration, CI/CD integration, artifact management, and flaky test strateg… | 8 |
 | `affaan-m__ecc/skill/ecc-recipes` | Map a described workflow to the right ECC command-GROUP with run-order and stop condition, and browse all command-group recipe fa… | 6 |
 | `affaan-m__ecc/skill/ecc-tools-cost-audit` | Evidence-first ECC Tools burn and billing audit workflow. Use when investigating runaway PR creation, quota bypass, premium-model… | 6 |
-| `affaan-m__ecc/skill/enterprise-agent-ops` | Operate long-lived agent workloads with observability, security boundaries, and lifecycle management. | 1 |
+| `affaan-m__ecc/skill/enterprise-agent-ops` | Operate long-lived agent workloads with observability, security boundaries, and lifecycle management. Use when running long-lived… | 1 |
 | `affaan-m__ecc/skill/finance-billing-ops` | Evidence-first revenue, pricing, refunds, team-billing, and billing-model truth workflow for ECC. Use when the user wants a sales… | 4 |
 | `affaan-m__ecc/skill/flox-environments` | Create reproducible, cross-platform (macOS/Linux) development environments with Flox, a declarative Nix-based environment manager… | 14 |
 | `affaan-m__ecc/skill/foundation-models-on-device` | Apple FoundationModels framework for on-device LLM — text generation, guided generation with @Generable, tool calling, and snapsh… | 8 |
 | `affaan-m__ecc/skill/gan-style-harness` | GAN-inspired Generator-Evaluator agent harness for building high-quality applications autonomously. Based on Anthropic's March 20… | 12 |
 | `affaan-m__ecc/skill/inherit-legacy-style` | Legacy-project style inheritance skill. Use when the user types /inherit-legacy-style, or when onboarding an AI coding agent onto… | 8 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
-| `affaan-m__ecc/skill/ito-data-atlas-agent` | Design source-grounded Data Atlas style agents for Itô basket research, market discovery, parameter drafting, and human-in-the-lo… | 8 |
 | `affaan-m__ecc/skill/ito-inference` | Inspect the availability of model serving on a completed Itô compute booking and, when the canonical backend becomes available, h… | 6 |
-| `affaan-m__ecc/skill/ito-training` | Run an ML training job on a completed Itô compute booking through the canonical Itô backend. Use after ito-compute has booked GPU… | 2 |
+| `affaan-m__ecc/skill/ito-training` | Inspect the availability of ML training on a completed Itô compute booking and, when the canonical backend becomes available, han… | 6 |
 | `affaan-m__ecc/skill/knowledge-ops` | Knowledge base management, ingestion, sync, and retrieval across multiple storage layers (local files, MCP memory, vector stores,… | 7 |
 | `affaan-m__ecc/skill/lead-intelligence` | AI-native lead intelligence and outreach pipeline. Replaces Apollo, Clay, and ZoomInfo with agent-powered signal scoring, mutual … | 21 |
-| `affaan-m__ecc/skill/llm-trading-agent-security` | Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-… | 4 |
+| `affaan-m__ecc/skill/living-docs-governance` | Keep a long-lived project's documentation from rotting by assigning existing project docs clear constitution, map, status, and hi… | 8 |
+| `affaan-m__ecc/skill/llm-trading-agent-security` | Security patterns for autonomous trading agents with wallet or transaction authority. Covers prompt injection, spend limits, pre-… | 5 |
 | `affaan-m__ecc/skill/loop-design-check` | Design a goal-oriented agent loop, and review it for the ways loops go wrong — spinning and burning tokens, Goodhart-gaming the v… | 12 |
 | `affaan-m__ecc/skill/ml-adoption-playbook` | End-to-end methodology for AI agents and software engineers to add machine learning algorithms to existing non-ML codebases. Cove… | 4 |
 | `affaan-m__ecc/skill/mle-workflow` | Production machine-learning engineering workflow for data contracts, reproducible training, model evaluation, deployment, monitor… | 22 |
+| `affaan-m__ecc/skill/nasiko-control-plane` | Install, detect, and operate the optional Nasiko agent control plane through ECC with pinned artifacts, explicit consent, and tel… | 3 |
 | `affaan-m__ecc/skill/openclaw-persona-forge` | 为 OpenClaw AI Agent 锻造完整的龙虾灵魂方案。根据用户偏好或随机抽卡， 输出身份定位、灵魂描述(SOUL.md)、角色化底线规则、名字和头像生图提示词。 如当前环境提供已审核的生图 skill，可自动生成统一风格头像图片。 当用户需要创建、… | 35 |
 | `affaan-m__ecc/skill/orch-add-feature` | Orchestrate building a brand-new feature end to end — research, plan, TDD implementation, review, and gated commit — by delegatin… | 2 |
 | `affaan-m__ecc/skill/orch-fix-defect` | Orchestrate fixing a bug — reproduce it as a failing regression test, fix to green, review, and gated commit — by delegating each… | 2 |
 | `affaan-m__ecc/skill/orch-pipeline` | Shared orchestration engine for the orch-* skill family. Defines the gated Research-Plan-TDD-Review-Commit pipeline, the size cla… | 6 |
 | `affaan-m__ecc/skill/plan-orchestrate` | Read a plan document, decompose it into steps, design a per-step agent chain from the ECC catalogue, and emit ready-to-paste /orc… | 18 |
+| `affaan-m__ecc/skill/prediction-market-oracle-research` | Research prediction markets as data sources or oracle signals for products, agents, dashboards, and corporate decision intelligen… | 2 |
 | `affaan-m__ecc/skill/prediction-market-risk-review` | Review prediction-market, basket, oracle, and trading-agent workflows for compliance, safety, data-quality, privacy, and executio… | 2 |
 | `affaan-m__ecc/skill/prompt-optimizer` | >- Analyze raw prompts, identify intent and gaps, match ECC components (skills/commands/agents/hooks), and output a ready-to-past… | 16 |
 | `affaan-m__ecc/skill/pytorch-patterns` | PyTorch deep learning patterns and best practices for building robust, efficient, and reproducible training pipelines, model arch… | 11 |
-| `affaan-m__ecc/skill/ralphinho-rfc-pipeline` | RFC-driven multi-agent DAG execution pattern with quality gates, merge queues, and work unit orchestration. | 1 |
+| `affaan-m__ecc/skill/ralphinho-rfc-pipeline` | RFC-driven multi-agent DAG execution pattern with quality gates, merge queues, and work unit orchestration. Use when running RFC-… | 2 |
 | `affaan-m__ecc/skill/react-performance` | React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/ve… | 18 |
 | `affaan-m__ecc/skill/recsys-pipeline-architect` | Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffe… | 8 |
 | `affaan-m__ecc/skill/regex-vs-llm-structured-text` | Decision framework for choosing between regex and LLM when parsing structured text — start with regex, add LLM only for low-confi… | 6 |
-| `affaan-m__ecc/skill/santa-method` | Multi-agent adversarial verification with convergence loop. Two independent review agents must both pass before output ships. | 12 |
+| `affaan-m__ecc/skill/santa-method` | Multi-agent adversarial verification with convergence loop. Two independent review agents must both pass before output ships. Use… | 13 |
 | `affaan-m__ecc/skill/security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks usi… | 4 |
 | `affaan-m__ecc/skill/skill-comply` | Visualize whether skills, rules, and agent definitions are actually followed — auto-generates scenarios at 3 prompt strictness le… | 59 |
 | `affaan-m__ecc/skill/social-publisher` | Agent-driven scheduling and publishing of social media posts across 13 platforms via SocialClaw. Use when the user wants to publi… | 4 |
-| `affaan-m__ecc/skill/team-agent-orchestration` | Run team-based orchestration for agent squads using work items, ownership, agent Kanban, merge gates, and control pane handoffs. | 5 |
-| `affaan-m__ecc/skill/team-builder` | Interactive agent picker for composing and dispatching parallel teams | 7 |
+| `affaan-m__ecc/skill/team-agent-orchestration` | Run team-based orchestration for agent squads using work items, ownership, agent Kanban, merge gates, and control pane handoffs. … | 5 |
+| `affaan-m__ecc/skill/team-builder` | Interactive agent picker for composing and dispatching parallel teams. Use when composing and dispatching a parallel team of agen… | 7 |
 | `affaan-m__ecc/skill/unified-memory` | Share durable, inspectable context and handoffs between Claude, Codex, Hermes, Cursor, OpenCode, and other agents through the loc… | 6 |
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | > Live SEO data via DataForSEO MCP server: SERP analysis, keyword research (volume, difficulty, intent, trends), backlink profile… | 23 |
 | `AgriciDaniel__claude-seo/skill/seo-geo` | > Optimize content for AI Overviews (formerly SGE), ChatGPT web search, Perplexity, and other AI-powered search experiences. Gene… | 24 |
 | `AgriciDaniel__claude-seo/skill/seo-profound` | Profound LLM citation tracker (extension). Time-series brand citation rates across ChatGPT, Perplexity, and other LLMs. Pairs wit… | 2 |
-| `anthropics__claude-plugins-official/skill/agent-development` | This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when… | 70 |
-| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 48 |
-| `anthropics__claude-plugins-official/skill/build-mcp-server` | This skill should be used when the user asks to "build an MCP server", "create an MCP", "make an MCP integration", "wrap an API f… | 50 |
-| `anthropics__claude-plugins-official/skill/hook-development` | This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "… | 66 |
-| `anthropics__claude-plugins-official/skill/mcp-integration` | This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "s… | 48 |
-| `anthropics__claude-plugins-official/skill/playground` | Creates interactive HTML playgrounds — self-contained single-file explorers that let users configure something visually through c… | 30 |
-| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 901 |
-| `anthropics__skills/skill/mcp-builder` | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through … | 122 |
-| `Egonex-AI__Understand-Anything/skill/understand` | Analyze a codebase to produce an interactive knowledge graph for understanding architecture, components, and relationships | 386 |
+| `anthropics__claude-plugins-official/skill/agent-development` | This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when… | 68 |
+| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 47 |
+| `anthropics__claude-plugins-official/skill/build-mcp-server` | This skill should be used when the user asks to "build an MCP server", "create an MCP", "make an MCP integration", "wrap an API f… | 49 |
+| `anthropics__claude-plugins-official/skill/hook-development` | This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "… | 63 |
+| `anthropics__claude-plugins-official/skill/mcp-integration` | This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "s… | 45 |
+| `anthropics__claude-plugins-official/skill/playground` | Creates interactive HTML playgrounds — self-contained single-file explorers that let users configure something visually through c… | 29 |
+| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 951 |
+| `anthropics__skills/skill/mcp-builder` | Guide for creating high-quality MCP (Model Context Protocol) servers that enable LLMs to interact with external services through … | 119 |
+| `Egonex-AI__Understand-Anything/skill/understand` | Analyze a codebase to produce an interactive knowledge graph for understanding architecture, components, and relationships | 377 |
 | `Egonex-AI__Understand-Anything/skill/understand-chat` | Use when you need to ask questions about a codebase or understand code using a knowledge graph | 5 |
 | `Egonex-AI__Understand-Anything/skill/understand-dashboard` | Launch the interactive web dashboard to visualize a codebase's knowledge graph | 7 |
-| `Egonex-AI__Understand-Anything/skill/understand-domain` | Extract business domain knowledge from a codebase and generate an interactive domain flow graph. Works standalone (lightweight sc… | 26 |
+| `Egonex-AI__Understand-Anything/skill/understand-domain` | Extract business domain knowledge from a codebase and generate an interactive domain flow graph. Works standalone (lightweight sc… | 25 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
-| `Egonex-AI__Understand-Anything/skill/understand-knowledge` | Analyze a Karpathy-pattern LLM wiki knowledge base and generate an interactive knowledge graph with entity extraction, implicit r… | 44 |
-| `Graphify-Labs__graphify/skill/graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ e… | 3838 |
+| `Egonex-AI__Understand-Anything/skill/understand-knowledge` | Analyze a Karpathy-pattern LLM wiki knowledge base and generate an interactive knowledge graph with entity extraction, implicit r… | 43 |
+| `Graphify-Labs__graphify/skill/graphify` | Use for any question about a codebase, its architecture, file relationships, or project content — especially when graphify-out/ e… | 4028 |
 | `mattpocock__skills/skill/claude-handoff` | Hand the current conversation off to a fresh background agent that picks up the work immediately. | 1 |
-| `mattpocock__skills/skill/domain-modeling` | Build and sharpen a project's domain model. Use when the user wants to pin down domain terminology or a ubiquitous language, reco… | 9 |
+| `mattpocock__skills/skill/domain-modeling` | Build and sharpen a project's domain model. Use when discussing codebase terminology, writing or editing a CONTEXT.md, or recordi… | 8 |
 | `mattpocock__skills/skill/handoff` | Compact the current conversation into a handoff document for another agent to pick up. | 1 |
 | `mattpocock__skills/skill/prototype` | Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic f… | 16 |
 | `mattpocock__skills/skill/research` | Investigate a question against high-trust primary sources and capture the findings as a Markdown file in the repo. Use when the u… | 1 |
-| `mattpocock__skills/skill/triage` | Move issues and external PRs through a state machine of triage roles — categorise, verify, grill if needed, and write agent-ready… | 19 |
-| `mattpocock__skills/skill/wayfinder` | Plan a huge chunk of work — more than one agent session can hold — as a shared map of decision tickets on your issue tracker, and… | 12 |
-| `mattpocock__skills/skill/wizard` | Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure,… | 13 |
-| `multica-ai__multica/skill/multica-creating-agents` | Use when creating, inspecting, or debugging a Multica agent definition via the `multica agent` CLI or POST /api/agents. Not for a… | 33 |
-| `multica-ai__multica/skill/multica-mentioning` | Use when an issue comment needs to @mention someone — link to a person, trigger another agent, hand work to a squad, or broadcast… | 28 |
-| `multica-ai__multica/skill/multica-runtimes-and-repos` | Use when a Multica runtime or daemon misbehaves: agent not running, task not claimed, runtime offline, workdir or session reuse, … | 8 |
+| `mattpocock__skills/skill/triage` | Move issues and external PRs through a state machine of triage roles, categorise, verify, grill if needed, and write agent-ready … | 19 |
+| `mattpocock__skills/skill/wayfinder` | Plan a huge chunk of work (more than one agent session can hold) as a shared map of decision tickets on your issue tracker, and r… | 12 |
+| `mattpocock__skills/skill/wizard` | Generate an interactive bash wizard that walks a human through steps only they can perform. Use when provisioning infrastructure,… | 12 |
+| `multica-ai__multica/skill/incident-response` | How this team handles a production incident issue — what to establish before proposing a fix, and what an agent may and may not d… | 3 |
+| `multica-ai__multica/skill/multica-creating-agents` | Use when creating, inspecting, or debugging a Multica agent definition via the `multica agent` CLI or POST /api/agents. Not for a… | 39 |
+| `multica-ai__multica/skill/multica-mentioning` | Use when an issue comment needs to @mention someone — link to a person, trigger another agent, hand work to a squad, or broadcast… | 30 |
+| `multica-ai__multica/skill/multica-runtimes-and-repos` | Use when a Multica runtime or daemon misbehaves: agent not running, task not claimed, runtime offline, workdir or session reuse, … | 13 |
+| `usestrix__strix/skill/find-security-vulnerabilities-in-code` | Find security vulnerabilities in a codebase or repository with Strix — a white-box AI security review that reads your source, rea… | 4 |
 | `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
 

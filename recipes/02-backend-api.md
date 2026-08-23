@@ -81,7 +81,7 @@ Sechs Bausteine, rund 52 KB. Das ist die Obergrenze für diesen Projekttyp.
 | `affaan-m__ecc/skill/postgres-patterns` | skill | Nur bei PostgreSQL. Kompakte Index- und Anti-Pattern-Referenz. | 4 |
 | `affaan-m__ecc/skill/prisma-patterns` | skill | Nur bei Prisma. Wegen der Fallen: `updateMany` liefert Count statt Records, `migrate dev` setzt die DB zurück, Serverless erschöpft Connections. | 15 |
 | `affaan-m__ecc/agent/silent-failure-hunter` | agent | Nur wenn bereits ein Fall auftrat, in dem ein Fehler geschluckt wurde. Sehr klein, sehr eng. | 2 |
-| `anthropics__claude-plugins-official/agent/pr-test-analyzer` | agent | Nur wenn PRs der Arbeitsmodus sind **und** eine Test-Suite den Verifikationspfad trägt — der Agent arbeitet diff-/PR-zentriert, `git diff` und `gh` vorausgesetzt. Gegen das Symptom „Tests laufen grün, decken die geänderte Logik aber nicht ab": Er prüft verhaltensbezogene Abdeckung (Kritikalität 1–10) und ersetzt kein mechanisches Coverage-Gate, sondern ergänzt es dort, wo Zeilenabdeckung grün ist, Verhaltensabdeckung aber fehlt. Abgrenzung zum Kern-Set: `api-tester` prüft Laufzeitverhalten, dieser Agent, ob die Suite die geänderte Logik abdeckt. Stammt aus dem Plugin `pr-review-toolkit`, ist aber einzeln funktionsfähig — eigene description mit Invocation-Triggern; der dispatchende `command/review-pr` wird bewusst nicht mitinstalliert. | 5 |
+| `anthropics__claude-plugins-official/agent/pr-test-analyzer` | agent | Nur wenn PRs der Arbeitsmodus sind **und** eine Test-Suite den Verifikationspfad trägt — der Agent arbeitet diff-/PR-zentriert, `git diff` und `gh` vorausgesetzt. Gegen das Symptom „Tests laufen grün, decken die geänderte Logik aber nicht ab": Er prüft verhaltensbezogene Abdeckung (Kritikalität 1–10) und ersetzt kein mechanisches Coverage-Gate, sondern ergänzt es dort, wo Zeilenabdeckung grün ist, Verhaltensabdeckung aber fehlt. Abgrenzung zum Kern-Set: `api-tester` prüft Laufzeitverhalten, dieser Agent, ob die Suite die geänderte Logik abdeckt. Stammt aus dem Plugin `pr-review-toolkit`, ist aber einzeln funktionsfähig — eigene description mit Invocation-Triggern; der dispatchende `command/review-pr` wird bewusst nicht mitinstalliert. | 4 |
 | `affaan-m__ecc/skill/docker-patterns` | skill | Nur wenn der Dienst containerisiert läuft und der Agent Compose-Dateien anfasst. | 8 |
 | `affaan-m__ecc/hook/pre-bash-dev-server-block` | hook | Nur wenn der Agent wiederholt einen blockierenden Dev-Server startet und die Session hängt. Hook, weil eine Bitte hier nicht zuverlässig greift. | 6 |
 | `affaan-m__ecc/hook/config-protection` | hook | Nur wenn der Agent schon einmal eine Lint-/Format-Config aufgeweicht hat, um einen roten Check grün zu bekommen, statt den Code zu fixen — eine dokumentierte Modellschwäche. Blockiert Änderungen an bestehenden ESLint-/Prettier-/Biome-/Ruff-Configs; Neuanlage bleibt erlaubt, im Fehlerfall lässt er durch (fail-open). Ehrliche Reichweite: In einem Projekt ohne solche Configs ist er ein No-op. | 5 |
@@ -108,7 +108,7 @@ Git-Hooks tragen.
 ## Installationsbefehl
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs install \
   affaan-m__ecc/skill/api-design \
   affaan-m__ecc/skill/contract-first \

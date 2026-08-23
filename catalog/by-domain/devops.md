@@ -1,8 +1,8 @@
 # Domäne: devops
 
-57 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+59 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
-## agent (26)
+## agent (27)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -10,6 +10,7 @@
 | `affaan-m__ecc/agent/opensource-forker` | Fork any project for open-sourcing. Copies files, strips secrets and credentials (20+ patterns), replaces internal references wit… | 7 |
 | `affaan-m__ecc/agent/opensource-packager` | Generate complete open-source packaging for a sanitized project. Produces CLAUDE.md, setup.sh, README.md, LICENSE, CONTRIBUTING.m… | 8 |
 | `affaan-m__ecc/agent/opensource-sanitizer` | Verify an open-source fork is fully sanitized before release. Scans for leaked secrets, PII, internal references, and dangerous f… | 7 |
+| `affaan-m__ecc/agent/rag-pipeline-reviewer` | Reviews RAG (Retrieval-Augmented Generation) pipelines for retrieval quality, chunking strategy, embedding choices, and evaluatio… | 6 |
 | `msitarzewski__agency-agents/agent/agents-orchestrator` | Autonomous pipeline manager that orchestrates the entire development workflow. You are the leader of this process. | 15 |
 | `msitarzewski__agency-agents/agent/ai-data-remediation-engineer` | Specialist in self-healing data pipelines — uses air-gapped local SLMs and semantic clustering to automatically detect, classify,… | 10 |
 | `msitarzewski__agency-agents/agent/blender-add-on-engineer` | Blender tooling specialist - Builds Python add-ons, asset validators, exporters, and pipeline automations that turn repetitive DC… | 11 |
@@ -49,19 +50,19 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4119 |
+| `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4061 |
 | `anthropics__claude-plugins-official/plugin/gitlab` | GitLab DevOps platform integration. Manage repositories, merge requests, CI/CD pipelines, issues, and wikis. Full access to GitLa… | 1 |
-| `anthropics__claude-plugins-official/plugin/mcp-tunnels` | Connect Claude to a private MCP server through an Anthropic MCP tunnel. Drives the Docker Compose quickstart end to end: certific… | 33 |
+| `anthropics__claude-plugins-official/plugin/mcp-tunnels` | Connect Claude to a private MCP server through an Anthropic MCP tunnel. Drives the Docker Compose quickstart end to end: certific… | 32 |
 | `anthropics__claude-plugins-official/plugin/terraform` | The Terraform MCP Server provides seamless integration with Terraform ecosystem, enabling advanced automation and interaction cap… | 1 |
 
-## skill (25)
+## skill (26)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/skill/canary-watch` | Use this skill to monitor and verify a deployed URL after releases — checks HTTP endpoints, SSE streams, static assets, console e… | 3 |
 | `affaan-m__ecc/skill/competitive-platform-analysis` | >- Use when scoping a competitive landscape — identifying, categorising, and score-filtering a competitor set before any benchmar… | 12 |
 | `affaan-m__ecc/skill/competitive-report-structure` | >- Use after benchmark-methodology has produced scored competitor profile cards. Assembles findings into a decision-grade report:… | 9 |
-| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching. | 6 |
+| `affaan-m__ecc/skill/cost-aware-llm-pipeline` | Cost optimization patterns for LLM API usage — model routing by task complexity, budget tracking, retry logic, and prompt caching… | 6 |
 | `affaan-m__ecc/skill/dashboard-builder` | Build monitoring dashboards that answer real operator questions for Grafana, SigNoz, and similar platforms. Use when turning metr… | 2 |
 | `affaan-m__ecc/skill/deployment-patterns` | > Deployment workflows, CI/CD pipeline patterns, Docker containerization, health checks, rollback strategies, and production read… | 11 |
 | `affaan-m__ecc/skill/django-celery` | Django + Celery async task patterns — configuration, task design, beat scheduling, retries, canvas workflows, monitoring, and tes… | 13 |
@@ -74,13 +75,14 @@
 | `affaan-m__ecc/skill/opensource-pipeline` | Open-source pipeline: fork, sanitize, and package private projects for safe public release. Chains 3 agents (forker, sanitizer, p… | 7 |
 | `affaan-m__ecc/skill/orch-pipeline` | Shared orchestration engine for the orch-* skill family. Defines the gated Research-Plan-TDD-Review-Commit pipeline, the size cla… | 6 |
 | `affaan-m__ecc/skill/pubmed-database` | Direct PubMed and NCBI E-utilities search workflows for biomedical literature, MeSH queries, PMID lookup, citation retrieval, and… | 5 |
-| `affaan-m__ecc/skill/ralphinho-rfc-pipeline` | RFC-driven multi-agent DAG execution pattern with quality gates, merge queues, and work unit orchestration. | 1 |
+| `affaan-m__ecc/skill/ralphinho-rfc-pipeline` | RFC-driven multi-agent DAG execution pattern with quality gates, merge queues, and work unit orchestration. Use when running RFC-… | 2 |
 | `affaan-m__ecc/skill/recsys-pipeline-architect` | Design composable recommendation, ranking, and feed pipelines using the six-stage Source→Hydrator→Filter→Scorer→Selector→SideEffe… | 8 |
 | `affaan-m__ecc/skill/social-publisher` | Agent-driven scheduling and publishing of social media posts across 13 platforms via SocialClaw. Use when the user wants to publi… | 4 |
 | `affaan-m__ecc/skill/taste` | A creative-direction (taste) layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop visual family… | 20 |
 | `affaan-m__ecc/skill/video-editing` | AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capt… | 10 |
-| `AgriciDaniel__claude-seo/skill/seo-drift` | > SEO drift monitoring: capture baselines of SEO-critical elements, detect changes, and track regressions over time. Git for SEO:… | 13 |
-| `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1100 |
+| `AgriciDaniel__claude-seo/skill/seo-drift` | > SEO drift monitoring: capture baselines of SEO-critical elements, detect changes, and track regressions over time. Git for SEO:… | 12 |
+| `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1077 |
+| `usestrix__strix/skill/application-security-testing` | Application security testing (AppSec) across a whole product with Strix — decide which asset needs which test (source code, runni… | 4 |
 | `usestrix__strix/skill/ci-security-scanning-with-strix` | Add security scanning to CI/CD with Strix — GitHub Actions, GitLab CI, or any pipeline — so every pull request gets a diff-scoped… | 8 |
 | `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
 

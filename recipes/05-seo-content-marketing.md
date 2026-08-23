@@ -77,19 +77,19 @@ belegt, nicht verpflichtend.
 | `AgriciDaniel__claude-seo/agent/seo-content` | agent | E-E-A-T, Tiefe, Lesbarkeit, Thin Content, Zitierfähigkeit für KI-Antworten. Eigener Kontext — bewertet den Text, nicht die Absicht dahinter. | 4 |
 | `AgriciDaniel__claude-seo/agent/seo-performance` | agent | Core Web Vitals gemessen statt geschätzt. Fakt statt Einschätzung. | 4 |
 | `AgriciDaniel__claude-seo/skill/seo-schema` | skill | Structured Data erkennen, **validieren** und erzeugen. Der Validierungsschritt ist der Punkt. | 11 |
-| `AgriciDaniel__claude-seo/skill/seo-plan` | skill | Strategie, Seitenarchitektur, Content-Kalender vorab. Der Planner-Schritt — die Komponente, die laut Doktrin 7.2 am langsamsten altert. | 33 |
+| `AgriciDaniel__claude-seo/skill/seo-plan` | skill | Strategie, Seitenarchitektur, Content-Kalender vorab. Der Planner-Schritt — die Komponente, die laut Doktrin 7.2 am langsamsten altert. | 32 |
 
-Sechs Bausteine, rund 63 KB. Das ist die Obergrenze für diesen Projekttyp.
+Sechs Bausteine, rund 62 KB. Das ist die Obergrenze für diesen Projekttyp.
 `seo-plan` ist der grösste; er trägt den Scope-Teil und bleibt deshalb im Kern.
 
 ## Erweiterung (optional)
 
 | ID | Typ | Bedingung | KB |
 |---|---|---|---:|
-| `AgriciDaniel__claude-seo/skill/seo-content-brief` | skill | Nur wenn tatsächlich Texte entstehen. Liefert Briefings mit Abschnitts-Wortzahlen und Wettbewerber-Scoring. | 24 |
+| `AgriciDaniel__claude-seo/skill/seo-content-brief` | skill | Nur wenn tatsächlich Texte entstehen. Liefert Briefings mit Abschnitts-Wortzahlen und Wettbewerber-Scoring. | 23 |
 | `AgriciDaniel__claude-seo/skill/seo-geo` | skill | Nur wenn Sichtbarkeit in AI Overviews, ChatGPT oder Perplexity ein erklärtes Ziel ist. | 24 |
 | `AgriciDaniel__claude-seo/skill/seo-local` | skill | Nur bei lokalem Geschäft mit Google Business Profile, NAP-Konsistenz, Standortseiten. | 17 |
-| `AgriciDaniel__claude-seo/skill/seo-drift` | skill | Nur ab regelmässigen Deployments. Baseline und Diff der SEO-Elemente — das strukturierte Gedächtnis zwischen Sessions (Doktrin 5). | 13 |
+| `AgriciDaniel__claude-seo/skill/seo-drift` | skill | Nur ab regelmässigen Deployments. Baseline und Diff der SEO-Elemente — das strukturierte Gedächtnis zwischen Sessions (Doktrin 5). | 12 |
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | skill | Nur mit DataForSEO-Zugang. Ohne API-Schlüssel liefert der Baustein nichts. | 23 |
 | `affaan-m__ecc/skill/marketing-campaign` | skill | Nur wenn über SEO hinaus ein Launch ansteht: Positionierung, Landingpage-Copy, E-Mail-Strecken, Content-Kalender. | 5 |
 | `affaan-m__ecc/skill/brand-voice` | skill | Nur wenn ein erkennbarer Ton gehalten werden muss. Leitet das Stilprofil aus echten Texten ab statt aus Adjektiven. | 5 |
@@ -113,7 +113,7 @@ nicht, und ein installierter Hook ist bis zur Registrierung in
 ## Installationsbefehl
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs install \
   AgriciDaniel__claude-seo/skill/seo-audit \
   AgriciDaniel__claude-seo/agent/seo-technical \

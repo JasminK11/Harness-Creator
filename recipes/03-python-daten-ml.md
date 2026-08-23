@@ -103,7 +103,7 @@ Pflicht machen.
 ## Installationsbefehl
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs install \
   affaan-m__ecc/skill/mle-workflow \
   affaan-m__ecc/agent/mle-reviewer \

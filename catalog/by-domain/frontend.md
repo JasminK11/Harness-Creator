@@ -1,6 +1,6 @@
 # Domäne: frontend
 
-81 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+83 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (19)
 
@@ -24,7 +24,7 @@
 | `msitarzewski__agency-agents/agent/ux-researcher` | Expert user experience researcher specializing in user behavior analysis, usability testing, and data-driven design insights. Pro… | 13 |
 | `msitarzewski__agency-agents/agent/webassembly-engineer` | Expert WebAssembly engineer — compiling Rust/C++/Go to Wasm, JS interop and the boundary marshalling cost, WASI and server-side r… | 13 |
 | `msitarzewski__agency-agents/agent/wordpress-performance-engineer` | Expert WordPress performance engineer specializing in Core Web Vitals, object caching (Redis/Memcached), page caching, database a… | 24 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/agent/design-review` | >- Expert design reviewer for web UI. Use PROACTIVELY after any front-end change and before calling UI work complete, or when the… | 5 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/agent/design-review` | >- Expert design reviewer for web UI. Use PROACTIVELY after any front-end change and before calling UI work complete, or when the… | 4 |
 
 ## command (10)
 
@@ -37,7 +37,7 @@
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 | `affaan-m__ecc/command/react-test` | Enforce TDD workflow for React. Write React Testing Library tests first (behavior-focused, accessibility-first), then implement c… | 7 |
 | `affaan-m__ecc/command/vue-review` | Comprehensive Vue.js code review for Composition API correctness, reactivity, composable patterns, template security, accessibili… | 6 |
-| `anthropics__claude-plugins-official/command/create-plugin` | Guided end-to-end plugin creation workflow with component design, implementation, and validation | 16 |
+| `anthropics__claude-plugins-official/command/create-plugin` | Guided end-to-end plugin creation workflow with component design, implementation, and validation | 15 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-plan` | Generate a concrete design system (tokens, style, type, UX) before building UI | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/command/design-review` | Run the 7-phase design review (WCAG AA, responsive, interaction) on a page or URL | 1 |
 
@@ -52,13 +52,14 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `anthropics__claude-plugins-official/plugin/frontend-design` | Frontend design skill for UI/UX implementation | 31 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 15696 |
+| `anthropics__claude-plugins-official/plugin/frontend-design` | Frontend design skill for UI/UX implementation | 30 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` | UI/UX design intelligence. Searchable local database with 84 styles, 192 palettes, 74 font pairings, 25 charts, and 22 stacks (Re… | 21036 |
 
-## skill (48)
+## skill (50)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
+| `affaan-m__ecc/skill/accessibility` | Design, implement, and audit inclusive digital products using WCAG 2.2 Level AA. Use when building or auditing UI that must meet … | 6 |
 | `affaan-m__ecc/skill/angular-developer` | Generates Angular code and provides architectural guidance. Trigger when creating projects, components, or services, or for best … | 128 |
 | `affaan-m__ecc/skill/backend-patterns` | Backend architecture patterns, API design, database optimization, and server-side best practices for Node.js, Express, and Next.j… | 14 |
 | `affaan-m__ecc/skill/blender-motion-state-inspection` | Use this skill when inspecting Blender characters, rigs, poses, animation retargeting, ground contact, facing direction, or model… | 8 |
@@ -66,16 +67,17 @@
 | `affaan-m__ecc/skill/click-path-audit` | Trace every user-facing button/touchpoint through its full state change sequence to find bugs where functions individually work b… | 8 |
 | `affaan-m__ecc/skill/coding-standards` | Baseline cross-project coding conventions for naming, readability, immutability, and code-quality review. Use detailed frontend o… | 13 |
 | `affaan-m__ecc/skill/compose-multiplatform-patterns` | Compose Multiplatform and Jetpack Compose patterns for KMP projects — state management, navigation, theming, performance, and pla… | 8 |
+| `affaan-m__ecc/skill/design-system` | Use this skill to generate or audit design systems, check visual consistency, and review PRs that touch styling. Use when generat… | 3 |
 | `affaan-m__ecc/skill/documentation-lookup` | Use up-to-date library and framework docs via Context7 MCP instead of training data. Activates for setup questions, API reference… | 5 |
 | `affaan-m__ecc/skill/frontend-a11y` | > Accessibility patterns for React and Next.js — semantic HTML, ARIA attributes, form labeling, keyboard navigation, focus manage… | 12 |
 | `affaan-m__ecc/skill/frontend-design-direction` | Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applic… | 4 |
-| `affaan-m__ecc/skill/frontend-patterns` | Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices. | 16 |
+| `affaan-m__ecc/skill/frontend-patterns` | Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices. Use when bui… | 16 |
 | `affaan-m__ecc/skill/frontend-slides` | Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to bui… | 16 |
-| `affaan-m__ecc/skill/healthcare-emr-patterns` | EMR/EHR development patterns for healthcare applications. Clinical safety, encounter workflows, prescription generation, clinical… | 6 |
+| `affaan-m__ecc/skill/healthcare-emr-patterns` | EMR/EHR development patterns for healthcare applications. Clinical safety, encounter workflows, prescription generation, clinical… | 7 |
 | `affaan-m__ecc/skill/liquid-glass-design` | iOS 26 Liquid Glass design system — dynamic glass material with blur, reflection, and interactive morphing for SwiftUI, UIKit, an… | 9 |
 | `affaan-m__ecc/skill/make-interfaces-feel-better` | Apply concrete design-engineering details that make interfaces feel polished. Use when reviewing or improving UI spacing, typogra… | 5 |
 | `affaan-m__ecc/skill/motion-advanced` | Advanced motion patterns for React / Next.js — drag & drop, gestures, text animations, SVG path drawing, custom hooks, imperative… | 18 |
-| `affaan-m__ecc/skill/motion-foundations` | Motion tokens, spring presets, performance rules, device adaptation, accessibility enforcement, and SSR safety for React / Next.j… | 9 |
+| `affaan-m__ecc/skill/motion-foundations` | Motion tokens, spring presets, performance rules, device adaptation, accessibility enforcement, and SSR safety for React / Next.j… | 10 |
 | `affaan-m__ecc/skill/motion-patterns` | Production-ready animation patterns for React / Next.js — button, modal, toast, stagger, page transitions, exit animations, scrol… | 13 |
 | `affaan-m__ecc/skill/motion-ui` | Production-ready UI motion system for React/Next.js. Use when implementing animations, transitions, or motion patterns. | 14 |
 | `affaan-m__ecc/skill/nextjs-turbopack` | Next.js 16+ and Turbopack — incremental bundling, FS caching, dev speed, and when to use Turbopack vs webpack. | 2 |
@@ -90,21 +92,21 @@
 | `affaan-m__ecc/skill/ui-demo` | Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutor… | 15 |
 | `affaan-m__ecc/skill/ui-to-vue` | Use when the user has UI screenshots or design exports that need batch conversion into Vue 3 components, especially with Vant, El… | 5 |
 | `affaan-m__ecc/skill/vue-patterns` | Vue.js 3 Composition API patterns, component architecture, reactivity best practices, Pinia state management, Vue Router navigati… | 13 |
-| `affaan-m__ecc/skill/windows-desktop-e2e` | E2E testing for Windows native desktop apps (WPF, WinForms, Win32/MFC, Qt) using pywinauto and Windows UI Automation. | 30 |
-| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 48 |
+| `affaan-m__ecc/skill/windows-desktop-e2e` | E2E testing for Windows native desktop apps (WPF, WinForms, Win32/MFC, Qt) using pywinauto and Windows UI Automation. Use when wr… | 30 |
+| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 47 |
 | `anthropics__claude-plugins-official/skill/frontend-design` | Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direc… | 18 |
-| `anthropics__claude-plugins-official/skill/plugin-structure` | This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize … | 76 |
+| `anthropics__claude-plugins-official/skill/plugin-structure` | This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize … | 73 |
 | `anthropics__skills/skill/frontend-design` | Guidance for distinctive, intentional visual design when building new UI or reshaping an existing one. Helps with aesthetic direc… | 18 |
-| `anthropics__skills/skill/slack-gif-creator` | Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation con… | 44 |
+| `anthropics__skills/skill/slack-gif-creator` | Knowledge and utilities for creating animated GIFs optimized for Slack. Provides constraints, validation tools, and animation con… | 43 |
 | `anthropics__skills/skill/web-artifacts-builder` | Suite of tools for creating elaborate, multi-component claude.ai HTML artifacts using modern frontend web technologies (React, Ta… | 45 |
 | `anthropics__skills/skill/webapp-testing` | Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debu… | 22 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
 | `mattpocock__skills/skill/prototype` | Build a throwaway prototype to answer a design question. Use when the user wants to sanity-check whether a state model or logic f… | 16 |
 | `multica-ai__multica/skill/web-design-guidelines` | Review UI code for Web Interface Guidelines compliance. Use when asked to "review my UI", "check accessibility", "audit design", … | 1 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/banner-design` | Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generate… | 13 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 241 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variab… | 180 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 236 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variab… | 175 |
 | `nextlevelbuilder__ui-ux-pro-max-skill/skill/slides` | Create strategic HTML presentations with Chart.js, design tokens, responsive layouts, copywriting formulas, and contextual slide … | 19 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-styling` | Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first… | 5627 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-ux-pro-max` | UI/UX design intelligence for web and mobile. Searchable local database with 84 styles, 192 color palettes, 74 font pairings, 192… | 1729 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-styling` | Create beautiful, accessible user interfaces with shadcn/ui components (built on Radix UI + Tailwind), Tailwind CSS utility-first… | 5620 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-ux-pro-max` | UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing … | 3479 |
 

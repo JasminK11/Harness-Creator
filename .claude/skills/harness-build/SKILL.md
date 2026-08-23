@@ -5,7 +5,7 @@ description: Entscheidet, WOMIT gearbeitet wird. Stattet ein Zielprojekt mit Bau
 
 # /harness-build — Harness für dieses Projekt zusammenstellen
 
-Die Harness-Bibliothek liegt unter `C:\Users\info\OneDrive\Desktop\Harnes Creator`.
+Die Harness-Bibliothek liegt im Bibliotheksverzeichnis (`<projektverzeichnis>`).
 Sie katalogisiert Bausteine aus einer wachsenden Zahl fremder Repos: Skills,
 Subagents, Slash-Commands, Hooks, MCP-Konfigurationen, Plugins.
 
@@ -19,8 +19,8 @@ Kontextfenster voll, bevor er die erste Zeile Projektcode gesehen hat. Deshalb g
 ohne Ausnahme:
 
 - **Nie** `catalog/index.json` lesen. Diese Datei ist mehrere Megabyte gross.
-- **Nie** die Repo-Klone unter `C:\Users\info\.harness-sources\` mit Glob, Grep oder
-  Read durchsuchen.
+- **Nie** die Repo-Klone unter dem Klon-Verzeichnis (`~/.harness-sources`,
+  überschreibbar mit HARNESS_SOURCES) mit Glob, Grep oder Read durchsuchen.
 - Der einzige Zugriffsweg ist das CLI. Es hält den Katalog ausserhalb deines
   Kontexts und liefert nur die Treffer zurück.
 
@@ -30,7 +30,7 @@ klein gehalten.
 ## Werkzeug
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 
 node tools/harness.mjs stats                       # Bestand im Überblick
 node tools/harness.mjs search "<worte>"            # Treffer als kompakte Zeilen

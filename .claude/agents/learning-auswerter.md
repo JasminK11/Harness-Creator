@@ -30,7 +30,7 @@ sich unbemerkt unter Quellenwissen mischt.
 2. **Den Kontext der Bibliothek prüfen**, bevor du beurteilst, was neu ist:
 
    ```bash
-   cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+   cd "<projektverzeichnis>"
    node tools/harness.mjs knowledge --list
    node tools/harness.mjs knowledge "<stichwort aus der quelle>"
    ```
@@ -70,7 +70,7 @@ Dazu am Ende:
 ## Zugriffsregeln
 
 Niemals `catalog/index.json` lesen — 20 MB. Niemals die Repo-Klone unter
-`C:\Users\info\.harness-sources\` mit Glob oder Grep durchsuchen. Der Katalog ist nur
+das Klon-Verzeichnis (`~/.harness-sources`, überschreibbar mit HARNESS_SOURCES) mit Glob oder Grep durchsuchen. Der Katalog ist nur
 über das CLI zugänglich.
 
 `Learnings/` ist die Rohschicht: **nur lesen, nie ändern.** Sie ist der Beleg für

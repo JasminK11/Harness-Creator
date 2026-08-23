@@ -114,11 +114,11 @@ Der Katalog umfasst über 25.000 Bausteine. Wer ihn einliest, hat sein
 Kontextfenster voll, bevor er die erste Zeile Projektcode sieht. Deshalb:
 
 - **Nie** `catalog/index.json` lesen.
-- **Nie** die Repo-Klone unter `C:\Users\info\.harness-sources` mit Glob/Grep/Read durchsuchen.
+- **Nie** die Repo-Klone unter `/home/anoncrypt/.harness-sources` mit Glob/Grep/Read durchsuchen.
 - Der einzige Zugriffsweg ist das CLI:
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "/home/anoncrypt/Harness-Creator"
 node tools/harness.mjs search "<stichwort>" [--type X] [--domain X] [--limit N]
 node tools/harness.mjs intent --list      # kein Stichwort, nur ein Symptom?
 node tools/harness.mjs intent <id>        # die hinterlegten Suchen dieser Absicht
@@ -139,11 +139,14 @@ Nicht dieselbe Anfrage wiederholen. Das Suchverhalten hat drei belegte Fallen:
   auf ODER zurück und sagt das („Kein Baustein enthält alle Suchwörter"). Je
   gängiger die Einzelwörter, desto mehr Teiltreffer — ein Projektprofil mit sieben
   Wörtern liefert über 250. Zwei gezielte Wörter sind besser als das ganze Profil.
-- **Die Suche matcht am Wortanfang.** Der Stamm findet alle längeren Formen
-  (`review` findet `reviews`, `reviewer`, `reviewing`); ein Plural-s wird
-  abgeschnitten, jede andere längere Form findet die kürzere nicht, und zwei
-  Endungen am selben Stamm finden einander nicht (`pruefen` findet `pruefung`
-  nicht). Deshalb den Wortstamm eingeben: `pruef` findet beides.
+- **Die Suche matcht am Wortanfang und verbindet Flexionsformen.** Der Stamm
+  findet alle längeren Formen (`review` findet `reviews`, `reviewer`,
+  `reviewing`); Biegungen desselben Stamms finden einander (`pruefen` trifft
+  `pruefung`, beide laufen auf `pruef`) — Endungen `ung`/`ungen`/`en` ab vier
+  Zeichen Rest, `e` ab fünf. Sehr kurze Stämme unter dem Restminimum werden
+  nicht rückwärts verbunden: `pruef` findet weiterhin alles, die Biegung eines
+  hypothetischen Dreizeichen-Stamms nicht. Den Wortstamm einzugeben ist damit
+  kein Muss mehr, bleibt aber der sicherste Weg.
 - **Der Standardbestand ist englisch beschrieben.** Deutsche Anfragen laufen
   dort ins Leere; den englischen Fachbegriff einsetzen. Die deutschen Bausteine
   liegen im Massen-Repo `legal-de` und sind nur mit `--domain legal-de` oder
@@ -151,10 +154,10 @@ Nicht dieselbe Anfrage wiederholen. Das Suchverhalten hat drei belegte Fallen:
 
 Bleibt es dabei, ist auch das ein Ergebnis: **kein Baustein ist besser als ein
 unpassender.** Dann nichts installieren, sondern die Lücke unter „Lücken" in
-`C:\Users\info\OneDrive\Desktop\Harnes Creator\sources.txt` vermerken — das Format steht dort.
+`/home/anoncrypt/Harness-Creator/sources.txt` vermerken — das Format steht dort.
 
 Wer mehr braucht — alle 14 Befehle, Bestand nach Typ und Domäne, die vollen
-Verbote —, liest `C:\Users\info\OneDrive\Desktop\Harnes Creator\INDEX.md` **komplett**. Sie ist unter
+Verbote —, liest `/home/anoncrypt/Harness-Creator/INDEX.md` **komplett**. Sie ist unter
 hundert Zeilen lang und genau dafür da. Kein Ersatz dafür, im Verzeichnis der
 Bibliothek herumzusuchen.
 

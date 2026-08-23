@@ -77,7 +77,7 @@ Sechs Bausteine, rund 69 KB. Das ist die Obergrenze für diesen Projekttyp.
 | ID | Typ | Bedingung | KB |
 |---|---|---|---:|
 | `affaan-m__ecc/skill/react-performance` | skill | Nur wenn ein **gemessenes** Performance-Problem vorliegt (LCP, Bundle-Grösse, Re-Render). 70+ Regeln — ohne Messwert nur Rauschen. | 18 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/agent/design-review` | agent | Nur wenn Playwright- oder chrome-devtools-MCP verfügbar ist und Optik bewertet werden soll. Fährt echte Viewports, prüft WCAG 2.1 AA. | 5 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/agent/design-review` | agent | Nur wenn Playwright- oder chrome-devtools-MCP verfügbar ist und Optik bewertet werden soll. Fährt echte Viewports, prüft WCAG 2.1 AA. | 4 |
 | `anthropics__skills/skill/frontend-design` | skill | Nur bei neuem Interface ohne bestehendes Design-System. Nicht bei Umbau in vorhandener Optik. | 18 |
 | `affaan-m__ecc/skill/nextjs-turbopack` | skill | Nur Next.js 16+ und nur, wenn die Dev-Laufzeit stört. | 2 |
 | `affaan-m__ecc/command/react-test` | command | Nur wenn TDD verbindlich gelten soll — der Command erzwingt Test-zuerst und prüft Coverage-Ziele. | 7 |
@@ -98,14 +98,14 @@ und kann deshalb keinen Zwang zur Pflicht machen.
 | Kandidat | Warum nicht |
 |---|---|
 | `affaan-m__ecc/skill/frontend-patterns` (16 KB) | Überschneidet sich fast vollständig mit `react-patterns` plus `react-performance`. Zwei Bausteine für dieselbe Frage sind teurer, nicht besser. `react-patterns` ist spezifischer und aktueller (React 18/19). |
-| `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` (15.696 KB, 567 Dateien) | Sammelpaket mit Style-, Palette- und Font-Datenbank. Sprengt jedes Projekt. Der einzelne `design-review`-Agent aus demselben Repo liefert den nützlichen Teil in 5 KB. |
+| `nextlevelbuilder__ui-ux-pro-max-skill/plugin/ui-ux-pro-max` (15.696 KB, 567 Dateien) | Sammelpaket mit Style-, Palette- und Font-Datenbank. Sprengt jedes Projekt. Der einzelne `design-review`-Agent aus demselben Repo liefert den nützlichen Teil in 4 KB. |
 | `affaan-m__ecc/skill/motion-ui`, `motion-patterns`, `motion-foundations`, `motion-advanced` (je 1 KB) | Leere Übersetzungs-Platzhalter ("日本語翻訳：このファイルは … 用の日本語翻訳が必要です"). Kein verwertbarer Inhalt. |
 | `affaan-m__ecc/skill/browser-qa` (3 KB) | Liegt nur als japanische Übersetzung vor und ist deutlich flacher als `webapp-testing`, das dieselbe Aufgabe mit lauffähigen Playwright-Skripten löst. |
 
 ## Installationsbefehl
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs install \
   anthropics__skills/skill/webapp-testing \
   affaan-m__ecc/skill/react-patterns \

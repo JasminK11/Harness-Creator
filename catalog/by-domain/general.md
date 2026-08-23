@@ -1,6 +1,6 @@
 # Domäne: general
 
-350 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+342 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (155)
 
@@ -235,7 +235,7 @@
 | `anthropics__claude-plugins-official/command/commit-push-pr` | Commit, push, and open a PR | 1 |
 | `anthropics__claude-plugins-official/command/configure` | Enable or disable hookify rules interactively | 3 |
 | `anthropics__claude-plugins-official/command/feature-dev` | Guided feature development with codebase understanding and architecture focus | 5 |
-| `anthropics__claude-plugins-official/command/hookify` | Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions | 8 |
+| `anthropics__claude-plugins-official/command/hookify` | Create hooks to prevent unwanted behaviors from conversation analysis or explicit instructions | 7 |
 | `anthropics__claude-plugins-official/command/list` | List all configured hookify rules | 2 |
 | `anthropics__claude-plugins-official/command/maker-setup` | Onboard a Code-with-Claude Makers Cardputer — fetch the build-with-claude repo, flash firmware, and install the Claude Buddy apps. | 1 |
 | `anthropics__claude-plugins-official/command/modernize-assess` | Full discovery & portfolio analysis of a legacy system — inventory, complexity, debt, relative scale | 11 |
@@ -259,16 +259,14 @@
 | `affaan-m__ecc/hook/run-with-flags-shell` | Preserve stdin for passthrough or script execution | 1 |
 | `affaan-m__ecc/hook/suggest-compact` | Strategic Compact Suggester | 10 |
 
-## skill (108)
+## skill (100)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/accessibility` | Design, implement, and audit inclusive digital products using WCAG 2.2 Level AA standards. Use this skill to generate semantic AR… | 6 |
 | `affaan-m__ecc/skill/android-clean-architecture` | Clean Architecture patterns for Android and Kotlin Multiplatform projects — module structure, dependency rules, UseCases, Reposit… | 9 |
 | `affaan-m__ecc/skill/automation-audit-ops` | Evidence-first automation inventory and overlap audit workflow for ECC. Use when the user wants to know which jobs, hooks, connec… | 4 |
 | `affaan-m__ecc/skill/benchmark` | Use this skill to measure performance baselines, detect regressions before/after PRs, and compare stack alternatives. | 2 |
 | `affaan-m__ecc/skill/benchmark-optimization-loop` | Use when the user asks to make something faster, try many variants, run recursive optimization, benchmark latency/throughput/cost… | 2 |
-| `affaan-m__ecc/skill/cisco-ios-patterns` | Cisco IOS and IOS-XE review patterns for show commands, config hierarchy, wildcard masks, ACL placement, interface hygiene, and s… | 5 |
 | `affaan-m__ecc/skill/code-tour` | Create CodeTour `.tour` files — persona-targeted, step-by-step walkthroughs with real file and line anchors. Use for onboarding t… | 8 |
 | `affaan-m__ecc/skill/codehealth-mcp` | Real-time structural Code Health via CodeScene MCP — review before edits, verify score deltas after changes, gate commits and PRs… | 7 |
 | `affaan-m__ecc/skill/connections-optimizer` | Reorganize the user's X and LinkedIn network with review-first pruning, add/follow recommendations, and channel-specific warm out… | 5 |
@@ -277,24 +275,19 @@
 | `affaan-m__ecc/skill/council` | Convene a four-voice council for ambiguous decisions, tradeoffs, and go/no-go calls. Use when multiple valid paths exist and you … | 6 |
 | `affaan-m__ecc/skill/crosspost` | Multi-platform content distribution across X, LinkedIn, Threads, and Bluesky. Adapts content per platform using content-engine pa… | 4 |
 | `affaan-m__ecc/skill/customer-billing-ops` | Operate customer billing workflows such as subscriptions, refunds, churn triage, billing-portal recovery, and plan analysis using… | 4 |
-| `affaan-m__ecc/skill/dart-flutter-patterns` | Production-ready Dart and Flutter patterns covering null safety, immutable state, async composition, widget architecture, popular… | 16 |
 | `affaan-m__ecc/skill/data-throughput-accelerator` | Use when large data ingestion, backfill, export, ETL, warehouse loading, manifest catch-up, or table synchronization needs to bec… | 3 |
 | `affaan-m__ecc/skill/deep-research` | Multi-source deep research using firecrawl and exa MCPs. Searches the web, synthesizes findings, and delivers cited reports with … | 5 |
-| `affaan-m__ecc/skill/design-system` | Use this skill to generate or audit design systems, check visual consistency, and review PRs that touch styling. | 2 |
-| `affaan-m__ecc/skill/dotnet-patterns` | Idiomatic C# and .NET patterns, conventions, dependency injection, async/await, and best practices for building robust, maintaina… | 9 |
 | `affaan-m__ecc/skill/ecc-guide` | Guide users through ECC's current agents, skills, commands, hooks, rules, install profiles, and project onboarding by reading the… | 5 |
 | `affaan-m__ecc/skill/email-ops` | Evidence-first mailbox triage, drafting, send verification, and sent-mail-safe follow-up workflow for ECC. Use when the user want… | 3 |
 | `affaan-m__ecc/skill/error-handling` | Patterns for robust error handling across TypeScript, Python, and Go. Covers typed errors, error boundaries, retries, circuit bre… | 11 |
 | `affaan-m__ecc/skill/everything-claude-code` | Development conventions and patterns for everything-claude-code. JavaScript project with conventional commits. | 11 |
-| `affaan-m__ecc/skill/everything-claude-code-conventions` | Development conventions and patterns for everything-claude-code. JavaScript project with conventional commits. | 11 |
 | `affaan-m__ecc/skill/evm-token-decimals` | Prevent silent decimal mismatch bugs across EVM chains. Covers runtime decimal lookup, chain-aware caching, bridged-token precisi… | 4 |
 | `affaan-m__ecc/skill/exa-search` | Neural search via Exa MCP for web, code, and company research. Use when the user needs web search, code examples, company intel, … | 5 |
 | `affaan-m__ecc/skill/gateguard` | Fact-forcing gate that blocks Edit/Write/Bash (including MultiEdit) and demands concrete investigation (importers, data schemas, … | 5 |
 | `affaan-m__ecc/skill/generating-python-installer` | Commercial-grade Python installer expert for Windows: Nuitka extreme compilation, dist slimming, DLL footprint analysis, and Inno… | 30 |
-| `affaan-m__ecc/skill/git-workflow` | Git workflow patterns including branching strategies, commit conventions, merge vs rebase, conflict resolution, and collaborative… | 15 |
 | `affaan-m__ecc/skill/golang-patterns` | > Go-specific design patterns and best practices including functional options, small interfaces, dependency injection, concurrenc… | 4 |
 | `affaan-m__ecc/skill/healthcare-cdss-patterns` | Clinical Decision Support System (CDSS) development patterns. Drug interaction checking, dose validation, clinical scoring (NEWS2… | 9 |
-| `affaan-m__ecc/skill/healthcare-phi-compliance` | Protected Health Information (PHI) and Personally Identifiable Information (PII) compliance patterns for healthcare applications.… | 5 |
+| `affaan-m__ecc/skill/healthcare-phi-compliance` | Protected Health Information (PHI) and Personally Identifiable Information (PII) compliance patterns for healthcare applications.… | 6 |
 | `affaan-m__ecc/skill/hermes-imports` | Convert local Hermes operator workflows into sanitized ECC skills and release-pack artifacts. Use when preparing a Hermes workflo… | 3 |
 | `affaan-m__ecc/skill/hexagonal-architecture` | Design, implement, and refactor Ports & Adapters systems with clear domain boundaries, dependency inversion, and testable use-cas… | 11 |
 | `affaan-m__ecc/skill/homelab-network-readiness` | Readiness checklist for homelab VLAN segmentation, local DNS filtering, and WireGuard-style remote access before changing router,… | 7 |
@@ -306,32 +299,30 @@
 | `affaan-m__ecc/skill/ito-compute` | Query live GPU inventory, submit an authenticated Itô fixed-rate RFQ, inspect RFQ or procurement status, revoke device credential… | 6 |
 | `affaan-m__ecc/skill/java-coding-standards` | Java coding standards for Spring Boot and Quarkus services: naming, immutability, Optional usage, streams, exceptions, generics, … | 11 |
 | `affaan-m__ecc/skill/jpa-patterns` | JPA/Hibernate patterns for entity design, relationships, query optimization, transactions, auditing, indexing, pagination, and po… | 5 |
-| `affaan-m__ecc/skill/kotlin-coroutines-flows` | Kotlin Coroutines and Flow patterns for Android and KMP — structured concurrency, Flow operators, StateFlow, error handling, and … | 8 |
 | `affaan-m__ecc/skill/kotlin-patterns` | Idiomatic Kotlin patterns, best practices, and conventions for building robust, efficient, and maintainable Kotlin applications w… | 18 |
 | `affaan-m__ecc/skill/literature-review` | Systematic literature-review workflow for academic, biomedical, technical, and scientific topics, including search planning, sour… | 5 |
 | `affaan-m__ecc/skill/logistics-exception-management` | > Codified expertise for handling freight exceptions, shipment delays, damages, losses, and carrier disputes. Informed by logisti… | 16 |
 | `affaan-m__ecc/skill/messages-ops` | Evidence-first live messaging workflow for ECC. Use when the user wants to read texts or DMs, recover a recent one-time code, ins… | 3 |
-| `affaan-m__ecc/skill/nanoclaw-repl` | Operate and extend NanoClaw v2, ECC's zero-dependency session-aware REPL built on claude -p. | 1 |
+| `affaan-m__ecc/skill/nanoclaw-repl` | Operate and extend NanoClaw v2, ECC's zero-dependency session-aware REPL built on claude -p. Use when operating or extending the … | 1 |
 | `affaan-m__ecc/skill/nestjs-patterns` | NestJS architecture patterns for modules, controllers, providers, DTO validation, guards, interceptors, config, and production-gr… | 7 |
 | `affaan-m__ecc/skill/netmiko-ssh-automation` | Safe Python Netmiko patterns for read-only collection, bounded batch SSH, TextFSM parsing, guarded config changes, timeouts, and … | 6 |
-| `affaan-m__ecc/skill/network-bgp-diagnostics` | Diagnostics-only BGP troubleshooting patterns for neighbor state, route exchange, prefix policy, AS path inspection, and safe evi… | 5 |
+| `affaan-m__ecc/skill/network-bgp-diagnostics` | Diagnostics-only BGP troubleshooting patterns for neighbor state, route exchange, prefix policy, AS path inspection, and safe evi… | 6 |
 | `affaan-m__ecc/skill/network-interface-health` | Diagnose interface errors, drops, CRCs, duplex mismatches, flapping, speed negotiation issues, and counter trends on routers, swi… | 6 |
 | `affaan-m__ecc/skill/nodejs-keccak256` | Prevent Ethereum hashing bugs in JavaScript and TypeScript. Node's sha3-256 is NIST SHA3, not Ethereum Keccak-256, and silently b… | 3 |
 | `affaan-m__ecc/skill/orch-change-feature` | Orchestrate altering an existing, working feature to new desired behavior — update its tests to the new spec, change the implemen… | 2 |
 | `affaan-m__ecc/skill/orch-refine-code` | Orchestrate a behavior-preserving refactor — confirm tests are green, restructure without changing behavior, keep tests green, re… | 2 |
 | `affaan-m__ecc/skill/parallel-execution-optimizer` | Use when the user wants a task done much faster through parallel work, concurrent agents, batched tool calls, isolated worktrees,… | 3 |
-| `affaan-m__ecc/skill/perl-patterns` | Modern Perl 5.36+ idioms, best practices, and conventions for building robust, maintainable Perl applications. | 11 |
-| `affaan-m__ecc/skill/plan-canvas` | Open plans and HTML artifacts in a local browser canvas where the human annotates elements, chats, and approves or requests chang… | 7 |
+| `affaan-m__ecc/skill/plan-canvas` | Open plans and HTML artifacts in a local browser canvas where the human annotates elements, chats, and approves or requests chang… | 9 |
 | `affaan-m__ecc/skill/plankton-code-quality` | Write-time code quality enforcement using Plankton — auto-formatting, linting, and Claude-powered fixes on every file edit via ho… | 8 |
-| `affaan-m__ecc/skill/production-audit` | Local-evidence production readiness audit for shipped apps, pre-launch reviews, post-merge checks, and "what breaks in prod?" que… | 7 |
+| `affaan-m__ecc/skill/production-audit` | Local-evidence production readiness audit for shipped apps, pre-launch reviews, post-merge checks, and "what breaks in prod?" que… | 8 |
 | `affaan-m__ecc/skill/production-scheduling` | > Codified expertise for production scheduling, job sequencing, line balancing, changeover optimization, and bottleneck resolutio… | 28 |
 | `affaan-m__ecc/skill/project-flow-ops` | Operate execution flow across GitHub and Linear by triaging issues and pull requests, linking active work, and keeping GitHub pub… | 3 |
 | `affaan-m__ecc/skill/python-patterns` | > Python-specific design patterns and best practices including protocols, dataclasses, context managers, decorators, async/await,… | 9 |
 | `affaan-m__ecc/skill/quality-nonconformance` | > Codified expertise for quality control, non-conformance investigation, root cause analysis, corrective action, and supplier qua… | 30 |
 | `affaan-m__ecc/skill/recursive-decision-ledger` | Use when the user asks for repeated rollouts, marked decision processes, high-dimensional search, stochastic optimization, local-… | 2 |
-| `affaan-m__ecc/skill/repo-scan` | Cross-stack source code asset audit — classifies every file, detects embedded third-party libraries, and delivers actionable four… | 3 |
+| `affaan-m__ecc/skill/repo-scan` | Bootstrap pointer that installs the external repo-scan skill from a pinned, reviewable commit. Use when repo-scan must be install… | 7 |
 | `affaan-m__ecc/skill/research-ops` | Evidence-first current-state research workflow for ECC. Use when the user wants fresh facts, comparisons, enrichment, or a recomm… | 4 |
-| `affaan-m__ecc/skill/rules-distill` | Scan skills to extract cross-cutting principles and distill them into rules — append, revise, or create new rule files | 15 |
+| `affaan-m__ecc/skill/rules-distill` | Scan skills to extract cross-cutting principles and distill them into rules — append, revise, or create new rule files. Use when … | 15 |
 | `affaan-m__ecc/skill/rust-patterns` | Idiomatic Rust patterns, ownership, error handling, traits, concurrency, and best practices for building safe, performant applica… | 13 |
 | `affaan-m__ecc/skill/safety-guard` | Use this skill to prevent destructive operations when working on production systems or running agents autonomously. | 2 |
 | `affaan-m__ecc/skill/skill-scout` | Search existing local, marketplace, GitHub, and web skill sources before creating a new skill. Use when the user wants to create,… | 4 |
@@ -346,29 +337,30 @@
 | `affaan-m__ecc/skill/vite-patterns` | Vite build tool patterns including config, plugins, HMR, env variables, proxy setup, SSR, library mode, dependency pre-bundling, … | 17 |
 | `anthropics__claude-plugins-official/skill/access` | Manage Discord channel access — approve pairings, edit allowlists, set DM/group policy. Use when the user asks to pair, approve s… | 4 |
 | `anthropics__claude-plugins-official/skill/cardputer-buddy` | Iterate on the Cardputer-Adv MicroPython app bundle (Claude Buddy, Snake, Hello) after the device is already provisioned via m5-o… | 2 |
-| `anthropics__claude-plugins-official/skill/claude-md-improver` | Audit and improve CLAUDE.md files in repositories. Use when user asks to check, audit, update, improve, or fix CLAUDE.md files. S… | 16 |
+| `anthropics__claude-plugins-official/skill/claude-md-improver` | Audit and improve CLAUDE.md files in repositories. Use when user asks to check, audit, update, improve, or fix CLAUDE.md files. S… | 15 |
 | `anthropics__claude-plugins-official/skill/configure` | Set up the Discord channel — save the bot token and review access policy. Use when the user pastes a Discord bot token, asks to c… | 4 |
-| `anthropics__claude-plugins-official/skill/m5-onboard` | End-to-end onboarding for a freshly-plugged-in M5Stack ESP32 device (Cardputer, Cardputer-Adv, Core, CoreS3, Stick) — detect on U… | 24 |
-| `anthropics__skills/skill/algorithmic-art` | Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request cr… | 60 |
+| `anthropics__claude-plugins-official/skill/m5-onboard` | End-to-end onboarding for a freshly-plugged-in M5Stack ESP32 device (Cardputer, Cardputer-Adv, Core, CoreS3, Stick) — detect on U… | 23 |
+| `anthropics__skills/skill/algorithmic-art` | Creating algorithmic art using p5.js with seeded randomness and interactive parameter exploration. Use this when users request cr… | 58 |
 | `anthropics__skills/skill/internal-comms` | A set of resources to help me write all kinds of internal communications, using the formats that my company likes to use. Claude … | 22 |
 | `anthropics__skills/skill/template-skill` | Replace with description of the skill and when Claude should use it. | 1 |
-| `mattpocock__skills/skill/ask-matt` | Ask which skill or flow fits your situation. A router over the skills in this repo. | 16 |
-| `mattpocock__skills/skill/code-review` | Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes — Standards (does the code follow this… | 7 |
-| `mattpocock__skills/skill/codebase-design` | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening o… | 12 |
+| `mattpocock__skills/skill/ask-matt` | Ask which skill or flow fits your situation. A router over the skills in this repo. | 15 |
+| `mattpocock__skills/skill/code-review` | Review the changes since a fixed point (commit, branch, tag, or merge-base) along two axes: Standards (does the code follow this … | 7 |
+| `mattpocock__skills/skill/codebase-design` | Shared vocabulary for designing deep modules. Use when the user wants to design or improve a module's interface, find deepening o… | 11 |
 | `mattpocock__skills/skill/diagnosing-bugs` | Diagnosis loop for hard bugs and performance regressions. Use when the user says "diagnose"/"debug this", or reports something br… | 10 |
 | `mattpocock__skills/skill/grill-me` | A relentless interview to sharpen a plan or design. | 1 |
 | `mattpocock__skills/skill/implement` | Implement a piece of work based on a spec or set of tickets. | 1 |
+| `mattpocock__skills/skill/implement-spec` | Implement a specification in code. | 2 |
 | `mattpocock__skills/skill/improve-codebase-architecture` | Scan a codebase for deepening opportunities, present them as a visual HTML report, then grill through whichever one you pick. | 13 |
 | `mattpocock__skills/skill/loop-me` | Grill me about specs for the workflows I want to build, within this workspace. | 3 |
 | `mattpocock__skills/skill/resolving-merge-conflicts` | Use when you need to resolve an in-progress git merge/rebase conflict. | 1 |
 | `mattpocock__skills/skill/scaffold-exercises` | Create exercise directory structures with sections, problems, solutions, and explainers that pass linting. Use when user wants to… | 4 |
-| `mattpocock__skills/skill/setup-matt-pocock-skills` | Configure this repo for the engineering skills — set up its issue tracker, triage label vocabulary, and domain doc layout. Run on… | 19 |
+| `mattpocock__skills/skill/setup-matt-pocock-skills` | Configure this repo for the engineering skills: set up its issue tracker, triage label vocabulary, and domain doc layout. Run onc… | 19 |
 | `mattpocock__skills/skill/setup-pre-commit` | Set up Husky pre-commit hooks with lint-staged (Prettier), type checking, and tests in the current repo. Use when user wants to a… | 2 |
-| `mattpocock__skills/skill/setup-ts-deep-modules` | Wire dependency-cruiser into a TypeScript repo so each package is a deep module — implementation hidden in subfolders, reachable … | 11 |
+| `mattpocock__skills/skill/setup-ts-deep-modules` | Wire dependency-cruiser into a TypeScript repo so each package is a deep module, with implementation hidden in subfolders and rea… | 11 |
 | `mattpocock__skills/skill/teach` | Teach the user a new skill or concept, within this workspace. | 18 |
 | `mattpocock__skills/skill/to-questionnaire` | Turn a decision you can't fully answer into a questionnaire for someone else to fill in. | 3 |
-| `mattpocock__skills/skill/to-spec` | Turn the current conversation into a spec and publish it to the project issue tracker — no interview, just synthesis of what you'… | 3 |
+| `mattpocock__skills/skill/to-spec` | Turn the current conversation into a spec and publish it to the project issue tracker: no interview, just synthesis of what you'v… | 3 |
 | `mattpocock__skills/skill/to-tickets` | Break a plan, spec, or the current conversation into a set of tracer-bullet tickets, each declaring its blocking edges, published… | 6 |
-| `mattpocock__skills/skill/wait-what` | Stop. That last message did not land — re-pitch it. | 1 |
-| `mvanhorn__last30days-skill/skill/last30days` | Research what people actually say about any topic in the last 30 days. Pulls posts and engagement from Reddit, X, YouTube, TikTok… | 16261 |
+| `mattpocock__skills/skill/wait-what` | Stop. That last message did not land: re-pitch it. | 1 |
+| `mvanhorn__last30days-skill/skill/last30days` | Research what people actually say about any topic in the last 30 days. Pulls posts and engagement from Reddit, X, YouTube, TikTok… | 16446 |
 

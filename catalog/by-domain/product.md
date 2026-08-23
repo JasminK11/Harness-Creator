@@ -1,6 +1,6 @@
 # Domäne: product
 
-107 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+106 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (57)
 
@@ -9,8 +9,8 @@
 | `affaan-m__ecc/agent/gan-planner` | GAN Harness — Planner agent. Expands a one-line prompt into a full product specification with features, sprints, evaluation crite… | 4 |
 | `affaan-m__ecc/agent/marketing-agent` | Marketing strategist and copywriter for campaign planning, audience research, positioning, copy creation, and content review. Cov… | 7 |
 | `AgriciDaniel__claude-seo/agent/seo-ecommerce` | > E-commerce SEO analyst. Validates product schema, analyzes Google Shopping and Amazon marketplace visibility, identifies pricin… | 4 |
-| `AgriciDaniel__claude-seo/agent/seo-geo` | GEO and AI search specialist. Analyzes AI crawler accessibility, llms.txt presence (optional; ignored by Google Search), passage-… | 4 |
-| `AgriciDaniel__claude-seo/agent/seo-maps` | Maps intelligence specialist. Geo-grid rank tracking, GBP profile auditing, review intelligence, cross-platform NAP verification,… | 5 |
+| `AgriciDaniel__claude-seo/agent/seo-geo` | GEO and AI search specialist. Analyzes AI crawler accessibility, llms.txt presence (optional; ignored by Google Search), passage-… | 3 |
+| `AgriciDaniel__claude-seo/agent/seo-maps` | Maps intelligence specialist. Geo-grid rank tracking, GBP profile auditing, review intelligence, cross-platform NAP verification,… | 4 |
 | `msitarzewski__agency-agents/agent/account-strategist` | Expert post-sale account strategist specializing in land-and-expand execution, stakeholder mapping, QBR facilitation, and net rev… | 14 |
 | `msitarzewski__agency-agents/agent/ai-citation-strategist` | Expert in AI recommendation engine optimization (AEO/GEO) — audits brand visibility across ChatGPT, Claude, Gemini, and Perplexit… | 9 |
 | `msitarzewski__agency-agents/agent/baidu-seo-specialist` | Expert Baidu search optimization specialist focused on Chinese search engine ranking, Baidu ecosystem integration, ICP compliance… | 13 |
@@ -73,7 +73,7 @@
 | `affaan-m__ecc/command/plan-prd` | Generate a lean, problem-first PRD and hand off to /plan for implementation planning. | 5 |
 | `affaan-m__ecc/command/prp-prd` | Interactive PRD generator - problem-first, hypothesis-driven product spec with back-and-forth questioning | 14 |
 
-## skill (46)
+## skill (45)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -90,10 +90,7 @@
 | `affaan-m__ecc/skill/frontend-design-direction` | Set an ECC-specific frontend design direction for production UI work. Use when building or improving websites, dashboards, applic… | 4 |
 | `affaan-m__ecc/skill/growth-log` | Use after a complex task, failure, or when reviewing what was learned. Teaches how to write growth logs that extract reusable pat… | 7 |
 | `affaan-m__ecc/skill/intent-driven-development` | Turn ambiguous or high-impact product and engineering changes into scoped, verifiable acceptance criteria before or alongside imp… | 17 |
-| `affaan-m__ecc/skill/ito-basket-compare` | Compare Itô prediction-market baskets against a user's knowledge base, portfolio notes, financial context, watchlist, or research… | 12 |
-| `affaan-m__ecc/skill/ito-data-atlas-agent` | Design source-grounded Data Atlas style agents for Itô basket research, market discovery, parameter drafting, and human-in-the-lo… | 8 |
-| `affaan-m__ecc/skill/ito-market-intelligence` | Research prediction-market events, venues, underliers, liquidity, and news context for Itô basket workflows. Use for read-only ma… | 10 |
-| `affaan-m__ecc/skill/ito-trade-planner` | Build a non-advisory prediction-market trade planning worksheet for Itô or venue workflows. Use to inspect venues, underliers, co… | 6 |
+| `affaan-m__ecc/skill/ito-baskets` | Read-only Itô basket and prediction-market data skill. Index the live basket catalog, compare a basket against user-supplied rese… | 23 |
 | `affaan-m__ecc/skill/latency-critical-systems` | Use for latency-sensitive systems such as realtime dashboards, market data, streaming agents, execution gateways, queues, caches,… | 2 |
 | `affaan-m__ecc/skill/manim-video` | Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the w… | 6 |
 | `affaan-m__ecc/skill/market-research` | Conduct market research, competitive analysis, investor due diligence, and industry intelligence with source attribution and deci… | 2 |
@@ -107,20 +104,22 @@
 | `affaan-m__ecc/skill/returns-reverse-logistics` | > Codified expertise for returns authorization, receipt and inspection, disposition decisions, refund processing, fraud detection… | 24 |
 | `AgriciDaniel__claude-seo/skill/seo-backlinks` | Backlink profile analysis: referring domains, anchor text distribution, toxic link detection, competitor gap analysis. Works with… | 13 |
 | `AgriciDaniel__claude-seo/skill/seo-competitor-pages` | > Generate SEO-optimized competitor comparison and alternatives pages. Covers "X vs Y" layouts, "alternatives to X" pages, featur… | 8 |
-| `AgriciDaniel__claude-seo/skill/seo-content-brief` | > Generate competitive SEO content briefs with per-section word counts, competitor scoring, keyword density guidance, and page-ty… | 24 |
+| `AgriciDaniel__claude-seo/skill/seo-content-brief` | > Generate competitive SEO content briefs with per-section word counts, competitor scoring, keyword density guidance, and page-ty… | 23 |
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | > Live SEO data via DataForSEO MCP server: SERP analysis, keyword research (volume, difficulty, intent, trends), backlink profile… | 23 |
-| `AgriciDaniel__claude-seo/skill/seo-ecommerce` | > E-commerce SEO analysis: Google Shopping visibility, Amazon marketplace intelligence, product schema validation, competitor pri… | 25 |
+| `AgriciDaniel__claude-seo/skill/seo-ecommerce` | > E-commerce SEO analysis: Google Shopping visibility, Amazon marketplace intelligence, product schema validation, competitor pri… | 24 |
 | `AgriciDaniel__claude-seo/skill/seo-geo` | > Optimize content for AI Overviews (formerly SGE), ChatGPT web search, Perplexity, and other AI-powered search experiences. Gene… | 24 |
 | `AgriciDaniel__claude-seo/skill/seo-image-gen` | AI image generation for SEO assets: OG/social preview images, blog hero images, schema images, product photography, infographics.… | 9 |
 | `AgriciDaniel__claude-seo/skill/seo-maps` | > Maps intelligence for local SEO: geo-grid rank tracking, GBP profile auditing via API, review intelligence across Google/Tripad… | 12 |
-| `AgriciDaniel__claude-seo/skill/seo-plan` | > Strategic SEO planning for new or existing websites. Industry-specific templates, competitive analysis, content strategy, and i… | 33 |
+| `AgriciDaniel__claude-seo/skill/seo-plan` | > Strategic SEO planning for new or existing websites. Industry-specific templates, competitive analysis, content strategy, and i… | 32 |
 | `AgriciDaniel__claude-seo/skill/seo-profound` | Profound LLM citation tracker (extension). Time-series brand citation rates across ChatGPT, Perplexity, and other LLMs. Pairs wit… | 2 |
-| `AgriciDaniel__claude-seo/skill/seo-sxo` | > Search Experience Optimization: reads Google SERPs backwards to detect page-type mismatches, derives user stories from search i… | 36 |
-| `anthropics__skills/skill/brand-guidelines` | Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-an… | 14 |
-| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 901 |
+| `AgriciDaniel__claude-seo/skill/seo-sxo` | > Search Experience Optimization: reads Google SERPs backwards to detect page-type mismatches, derives user stories from search i… | 35 |
+| `anthropics__skills/skill/academy-guide` | > Stop and check this skill before finishing any reply to a question about how to use Claude or a Claude product — it recommends … | 19 |
+| `anthropics__skills/skill/brand-guidelines` | Applies Anthropic's official brand colors and typography to any sort of artifact that may benefit from having Anthropic's look-an… | 13 |
+| `anthropics__skills/skill/claude-api` | /- Reference for the Claude API / Anthropic SDK — model ids, pricing, params, streaming, tool use, MCP, agents, caching, token co… | 951 |
 | `multica-ai__multica/skill/multica-onboarding` | Use when a product-authored kickoff starts or resumes Mika's interactive onboarding for a Multica workspace. The opening greeting… | 7 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/brand` | Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of vo… | 90 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 241 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variab… | 180 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-ux-pro-max` | UI/UX design intelligence for web and mobile. Searchable local database with 84 styles, 192 color palettes, 74 font pairings, 192… | 1729 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/brand` | Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of vo… | 87 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 236 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design-system` | Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variab… | 175 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/ui-ux-pro-max` | UI/UX design intelligence for web, mobile, and desktop. This skill should be used when designing, building, reviewing, or fixing … | 3479 |
+| `usestrix__strix/skill/application-security-testing` | Application security testing (AppSec) across a whole product with Strix — decide which asset needs which test (source code, runni… | 4 |
 

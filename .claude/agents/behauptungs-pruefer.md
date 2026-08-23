@@ -30,7 +30,7 @@ aufgefallen.
 Sieh im Code nach, nicht in der Dokumentation — die hinkt hinterher.
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs knowledge "<stichwort>"
 grep -n "<funktionsname>" tools/harness.mjs
 ```
@@ -72,7 +72,7 @@ Zielprojekt. Ein Prüfer, der das gefundene Problem selbst wegrepariert, meldet 
 nicht mehr — und niemand erfährt, dass es da war.
 
 Niemals `catalog/index.json` lesen (20 MB). Niemals die Repo-Klone unter
-`C:\Users\info\.harness-sources\` mit Glob oder Grep durchsuchen.
+das Klon-Verzeichnis (`~/.harness-sources`, überschreibbar mit HARNESS_SOURCES) mit Glob oder Grep durchsuchen.
 
 ## Sprache
 

@@ -1,6 +1,6 @@
 # Domäne: meta
 
-172 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+176 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (22)
 
@@ -21,7 +21,7 @@
 | `anthropics__skills/agent/analyzer` | Analyze blind comparison results to understand WHY the winner won and generate improvement suggestions. | 10 |
 | `anthropics__skills/agent/comparator` | Compare two outputs WITHOUT knowing which skill produced them. | 7 |
 | `anthropics__skills/agent/grader` | Evaluate expectations against an execution transcript and outputs. | 9 |
-| `Egonex-AI__Understand-Anything/agent/architecture-analyzer` | / Analyzes a codebase's file structure, summaries, and import relationships to identify logical architectural layers and assign e… | 23 |
+| `Egonex-AI__Understand-Anything/agent/architecture-analyzer` | / Analyzes a codebase's file structure, summaries, and import relationships to identify logical architectural layers and assign e… | 22 |
 | `Egonex-AI__Understand-Anything/agent/assemble-reviewer` | / Reviews the output of merge-batch-graphs.py for semantic issues the script cannot catch. Recovers dropped nodes/edges and fills… | 5 |
 | `Egonex-AI__Understand-Anything/agent/domain-analyzer` | / Analyzes codebases to extract business domain knowledge — domains, business flows, and process steps. Produces a domain-graph.j… | 6 |
 | `Egonex-AI__Understand-Anything/agent/graph-reviewer` | / Validates knowledge graphs for correctness, completeness, and quality. Runs systematic checks and renders approval or rejection… | 12 |
@@ -41,11 +41,11 @@
 | `affaan-m__ecc/command/sessions` | Manage Claude Code session history, aliases, and session metadata. | 14 |
 | `anthropics__claude-plugins-official/command/asana-setup` | Set up the Asana V2 MCP server connection (one-time OAuth app + claude mcp add) | 2 |
 | `anthropics__claude-plugins-official/command/create-docker-mcp-tunnel` | Stand up an Anthropic MCP tunnel locally with Docker Compose so Claude can call a private MCP server (manual-credentials quicksta… | 16 |
-| `anthropics__claude-plugins-official/command/create-plugin` | Guided end-to-end plugin creation workflow with component design, implementation, and validation | 16 |
+| `anthropics__claude-plugins-official/command/create-plugin` | Guided end-to-end plugin creation workflow with component design, implementation, and validation | 15 |
 | `anthropics__claude-plugins-official/command/example-command` | An example slash command that demonstrates command frontmatter options (legacy format) | 1 |
 | `anthropics__claude-plugins-official/command/help` | Get help with the hookify plugin | 5 |
 
-## hook (50)
+## hook (51)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
@@ -60,7 +60,7 @@
 | `affaan-m__ecc/hook/design-quality-check` | PostToolUse hook: lightweight frontend design-quality reminder. | 4 |
 | `affaan-m__ecc/hook/desktop-notify` | Desktop Notification Hook (Stop) | 9 |
 | `affaan-m__ecc/hook/doc-file-warning` | Doc file warning hook (PreToolUse - Write) | 3 |
-| `affaan-m__ecc/hook/ecc-context-monitor` | ECC Context Monitor — PostToolUse hook | 9 |
+| `affaan-m__ecc/hook/ecc-context-monitor` | ECC Context Monitor — PostToolUse hook | 10 |
 | `affaan-m__ecc/hook/ecc-metrics-bridge` | ECC Metrics Bridge — PostToolUse hook | 10 |
 | `affaan-m__ecc/hook/ecc-statusline` | ECC Statusline — statusLine command | 5 |
 | `affaan-m__ecc/hook/evaluate-session` | Continuous Learning - Session Evaluator | 3 |
@@ -68,7 +68,7 @@
 | `affaan-m__ecc/hook/governance-capture` | Governance Event Capture Hook | 9 |
 | `affaan-m__ecc/hook/insaits-security-monitor` | InsAIts Security Monitor -- PreToolUse Hook for Claude Code | 8 |
 | `affaan-m__ecc/hook/mcp-health-check` | The preflight HTTP probe only checks reachability; it does not have access to | 23 |
-| `affaan-m__ecc/hook/observe` | Continuous Learning v2 - Observation Hook | 23 |
+| `affaan-m__ecc/hook/observe` | Continuous Learning v2 - Observation Hook | 27 |
 | `affaan-m__ecc/hook/post-edit-accumulator` | PostToolUse Hook: Accumulate edited JS/TS file paths for batch processing | 2 |
 | `affaan-m__ecc/hook/post-edit-console-warn` | PostToolUse Hook: Warn about console.log statements after edits | 2 |
 | `affaan-m__ecc/hook/post-edit-format` | PostToolUse Hook: Auto-format JS/TS files after edits | 4 |
@@ -78,26 +78,27 @@
 | `affaan-m__ecc/hook/pre-compact` | PreCompact Hook - Save LLM-generated summary before context compaction | 7 |
 | `affaan-m__ecc/hook/pre-write-doc-warn` | Backward-compatible doc warning hook entrypoint. | 1 |
 | `affaan-m__ecc/hook/quality-gate` | Quality Gate Hook | 5 |
-| `affaan-m__ecc/hook/run-with-flags` | Executes a hook script only when enabled by ECC hook profile flags. | 8 |
+| `affaan-m__ecc/hook/run-with-flags` | Executes a hook script only when enabled by ECC hook profile flags. | 9 |
 | `affaan-m__ecc/hook/session-activity-tracker` | Session Activity Tracker Hook | 16 |
 | `affaan-m__ecc/hook/session-end` | Stop Hook (Session End) - Persist learnings during active sessions | 12 |
 | `affaan-m__ecc/hook/session-end-marker` | Legacy CLI execution (when run directly) | 2 |
-| `affaan-m__ecc/hook/session-start` | SessionStart Hook - Load previous context on new session | 27 |
+| `affaan-m__ecc/hook/session-start` | SessionStart Hook - Load previous context on new session | 28 |
 | `affaan-m__ecc/hook/session-start-bootstrap` | Read the raw JSON event from stdin | 3 |
+| `affaan-m__ecc/hook/skill-run-tracker` | Bounds for persisted identifiers. Long enough for any real skill id or | 5 |
 | `affaan-m__ecc/hook/stop-format-typecheck` | Stop Hook: Batch format and typecheck all JS/TS files edited this response | 9 |
 | `AgriciDaniel__claude-seo/hook/validate-schema` | Post-edit schema validation hook for Claude Code. | 6 |
-| `anthropics__claude-plugins-official/hook/diffstate` | Git-derived diff/review-state helpers for the security-guidance plugin. | 21 |
+| `anthropics__claude-plugins-official/hook/diffstate` | Git-derived diff/review-state helpers for the security-guidance plugin. | 20 |
 | `anthropics__claude-plugins-official/hook/extensibility` | Project-specific extensibility for the security-guidance plugin. | 12 |
-| `anthropics__claude-plugins-official/hook/gitutil` | Leaf git/subprocess helpers and diff parsing for the security-guidance plugin. | 35 |
+| `anthropics__claude-plugins-official/hook/gitutil` | Leaf git/subprocess helpers and diff parsing for the security-guidance plugin. | 34 |
 | `anthropics__claude-plugins-official/hook/hooks` | Explanatory mode hook that adds educational insights instructions | 1 |
-| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 115 |
+| `anthropics__claude-plugins-official/hook/llm` | LLM-based security analysis for the security-guidance plugin. | 113 |
 | `anthropics__claude-plugins-official/hook/patterns` | Regex-based security pattern definitions for the security-guidance plugin. | 18 |
 | `anthropics__claude-plugins-official/hook/posttooluse` | PostToolUse hook executor for hookify plugin. | 2 |
 | `anthropics__claude-plugins-official/hook/pretooluse` | PreToolUse hook executor for hookify plugin. | 2 |
-| `anthropics__claude-plugins-official/hook/review-api` | Public review API for the security-guidance agentic commit reviewer. | 25 |
-| `anthropics__claude-plugins-official/hook/security-reminder-hook` | Security Guidance Plugin for Claude Code | 111 |
+| `anthropics__claude-plugins-official/hook/review-api` | Public review API for the security-guidance agentic commit reviewer. | 24 |
+| `anthropics__claude-plugins-official/hook/security-reminder-hook` | Security Guidance Plugin for Claude Code | 109 |
 | `anthropics__claude-plugins-official/hook/sg-python` | Find a working Python 3 interpreter and exec the hook with it. | 5 |
-| `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 8 |
+| `anthropics__claude-plugins-official/hook/stop-hook` | Ralph Loop Stop Hook | 7 |
 | `anthropics__claude-plugins-official/hook/userpromptsubmit` | UserPromptSubmit hook executor for hookify plugin. | 1 |
 
 ## mcp (4)
@@ -113,48 +114,48 @@
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/plugin/ecc` | Harness-native ECC plugin for engineering teams - 67 agents, 284 skills, 94 legacy command shims, reusable hooks, rules, MCP conv… | 49708 |
-| `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4119 |
+| `affaan-m__ecc/plugin/ecc` | Harness-native ECC plugin for engineering teams - 68 agents, 286 skills, 94 legacy command shims, reusable hooks, rules, MCP conv… | 50333 |
+| `AgriciDaniel__claude-seo/plugin/claude-seo` | Comprehensive SEO analysis plugin for Claude Code. 25 sub-skills (21 core + 1 orchestrator + 1 framework + 2 extension mirrors) a… | 4061 |
 | `anthropics__claude-plugins-official/plugin/agent-sdk-dev` | Claude Agent SDK Development Plugin | 36 |
-| `anthropics__claude-plugins-official/plugin/asana` | Asana project management integration. Connects Claude Code to Asana's V2 MCP server (https://mcp.asana.com/v2/mcp) to create and … | 6 |
-| `anthropics__claude-plugins-official/plugin/claude-code-setup` | Analyze codebases and recommend tailored Claude Code automations such as hooks, skills, MCP servers, and subagents. | 589 |
-| `anthropics__claude-plugins-official/plugin/claude-md-management` | Tools to maintain and improve CLAUDE.md files - audit quality, capture session learnings, and keep project memory current. | 1079 |
-| `anthropics__claude-plugins-official/plugin/claude-security` | Deep vulnerability scanning of your own code, run entirely inside your Claude Code session at a chosen effort tier, with every fi… | 244 |
-| `anthropics__claude-plugins-official/plugin/code-modernization` | Modernize legacy codebases (COBOL, legacy Java/C++/.NET, monolith web apps) with a structured preflight / assess / map / extract-… | 529 |
+| `anthropics__claude-plugins-official/plugin/asana` | Asana project management integration. Connects Claude Code to Asana's V2 MCP server (https://mcp.asana.com/v2/mcp) to create and … | 5 |
+| `anthropics__claude-plugins-official/plugin/claude-code-setup` | Analyze codebases and recommend tailored Claude Code automations such as hooks, skills, MCP servers, and subagents. | 587 |
+| `anthropics__claude-plugins-official/plugin/claude-md-management` | Tools to maintain and improve CLAUDE.md files - audit quality, capture session learnings, and keep project memory current. | 1078 |
+| `anthropics__claude-plugins-official/plugin/claude-security` | Deep vulnerability scanning of your own code, run entirely inside your Claude Code session at a chosen effort tier, with every fi… | 324 |
+| `anthropics__claude-plugins-official/plugin/code-modernization` | Modernize legacy codebases (COBOL, legacy Java/C++/.NET, monolith web apps) with a structured preflight / assess / map / extract-… | 524 |
 | `anthropics__claude-plugins-official/plugin/code-review` | Automated code review for pull requests using multiple specialized agents with confidence-based scoring | 26 |
-| `anthropics__claude-plugins-official/plugin/commit-commands` | Streamline your git workflow with simple commands for committing, pushing, and creating pull requests | 21 |
-| `anthropics__claude-plugins-official/plugin/context7` | Upstash Context7 MCP server for up-to-date documentation lookup. Connects to Context7's hosted remote MCP server (https://mcp.con… | 3 |
-| `anthropics__claude-plugins-official/plugin/cwc-makers` | Seamless onboarding for the Code-with-Claude Makers Cardputer: one /maker-setup command clones the build-with-claude repo, flashe… | 41 |
-| `anthropics__claude-plugins-official/plugin/discord` | Discord channel for Claude Code — messaging bridge with built-in access control. Manage pairing, allowlists, and policy via /disc… | 90 |
-| `anthropics__claude-plugins-official/plugin/example-plugin` | A comprehensive example plugin demonstrating all Claude Code extension options including commands, agents, skills, hooks, and MCP… | 19 |
+| `anthropics__claude-plugins-official/plugin/commit-commands` | Streamline your git workflow with simple commands for committing, pushing, and creating pull requests | 20 |
+| `anthropics__claude-plugins-official/plugin/context7` | Upstash Context7 MCP server for up-to-date documentation lookup. Connects to Context7's hosted remote MCP server (https://mcp.con… | 2 |
+| `anthropics__claude-plugins-official/plugin/cwc-makers` | Seamless onboarding for the Code-with-Claude Makers Cardputer: one /maker-setup command clones the build-with-claude repo, flashe… | 40 |
+| `anthropics__claude-plugins-official/plugin/discord` | Discord channel for Claude Code — messaging bridge with built-in access control. Manage pairing, allowlists, and policy via /disc… | 88 |
+| `anthropics__claude-plugins-official/plugin/example-plugin` | A comprehensive example plugin demonstrating all Claude Code extension options including commands, agents, skills, hooks, and MCP… | 18 |
 | `anthropics__claude-plugins-official/plugin/explanatory-output-style` | Adds educational insights about implementation choices and codebase patterns (mimics the deprecated Explanatory output style) | 16 |
-| `anthropics__claude-plugins-official/plugin/fakechat` | Localhost iMessage-style web chat for Claude Code — test surface with file upload and edits. No tokens, no access control. | 43 |
-| `anthropics__claude-plugins-official/plugin/feature-dev` | Comprehensive feature development workflow with specialized agents for codebase exploration, architecture design, and quality rev… | 36 |
+| `anthropics__claude-plugins-official/plugin/fakechat` | Localhost iMessage-style web chat for Claude Code — test surface with file upload and edits. No tokens, no access control. | 42 |
+| `anthropics__claude-plugins-official/plugin/feature-dev` | Comprehensive feature development workflow with specialized agents for codebase exploration, architecture design, and quality rev… | 35 |
 | `anthropics__claude-plugins-official/plugin/github` | Official GitHub MCP server for repository management. Create issues, manage pull requests, review code, search repositories, and … | 1 |
 | `anthropics__claude-plugins-official/plugin/greptile` | AI code review agent for GitHub and GitLab. View and resolve Greptile's PR review comments directly from Claude Code. | 2 |
-| `anthropics__claude-plugins-official/plugin/hookify` | Easily create hooks to prevent unwanted behaviors by analyzing conversation patterns | 81 |
-| `anthropics__claude-plugins-official/plugin/imessage` | iMessage channel for Claude Code — reads chat.db directly, sends via AppleScript. Built-in access control; manage pairing, allowl… | 83 |
+| `anthropics__claude-plugins-official/plugin/hookify` | Easily create hooks to prevent unwanted behaviors by analyzing conversation patterns | 78 |
+| `anthropics__claude-plugins-official/plugin/imessage` | iMessage channel for Claude Code — reads chat.db directly, sends via AppleScript. Built-in access control; manage pairing, allowl… | 81 |
 | `anthropics__claude-plugins-official/plugin/laravel-boost` | Laravel development toolkit MCP server. Provides intelligent assistance for Laravel applications including Artisan commands, Eloq… | 1 |
 | `anthropics__claude-plugins-official/plugin/learning-output-style` | Interactive learning mode that requests meaningful code contributions at decision points (mimics the unshipped Learning output st… | 20 |
 | `anthropics__claude-plugins-official/plugin/linear` | Linear issue tracking integration. Create issues, manage projects, update statuses, search across workspaces, and streamline your… | 1 |
-| `anthropics__claude-plugins-official/plugin/math-olympiad` | Solve competition math (IMO, Putnam, USAMO) with adversarial verification that catches what self-verification misses. Fresh-conte… | 76 |
-| `anthropics__claude-plugins-official/plugin/mcp-tunnels` | Connect Claude to a private MCP server through an Anthropic MCP tunnel. Drives the Docker Compose quickstart end to end: certific… | 33 |
+| `anthropics__claude-plugins-official/plugin/math-olympiad` | Solve competition math (IMO, Putnam, USAMO) with adversarial verification that catches what self-verification misses. Fresh-conte… | 75 |
+| `anthropics__claude-plugins-official/plugin/mcp-tunnels` | Connect Claude to a private MCP server through an Anthropic MCP tunnel. Drives the Docker Compose quickstart end to end: certific… | 32 |
 | `anthropics__claude-plugins-official/plugin/playwright` | Browser automation and end-to-end testing MCP server by Microsoft. Enables Claude to interact with web pages, take screenshots, f… | 1 |
-| `anthropics__claude-plugins-official/plugin/plugin-dev` | Plugin development toolkit with skills for creating agents, commands, hooks, MCP integrations, and comprehensive plugin structure… | 559 |
-| `anthropics__claude-plugins-official/plugin/pr-review-toolkit` | Comprehensive PR review agents specializing in comments, tests, error handling, type design, code quality, and code simplification | 55 |
+| `anthropics__claude-plugins-official/plugin/plugin-dev` | Plugin development toolkit with skills for creating agents, commands, hooks, MCP integrations, and comprehensive plugin structure… | 537 |
+| `anthropics__claude-plugins-official/plugin/pr-review-toolkit` | Comprehensive PR review agents specializing in comments, tests, error handling, type design, code quality, and code simplification | 54 |
 | `anthropics__claude-plugins-official/plugin/project-artifact` | Generate and publish a project status artifact — an opinionated, tabbed status page (overview & success criteria, the workstream … | 60 |
 | `anthropics__claude-plugins-official/plugin/serena` | Semantic code analysis MCP server providing intelligent code understanding, refactoring suggestions, and codebase navigation thro… | 1 |
-| `anthropics__claude-plugins-official/plugin/skill-creator` | Create new skills, improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, up… | 237 |
-| `anthropics__claude-plugins-official/plugin/telegram` | Telegram channel for Claude Code — messaging bridge with built-in access control. Manage pairing, allowlists, and policy via /tel… | 92 |
+| `anthropics__claude-plugins-official/plugin/skill-creator` | Create new skills, improve existing skills, and measure skill performance. Use when users want to create a skill from scratch, up… | 231 |
+| `anthropics__claude-plugins-official/plugin/telegram` | Telegram channel for Claude Code — messaging bridge with built-in access control. Manage pairing, allowlists, and policy via /tel… | 91 |
 | `anthropics__claude-plugins-official/plugin/terraform` | The Terraform MCP Server provides seamless integration with Terraform ecosystem, enabling advanced automation and interaction cap… | 1 |
-| `Egonex-AI__Understand-Anything/plugin/understand-anything` | AI-powered codebase understanding — analyze, visualize, and explain any project | 32102 |
+| `Egonex-AI__Understand-Anything/plugin/understand-anything` | AI-powered codebase understanding — analyze, visualize, and explain any project | 31976 |
 
-## skill (50)
+## skill (53)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
-| `affaan-m__ecc/skill/agent-eval` | Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consis… | 4 |
-| `affaan-m__ecc/skill/agent-harness-construction` | Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. | 2 |
+| `affaan-m__ecc/skill/agent-eval` | Head-to-head comparison of coding agents (Claude Code, Aider, Codex, etc.) on custom tasks with pass rate, cost, time, and consis… | 5 |
+| `affaan-m__ecc/skill/agent-harness-construction` | Design and optimize AI agent action spaces, tool definitions, and observation formatting for higher completion rates. Use when de… | 2 |
 | `affaan-m__ecc/skill/agentic-os` | Build persistent multi-agent operating systems on Claude Code. Covers kernel architecture, specialist agents, slash commands, fil… | 12 |
 | `affaan-m__ecc/skill/architecture-decision-records` | Capture architectural decisions made during Claude Code sessions as structured ADRs. Auto-detects decision moments, records conte… | 7 |
 | `affaan-m__ecc/skill/autonomous-agent-harness` | Transform Claude Code into a fully autonomous agent system with persistent memory, scheduled operations, computer use, and task q… | 11 |
@@ -168,37 +169,40 @@
 | `affaan-m__ecc/skill/cost-tracking` | Track and report Claude Code token usage, spending, and budgets from the local ECC cost-tracker metrics log. Use when the user as… | 4 |
 | `affaan-m__ecc/skill/delivery-gate` | Stop hook that blocks Claude from finishing until quality checks pass. Detects rationalization patterns (surface text heuristics)… | 13 |
 | `affaan-m__ecc/skill/dmux-workflows` | Multi-agent orchestration using dmux (tmux pane manager for AI agents). Patterns for parallel agent workflows across Claude Code,… | 5 |
-| `affaan-m__ecc/skill/eval-harness` | Formal evaluation framework for Claude Code sessions implementing eval-driven development (EDD) principles | 6 |
+| `affaan-m__ecc/skill/dynamic-workflow-mode` | Design task-local harnesses, eval gates, and reusable skill extraction for Claude dynamic workflow mode and other adaptive agent … | 5 |
+| `affaan-m__ecc/skill/eval-harness` | Formal evaluation framework for Claude Code sessions implementing eval-driven development (EDD) principles. Use when a Claude Cod… | 6 |
 | `affaan-m__ecc/skill/gan-style-harness` | GAN-inspired Generator-Evaluator agent harness for building high-quality applications autonomously. Based on Anthropic's March 20… | 12 |
 | `affaan-m__ecc/skill/healthcare-eval-harness` | Patient safety evaluation harness for healthcare application deployments. Automated test suites for CDSS accuracy, PHI exposure, … | 8 |
 | `affaan-m__ecc/skill/hookify-rules` | This skill should be used when the user asks to create a hookify rule, write a hook rule, configure hookify, add a hookify rule, … | 3 |
-| `affaan-m__ecc/skill/iterative-retrieval` | Pattern for progressively refining context retrieval to solve the subagent context problem | 7 |
+| `affaan-m__ecc/skill/iterative-retrieval` | Pattern for progressively refining context retrieval to solve the subagent context problem. Use when a subagent lacks the context… | 7 |
 | `affaan-m__ecc/skill/laravel-plugin-discovery` | Discover and evaluate Laravel packages via LaraPlugins.io MCP. Use when the user wants to find plugins, check package health, or … | 6 |
+| `affaan-m__ecc/skill/living-docs-governance` | Keep a long-lived project's documentation from rotting by assigning existing project docs clear constitution, map, status, and hi… | 8 |
+| `affaan-m__ecc/skill/mcp-server-patterns` | Build MCP servers with Node/TypeScript SDK — tools, resources, prompts, Zod validation, stdio vs Streamable HTTP. Use Context7 or… | 4 |
 | `affaan-m__ecc/skill/security-scan` | Scan your Claude Code configuration (.claude/ directory) for security vulnerabilities, misconfigurations, and injection risks usi… | 4 |
 | `affaan-m__ecc/skill/skill-stocktake` | Use when auditing Claude skills and commands for quality. Supports Quick Scan (changed skills only) and Full Stocktake modes with… | 18 |
-| `affaan-m__ecc/skill/verification-loop` | A comprehensive verification system for Claude Code sessions. | 3 |
+| `affaan-m__ecc/skill/verification-loop` | A comprehensive verification system for Claude Code sessions. Use when verifying a Claude Code session's work before claiming it … | 3 |
 | `affaan-m__ecc/skill/workspace-surface-audit` | Audit the active repo, MCP servers, plugins, connectors, env surfaces, and harness setup, then recommend the highest-value ECC-na… | 5 |
 | `AgriciDaniel__claude-seo/skill/seo-audit` | Full website SEO audit with parallel subagent delegation. Crawls up to 500 pages, detects business type, delegates to up to 15 sp… | 8 |
 | `AgriciDaniel__claude-seo/skill/seo-dataforseo` | > Live SEO data via DataForSEO MCP server: SERP analysis, keyword research (volume, difficulty, intent, trends), backlink profile… | 23 |
-| `anthropics__claude-plugins-official/skill/agent-development` | This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when… | 70 |
-| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 48 |
-| `anthropics__claude-plugins-official/skill/build-mcp-server` | This skill should be used when the user asks to "build an MCP server", "create an MCP", "make an MCP integration", "wrap an API f… | 50 |
-| `anthropics__claude-plugins-official/skill/build-mcpb` | This skill should be used when the user wants to "package an MCP server", "bundle an MCP", "make an MCPB", "ship a local MCP serv… | 19 |
-| `anthropics__claude-plugins-official/skill/claude-automation-recommender` | Analyze a codebase and recommend Claude Code automations (hooks, subagents, skills, plugins, MCP servers). Use when user asks for… | 44 |
-| `anthropics__claude-plugins-official/skill/command-development` | This skill should be used when the user asks to "create a slash command", "add a command", "write a custom command", "define comm… | 158 |
+| `anthropics__claude-plugins-official/skill/agent-development` | This skill should be used when the user asks to "create an agent", "add an agent", "write a subagent", "agent frontmatter", "when… | 68 |
+| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 47 |
+| `anthropics__claude-plugins-official/skill/build-mcp-server` | This skill should be used when the user asks to "build an MCP server", "create an MCP", "make an MCP integration", "wrap an API f… | 49 |
+| `anthropics__claude-plugins-official/skill/build-mcpb` | This skill should be used when the user wants to "package an MCP server", "bundle an MCP", "make an MCPB", "ship a local MCP serv… | 18 |
+| `anthropics__claude-plugins-official/skill/claude-automation-recommender` | Analyze a codebase and recommend Claude Code automations (hooks, subagents, skills, plugins, MCP servers). Use when user asks for… | 42 |
+| `anthropics__claude-plugins-official/skill/command-development` | This skill should be used when the user asks to "create a slash command", "add a command", "write a custom command", "define comm… | 151 |
 | `anthropics__claude-plugins-official/skill/example-command` | An example user-invoked skill that demonstrates frontmatter options and the skills/<name>/SKILL.md layout | 1 |
 | `anthropics__claude-plugins-official/skill/example-skill` | This skill should be used when the user asks to "demonstrate skills", "show skill format", "create a skill template", or discusse… | 3 |
-| `anthropics__claude-plugins-official/skill/hook-development` | This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "… | 66 |
-| `anthropics__claude-plugins-official/skill/mcp-integration` | This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "s… | 48 |
-| `anthropics__claude-plugins-official/skill/plugin-settings` | This skill should be used when the user asks about "plugin settings", "store plugin configuration", "user-configurable plugin", "… | 45 |
-| `anthropics__claude-plugins-official/skill/plugin-structure` | This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize … | 76 |
+| `anthropics__claude-plugins-official/skill/hook-development` | This skill should be used when the user asks to "create a hook", "add a PreToolUse/PostToolUse/Stop hook", "validate tool use", "… | 63 |
+| `anthropics__claude-plugins-official/skill/mcp-integration` | This skill should be used when the user asks to "add MCP server", "integrate MCP", "configure MCP in plugin", "use .mcp.json", "s… | 45 |
+| `anthropics__claude-plugins-official/skill/plugin-settings` | This skill should be used when the user asks about "plugin settings", "store plugin configuration", "user-configurable plugin", "… | 43 |
+| `anthropics__claude-plugins-official/skill/plugin-structure` | This skill should be used when the user asks to "create a plugin", "scaffold a plugin", "understand plugin structure", "organize … | 73 |
 | `anthropics__claude-plugins-official/skill/project-artifact` | Generate and publish a project status artifact — an opinionated, tabbed status page for a project too big for one update (overvie… | 46 |
-| `anthropics__claude-plugins-official/skill/receipts` | Generate a personal Claude Code usage & impact report ("receipts") from this machine's local session transcripts — for justifying… | 82 |
-| `anthropics__claude-plugins-official/skill/session-report` | Generate an explorable HTML report of Claude Code session usage (tokens, cache, subagents, skills, expensive prompts) from ~/.cla… | 58 |
-| `anthropics__claude-plugins-official/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 225 |
+| `anthropics__claude-plugins-official/skill/receipts` | Generate a personal Claude Code usage & impact report ("receipts") from this machine's local session transcripts — for justifying… | 80 |
+| `anthropics__claude-plugins-official/skill/session-report` | Generate an explorable HTML report of Claude Code session usage (tokens, cache, subagents, skills, expensive prompts) from ~/.cla… | 56 |
+| `anthropics__claude-plugins-official/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 220 |
 | `anthropics__claude-plugins-official/skill/skill-development` | This skill should be used when the user wants to "create a skill", "add a skill to plugin", "write a new skill", "improve skill d… | 34 |
-| `anthropics__claude-plugins-official/skill/writing-hookify-rules` | This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify… | 9 |
-| `anthropics__skills/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 225 |
+| `anthropics__claude-plugins-official/skill/writing-hookify-rules` | This skill should be used when the user asks to "create a hookify rule", "write a hook rule", "configure hookify", "add a hookify… | 8 |
+| `anthropics__skills/skill/skill-creator` | Create new skills, modify and improve existing skills, and measure skill performance. Use when users want to create a skill from … | 220 |
 | `Egonex-AI__Understand-Anything/skill/understand-diff` | Use when you need to analyze git diffs or pull requests to understand what changed, affected components, and risks | 6 |
 | `Egonex-AI__Understand-Anything/skill/understand-explain` | Use when you need a deep-dive explanation of a specific file, function, or module in the codebase | 5 |
 | `Egonex-AI__Understand-Anything/skill/understand-onboard` | Use when you need to generate an onboarding guide for new team members joining a project | 5 |

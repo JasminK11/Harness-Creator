@@ -68,6 +68,403 @@ zwei Einträge.
 
 ## Einträge
 
+## [2026-08-23] revise | Windows-Pfad-Reste aus Bedien-Texten entfernt (Umzug nach Linux)
+
+Bezug: Auftrag vom PM. Das Projekt ist von einem Windows-OneDrive-Pfad nach
+Linux gezogen; die Agentendateien unter `.claude/agents/` hatte der PM bereits
+selbst bereinigt. Geändert wurden vier Gruppen, jeweils maschinenneutral statt
+absolut — dieselbe Bewertung wie beim generierten CLAUDE.md-Block: Skills und
+Wissen müssen je Maschine stimmen.
+
+1. **Bedien-Skills**: `harness-plan` (1 Stelle), `harness-build` (3 Stellen),
+   `harness-update` (4 Stellen). Projektverzeichnis → `<projektverzeichnis>`,
+   Klon-Verzeichnis → „das Klon-Verzeichnis (`~/.harness-sources`,
+   überschreibbar mit HARNESS_SOURCES)". Die PowerShell-Zeile
+   `Remove-Item "C:\Users\info\.harness-sources\owner__repo"` wurde durch den
+   portablen Befehl `rm -rf "$HARNESS_SOURCES/owner__repo"` ersetzt samt Hinweis,
+   dass `$HARNESS_SOURCES` dieselbe Variable ist, die auch das CLI auswertet
+   (`CLONE_DIR`, harness.mjs) — gegen das laufende System verifiziert.
+2. **Rezepte**: je 1 `cd`-Zeile in `recipes/01`–`06` und `recipes/README.md`
+   → `cd "<projektverzeichnis>"`. Zusätzlich Formatfehler aus R1 behoben:
+   in `recipes/06` fehlte vor der Tabellenzeile `test-engineer` die Leerzeile
+   hinter dem Blockzitat (Tabelle renderte dort nicht).
+3. **`knowledge/03-vorbilder.md`** (5 Stellen): Herkunftsangaben in Frontmatter
+   und Abschnitt „Geprüfte Dateien" nennen jetzt „lokaler Abzug im
+   Klon-Verzeichnis der Bibliothek" bzw. `<projektverzeichnis>` für den
+   Eigen-Bibliothek-Eintrag — historische Aussage unverändert, nur der
+   Fundort maschinenneutral.
+4. **`sources.txt`**: Kommentarzeile zum Klon-Verzeichnis auf dieselbe
+   neutrale Formulierung umgestellt.
+
+Naht geprüft: `CLAUDE.md` und `INDEX.md` nutzen absolute Pfade, sind aber beide
+je Maschine aus dem Werkzeug generiert (INDEX.md schreibt `cmdSync()`/
+Ebene 1, CLAUDE.md-Block regeneriert) — kein Widerspruch zu den neutralen
+Skill-Texten. Keine Bestandszahl betroffen, daher kein `lint:historisch`.
+
+## [2026-08-23] werkzeug | Nahtprüfung erfasst jetzt jede Markdown-Datei unter `.claude/skills/` und `.claude/agents/` — nicht mehr nur `SKILL.md`
+
+Bezug: der „Offen"-Vermerk im Eintrag `[2026-08-07] revise | …Bestandszahl…`
+(`cmdLint()` (`NAHT_EXTRA`) sollte `.claude/skills/` und `.claude/agents/`
+einschliessen). Befund vor dem Lauf: die Aufnahme selbst war **schon geschehen**
+— derselbe Commit `785e0eb`, der den Vermerk schrieb, hatte die Sammlung der
+`.claude`-Dateien in `NAHT_EXTRA` bereits eingebaut; protokolliert als erledigt
+wurde sie nie, und die Muss-melden-Gegenprobe bestätigte, dass die Naht dort
+greift. Geblieben war ein Restloch gegen den Auftragsumfang
+(`.claude/skills/**/*.md`): der Sammler nahm pro Skill-Ordner ausschliesslich
+`SKILL.md` und in `agents/` nur Dateien auf direkter Ebene. Eine zweite
+Markdown-Datei neben der SKILL.md — Notizen, Referenz, Beispiele — leitet
+denselben Agenten zu denselben Aufrufen an und war gegen den Dispatcher unsichtbar.
+Nachweis der Lücke vor der Änderung: `NOTIZEN.md` mit
+`node tools/harness.mjs serch "x"` in `.claude/skills/harness-build/` angelegt,
+`lint --all` blieb stumm (0 Treffer).
+
+**Was geändert wurde.** `tools/harness.mjs`, nur der IIFE-Sammler innerhalb von
+`NAHT_EXTRA`: läuft jetzt rekursiv über `.claude/skills/` und `.claude/agents/`
+und nimmt jede `.md`-Datei in beliebiger Tiefe. Keine zweite Konstante
+(kein `NAHT_PROJEKT_DIRS`) und keine zweite Logik: `NAHT_EXTRA` ist genau die
+vorgesehene Liste für Dateien ausserhalb von `KNOWLEDGE_DIRS`, und die Nähte 1,
+2 und 4 prüfen sie bereits über `nahtDateien()` mit unveränderter Schwere-Bewertung.
+Der Warum-Kommentar steht im Code beim Sammler. Bewusst nicht geändert: die
+Extraktion in Naht 2. Die Prüfung auf echte `node … harness.mjs …`-Aufrufe
+innerhalb von Codeblöcken behandelt die `cd`-Zeilen und Wegwerf-Ordner-Beispiele
+der Agenten-Dateien sauber (`node`-Anforderung, Flaggen nur hinter `harness.mjs`)
+— Grenzen statt verbiegen.
+
+**Echte Textfehler in den geprüften Dateien:** keine. Vorher wie nachher
+0 Befunde; die heute vorhandenen `.claude`-Dateien bestehen alle Nähte.
+
+**Prüfprotokoll.** `node --check tools/harness.mjs`: ok. `lint --all` vorher:
+16 Dateien, Nähte in 27, 0 Befunde (~0,17 s); nachher: 16 Dateien, Nähte in 27,
+0 Befunde (~0,17 s) — gleiche Zählung, da noch keine verschachtelte Zusatzdatei
+existiert; die Änderung ist rein vorsorgend. `eval --no-save`: 1 Rangänderung
+gegenüber dem Lauf vom Vormittag („werbeaussage pruefen" Rang 563 → 1), kein
+Rückschritt, Stand nicht fortgeschrieben. Danach jeder gefahrlose Subcommand:
+`stats`, `search "review" --limit 3`, `show affaan-m__ecc/agent/code-reviewer`,
+`knowledge "evaluator agent"`, `knowledge --list`, `install --dry-run`,
+`uninstall --dry-run` (verweigert korrekt ohne Manifest), `list --to`,
+`bootstrap --to --dry-run` — alle wie dokumentiert.
+
+**Gegenproben.**
+- Muss-melden (neu gedeckte Stelle): `NOTIZEN.md` mit `serch` in
+  `.claude/skills/harness-build/` → `[hoch] … Codeblock ruft Subcommand(s) auf,
+  die es nicht gibt: 'serch'`. Datei danach gelöscht.
+- Muss-melden (bestehende Stelle, Regressionsschutz): `serch`-Block ans Ende von
+  `.claude/agents/werkzeug-aenderer.md` → dieselbe Meldung. Danach per
+  `git checkout` wiederhergestellt (Datei war gegenüber HEAD unverändert).
+- Darf-nicht-melden: Block mit `cd`-Zeile plus korrekten Aufrufen
+  (`stats`, `search "review" --limit 3`) an dieselbe Datei angehängt → lint bleibt
+  stumm (weiterhin 0 Befunde). Wiederhergestellt.
+
+Damit ist der Offen-Vermerk aus dem Eintrag vom 2026-08-07 erledigt; dessen
+Aussage „lint prüft `.claude/` nicht" galt nur bis Commit `785e0eb` am selben Tag.
+
+## [2026-08-23] revise | Eval-Fall „werbeaussage pruefen": `warum` von Ankündigung auf Regressionsfall umgestellt
+
+Bezug: die drei heutigen Einträge darunter (Flexions-Join, Nachschärfung,
+claudeMdBlock-Anpassung). Der Fall ist seit dem Vormittagslauf grün, sein
+`warum`-Feld sagte aber weiterhin „Grün, sobald die Suche Flexionsformen
+verbindet" — eine erfüllte Ankündigung, die künftige Leser zur Verwirrung über
+den Ist-Zustand einlädt. **Vorher galt:** der Fall dokumentierte eine offene
+Schwäche als Erwartung an das Werkzeug. **Jetzt gilt:** er dokumentiert die
+ehemals größte Flexions-Lücke (Echtbefund Dropfolio, 2026-08-10) und nennt im
+selben Feld, wodurch sie geschlossen wurde — Flexions-Streifung in
+`termRegex`, Endungen `ung`/`ungen`/`en` ab Rest ≥ 4, `e` ab Rest ≥ 5,
+Ausnahmen `rechnung`/`rechnungen` (Stand 2026-08-23) — und dass er als
+Regressionsfall stehen bleibt. Nur dieses eine Feld dieses einen Falls geändert;
+Struktur der Datei unverändert, JSON per Parser gegengelesen. Die
+`optional`-Markierung blieb unangetastet — ihre Entfernung wäre eine
+Verhaltensänderung der Evals und gehört nicht in diesen Lauf.
+
+**Nahtprüfung** (CLAUDE.md wurde heute per bootstrap regeneriert):
+- `INDEX.md`: keine Aussage zum Matchverhalten (Grep 0 Treffer zu
+  Flexion/Wortstamm/Endungen); Bestandszahlen gegen `stats` abgeglichen — Kopf
+  25.655/1.104/24.543/8/14 exakt, Typ-Tabelle summiert auf 1.104
+  (Standardzugriff-Sicht), Domänen-Zahlen decken sich je Paar mit `stats`
+  (Differenzen general −3, meta −5 sind die 8 Quarantäne-Einträge). Kein Befund.
+- `README.md`: ein Befund, behoben — „Elf Subcommands" korrigiert zu
+  „Vierzehn Subcommands"; der Dispatcher listet 14 (`search … extract`,
+  selbst gezählt), derselbe Drift-Typ, der laut LOG vom 2026-08-20 schon einmal
+  in dieser Datei stand („um drei Befehle im Rückstand") und in CLAUDE.md
+  bereits behoben war. Sonst keine Aussagen zum Suchverhalten; „rund 25.500"
+  und „24.500 Rechts-Skills" sind gerundete Grössenordnungen, weiter zutreffend.
+- `CLAUDE.md`: trägt den neuen Suchfallen-Text (Fall 2 „matcht am Wortanfang
+  und verbindet Flexionsformen") wortgleich mit dem heutigen
+  claudeMdBlock-Eintrag; kein Widerspruch zu INDEX/README.
+
+## [2026-08-23] revise | claudeMdBlock-Vorlage: Suchfallen-Fall 2 an Flexions-Matching angeglichen
+
+Bezug: die beiden heutigen Einträge „Suche verbindet Flexionsformen desselben
+Wortstamms" und „Flexions-Streifung nachschärfend eingegrenzt" — deren
+Dokumentationsfolge, hier vollzogen. Nur Text im Template (`claudeMdBlock()`
+in `tools/harness.mjs`), keine Zeile an `termRegex`/`FLEXIONS_ENDUNGEN`/
+`MIN_STAMM_LAENGE(_E)`/`STREICH_AUSNAHMEN` berührt.
+
+**Vorher galt** (Fall 2 „Die Suche matcht am Wortanfang"): zwei Endungen am
+selben Stamm finden einander nicht („`pruefen` findet `pruefung` nicht"),
+den Wortstamm einzugeben sei Pflicht. Seit dem Vormittagslauf falsch.
+
+**Neuer Wortlaut** (im Block für CLAUDE.md):
+
+> - **Die Suche matcht am Wortanfang und verbindet Flexionsformen.** Der Stamm
+>   findet alle längeren Formen (`review` findet `reviews`, `reviewer`,
+>   `reviewing`); Biegungen desselben Stamms finden einander (`pruefen` trifft
+>   `pruefung`, beide laufen auf `pruef`) — Endungen `ung`/`ungen`/`en` ab vier
+>   Zeichen Rest, `e` ab fünf. Sehr kurze Stämme unter dem Restminimum werden
+>   nicht rückwärts verbunden: `pruef` findet weiterhin alles, die Biegung eines
+>   hypothetischen Dreizeichen-Stamms nicht. Den Wortstamm einzugeben ist damit
+>   kein Muss mehr, bleibt aber der sicherste Weg.
+
+Damit beschreibt der Rat das Verhalten, statt eine alte Grenze zu behaupten;
+die Restminimums-Zahlen entsprechen `MIN_STAMM_LAENGE` (4) und
+`MIN_STAMM_LAENGE_E` (5) im Wortlaut, nicht per Zeilenverweis.
+
+**Prüfprotokoll:** `node --check` ok; `lint --all`: **0 Befunde** (16 Dateien,
+27 Nähte); Gegenprobe über `bootstrap --to <Wegwerf-Ordner>`: generierte
+CLAUDE.md trägt den neuen Text, alte Formulierung („Endungen am selben Stamm
+finden einander nicht") dort 0-mal; Ordner danach entfernt. `search "pruefen"
+--domain legal-de`: unverändert 2.416 Treffer; `eval --no-save`: 12 von 12.
+Grep gegen INDEX.md und README.md: keine Fundstellen zur alten Aussage — die
+alte Behauptung stand nur im Template und in der dadurch erzeugten CLAUDE.md
+(wird vom PM per bootstrap regeneriert). Die Warum-Kommentare an
+`FLEXIONS_ENDUNGEN` nennen „'pruefen' fand 'pruefung' nicht" bewusst als
+Vergangenheitsbeleg fürs Warum des Streifens — historisch korrekt, nicht geändert.
+
+## [2026-08-23] revise | Flexions-Streifung nachschärfend eingegrenzt (zwei falsch-Positive behoben)
+
+Bezug: Vormittags-Eintrag „Suche verbindet Flexionsformen desselben Wortstamms“
+(heute, darüberhalb bzw. darunter je nach Leserichtung). Ein adversarial
+Prüflauf belegte zwei Kollisionen der neuen Streifung:
+
+1. `search "state"`: 71 statt 44 Treffer — die `e`-Streifung machte aus `state`
+   den Stamm `stat` und zog `statistician`, `instinct-status`, `ecc-statusline`
+   mit (4 Kollisionstreffer in den ersten 100).
+2. `search "rechnung" --domain legal-de`: `ar-abfindungs-rechner-modular` auf
+   Rang 3 der Top 6 — die `ung`-Streifung machte aus `rechnung` den Stamm
+   `rechn`, ein Präfix der fremden Wortfamilie Rechner/rechnen/rechnet.
+
+**Geändert:** `termRegex()` in `tools/harness.mjs`. Neu sind `MIN_STAMM_LAENGE_E`
+= 5 (höheres Restminimum nur für die Ein-Zeichen-Endung `e`; `MIN_STAMM_LAENGE`
+= 4 bleibt für `ungen`/`ung`/`en`) und `STREICH_AUSNAHMEN`
+(`rechnung`, `rechnungen` — diese Terme werden gar nicht gestammt). Die
+Warum-Kommentare im Code nennen beide Kollisionsbelege.
+
+**Warum diese Form:** Eine reine Streichung von `"e"` aus `FLEXIONS_ENDUNGEN`
+fixte Kollision 1, ließ aber Rechner auf Rang 1 stehen (gemessen). Ein global
+erhöhtes Restminimum scheiterte messbar an der Arithmetik: `rechn` hat fünf
+Zeichen wie `pruef`, trennt also keine Schwelle. Die e-Schwelle 5 ist der
+exakte Schnitt: sie kappt genau die 4-Zeichen-Reste (`state`→`stat`) und erhält
+die echten Nutzer der e-Streifung — die englische y/ies-Flexion
+(`properties`→`properti`, `studies`→`studi`, Rest ≥ 5 bleibt streifbar).
+Deutsche e-Joins brauchen den Streifer nicht: das offene Präfix-Matching
+verbindet `frage`/`fragen`, `abgabe`/`abgaben` ohnehin; gemessen identische
+Trefferzahlen für frage/suche/abgabe/waffe/store/house/cache/queue/table vor/nach.
+Die Ausnahmenliste ist bewusst minimal und nur so groß wie der Beleg;
+`rechnen` bleibt streifbar und verbindet weiter Richtung Rechnungs-Familie.
+
+**Prüfprotokoll** (`node --check` ok; USAGE, `stats` 25.655 Bausteine,
+`search`+`show` code-reviewer, `knowledge "evaluator agent"`, `knowledge --list`,
+`lint --all`: **0 Befunde**, install/uninstall/list-Zyklus gegen Wegwerf-Ordner
+sauber, bootstrap-Trockenlauf unauffällig):
+
+- `search "state"`: **44 Treffer** (Vormittag: 71), Kollisionstreffer in den
+  ersten 100: **0**.
+- `search "rechnung" --domain legal-de --limit 6`: **86 Treffer**, kein
+  Rechner-Baustein in den Top 6, `grep -c rechner` über die ersten 100: **0**.
+  Der Rückgang 359 → 86 ist der beabsichtigte Präzisionsgewinn: die Differenz
+  sind genau die `rechn`-falsch-Positiven (Rechner-/rechnet-Treffer), belegt
+  durch Tokenzerlegung beider Ergebnismengen.
+- `eval --no-save`: **12 von 12 Pflichtfällen grün**; einzige Rangänderung
+  gegenüber last-run.json bleibt der Heilfall selbst
+  (werbeaussagen-pruefung Rang 563 → 1). Heilfall-Suche
+  „werbeaussage pruefen --domain legal-de": Ziel-Skill **Rang 1 von 1**,
+  0,153 s (Vormittag: 0,150 s) — keine messbare Einbusse.
+- Gegenprobe 1: `search "pruefungen" --domain legal-de` findet weiterhin die
+  pruefen/pruefung-Items (Stamm `pruef`, 2.416 Treffer, Top-Treffer sind
+  Prüfen-/Prüfung-Skills) — der Vormittags-Nutzfall ist unversehrt.
+- Gegenprobe 2: `search "anmeldung" --domain legal-de` findet die
+  Anmelde-/Anmeldungen-Familie inkl. `01-anmeldung-pruefen-zustaendigkeit`
+  (56 Treffer).
+
+**Negativ-Kontrollen** (beweisen, dass die beiden Sicherungen tragend sind):
+Sabotiertes `MIN_STAMM_LAENGE_E = 4` brachte alle vier `state`-Kollisionen
+zurück (71 Treffer); geleerte `STREICH_AUSNAHMEN` brachten zwei
+Rechner-Bausteine in die Top 6 von `rechnung`. Beide danach zurückgesetzt und
+per grep verifiziert. Protokollnotiz zur eigenen Fehlerkultur: der erste
+Restore-sed griff ohne Zeilenanker auch in den Seed-Sets von
+`cliOberflaeche()` und schleuste `rechnung`/`rechnungen` als Schein-Subcommands
+ein — `cmdLint()` fing das sofort (34 hoch-Befunde „Subcommand(s), die es nicht
+gibt"); nach zeilengenauer Korrektur wieder 0 Befunde. Der Lauf ist hier erneut
+der Test gewesen.
+
+**Nicht geändert:** `FLEXIONS_ENDUNGEN`-Liste selbst, `MIN_STAMM_LAENGE` (4)
+für die längeren Endungen, Plural-s-Streifen, UND/ODER-Logik,
+`STOPPWOERTER`, `sucheIds()` (erbt über `bewerteTreffer`).
+
+**Dokumentationsfolge (für den wissensbank-autor, hier nur gemeldet):**
+Der claudeMdBlock-Vorlagentext (Fall 2, „Die Suche matcht am Wortanfang")
+behauptet weiterhin „zwei Endungen am selben Stamm finden einander nicht
+(`pruefen` findet `pruefung` nicht)" — das ist seit dem Vormittagslauf falsch
+und ist jetzt doppelt unpräzise geworden: Biegungen desselben Stamms finden
+sich gegenseitig, außer bei Rest < 5 hinter einem einzelnen `e` und außer bei
+den Termen in `STREICH_AUSNAHMEN`. Der praktische Rat („den Wortstamm eingeben")
+bleibt richtig. Textänderung gehört in einen eigenen Folgelauf.
+
+## [2026-08-23] werkzeug | Suche verbindet Flexionsformen desselben Wortstamms
+
+Anlass: Eval-Fall „werbeaussage pruefen“ (routing.jsonl:24, optional) stand seit
+seinem Eintrag auf Rot — der wortgleiche Skill `werbeaussagen-pruefung` wurde
+nicht gefunden, weil `termRegex()` den Term als Wortanfangs-Präfix matchte und
+'pruefen' gegen 'pruefung' im 6. Zeichen scheiterte. Belegt vor der Änderung:
+`search "pruefen" --domain legal-de` = 582 Treffer, `search "pruefung"` = 605,
+Overlap 3; der Ziel-Skill lag auf Rang 563.
+
+**Geändert:** `termRegex()` in `tools/harness.mjs`, neue Konstanten
+`FLEXIONS_ENDUNGEN` (`["ungen", "ung", "en", "e"]`) und `MIN_STAMM_LAENGE` (4).
+Nach dem bestehenden Plural-s-Streifen wird jetzt zusätzlich eine Flexionsendung
+abgestreift, längste zuerst, aber nur wenn mindestens vier Zeichen Rest bleiben.
+'pruefen', 'pruefung' und 'pruefungen' laufen alle auf den Stamm 'pruef' und
+treffen dieselben Items; die UND-Fallback-auf-ODER-Semantik blieb unverändert,
+nur das Token-Matching wurde präziser.
+
+**Warum (steht auch als Kommentar im Code):** Wortanfangs-Matching verbindet
+keine Biegungen desselben Stamms — die UND-Suche fiel auf hunderte Teiltreffer
+zurück und der wortgleiche Skill lag auf Rang 563. Das Restminimum von vier
+Zeichen verhindert, dass 'notes' über 'note' zu 'not' verkürzt alles findet, was
+mit 'not…' anfängt (Notariat, Nothing, Notice).
+
+**Prüfprotokoll** (`node --check`, USAGE, `stats`, `search`, `show`,
+`knowledge`, `knowledge --list`, `lint --all`: 0 Befunde, alle install/uninstall/
+list/bootstrap-Trockenläufe gegen Wegwerf-Ordner — alles unauffällig):
+
+- `eval --no-save`: **12 von 12 Pflichtfällen grün**, der Fall „werbeaussage
+  pruefen“ ist jetzt grün; einzige Rangänderung gegenüber last-run.json:
+  `werbeaussagen-pruefung` Rang 563 → **Rang 1**.
+- Zeitmessung Suchlauf vor/nach der Änderung: 0,155 s → 0,150 s („werbeaussage
+  pruefen“, --domain legal-de) — keine messbare Einbusse bei 25.655 Bausteinen.
+- Dokumentierter Stamm-Effekt erhalten: `search "review" --limit 3` findet
+  code-reviewer, cpp-reviewer, csharp-reviewer wie zuvor.
+
+**Gegenprobe** (eingeschleust als `evals/_gegenprobe-werkzeug-aenderer.jsonl`,
+zwei Fälle, danach gelöscht): (1) „werbeaussage pruefen“ muss den Ziel-Skill in
+den Top 5 melden — meldete grün, und sein Rot-Können war durch den Baseline-Lauf
+vor der Änderung belegt. (2) `search "test"` darf `disclosure-statement-1125`
+nicht treffen (`verboten`) — meldete grün; 'statement' beginnt nicht mit 'test'
+und wird vom Präfix-Matching nie berührt. Negativ-Kontrolle für die
+Mindestlänge: eine sabotierte Werkzeugkopie mit `MIN_STAMM_LAENGE = 1` machte
+aus 'notes' den Stamm 'not' und fand 497 Notariats-Treffer statt der 32
+sauberen — das Restminimum beweist damit seinen Wert am laufenden Werkzeug.
+
+**Nicht geändert:** der Plural-s-Streifen und die UND/ODER-Logik in
+`bewerteTreffer()`; die Termbilanz; `sucheIds()` (erbt das Verhalten über
+`bewerteTreffer` automatisch).
+
+**Dokumentationsfolge (für den wissensbank-autor, hier nur gemeldet):**
+CLAUDE.md, Abschnitt „Wenn die Suche nichts Passendes findet", zweite Falle
+(„Die Suche matcht am Wortanfang"): Der Satzteil „jede andere längere Form
+findet die kürzere nicht, und zwei Endungen am selben Stamm finden einander
+nicht (`pruefen` findet `pruefung` nicht)" ist durch diese Änderung falsch
+geworden — Biegungen desselben Stamms finden sich jetzt gegenseitig, solange
+der gemeinsame Rest vier Zeichen behält. INDEX.md macht keine Aussagen zum
+Matchverhalten und ist nicht betroffen.
+
+## [2026-08-23] revise | Bestandszahlen-Nachzug nach Katalog-Neubau
+
+Anlass: `update` lief einen neuen Katalog (2026-08-23, `stats`: 25.655 Bausteine,
+1.104 im Standardzugriff, 8 in Quarantäne); `lint` meldete 9 hoch-Befunde
+(veraltete Bestandszahlen) und 7 mittel-Befunde (KB-Drift in Rezept-Tabellen).
+Alle Zahlen unten per CLI belegt (`stats`, `show`), nichts geschätzt.
+
+**Hoch — Bestandszahlen:**
+
+- `knowledge/02-bausteine.md` („Ein Randbefund zur Bibliothek", Abschnitt 2.5):
+  `1.091` als bewusst historischer Messwert vom 2026-08-10 belassen und mit
+  `<!-- lint:historisch -->` samt Begründung markiert — der Satz bezieht sich
+  ausdrücklich auf diesen Messzeitpunkt; die Aussage „vier mcp-Bausteine" wurde
+  gegen `stats` (mcp: 4) bestätigt und gilt unverändert.
+- `knowledge/03-vorbilder.md` (Teil D, „Stand bei uns"): zeitlose Ist-Stand-Angabe
+  aktualisiert 25.642 → **25.655** gesamt und 1.091 → **1.104** im Standardzugriff;
+  die datierten Klammerwerte (1.099 vor M2 usw.) blieben als Geschichte stehen.
+  Der `--all`-Lauf förderte drei weitere Stellen in derselben Datei zutage, alle
+  zeitlose Argumente und ebenfalls aktualisiert: Empfehlung D4 „24.543 von
+  25.655 Bausteinen (95,7 %)" (Repo-Zahl 24.543 laut `stats` unverändert,
+  Prozentsatz stimmt weiter), Teil E „Unsere 25.655 Bausteine stammen aus 14
+  fremden Repos".
+- `knowledge/04-governance.md` (Nachtrag 2026-08-10 nach M2/M3): `1.091` ist der
+  dokumentierte Messstand dieses Nachtrags — mit `<!-- lint:historisch -->` und
+  Begründung markiert statt aktualisiert. Der `--all`-Lauf fand zusätzlich die
+  Tabelle „Wäre theoretisch schön" (LLM-Neuklassifikation): zeitlose Kosten-
+  argument, 1.091 → **1.104** aktualisiert (`stats`; Massen-Repo weiterhin 24.543).
+- `knowledge/05-erkenntnisse-aus-vorlesungen.md`, sechs Stellen:
+  „Unser Bestand steht dazu im Widerspruch" aktualisiert 24.729 → **24.739** Skills
+  und 70 → **72** Hooks (`stats`: skill 24.739, hook 72, mcp 4);
+  „ungefiltertes Listing über … Einträge", „25.642 Einträge schaden niemandem",
+  „Unsere Position" (Platte/Standardzugriff), „Generik-Bias" und Teil-E-Absatz
+  „das Produkt, nicht die …" je 25.642 → **25.655** bzw. 1.091 → **1.104**
+  (zeitlose Argumente über den aktuellen Bestand, daher aktualisiert statt
+  markiert); im selben Absatz die veraltete Repo-Zahl 24.161 → **24.543**
+  (`stats`: Klotzkette__claude-fuer-deutsches-recht = 24.543, dasselbe Mega-Repo,
+  das auch `03` mit 24.543 nennt).
+- `knowledge/LOG.md` (zwei ältere Einträge): der Extractor-Gegenprobelauf
+  (`25.642`/`1.091`) und die Überschrift des `hookDescription()`-Eintrags vom
+  2026-08-10 („Standardzugriff jetzt 1.091") dokumentieren den Stand ihres
+  jeweiligen Tages — mit `<!-- lint:historisch -->` und Begründung markiert;
+  LOG ist append-only, der damalige Stand muss nennbar bleiben.
+
+**Mittel — KB-Drift in Rezepten:** Alle sieben gemeldeten IDs existieren weiter
+(je per `show` verifiziert, Typ unverändert); ersetzt oder gestrichen wurde keine,
+korrigiert wurden nur die KB-Spalten auf den neuen `Grösse`-Wert aus `show`
+(Konvention der Tabellen: Gesamtgrösse, belegt an unbemängelten Zeilen):
+
+- `recipes/01-web-app-react-nextjs.md`: `design-review` 5 → **4**; zusätzlich die
+  Prosa-Erwähnung „nützlichen Teil in 5 KB" → 4 KB.
+- `recipes/02-backend-api.md`: `pr-test-analyzer` 5 → **4**.
+- `recipes/04-security-audit-pentest.md`: `penetration-testing-with-strix` 8 → **9**;
+  Kern-Set-Summe „rund 43 KB" → **rund 44 KB**.
+- `recipes/05-seo-content-marketing.md`: `seo-plan` 33 → **32**, Summe „rund 63 KB"
+  → **rund 62 KB**; `seo-content-brief` 24 → **23**; `seo-drift` 13 → **12**.
+- `recipes/06-legacy-onboarding.md`: `graphify` (agent) 62 → **61**.
+
+Bilanz: 0 IDs ersetzt, 0 gestrichen; 5 Zahlenstellen mit `<!-- lint:historisch -->`
+markiert (02, 04-Nachtrag, LOG ×2 inkl. Eintragsüberschrift), übrige 13 Fundstellen
+auf den neuen Stand gebracht. Abschluss: `lint --all` 0 Befunde,
+`eval --no-save` 12 von 12 Pflichtfällen bestanden — keiner der fünf als bekannte
+Schwäche geführten Fälle berührt eine der angefassten IDs.
+
+## [2026-08-23] add | Subagent `pm-orchestrator` angelegt; `wissensbank-autor` trägt zusätzlich die drei Bedien-Skills unter `.claude/skills/`
+
+**Was entsteht.** `.claude/agents/pm-orchestrator.md`: eine PM-/Orchestrator-Rolle,
+die Aufträge annimmt, zuschneidet und an die vier Fach-Spezialisten
+(`learning-auswerter`, `behauptungs-pruefer`, `werkzeug-aenderer`,
+`wissensbank-autor`) delegiert. Er schreibt selbst keine Fachtexte — ausgenommen
+seine eigenen Rollendateien.
+
+**Welche Zuständigkeit sich dadurch verschiebt.** Zweifach. Erstens lag die
+Auftragszuschneidung bisher beim Nutzer oder beim jeweils beauftragten Spezialisten;
+sie liegt jetzt bei einer benannten Rolle. Zweitens trug die Rollendatei des
+`wissensbank-autor` bisher nur `knowledge/`, `recipes/` und `LOG.md` — für die drei
+Bedien-Skills (`.claude/skills/harness-plan/SKILL.md`, `.claude/skills/harness-build/SKILL.md`,
+`.claude/skills/harness-update/SKILL.md`) gab es keine dokumentierte Zuständigkeit
+(Grep-Befund: weder dieser LOG noch `06-massnahmen.md` weisen sie jemandem zu; M14
+nennt den `wissensbank-autor` für die Einarbeitung des Rückkanal-Befunds allgemein
+zuständig — `06-massnahmen.md`, M14 Punkt 4: „Zuständig bleibt der `wissensbank-autor`" —,
+nicht nur für die Lückenzeilen in `sources.txt`; für das *Tragen* der drei
+SKILL.md-Dateien selbst stand er auch dort nicht). Die
+Rollendatei trägt jetzt im Abschnitt „Bedien-Skills — die drei SKILL.md-Dateien
+unter .claude/skills/" drei Regeln: ändern nur auf geprüften Befund; nach jeder
+Änderung Nahtprüfung gegen `CLAUDE.md` und `INDEX.md` (Abgrenzung zu M18, das genau
+diesen Fehlertyp als erledigte Massnahme dokumentiert — hier wird dieselbe Lehre zur
+Dauerpflicht des zuständigen Agenten, kein zweiter Massnahmeneintrag); Schritt 9 in
+`harness-build` (Rückkanal, M14) nicht ohne Auftrag anfassen.
+
+**Nahtprüfung (Regel 2, nachträglich, 2026-08-23).** Heute wurde keine SKILL.md
+geändert — nur die Rollendatei des `wissensbank-autor` und dieser LOG-Eintrag —,
+der Pflichtlauf griff also formal nicht an; er wurde trotzdem gegen den neuen
+Zuständigkeitsstand nachgeholt: Weder `CLAUDE.md` noch `INDEX.md` treffen eine
+Aussage darüber, wer die drei Bedien-Skills trägt oder wer Aufträge zuschneidet
+(`CLAUDE.md` nennt Subagenten nur als Frage an die Wissensbank, `INDEX.md` ist von
+`extract` erzeugt und beschreibt Befehle und Bestand) — keine der beiden Dateien
+widerspricht dem neuen Stand, die Naht ist geschlossen.
+
 ## [2026-08-20] revise | Drei Fallen-Punkte in `claudeMdBlock()` nach adversarialer Prüfung neu gefasst
 
 **Was geändert wurde.** `tools/harness.mjs`, Funktion `claudeMdBlock()`, Abschnitt
@@ -277,7 +674,10 @@ nicht `update`) lief darauf; Ergebnis exakt wie erwartet: Nenner 1.099→1.103
 Dateien danach entfernt, `extract` erneut gelaufen: Katalog exakt auf dem
 Ausgangsstand (`node tools/harness.mjs stats` vorher/nachher identisch:
 25.642 Bausteine, 1.091 im Standardzugriff nach `cmdStats()`-Definition, 8 in
-Quarantäne). Der Gegenprobe-Block (17:26, sichtbar höherer Nenner) steht
+Quarantäne <!-- lint:historisch --> — diese Zahlen dokumentieren den Katalogstand
+des damaligen Testlaufs vom 2026-08-10; das Protokoll muss den damaligen Stand
+nennen, sonst ist die Gegenprobe nicht mehr nachvollziehbar. Aktueller Bestand:
+`node tools/harness.mjs stats`). Der Gegenprobe-Block (17:26, sichtbar höherer Nenner) steht
 weiterhin im CHANGELOG.md, jetzt mit einer Kennzeichnungszeile im
 Blockkopf ("… — Gegenprobe mit 4 Fixture-Dateien, siehe knowledge/LOG.md") statt
 kommentarlos zwischen echten Katalogzuständen zu stehen — eine erhöhte Zahl
@@ -776,11 +1176,15 @@ nicht mechanisch ersetzen.
 Baustein-ID verändert oder erfunden, `tools/harness.mjs` nicht angefasst.
 Nicht committet.
 
-## [2026-08-10] revise | `hookDescription()` liest jetzt JSDoc/Blockkommentare, Python-Docstrings und JSON-Top-Level-`description` — 7 Fälle aus der Quarantäne (15 → 8), 48 Hook-Descriptions verbessert, Standardzugriff jetzt 1.091
+## [2026-08-10] revise | `hookDescription()` liest jetzt JSDoc/Blockkommentare, Python-Docstrings und JSON-Top-Level-`description` — 7 Fälle aus der Quarantäne (15 → 8), 48 Hook-Descriptions verbessert, Standardzugriff jetzt 1.091 <!-- lint:historisch -->
 
 **Quelle.** Die im Eintrag direkt darunter festgehaltene Folgeaufgabe aus der
 Prüfauflage des `behauptungs-pruefer` (2026-08-10) und der Nachtrag „Offene
-Folgeaufgabe" zu Abschnitt 3.2 in `04-governance.md`.
+Folgeaufgabe" zu Abschnitt 3.2 in `04-governance.md`. <!-- lint:historisch -->
+Die 1.091 in dieser Überschrift ist der Ergebnisstand genau dieses Eintrags vom
+2026-08-10; LOG-Einträge dokumentieren den Stand ihres jeweiligen Tages und
+dürfen nachträglich nicht umgeschrieben werden. Aktueller Bestand:
+`node tools/harness.mjs stats`.
 
 **Was geändert wurde.** In `tools/harness.mjs`: `hookDescription()` prüft vor
 der bestehenden Zeilenkommentar-Suche zwei neue Orte, dahinter eine neue

@@ -137,7 +137,7 @@ und wird als verwaist gemeldet — das CLI löscht nie von selbst.
 
 ## CLI
 
-Elf Subcommands. Die vollständige Übersicht mit allen Flaggen, Warnungen und
+Vierzehn Subcommands. Die vollständige Übersicht mit allen Flaggen, Warnungen und
 Sonderfällen gibt das Werkzeug selbst aus:
 
 ```bash

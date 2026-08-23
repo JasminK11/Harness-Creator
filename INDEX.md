@@ -1,7 +1,7 @@
 # Harness-Bibliothek — Index (Ebene 1)
 
 > Automatisch erzeugt von `tools/harness.mjs extract` — **nicht von Hand bearbeiten.**
-> Stand: 2026-08-10 17:40 · 1091 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 8 in Quarantäne, siehe unten) aus 14 Repos
+> Stand: 2026-08-23 12:22 · 1104 Bausteine im Standardzugriff (+ 24543 in Massen-Repos, 8 in Quarantäne, siehe unten) aus 14 Repos
 
 ## Was das hier ist
 
@@ -13,7 +13,7 @@ wann welcher Typ der richtige ist. Du ziehst daraus die wenigen Bausteine, die
 ## So fängst du an
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "/home/anoncrypt/Harness-Creator"
 node tools/harness.mjs        # vollständige Befehlsübersicht mit allen Flaggen
 ```
 
@@ -29,12 +29,12 @@ node tools/harness.mjs knowledge "hook statt skill"
 ## Was du niemals tun darfst
 
 - **`catalog/index.json` lesen.** Rund 20 MB. Das CLI liest sie an deiner Stelle.
-- **Die Repo-Klone unter `C:\Users\info\.harness-sources` mit Glob, Grep oder Read durchsuchen.**
+- **Die Repo-Klone unter `/home/anoncrypt/.harness-sources` mit Glob, Grep oder Read durchsuchen.**
   Derselbe Grund, und du bekommst dort keine Beschreibungen, sondern rohe Dateien.
 - **`knowledge/` oder `recipes/` am Stück lesen.** Der Befehl `knowledge` schneidet
   den passenden Abschnitt heraus und nennt Datei und Zeile.
 
-Grund: Der volle Katalog umfasst 25642 Bausteine. Wer den einliest,
+Grund: Der volle Katalog umfasst 25655 Bausteine. Wer den einliest,
 hat sein Kontextfenster voll, bevor er die erste Zeile Projektcode sieht.
 
 ## Die Befehle
@@ -63,10 +63,10 @@ Warnungen stehen im Aufruf ohne Argument.
 
 | Typ | Anzahl | Was es ist | Wann einbauen |
 |---|---:|---|---|
-| skill | 431 | Ordner mit `SKILL.md` + Assets | Wiederkehrendes Verfahren, das Claude nachschlagen soll |
-| agent | 407 | Subagent mit eigenem Kontextfenster | Arbeit, die viel Kontext frisst oder unabhängig geprüft werden muss |
+| skill | 441 | Ordner mit `SKILL.md` + Assets | Wiederkehrendes Verfahren, das Claude nachschlagen soll |
+| agent | 408 | Subagent mit eigenem Kontextfenster | Arbeit, die viel Kontext frisst oder unabhängig geprüft werden muss |
 | command | 141 | Slash-Command | Manuell ausgelöster Ablauf mit festem Namen |
-| hook | 62 | Skript an einem Lifecycle-Event | Regel, die *immer* greifen muss — nicht dem Modell überlassen |
+| hook | 64 | Skript an einem Lifecycle-Event | Regel, die *immer* greifen muss — nicht dem Modell überlassen |
 | plugin | 46 | Gebündeltes Paket | Mehrere zusammengehörige Bausteine auf einmal |
 | mcp | 4 | MCP-Server-Konfiguration | Zugriff auf externes System (DB, API, Browser) |
 
@@ -77,9 +77,9 @@ je Domäne unter `catalog/by-domain/<domäne>.md`. Die erste Zahl ist der
 Standardzugriff, die Zahl in Klammern kommt aus Massen-Repos hinzu — `--domain`
 liefert die Summe, der Detail-Index listet nur die erste Zahl:
 
-`general` 350 · `data-ai` 198 (+48) · `meta` 172 (+458) · `backend` 137 (+41) · `product` 107 (+101) ·
-`security` 101 (+41) · `frontend` 81 (+10) · `testing` 80 (+25) · `docs` 66 (+19) · `seo` 58 (+6) ·
-`devops` 57 (+37) · `media` 51 (+66)
+`general` 342 · `data-ai` 205 (+48) · `meta` 176 (+458) · `backend` 140 (+41) · `security` 107 (+41) ·
+`product` 106 (+101) · `docs` 86 (+19) · `testing` 85 (+25) · `frontend` 83 (+10) · `devops` 59 (+37) ·
+`seo` 58 (+6) · `media` 54 (+66)
 
 ## Massen-Repos (opt-in)
 

@@ -207,7 +207,7 @@ Bei jeder Entscheidung, die dieser Leitfaden nicht abdeckt, frag die Wissensbank
 zu vermuten:
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs knowledge "<frage>"
 node tools/harness.mjs knowledge --list
 ```

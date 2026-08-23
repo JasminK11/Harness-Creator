@@ -39,8 +39,9 @@
 #   3. Trägt es eine Vertrauenszeile? Ohne Zeile gilt nicht "gut", sondern
 #      "ungeprüft" — dann schreib das hin, statt die Zeile wegzulassen.
 #
-# Die Klone liegen NICHT hier, sondern unter C:\Users\info\.harness-sources
-# (ausserhalb von OneDrive — sonst synct OneDrive hunderte MB .git-Objekte).
+# Die Klone liegen NICHT hier, sondern im Klon-Verzeichnis der Bibliothek
+# (~/.harness-sources, überschreibbar mit HARNESS_SOURCES — ausserhalb von
+# Cloud-Sync-Ordnern, sonst synct dieser hunderte MB .git-Objekte).
 
 # --- Security / Pentest ---
 # Vertrauen: gepflegt — Firmen-Repo hinter dem Strix-Produkt, Skills tragen Apache-2.0 im Frontmatter

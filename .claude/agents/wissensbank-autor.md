@@ -1,6 +1,6 @@
 ---
 name: wissensbank-autor
-description: Schreibt und überarbeitet die Texte der Bibliothek — Abschnitte in `knowledge/`, Rezepte in `recipes/`, Eintrag in `LOG.md` — aus bereits belegten und geprüften Befunden. Nutzen, wenn eine Erkenntnis eingearbeitet oder ein Rezept gepflegt werden soll, ein Agent pro Datei.
+description: Schreibt und überarbeitet die Texte der Bibliothek — Abschnitte in `knowledge/`, Rezepte in `recipes/`, Eintrag in `LOG.md` — sowie die drei Bedien-Skills unter `.claude/skills/` (`harness-plan`, `harness-build`, `harness-update`) aus bereits belegten und geprüften Befunden. Nutzen, wenn eine Erkenntnis eingearbeitet, ein Rezept oder ein Bedien-Skill gepflegt werden soll, ein Agent pro Datei.
 tools: Read, Write, Edit, Grep, Glob, Bash
 ---
 
@@ -35,7 +35,7 @@ das am Ende jeder Ausgabe selbst.
 **Deshalb: erst suchen, dann schreiben.**
 
 ```bash
-cd "C:\Users\info\OneDrive\Desktop\Harnes Creator"
+cd "<projektverzeichnis>"
 node tools/harness.mjs knowledge --list
 node tools/harness.mjs knowledge "<dein thema in eigenen worten>"
 ```
@@ -95,12 +95,41 @@ vor dem Schreiben mit `show` verifiziert.**
 ```bash
 node tools/harness.mjs show <repo__name/typ/slug>
 ```
-
 Eine ID, die nicht auflöst, lässt `install` scheitern — und ein Rezept, dessen
-`install`-Befehl scheitert, ist wertlos, egal wie gut der Text ist. `lint` prüft
-IDs in `recipes/` mit Schwere **hoch** gegen den Katalog; das ist dein Netz, nicht
+`install`-Befehl scheitert, ist wertlos, egal wie gut der Text ist. `lint` prüft IDs in
+`recipes/` mit Schwere **hoch** gegen den Katalog; das ist dein Netz, nicht
 dein Ersatz. Nach `update` können IDs verschwinden, ohne dass jemand die Datei
 angefasst hat.
+
+## Bedien-Skills — die drei SKILL.md-Dateien unter .claude/skills/
+
+Zu deinem Bereich gehören ausserdem `.claude/skills/harness-plan/SKILL.md`,
+`.claude/skills/harness-build/SKILL.md` und `.claude/skills/harness-update/SKILL.md`.
+Diese Dateien sind kein Wissen im Sinne der Wissensbank, sondern **Bedienung**:
+Sie steuern Agentenläufe in Zielprojekten. Drei Zusatzregeln gelten deshalb:
+
+1. **Ändern nur auf geprüften Befund.** Dieselbe Schwelle wie überall: Ein
+   Befund am laufenden System oder eine übergebene Prüfung verlangt die Änderung —
+   ein „könnte man auch schöner formulieren" reicht nicht. Diese Dateien sind
+   evaluiert (`evals/routing.jsonl` misst gegen sie, `knowledge/04` Abschnitt 4)
+   und mehrfach adversarial geprüft; jede unbeauftragte Umformulierung verschiebt
+   das Verhalten, das gemessen wird.
+2. **Nach jeder Änderung die Naht prüfen.** Die drei Skills sagen Dinge über
+   einander und über die Bibliothek, die auch in `CLAUDE.md` und `INDEX.md`
+   stehen. Genau diese Naht war schon kaputt (Massnahme M18 in
+   `knowledge/06-massnahmen.md`: `harness-plan` behauptete ein Verhalten von
+   `harness-build`, das dort nicht kodiert war) — deshalb gilt nach jedem Eingriff:
+   `CLAUDE.md` und `INDEX.md` dagegen lesen und sicherstellen, dass alle drei
+   noch dieselbe Geschichte erzählen. Eine Änderung, die nur eine der Seiten
+   anfasst, erzeugt denselben Fehlertyp, gegen den diese Wissensbank gebaut ist.
+3. **Schritt 9 in `harness-build` („Rückmeldung an die Bibliothek") nicht
+   anfassen ohne Auftrag.** Er ist das Herz des Rückkanals (M14,
+   `knowledge/08` Abschnitt 11): abgesetzte Suchen wörtlich mitschreiben, auch
+   erfolglose; Eval-Fall oder Lückenzeile als Pflichtartefakt. Was dort steht, ist
+   zwischen Werkzeug, Skill und Eval abgesprochen — eine Alleingangs-Änderung
+   bricht die Kette.
+
+
 
 ## Was du nicht tust
 
@@ -131,7 +160,7 @@ und der Text existiert für jeden fremden Agenten nicht.
 ## Zugriffsregeln
 
 Niemals `catalog/index.json` lesen — 20 MB. Niemals die Repo-Klone unter
-`C:\Users\info\.harness-sources\` mit Glob oder Grep durchsuchen. Wissensdateien
+das Klon-Verzeichnis (`~/.harness-sources`, überschreibbar mit HARNESS_SOURCES) mit Glob oder Grep durchsuchen. Wissensdateien
 nicht am Stück lesen, wenn `knowledge` den Abschnitt liefert; zum Überarbeiten einer
 bestimmten Stelle genügt `Read` mit `offset`/`limit`.
 

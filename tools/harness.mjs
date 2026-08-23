@@ -1154,6 +1154,34 @@ const STOPPWOERTER = new Set([
   "so", "if", "then", "than", "as", "up", "out", "off",
 ]);
 
+/** Flexionsendungen, die vor dem Präfix-Matching abgestreift werden — längste
+ *  zuerst, deutsch geführt (der belegte Fall kam aus legal-de), englisch deckt
+ *  der Plural-s davor schon ab. Warum überhaupt streifen: Wortanfangs-Matching
+ *  verbindet keine Biegungen desselben Stamms — 'pruefen' fand 'pruefung' nicht,
+ *  die UND-Suche fiel auf hunderte Teiltreffer zurück und der wortgleiche Skill
+ *  lag auf Rang 563 (Eval-Fall "werbeaussage pruefen", routing.jsonl). */
+const FLEXIONS_ENDUNGEN = ["ungen", "ung", "en", "e"];
+
+/** Restminimum nach dem Streifen. Ohne Minimum würde 'notes' -> 'note' -> 'not'
+ *  plötzlich 'nothing' und 'notice' finden; ab vier Zeichen bleibt der Streifer
+ *  bei echten Stämmen ('pruef', 'werbeaussag') und trifft keine Fremdwörter mehr. */
+const MIN_STAMM_LAENGE = 4;
+
+/** Höheres Restminimum für die Ein-Zeichen-Endung "e". Gemessene Kollision bei
+ *  Rest 4: 'state' wurde zu 'stat' und fand statistician, instinct-status und
+ *  ecc-statusline mit (71 statt 44 Treffer) — englische e-Wörter kappen gern in
+ *  einen fremden Stamm hinein. Ab Rest 5 bleibt 'state' ganz und der deutsche
+ *  Nutzfall ('abgabe' -> 'abgab' findet 'abgaben') ist nicht betroffen. */
+const MIN_STAMM_LAENGE_E = 5;
+
+/** Terme, die vom Flexions-Streifen ausgenommen sind. Gemessene Kollision: aus
+ *  'rechnung' wird 'rechn', und dieses Präfix gehört zur fremden Wortfamilie
+ *  Rechner/rechnen — der ar-abfindungs-rechner stand danach auf Top-Rang der
+ *  Rechnungs-Suche. Der Streifer bringt hier nichts: 'rechnung' findet seine
+ *  Items über das offene Präfix ohnehin ('rechnungslegung', 'rechnungen').
+ *  'rechnen' bleibt streifbar und verbindet weiterhin Richtung Rechnung. */
+const STREICH_AUSNAHMEN = new Set(["rechnung", "rechnungen"]);
+
 /** Baut aus einem Suchterm einen Wortanfangs-Präfix-Regex.
  *
  *  Warum kein `includes` mehr: Mittwort-Substrings erzeugten Phantom-Treffer
@@ -1162,6 +1190,13 @@ const STOPPWOERTER = new Set([
  *  verlangt einen Wortanfang (`^` oder Nicht-Alphanumerikum davor), lässt das
  *  Wort aber weiterlaufen: "review" trifft "reviews" und "reviewer".
  *
+ *  Vor dem Matching wird der Term auf seinen Stamm reduziert: erst der
+ *  Plural-s, dann Flexionsendungen (`FLEXIONS_ENDUNGEN`) unter Einhaltung von
+ *  `MIN_STAMM_LAENGE` bzw. `MIN_STAMM_LAENGE_E` für die Ein-Zeichen-Endung,
+ *  sofern der Term nicht in `STREICH_AUSNAHMEN` steht. Dadurch finden Biegungen
+ *  desselben Stamms einander: 'pruefen' und 'pruefung' laufen beide auf 'pruef'
+ *  und treffen dieselben Items.
+ *
  *  Gekoppelte Invariante: Der Plural-s-Stamm (aus "releases" wird "release")
  *  ist NUR gefahrlos, weil das Matching Präfix-Matching ist — "kubernetes"
  *  wird zu "kubernete" gestammt und trifft "kubernetes" trotzdem weiter. Wer
@@ -1169,6 +1204,15 @@ const STOPPWOERTER = new Set([
 function termRegex(t) {
   let stamm = t;
   if (stamm.length > 3 && stamm.endsWith("s") && !stamm.endsWith("ss")) stamm = stamm.slice(0, -1);
+  if (!STREICH_AUSNAHMEN.has(stamm)) {
+    for (const ende of FLEXIONS_ENDUNGEN) {
+      const minimum = ende === "e" ? MIN_STAMM_LAENGE_E : MIN_STAMM_LAENGE;
+      if (stamm.endsWith(ende) && stamm.length - ende.length >= minimum) {
+        stamm = stamm.slice(0, -ende.length);
+        break;
+      }
+    }
+  }
   const esc = stamm.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   // Bewusst ohne g-Flag: ein g-Regex trägt lastIndex über test()-Aufrufe hinweg
   // und würde denselben Term in jedem zweiten Baustein "nicht finden".
@@ -2235,11 +2279,14 @@ function claudeMdBlock(installed, catalogGeneratedAt, target) {
   L.push("  auf ODER zurück und sagt das („Kein Baustein enthält alle Suchwörter\"). Je");
   L.push("  gängiger die Einzelwörter, desto mehr Teiltreffer — ein Projektprofil mit sieben");
   L.push("  Wörtern liefert über 250. Zwei gezielte Wörter sind besser als das ganze Profil.");
-  L.push("- **Die Suche matcht am Wortanfang.** Der Stamm findet alle längeren Formen");
-  L.push("  (`review` findet `reviews`, `reviewer`, `reviewing`); ein Plural-s wird");
-  L.push("  abgeschnitten, jede andere längere Form findet die kürzere nicht, und zwei");
-  L.push("  Endungen am selben Stamm finden einander nicht (`pruefen` findet `pruefung`");
-  L.push("  nicht). Deshalb den Wortstamm eingeben: `pruef` findet beides.");
+  L.push("- **Die Suche matcht am Wortanfang und verbindet Flexionsformen.** Der Stamm");
+  L.push("  findet alle längeren Formen (`review` findet `reviews`, `reviewer`,");
+  L.push("  `reviewing`); Biegungen desselben Stamms finden einander (`pruefen` trifft");
+  L.push("  `pruefung`, beide laufen auf `pruef`) — Endungen `ung`/`ungen`/`en` ab vier");
+  L.push("  Zeichen Rest, `e` ab fünf. Sehr kurze Stämme unter dem Restminimum werden");
+  L.push("  nicht rückwärts verbunden: `pruef` findet weiterhin alles, die Biegung eines");
+  L.push("  hypothetischen Dreizeichen-Stamms nicht. Den Wortstamm einzugeben ist damit");
+  L.push("  kein Muss mehr, bleibt aber der sicherste Weg.");
   L.push("- **Der Standardbestand ist englisch beschrieben.** Deutsche Anfragen laufen");
   L.push("  dort ins Leere; den englischen Fachbegriff einsetzen. Die deutschen Bausteine");
   L.push("  liegen im Massen-Repo `legal-de` und sind nur mit `--domain legal-de` oder");
@@ -3284,17 +3331,19 @@ const NAHT_EXTRA = [
   "README.md", "INDEX.md", "CLAUDE.md",
   ...(() => {
     const out = [];
-    for (const unter of ["skills", "agents"]) {
-      const dir = path.join(ROOT, ".claude", unter);
-      if (!fs.existsSync(dir)) continue;
-      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
-        if (e.isDirectory()) {
-          const f = path.join(dir, e.name, "SKILL.md");
-          if (fs.existsSync(f)) out.push(`.claude/${unter}/${e.name}/SKILL.md`);
-        } else if (/\.md$/i.test(e.name)) {
-          out.push(`.claude/${unter}/${e.name}`);
-        }
+    // Rekursiv statt nur `<skill>/SKILL.md`: ein Skill-Ordner kann weitere
+    // Markdown-Dateien tragen, die denselben Agenten zu denselben Aufrufen
+    // anleiten — dort ein Tippfehler gegen den Dispatcher wäre sonst genauso
+    // unsichtbar geblieben wie er es vor der Aufnahme in `NAHT_EXTRA` war.
+    const sammle = (rel) => {
+      for (const e of fs.readdirSync(path.join(ROOT, rel), { withFileTypes: true })) {
+        const kind = `${rel}/${e.name}`;
+        if (e.isDirectory()) sammle(kind);
+        else if (/\.md$/i.test(e.name)) out.push(kind);
       }
+    };
+    for (const unter of ["skills", "agents"]) {
+      if (fs.existsSync(path.join(ROOT, ".claude", unter))) sammle(`.claude/${unter}`);
     }
     return out;
   })(),

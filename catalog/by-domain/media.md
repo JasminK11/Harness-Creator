@@ -1,6 +1,6 @@
 # Domäne: media
 
-51 Bausteine. Erzeugt von `tools/harness.mjs extract`.
+54 Bausteine. Erzeugt von `tools/harness.mjs extract`.
 
 ## agent (24)
 
@@ -11,7 +11,7 @@
 | `affaan-m__ecc/agent/react-reviewer` | Expert React/JSX code reviewer specializing in hook correctness, render performance, server/client component boundaries, accessib… | 5 |
 | `AgriciDaniel__claude-seo/agent/seo-image-gen` | SEO image analyst. Audits existing OG/social preview images, identifies missing or low-quality images, and creates an image gener… | 2 |
 | `anthropics__claude-plugins-official/agent/skill-reviewer` | / Use this agent when the user has created or modified a skill and needs quality review, asks to "review my skill", "check skill … | 6 |
-| `Egonex-AI__Understand-Anything/agent/design-analyzer` | / Analyzes Figma structural nodes (pages, screens, components, instances, tokens) from a deterministic manifest and adds semantic… | 3 |
+| `Egonex-AI__Understand-Anything/agent/design-analyzer` | / Analyzes Figma structural nodes (pages, screens, components, instances, tokens) from a deterministic manifest and adds semantic… | 2 |
 | `msitarzewski__agency-agents/agent/bilibili-content-strategist` | Expert Bilibili marketing specialist focused on UP主 growth, danmaku culture mastery, B站 algorithm optimization, community buildin… | 11 |
 | `msitarzewski__agency-agents/agent/carousel-growth-engine` | Autonomous TikTok and Instagram carousel generation specialist. Analyzes any website URL with Playwright, generates viral 6-slide… | 14 |
 | `msitarzewski__agency-agents/agent/document-generator` | Expert document creation specialist who generates professional PDF, PPTX, DOCX, and XLSX files using code-based approaches with p… | 2 |
@@ -38,33 +38,36 @@
 | `affaan-m__ecc/command/marketing-campaign` | Plan and execute a full marketing campaign. Accepts a product brief and returns positioning, landing page copy, email sequence, s… | 4 |
 | `affaan-m__ecc/command/react-review` | Comprehensive React/JSX code review for hook correctness, render performance, server/client component boundaries, accessibility, … | 6 |
 
-## skill (25)
+## skill (28)
 
 | ID | Beschreibung | KB |
 |---|---|---:|
 | `affaan-m__ecc/skill/fal-ai-media` | Unified media generation via fal.ai MCP — image, video, and audio. Covers text-to-image (Nano Banana), text/image-to-video (Seeda… | 7 |
+| `affaan-m__ecc/skill/frontend-patterns` | Frontend development patterns for React, Next.js, state management, performance optimization, and UI best practices. Use when bui… | 16 |
 | `affaan-m__ecc/skill/frontend-slides` | Create stunning, animation-rich HTML presentations from scratch or by converting PowerPoint files. Use when the user wants to bui… | 16 |
 | `affaan-m__ecc/skill/manim-video` | Build reusable Manim explainers for technical concepts, graphs, system diagrams, and product walkthroughs, then hand off to the w… | 6 |
 | `affaan-m__ecc/skill/marketing-campaign` | End-to-end marketing campaign planning and execution. Covers audience research, positioning, campaign angle definition, landing p… | 5 |
 | `affaan-m__ecc/skill/nutrient-document-processing` | Process, convert, OCR, extract, redact, sign, and fill documents using the Nutrient DWS API. Works with PDFs, DOCX, XLSX, PPTX, H… | 6 |
 | `affaan-m__ecc/skill/react-performance` | React and Next.js performance optimization patterns adapted from Vercel Engineering's React Best Practices (https://github.com/ve… | 18 |
 | `affaan-m__ecc/skill/remotion-video-creation` | Best practices for Remotion - Video creation in React. 29 domain-specific rules covering 3D, animations, audio, captions, charts,… | 76 |
+| `affaan-m__ecc/skill/swiftui-patterns` | SwiftUI architecture patterns, state management with @Observable, view composition, navigation, performance optimization, and mod… | 7 |
 | `affaan-m__ecc/skill/taste` | A creative-direction (taste) layer for music videos and short-form edits in the angelcore / cloud-trance / hyperpop visual family… | 20 |
+| `affaan-m__ecc/skill/tasteforge-video` | Use for file-driven multimodal image, video, and 3D-asset discovery; taste interviews; distill or apply workflows; style-pack val… | 10 |
 | `affaan-m__ecc/skill/ui-demo` | Record polished UI demo videos using Playwright. Use when the user asks to create a demo, walkthrough, screen recording, or tutor… | 15 |
 | `affaan-m__ecc/skill/video-editing` | AI-assisted video editing workflows for cutting, structuring, and augmenting real footage. Covers the full pipeline from raw capt… | 10 |
 | `affaan-m__ecc/skill/videodb` | See, Understand, Act on video and audio. See- ingest from local files, URLs, RTSP/live feeds, or live record desktop; return real… | 125 |
-| `affaan-m__ecc/skill/visa-doc-translate` | Translate visa application documents (images) to English and create a bilingual PDF with original and translation | 6 |
-| `AgriciDaniel__claude-seo/skill/seo` | Comprehensive SEO analysis for any website or business type. Full site audits, single-page analysis, technical SEO (crawlability,… | 106 |
+| `affaan-m__ecc/skill/visa-doc-translate` | Translate visa application documents (images) to English and create a bilingual PDF with original and translation. Use when visa … | 6 |
+| `AgriciDaniel__claude-seo/skill/seo` | Comprehensive SEO analysis for any website or business type. Full site audits, single-page analysis, technical SEO (crawlability,… | 104 |
 | `AgriciDaniel__claude-seo/skill/seo-image-gen` | AI image generation for SEO assets: OG/social preview images, blog hero images, schema images, product photography, infographics.… | 9 |
-| `AgriciDaniel__claude-seo/skill/seo-images` | > Image optimization analysis for SEO and performance. Checks alt text, file sizes, formats, responsive images, lazy loading, CLS… | 17 |
-| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 48 |
-| `anthropics__claude-plugins-official/skill/math-olympiad` | "Solve competition math problems (IMO, Putnam, USAMO, AIME) with adversarial verification that catches the errors self-verificati… | 64 |
-| `anthropics__skills/skill/canvas-design` | Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to c… | 5427 |
-| `anthropics__skills/skill/docx` | Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx… | 1125 |
-| `anthropics__skills/skill/pdf` | Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, … | 59 |
-| `anthropics__skills/skill/pptx` | Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both. This includes: creating slide d… | 1136 |
-| `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1100 |
+| `AgriciDaniel__claude-seo/skill/seo-images` | > Image optimization analysis for SEO and performance. Checks alt text, file sizes, formats, responsive images, lazy loading, CLS… | 16 |
+| `anthropics__claude-plugins-official/skill/build-mcp-app` | This skill should be used when the user wants to build an "MCP app", add "interactive UI" or "widgets" to an MCP server, "render … | 47 |
+| `anthropics__claude-plugins-official/skill/math-olympiad` | "Solve competition math problems (IMO, Putnam, USAMO, AIME) with adversarial verification that catches the errors self-verificati… | 62 |
+| `anthropics__skills/skill/canvas-design` | Create beautiful visual art in .png and .pdf documents using design philosophy. You should use this skill when the user asks to c… | 5424 |
+| `anthropics__skills/skill/docx` | Use this skill whenever the user wants to create, read, edit, or manipulate Word documents (.docx files) or Word templates (.dotx… | 1102 |
+| `anthropics__skills/skill/pdf` | Use this skill whenever the user wants to do anything with PDF files. This includes reading or extracting text/tables from PDFs, … | 57 |
+| `anthropics__skills/skill/pptx` | Use this skill any time a .pptx or .potx file is involved in any way — as input, output, or both. This includes: creating slide d… | 1112 |
+| `anthropics__skills/skill/xlsx` | Use this skill any time a spreadsheet file is the primary input or output. This means any task where the user wants to: open, rea… | 1077 |
 | `Egonex-AI__Understand-Anything/skill/understand-figma` | Analyze a Figma file via the Figma REST API and generate an interactive design knowledge graph (pages, screens, components, compo… | 10 |
-| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 241 |
+| `nextlevelbuilder__ui-ux-pro-max-skill/skill/design` | Comprehensive design skill: brand identity, design tokens, UI styling, logo generation (55 styles, Gemini AI), corporate identity… | 236 |
 | `usestrix__strix/skill/managed-pentesting-with-strix` | Run a managed pentest of a web app or API through the app.strix.ai REST API — no local Docker, LLM key, or install needed. Create… | 8 |
 

@@ -107,7 +107,7 @@ intentional, will end up inducing these subtle undesirable behaviors."
    Prosa-Skills. Ein Baustein mit perfekter Beschreibung und flakigem Werkzeug
    richtet mehr Schaden an als ein mittelmässiger, der zuverlässig läuft — und der
    Schaden zeigt sich an einer Stelle, an der niemand sucht.
-4. Unser Bestand steht dazu im Widerspruch: 24.729 Skills gegen 70 Hooks und
+4. Unser Bestand steht dazu im Widerspruch: 24.739 Skills gegen 72 Hooks und
    4 MCP-Konfigurationen. Für `sources.txt` heisst das, gezielt nach Repos mit
    Hooks, Validierern und CI-Gates zu suchen statt nach weiteren Skill-Sammlungen.
 5. Einschränkung, die nicht verschwiegen wird: bei Feng entsteht der Effekt über
@@ -138,7 +138,7 @@ Die **Leseseite** haben wir richtig gebaut: `INDEX.md` (5 KB) als Einstieg,
 `catalog/by-domain/*.md` als Mittelschicht, `catalog/index.json` (20 MB)
 ausschliesslich über das CLI. Das ist von sechs Vorträgen bestätigt und keine
 Baustelle mehr. Davis liefert zusätzlich die Begründung, warum das keine
-Bequemlichkeit ist: ein ungefiltertes Listing über 25.642 Einträge ist nicht
+Bequemlichkeit ist: ein ungefiltertes Listing über 25.655 Einträge ist nicht
 „gross", es ist unbrauchbar. Konsequenz über die bestehende Regel hinaus: die
 Filterpflicht ins CLI einbauen statt in die Doku — `search` ohne `--type`/`--domain`
 und ohne `--limit` sollte nicht das Vollergebnis liefern, `--all` bleibt eine
@@ -387,12 +387,12 @@ die Suche weiter Treffer liefert.
 | Wang | Erst vertikal tief, dann horizontal breit: „domain expertise is something that informs how high quality your data can be" und „lessons learned that going really vertical on a single domain like infrastructure do translate into other horizontal domains." |
 | Davis | „Task list has gone away. Good. Wasn't particularly useful anyway, especially at large scale." |
 
-**Was daraus folgt.** Die 1.091 im Standardzugriff (1.099 vor M2, 1.084 direkt nach der M2-Quarantäne vom 2026-08-10, dann 1.091 nach der Erweiterung der Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-Felder am selben Tag) sind das Produkt, nicht die 25.642 —
+**Was daraus folgt.** Die 1.104 im Standardzugriff (1.099 vor M2, 1.084 direkt nach der M2-Quarantäne vom 2026-08-10, dann 1.091 nach der Erweiterung der Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-Felder am selben Tag) sind das Produkt, nicht die 25.655 —
 und sie sollten eher schrumpfen als wachsen. Ein weiteres Repo erhöht erst einmal die
 Menge, nicht die Qualität; das 14. (`anthropics__claude-plugins-official`, offiziell,
 aufgenommen 2026-08-08 auf Zuruf des Besitzers, +143 Bausteine) kam deshalb über die
 Aufnahmekriterien in `sources.txt`, nicht über Zuwachslogik. Zur Grössenordnung:
-24.161 der 25.642 Bausteine stammen aus einem
+24.543 der 25.655 Bausteine stammen aus einem
 einzigen en bloc gespiegelten Mega-Repo, das für 12 der 13 Domänen nie gebraucht
 wird. Die Regel gehört explizit in `knowledge/01`: **aufgenommen wird ein Repo,
 ausgeliefert werden einzelne Bausteine**; ein Repo, aus dem über mehrere Projekte
@@ -409,7 +409,7 @@ was unter bestehenden IDs geändert wurde oder verschwunden ist — sonst instal
 
 Zwei Nebenbefunde, die hierher gehören:
 
-- **Generik-Bias.** Bei 25.642 Einträgen liefert jede Textsuche zuverlässig die
+- **Generik-Bias.** Bei 25.655 Einträgen liefert jede Textsuche zuverlässig die
   generischsten Bausteine; der eng passende Nischen-Baustein liegt am Rand der
   Verteilung. Das ist messbar: dieselbe Suchroutine über mehrere sehr verschiedene
   Projektprofile fahren und die Überlappung der Top-Treffer zählen. Gegenmittel im
@@ -440,10 +440,10 @@ fremden Oberfläche sind totes Gewicht. Rallabandi verlangt sogar aktives Verges
 **Unsere Position.** Wangs Satz gilt für **Trainingsdaten**, nicht für
 **Laufzeitkontext** — der Unterschied ist bei uns entscheidend und wird sonst
 stillschweigend übersprungen. Für den Katalog auf der Platte hat Wang recht:
-25.642 Einträge schaden niemandem, solange sie hinter dem CLI liegen. Für alles,
+25.655 Einträge schaden niemandem, solange sie hinter dem CLI liegen. Für alles,
 was im Kontextfenster landet, hat Branco recht: jeder zusätzlich sichtbare Baustein
 verschiebt das Routing aller anderen, weil Descriptions um dieselben Auslöser
-konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 1.091 (1.099 vor
+konkurrieren. **Platte darf wachsen, Standardzugriff nicht** — die 1.104 (1.099 vor
 M2, 1.084 direkt nach der M2-Quarantäne vom 2026-08-10; nach der Erweiterung der
 Beschreibungs-Extraktion auf JSDoc-Blöcke, Python-Docstrings und JSON-`description`-
 Felder am selben Tag tragen 7 der 15 quarantänisierten Bausteine wieder ihre echte
